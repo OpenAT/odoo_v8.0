@@ -1,0 +1,20 @@
+[submodule "odoo"]
+	path = odoo
+	url = https://github.com/odoo/odoo.git
+	branch = 8.0
+[submodule "addons-thirdparty/server-tools"]
+	path = addons-thirdparty/server-tools
+	url = https://github.com/OCA/server-tools.git
+	branch = 8.0
+[submodule "addons-thirdparty/web"]
+	path = addons-thirdparty/web
+	url = https://github.com/OCA/web.git
+	branch = 8.0
+[submodule "addons-thirdparty/partner-contact"]
+	path = addons-thirdparty/partner-contact
+	url = https://github.com/OCA/partner-contact.git
+	branch = 8.0
+[submodule "addons-thirdparty/project-service"]
+	path = addons-thirdparty/project-service
+	url = https://github.com/OCA/project-service.git
+	branch = 8.0
