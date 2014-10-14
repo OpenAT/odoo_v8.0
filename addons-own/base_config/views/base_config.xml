@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- LOAD CSS AND JAVA SCRIPT FOR BACKEND
+             Traditional loading of css and js through __openerp__.py is no longer possible!
+             Thy have to be added to the assets_backend template:
+        -->
+        <template id="assets_backend" name="base_config assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/base_config/static/src/css/style.css"/>
+                <link rel="stylesheet" href="/base_config/static/src/css/chatter.css"/>
+                <link rel="stylesheet" href="/base_config/static/src/css/addons.css"/>
+            </xpath>
+        </template>
+
+        <!-- ACTIVATE TECHNICAL FEATURES FOR ADMIN -->
+        <record id="base.user_root" model="res.users">
+            <field name="groups_id" eval="[(4, ref('base.group_no_one'))]"/>
+        </record>
+
+        <!-- DEFAULT CONFIGURATION SETTINGS
+
+             Mostly this sets only groups - the id of the record of the group can be found in the original xml
+             Hint 1: You have to know the xml record id to change the record!
+             Hint 2: These values will be only changed/set at first installation of the module!!!
+             Hint 3: All the groups have an external id - can be found in "External Identifiers"
+             Hint 4: base.group_user is the User Group "Employee" Where all new users belong by default
+             Example: base.group_user can be found in odoo/openerp/addons/base/security/base_security.xml
+
+             Documentation of "eval" for many2* and *2many fields can be found in:
+             https://doc.odoo.com/v6.0/developer/2_5_Objects_Fields_Methods/methods.html/#osv.osv.osv.write
+             https://doc.odoo.com/6.0/developer/5_16_data_serialization/xml_serialization/
+             http://stackoverflow.com/questions/9377402/insert-into-many-to-many-openerp/9387447#9387447
+             And for sure in the source code of odoo ;)
+        -->
+        <record id="base.group_user" model="res.groups">
+            <field name="implied_ids" eval="[
+                                             (4, ref('sale.group_invoice_so_lines')),
+                                             (4, ref('sale_stock.group_invoice_deli_orders')),
+                                             (4, ref('product.group_sale_pricelist')),
+                                             (4, ref('sale.group_delivery_invoice_address')),
+                                             (4, ref('product.group_uom'))
+                                             (4, ref('sale.group_discount_per_so_line')),
+                                             (4, ref('sale_stock.group_route_so_lines')),
+                                             (4, ref('base.group_multi_salesteams')),
+                                             (4, ref('product.group_purchase_pricelist')),
+                                             (4, ref('stock.group_production_lot')),
+                                             (4, ref('stock.group_tracking_lot')),
+                                             (4, ref('stock.group_tracking_owner')),
+                                             (4, ref('stock_account.group_inventory_valuation')),
+                                             (4, ref('stock.group_locations')),
+                                             (4, ref('stock.group_adv_location')),
+                                             (4, ref('product.group_uos')),
+                                             (4, ref('project.group_time_work_estimation_tasks')),
+                                             (4, ref('project.group_tasks_work_on_tasks')),
+                                             (4, ref('analytic.group_analytic_accounting')),
+                                             (4, ref('account.group_proforma_invoices')),
+                                             (4, ref('account.group_supplier_inv_check_total')),
+                                             (4, ref('sale.group_analytic_accounting')),
+                                             (4, ref('purchase.group_analytic_accounting')),
+                                             (4, ref('base.group_hr_attendance')),
+                                           ]"
+            />
+        </record>
+
+        <!-- Set Default Values for ir.values -->
+        <function model="ir.values" name="set_default">
+            <value>sale.order</value>
+            <value>order_policy</value>
+            <value>manual</value>
+        </function>
+        <function model="ir.values" name="set_default">
+            <value>purchase.order</value>
+            <value>invoice_method</value>
+            <value>picking</value>
+        </function>
+        <function model="ir.values" name="set_default">
+            <value>res.company</value>
+            <value>timesheet_range</value>
+            <value>month</value>
+        </function>
+
+    </data>
+</openerp>

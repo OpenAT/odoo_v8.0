@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- Changed Original Task Stages -->
+        <record id="project.project_tt_analysis" model="project.task.type">
+            <field name="sequence">510</field>
+            <field name="name">Analysis_Mike</field>
+            <field name="state">draft</field>
+            <field name="case_default" eval="False"/>
+        </record>
+        <record id="project.project_tt_specification" model="project.task.type">
+            <field name="sequence">520</field>
+            <field name="name">Specification</field>
+            <field name="state">pending</field>
+            <field name="case_default" eval="False"/>
+        </record>
+        <record id="project.project_tt_design" model="project.task.type">
+            <field name="sequence">530</field>
+            <field name="name">Design</field>
+            <field name="state">open</field>
+            <field name="case_default" eval="False"/>
+        </record>
+        <record id="project.project_tt_development" model="project.task.type">
+            <field name="sequence">540</field>
+            <field name="name">Development</field>
+            <field name="state">open</field>
+            <field name="case_default" eval="False"/>
+        </record>
+        <record id="project.project_tt_testing" model="project.task.type">
+            <field name="sequence">550</field>
+            <field name="name">Testing</field>
+            <field name="state">open</field>
+            <field name="case_default" eval="False"/>
+        </record>
+        <record id="project.project_tt_merge" model="project.task.type">
+            <field name="sequence">560</field>
+            <field name="name">Merge</field>
+            <field name="state">open</field>
+            <field name="case_default" eval="False"/>
+            <field name="fold" eval="True"/>
+        </record>
+
+        <record id="project.project_tt_deployment" model="project.task.type">
+            <field name="sequence">50</field>
+            <field name="case_default" eval="True"/>
+            <field name="fold" eval="True"/>
+        </record>
+        <record id="project.project_tt_cancel" model="project.task.type">
+            <field name="sequence">60</field>
+            <field name="state">open</field>
+            <field name="case_default" eval="True"/>
+            <field name="fold" eval="True"/>
+        </record>
+
+
+        <!-- New Task Stages -->
+        <record id="project_tt_new" model="project.task.type">
+            <field name="sequence">10</field>
+            <field name="name">New</field>
+            <field name="state">draft</field>
+            <field name="case_default" eval="True"/>
+        </record>
+        <record id="project_tt_planned" model="project.task.type">
+            <field name="sequence">20</field>
+            <field name="name">Planned</field>
+            <field name="state">pending</field>
+            <field name="case_default" eval="True"/>
+        </record>
+        <record id="project_tt_waiting" model="project.task.type">
+            <field name="sequence">30</field>
+            <field name="name">Waiting</field>
+            <field name="state">pending</field>
+            <field name="case_default" eval="True"/>
+        </record>
+        <record id="project_tt_inprogress" model="project.task.type">
+            <field name="sequence">40</field>
+            <field name="name">In Progress</field>
+            <field name="state">open</field>
+            <field name="case_default" eval="True"/>
+        </record>
+
+    </data>
+</openerp>
