@@ -18,3 +18,15 @@
 	path = addons-thirdparty/project-service
 	url = https://github.com/OCA/project-service.git
 	branch = 8.0
+[submodule "addons-thirdparty/aeroolib"]
+	path = addons-thirdparty/aeroolib
+	url = https://github.com/aeroo/aeroolib.git
+	branch = master
+[submodule "addons-thirdparty/aeroo_reports"]
+	path = addons-thirdparty/aeroo_reports
+	url = https://github.com/aeroo/aeroo_reports.git
+	branch = master
+[submodule "addons-thirdparty/odoo-india"]
+	path = addons-thirdparty/odoo-india
+	url = https://github.com/Odoo-India/odoo-india.git
+	branch = master

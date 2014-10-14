@@ -1,0 +1,10 @@
+/* For web_filter_tabs */
+.openerp .oe_header_row.oe_custom_filter_tabs .oe_searchview_custom_tabs_div > ul > li,
+.openerp .oe_header_row.oe_custom_filter_tabs .oe_searchview_custom_tabs_div > ul > li:hover,
+.openerp .oe_header_row.oe_custom_filter_tabs .oe_searchview_custom_tabs_div > ul > li.oe_selected {
+    padding: 0 !important;
+}
+
+.openerp .oe_header_row.oe_custom_filter_tabs .oe_searchview_custom_tabs_div > ul > li > .oe_searchview_custom_delete {
+    display: none;
+}

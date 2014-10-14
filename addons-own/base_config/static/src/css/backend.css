@@ -1,0 +1,4 @@
+/* Set forms to use nearly the full width */
+.openerp .oe_form_sheet_width {
+    max-width: 95%;
+}

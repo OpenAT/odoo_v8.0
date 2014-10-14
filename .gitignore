@@ -25,3 +25,6 @@ target/
 #odoo
 data_dir/
 server.conf
+
+#Mac OSX
+.DS_*
