@@ -1,4 +1,4 @@
-
+Dieses Readme ist ein Notizblock - Rechnen sie mit gekritzel!
 
 Könnte sein dass wir oddo mit mod_wsgi über appache laufen lassen - dies hätte den vorteil das jede instance als
 eigener ubuntu user laufen würde und damit auch sicherheitstechnisch voneinander besser abgegrenzt ist.

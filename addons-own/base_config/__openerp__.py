@@ -38,15 +38,23 @@ Module tasks:
 
 - Install all common addons
 - Overwrite some of the backend CSS (forms-fullwidth, chatter, colors)
-- ToDo: Create a new configuration menu for addons-own and addons-thirdparty linked in addons-loaded
+- Create a new configuration menu for addons-own and addons-thirdparty linked in addons-loaded
 - ToDo: Set default values for the admin user (timezone, technical features, language)
-- Set/Create Project Stages
-- ToDo: Set/Create Issue/Opportunity Stages
-- ToDo: Load the Austrian set of Accounting Charts and set the right Taxes
+- Set/Create Project Stages (= Task Stages = Issue Stages)
 - ToDo: Setup Real-Time Warehouse Transactions, Create needed Accounts and use them in the product categories
 - ToDo: Set "Validate Timesheets every" to: Month
-- ToDo: Create a standard working schedules for 38,7 h and 40,0 h per week
-- ToDo: Set all other default values in "settings > configuration"
+- ToDo: Auto-Create a standard working schedules for 38,7 h and 40,0 h per week
+- Set default values in "settings > configuration" (groups and modules) as far as possible
+
+
+You still need to do some things by Hand after installing this module:
+----------------------------------------------------------------------
+
+- Set Chart of Accounts and Tax (Wizzard will pop up while installing)
+- Set Defaults for Admin-User and Template User (Timezone, Signature, ...)
+- Set the Timesheet Validation to "Month"
+- Create Standard Work Shedules and link them to employees
+- Create The Accounts for real-time warehouse moves and link them in the product-groups (maybe obsolete in v8.0?)
 
     """,
     'author': "OpenAT",
@@ -77,6 +85,7 @@ Module tasks:
     'data': [
         # DATA
         'data/data_project.xml',
+        'data/data_setup_css.xml',
         # SECURITY FILES
         #'security/ir.model.access.csv',
         #'security/ir_ui_view.xml',
@@ -86,7 +95,7 @@ Module tasks:
         #'views/templates.xml',
         #'views/snippets.xml',
         #'views/views.xml',
-        'views/base_config.xml'
+        'views/res_config.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

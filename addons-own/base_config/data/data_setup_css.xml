@@ -41,7 +41,7 @@
                                              (4, ref('sale_stock.group_invoice_deli_orders')),
                                              (4, ref('product.group_sale_pricelist')),
                                              (4, ref('sale.group_delivery_invoice_address')),
-                                             (4, ref('product.group_uom'))
+                                             (4, ref('product.group_uom')),
                                              (4, ref('sale.group_discount_per_so_line')),
                                              (4, ref('sale_stock.group_route_so_lines')),
                                              (4, ref('base.group_multi_salesteams')),
@@ -60,7 +60,7 @@
                                              (4, ref('account.group_supplier_inv_check_total')),
                                              (4, ref('sale.group_analytic_accounting')),
                                              (4, ref('purchase.group_analytic_accounting')),
-                                             (4, ref('base.group_hr_attendance')),
+                                             (4, ref('base.group_hr_attendance'))
                                            ]"
             />
         </record>
