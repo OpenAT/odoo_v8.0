@@ -40,6 +40,7 @@ ToDo: WAY MORE description of how to develop with git and how to use this repo i
 - [Technical Memento](https://www.odoo.com/files/memento/OpenERP_Technical_Memento_latest.pdf)
 - [eval many2many write](https://doc.odoo.com/v6.0/developer/2_5_Objects_Fields_Methods/methods.html/#osv.osv.osv.write)
 - [WebApps Tutorial HBEE](https://www.hbee.eu/en-us/blog/archive/2014/9/17/odoo-web-apps/)
+- [Forum how to's](https://www.odoo.com/forum/how-to)
 
 #### Configuration (res.config) related
 - https://www.odoo.com/forum/help-1/question/how-can-i-save-load-my-own-configuration-settings-30123
