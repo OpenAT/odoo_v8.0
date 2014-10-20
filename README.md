@@ -35,45 +35,45 @@ You could find some guidance for the setup script here:
 To use this branch for development use this workflow:
 
 ```bash
-# Clone the repo odoo_v8 branch master locally:
+# 1.) Clone the repo odoo_v8 branch master locally:
 git clone -b master --depth 1 --single-branch --recurse-submodules https://github.com/OpenAT/odoo_v8.0.git [instance_dir]
 
 # Check if the upstream (remote) is set correctly for the master branch
-git branch -vv # or
-git branch -a
-git --set-upstream-to=https://github.com/OpenAT/odoo_v8.0.git master
+git branch -vv
+git --set-upstream-to=https://github.com/OpenAT/odoo_v8.0.git master    # creates remotes and origin
 
-# Create and checkout a new branch:
+# 2.) Create and checkout a new branch:
 git branch dev-ckeditor_advanced
 git checkout dev-ckeditor_advanced
 
-# Push your Branch to Github (so everybody knows what you are working on)
-#maybe: git commit -m "[NEW] New Branch added for customer HOF"
+# 3.) Push your Branch to Github (so everybody knows what you are working on)
+git commit
 git push origin dev-ckeditor_advanced
 
-# Do stuff and commit changes:
-git add [file or folders] # This tells git what to include in next commit
-git commit -m "[IMP] Added README.md"
+# 4.) Do stuff and commit and push changes until ready:
+git add [file or folders]    # This tells git what to include in next commit
+git commit -m "[ADD] Added README.md"
 git push origin dev-ckeditor_advanced
 
-# When ready with development rebase and integrate into master
-git fetch origin/master
-git rebase 
-
+# 5.) When ready with development 
+# - create pull request on github (at webpage) if wanted to discuss / review changes
+# - Update master branch to latest
+# - rebase dev-ckeditor_advanced on master
+# - rebase dev-ckeditor_advanced submodules on master
+# - merge dev-ckeditor_advanced in master with rebase
+git checkout master    # NOW IN BRANCH master
+git pull
+git checkout dev-ckeditor_advanced    # NOW IN BRANCH dev-ckeditor_advanced
+git rebase master
+git submodule update --rebase
+git checkout master    # NOW IN BRANCH master
+git merge dev-ckeditor_advanced
+git push origin master
 
 ```
 
-### Create a local branch for development
-```bash
-# Create a new branch
-git branch dev-base_config
-# Checkout the new branch
-git checkout dev-base_config
-```
 
-ToDo: WAY MORE description of how to develop with git and how to use this repo in production!
-
-## Documentation
+## DOCUMENTATION
 
 ### odoo v8
 - [Latest Dev Docu](https://www.odoo.com/documentation/master/howtos/website.html)
@@ -96,8 +96,10 @@ ToDo: WAY MORE description of how to develop with git and how to use this repo i
 - http://djpatelblog.blogspot.in/2014/09/odoo-new-api-recordsets.html
 - http://wirtel.be/posts/en/2011/11/02/nginx-proxy-openerp/
 
-
-### github docu
+### git, git workflow and github
+- [Github Rebase Workflow](http://mettadore.com/2011/09/07/the-ever-deployable-github-workflow/)
+- [Git Submodules](http://git-scm.com/docs/git-submodule)
+- [Github Using Pull Requests](https://help.github.com/articles/using-pull-requests/)
 - [Adding an existing project to github](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
 - [Push to a Remote](https://help.github.com/articles/pushing-to-a-remote/)
 - [README.md Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
