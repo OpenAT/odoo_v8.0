@@ -1,6 +1,13 @@
 # odoo_v8.0
 This repo is used for production for odoo v8 installations. It is also the place where we develop our own addons for
-odoo. Some of the features of this repo:
+odoo. The *master* branch of this repo is alway the deployable production ready branch. All branch names uploaded here
+have to follow this rules:
+
+- DEVELOPMENT: dev-[module name OR feature name] e.g.: *dev-ckeditor_advanced*
+- FIXES: fix-[ISSUE Number] e.g.: *fix-1234* - Because of this there has to be an github Issue first!
+- CUSTOMER: cus-[customer id] e.g.: *cus_hof*
+
+Customer specific developments and fixes work like *cus_hof-dev-ckeditor_advanced* OR *cus_hof-fix-3425*
 
 ## Features
 
@@ -14,12 +21,46 @@ setup-tools.sh will be a simple setup script that is able to
 - deploy addon(s) to one or more databases on the local server
 - backup and restore databases (and data-dir) on the local server
 
-## Usage
+## SETUP
+Right now the Setup process is still done manualy - but in the ner future setup-tools.sh will handls everything. As
+soon as this script is finished it will be documented here.
 
-### Clone it for local use
-To use this repo simply clone it from github to your local maschine:
+You could find some guidance for the setup script here:
+- [odoo v7 setup scripts]
+- 
+-
+
+## DEVELOPMENT
+
+To use this branch for development use this workflow:
+
 ```bash
-git clone ...
+# Clone the repo odoo_v8 branch master locally:
+git clone -b master --depth 1 --single-branch --recurse-submodules https://github.com/OpenAT/odoo_v8.0.git [instance_dir]
+
+# Check if the upstream (remote) is set correctly for the master branch
+git branch -vv # or
+git branch -a
+git --set-upstream-to=https://github.com/OpenAT/odoo_v8.0.git master
+
+# Create and checkout a new branch:
+git branch dev-ckeditor_advanced
+git checkout dev-ckeditor_advanced
+
+# Push your Branch to Github (so everybody knows what you are working on)
+#maybe: git commit -m "[NEW] New Branch added for customer HOF"
+git push origin dev-ckeditor_advanced
+
+# Do stuff and commit changes:
+git add [file or folders] # This tells git what to include in next commit
+git commit -m "[IMP] Added README.md"
+git push origin dev-ckeditor_advanced
+
+# When ready with development rebase and integrate into master
+git fetch origin/master
+git rebase 
+
+
 ```
 
 ### Create a local branch for development
