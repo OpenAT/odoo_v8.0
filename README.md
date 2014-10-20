@@ -3,11 +3,13 @@ This repo is used for production for odoo v8 installations. It is also the place
 odoo. The *master* branch of this repo is alway the deployable production ready branch. All branch names uploaded here
 have to follow this rules:
 
-- DEVELOPMENT: dev-[module name OR feature name] e.g.: *dev-ckeditor_advanced*
-- FIXES: fix-[ISSUE Number] e.g.: *fix-1234* - Because of this there has to be an github Issue first!
-- CUSTOMER: cus-[customer id] e.g.: *cus_hof*
+- **dev-[module name OR feature name]** e.g.: *dev-ckeditor_advanced* = DEVELOPMENT
+- **fix-[ISSUE Number]** e.g.: *fix-1234*  = FIXES - (Make github Issue first!)
+- **cus_[customer id]** e.g.: *cus_hof* = CUSTOMER - (**Attention: underscore! not -**)
 
-Customer specific developments and fixes work like *cus_hof-dev-ckeditor_advanced* OR *cus_hof-fix-3425*
+Customer specific developments and fixes work like 
+- **cus_hof-dev-ckeditor_advanced**
+- **cus_hof-fix-3425**
 
 ## Features
 
@@ -15,20 +17,23 @@ Customer specific developments and fixes work like *cus_hof-dev-ckeditor_advance
 - updated requirements.txt to install with pip install -r /path/to/requirements.txt
 - all third party addons as well as odoo itself are linked as submodules
 
+
 ### Planned: Simple setup through setup-tools.sh
 setup-tools.sh will be a simple setup script that is able to 
 - setup new instances of odoo on the local server
 - deploy addon(s) to one or more databases on the local server
 - backup and restore databases (and data-dir) on the local server
 
+
 ## SETUP
 Right now the Setup process is still done manualy - but in the ner future setup-tools.sh will handls everything. As
 soon as this script is finished it will be documented here.
 
 You could find some guidance for the setup script here:
-- [odoo v7 setup scripts]
-- 
--
+- [odoo v7 setup scripts](https://github.com/OpenAT/odoo-tools/tree/7.0)
+- [odoo 8 setup script by Andre Schenkel](https://github.com/lukebranch/odoo-install-scripts/blob/master/odoo-saas4/ubuntu-14-04/odoo_install.sh)
+- [odoo setup ubuntu 14 lts](https://www.odoo.com/forum/help-1/question/how-to-install-odoo-from-github-on-ubuntu-14-04-for-testing-purposes-only-ie-not-for-production-52627)
+
 
 ## DEVELOPMENT
 
