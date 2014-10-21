@@ -94,25 +94,25 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     fi
 
     # ----- Update Server
-    echo -e "----- Update Server"
+    echo -e "\n----- Update Server"
     apt-get update >> $SETUP_LOG
     apt-get upgrade -y >> $SETUP_LOG
     echo -e "----- Update Server Done"
 
     # ----- Install Basic Packages
-    echo -e "----- Install Basic Packages"
+    echo -e "\n----- Install Basic Packages"
     apt-get install ssh wget sed git git-core gzip curl python libssl-dev build-essential -y >> $SETUP_LOG
     echo -e "----- Install Basic Packages Done"
 
     # ----- Install postgresql
-    echo -e "----- Install postgresql"
-    apt-get install postgresql postgresql-server-dev-9.3 libpq-dev >> $SETUP_LOG
+    echo -e "\n----- Install postgresql"
+    apt-get install postgresql postgresql-server-dev-9.3 libpq-dev -y >> $SETUP_LOG
     update-rc.d postgresql defaults >> $SETUP_LOG
     service postgresql restart | tee -a $SETUP_LOG
     echo -e "----- Install postgresql Done"
 
     # ----- Install nginx
-    echo -e "----- Install nginx"
+    echo -e "\n----- Install nginx"
     apt-get remove apache2 apache2-mpm-event apache2-mpm-prefork apache2-mpm-worker -y >> $SETUP_LOG
     apt-get install nginx -y >> $SETUP_LOG
     update-rc.d nginx defaults >> $SETUP_LOG
@@ -120,7 +120,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "----- Install nginx Done"
 
     # ----- Install Python Packages
-    echo -e "----- Install Python Packages"
+    echo -e "\n----- Install Python Packages"
     apt-get install python-pip python-dev python-software-properties  -y >> $SETUP_LOG
     apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> $SETUP_LOG
     apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> $SETUP_LOG
@@ -133,29 +133,35 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "----- Install Python Packages Done"
 
     # ----- Install Packages for AerooReports
-    echo -e "----- Install Packages for AerooReports"
+    echo -e "\n----- Install Packages for AerooReports"
     apt-get install python-genshi python-pyhyphen ure uno-libs3 unoconv libxml2-dev libxslt-dev \
                     libreoffice-core libreoffice-common libreoffice-base libreoffice-base-core \
                     libreoffice-draw libreoffice-calc libreoffice-writer libreoffice-impress \
                     python-cupshelpers hyphen-de hyphen-en-us -y >> $SETUP_LOG
-    echo -e "Install Aeroolib"
+    echo -e "\nInstall Aeroolib"
     git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git $BASEPATH/aeroolib >> $SETUP_LOG
+    cd $BASEPATH/aeroolib
     python $BASEPATH/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
-    echo -e "Install Aeroo LibreOffice Service"
+    cd $BASEPATH
+    echo -e "\nInstall Aeroo LibreOffice Service"
     wget -O- https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/aeroo.init > $BASEPATH/aeroo.init
-    ln -s $BASEPATH/aeroo.init /etc/init.d/aeroo.init >> $SETUP_LOG
+    chmod ugo=rx $BASEPATH/aeroo.init
+    ln -s $BASEPATH/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
     update-rc.d aeroo defaults >> $SETUP_LOG
     service aeroo stop >> $SETUP_LOG
     service aeroo start | tee -a $SETUP_LOG
     echo -e "----- Install Packages for AerooReports Done"
 
     # ----- Install Packages for Etherpad Lite
-    echo -e "Install Packages for Etherpad Lite"
+    echo -e "\n----- Install Packages for Etherpad Lite"
     apt-get install nodejs abiword -y >> $SETUP_LOG
-    echo -e "Install Packages for Etherpad Lite Done"
+    echo -e "----- Install Packages for Etherpad Lite Done"
 
 fi
 
+
+####### lxml==3.3.5 ?!? * make sure the development packages of libxml2 and libxslt are installed **
+####### No distributions at all found for PyChart==1.39 (from -r /opt/odoo/requirements.txt (line 51))
 
 # ---------------------------------------------------------
 # Script HELP
@@ -167,4 +173,4 @@ echo -e "$ odoo-tools.sh setup   {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}"
 echo -e "$ odoo-tools.sh deploy  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "$ odoo-tools.sh backup  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all}"
 echo -e "$ odoo-tools.sh restore {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {DUMP_TO_RESTORE}"
-echo -e "------------------------"
+echo -e "------------------------\n"
