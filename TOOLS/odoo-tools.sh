@@ -138,7 +138,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     apt-get install flashplugin-nonfree -y >> $SETUP_LOG
     pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> $SETUP_LOG
     echo -e "Install requirements.txt"
-    wget -O- https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/requirements.txt > $BASEPATH/requirements.txt
+    wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/requirements.txt > $BASEPATH/requirements.txt
     pip install -r $BASEPATH/requirements.txt | tee -a $SETUP_LOG
     echo -e "----- Install Python Packages Done"
 
@@ -154,7 +154,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     python $BASEPATH/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
     cd $BASEPATH
     echo -e "\nInstall Aeroo LibreOffice Service"
-    wget -O- https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/aeroo.init > $BASEPATH/aeroo.init
+    wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/aeroo.init > $BASEPATH/aeroo.init
     chmod ugo=rx $BASEPATH/aeroo.init
     ln -s $BASEPATH/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
     update-rc.d aeroo defaults >> $SETUP_LOG
@@ -311,7 +311,8 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     chmod ug=rw ${INSTANCE_LOGFILE} >> $INSTANCE_SETUPLOG
     chmod o=r ${INSTANCE_LOGFILE} >> $INSTANCE_SETUPLOG
 
-    # ---- Modify server.conf
+    # ---- Create server.conf
+    echo -e "\n---- Create odoo server config in: ${INSTANCE_PATH}/${TARGET_BRANCH}.conf"
     /bin/sed '{
         s,"admin_passwd = admin",'"admin_passwd = ${SUPER_PASSWORD}"',g
         s,"data_dir = data_dir",'"data_dir = ${INSTANCE_PATH}/data_dir"',g
@@ -321,12 +322,32 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         s,"longpolling_port = 8072",'"longpolling_port = ${BASEPORT}8072"',g
         s,"xmlrpc_port = 8069",'"xmlrpc_port = ${BASEPORT}8069"',g
         s,"xmlrpcs_port = 8071",'"xmlrpcs_port = ${BASEPORT}8071"',g
-            }' ${INSTANCE_PATH}/server.conf > ${INSTANCE_PATH}/server-local.conf | tee -a $INSTANCE_SETUPLOG
+            }' ${INSTANCE_PATH}/TOOLS/server.conf > ${INSTANCE_PATH}/${TARGET_BRANCH}.conf | tee -a $INSTANCE_SETUPLOG
+        chown ${DBUSER}:${DBUSER} ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
+        chmod ugo=r ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
+
+    # ---- Create the Init Script for odoo
+    echo -e "\n---- Setup init.d for instance: ${INSTANCE_PATH}/${TARGET_BRANCH}.init"
+    /bin/sed '{
+        s,DBUSER,'"$DBUSER"',g
+        s,TARGET_BRANCH,'"$TARGET_BRANCH"',g
+        s,INSTANCE_PATH,'"$INSTANCE_PATH"',g
+            }' ${INSTANCE_PATH}/TOOLS/server.init > ${INSTANCE_PATH}/${TARGET_BRANCH}.init | tee -a $INSTANCE_SETUPLOG
+    chmod ugo=rx ${INSTANCE_PATH}/${TARGET_BRANCH}.init
+    ln -s ${INSTANCE_PATH}/${TARGET_BRANCH}.init /etc/init.d/${TARGET_BRANCH} | tee -a $INSTANCE_SETUPLOG
+    update-rc.d ${TARGET_BRANCH} defaults | tee -a $INSTANCE_SETUPLOG
+    service ${TARGET_BRANCH} start | tee -a $INSTANCE_SETUPLOG
 
 
-    chmod o=r ${INSTANCE_PATH}/server-local.conf | tee -a $OA_SETUPLOG
-    ln -s ${OA_INSTANCEPATH}/openerp-${OA_INSTANCENAME}.conf /etc/openerp-${OA_INSTANCENAME}.conf | tee -a $OA_SETUPLOG
 
+    # ----- Link the log file
+    # ----- Setup cron Logrotate
+    # ----- Setup nginx # INFO Maybe check the proxy setting from v7 because of nginx ;)
+
+    # ----- Setup Etherpad
+    # ----- Setup cron backup script
+
+    # Maybe: Test URL to database - should work with v8.0
 
 fi
 

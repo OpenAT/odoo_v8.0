@@ -34,7 +34,7 @@ has internet access!
 sudo su
 
 # get odoo-tools.sh
-wget https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/odoo-tools.sh
+wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/odoo-tools.sh > odoo-tools.sh
 
 # Prepare the Ubuntu Server (reboot after finish is recommended)
 odoo-tools.sh prepare
@@ -42,6 +42,10 @@ odoo-tools.sh prepare
 # Setup a new instance: 
 # USAGE: odoo-tools.sh setup   {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}
 odoo-tools.sh setup cus_hof afg#3$56 www.hofer.com 
+
+#After the Install you should immediately push your new branch to github!
+# HINT: Dont worry *.conf and *.init files as well as data-dir is in .gitignore !
+git push origin YOURBRANCH
 ```
 
 
@@ -85,6 +89,12 @@ git checkout master    # NOW IN BRANCH master
 git merge dev-ckeditor_advanced
 git push origin master
 
+```
+
+Adding new Submodules to the repo:
+```bash
+# This is an example how to add a submodule:
+git submodule add -b master --depth 1 https://github.com/ether/etherpad-lite.git etherpad-lite
 ```
 
 
