@@ -18,15 +18,15 @@ SCRIPTPATH=$(cd ${0%/*} && pwd -P)
 # ----- Check UBUNTU Version:
 source /etc/lsb-release
 if [ $DISTRIB_ID = "Ubuntu" ] && [ $DISTRIB_RELEASE = "14.04" ] ; then
-    echo "\nOS Version: $$DISTRIB_ID $DISTRIB_RELEASE"
+    echo -e "\nOS Version: $DISTRIB_ID $DISTRIB_RELEASE"
 else
-    echo "\nERROR: This Script only works on Ubuntu 14.04!"
+    echo -e "\nERROR: This Script only works on Ubuntu 14.04!"
     exit 2
 fi
 
 # ----- Check script is started as root:
 if [ "$EUID" -ne 0 ]; then
-    echo "\nERROR: Please run as root!"
+    echo -e "\nERROR: Please run as root!"
     exit 2
 fi
 
@@ -46,8 +46,8 @@ else
 fi
 
 # ----- SETUP LOG-File:
-SETUP_LOG="${BASEPATH}/oe-prepare_system.log"
-if -w $SETUP_LOG ; then
+SETUP_LOG="${BASEPATH}/odoo_setup.log"
+if [ -w "$SETUP_LOG" ] ; then
     echo -e "\n Setup log file ist at ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
 else
     if touch $SETUP_LOG ; then
@@ -86,7 +86,7 @@ fi
 # ---------------------------------------------------------
 # $ odoo-tools.sh PREPARE
 # ---------------------------------------------------------
-if [ $SCRIPT_MODE = "prepare" ]; then
+if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "\n----- odoo-tools.sh PREPARE -----\n"
     if [ $# -ne 1 ]; then
         echo -e "\nERROR: \"setup-toosl.sh prepare\" takes exactly one argument!"
@@ -153,7 +153,6 @@ if [ $SCRIPT_MODE = "prepare" ]; then
     echo -e "\nInstall Packages for Etherpad Lite"
     apt-get install nodejs abiword -y >> $SETUP_LOG
     echo -e "\nInstall Packages for Etherpad Lite Done"
-
 
 fi
 
