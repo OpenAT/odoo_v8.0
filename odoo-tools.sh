@@ -16,15 +16,17 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(cd ${0%/*} && pwd -P)
 
 # ----- Check UBUNTU Version:
-. /etc/lsb_release
-if [ $DISTRIB_ID != "Ubuntu" -o $DISTRIB_RELEASE != "14.04" ]; then
-    echo "ERROR: This Script only works on Ubuntu 14.04!"
+source /etc/lsb-release
+if [ $DISTRIB_ID = "Ubuntu" ] && [ $DISTRIB_RELEASE = "14.04" ] ; then
+    echo "\nOS Version: $$DISTRIB_ID $DISTRIB_RELEASE"
+else
+    echo "\nERROR: This Script only works on Ubuntu 14.04!"
     exit 2
 fi
 
 # ----- Check script is started as root:
 if [ "$EUID" -ne 0 ]; then
-    echo "ERROR: Please run as root!"
+    echo "\nERROR: Please run as root!"
     exit 2
 fi
 
@@ -33,12 +35,12 @@ BASEPATH="/opt/odoo"
 if cd $BASEPATH ; then
     echo -e "\nChanged directory to $BASEPATH"
 else
-    if mkdir $OA_BASEDIR ; then
-	    echo -e "Created directory $BASEPATH"
-	    cd $OA_BASEDIR
-	    echo -e "Changed directory to $BASEPATH"
+    if mkdir $BASEPATH ; then
+	    echo -e "\nCreated directory $BASEPATH"
+	    cd $BASEPATH
+	    echo -e "\nChanged directory to $BASEPATH"
     else
-        echo -e "ERROR: Could not create directory $BASEPATH!"
+        echo -e "\nERROR: Could not create directory $BASEPATH!"
 	    exit 2
     fi
 fi
@@ -46,12 +48,12 @@ fi
 # ----- SETUP LOG-File:
 SETUP_LOG="${BASEPATH}/oe-prepare_system.log"
 if -w $SETUP_LOG ; then
-    echo -e "\n Setup log file ist at $SETUP_LOG. DO NOT MODIFY OR DELETE!"
+    echo -e "\n Setup log file ist at ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
 else
     if touch $SETUP_LOG ; then
-        echo -e "\n Setup log file ist at $SETUP_LOG. DO NOT MODIFY OR DELETE!"
+        echo -e "\n Setup log file ist at ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
     else
-        echo -e "ERROR: Could not create log file $SETUP_LOG!"
+        echo -e "ERROR: Could not create log file ${SETUP_LOG}!"
 	    exit 2
 	fi
 fi
