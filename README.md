@@ -26,13 +26,23 @@ odoo-tools.sh will be a simple setup script that is able to
 
 
 ## SETUP
-Right now the Setup process is still done manualy - but in the near future odoo-tools.sh will handle everything. As
-soon as this script is finished it will be documented here.
+This setup process will only work on a fresh install of Ubuntu 14.04 LTS. Make sure timezone is correct and the server
+has internet access!
 
-You could find some guidance for the setup script here:
-- [odoo v7 setup scripts](https://github.com/OpenAT/odoo-tools/tree/7.0)
-- [odoo 8 setup script by Andre Schenkel](https://github.com/lukebranch/odoo-install-scripts/blob/master/odoo-saas4/ubuntu-14-04/odoo_install.sh)
-- [odoo setup ubuntu 14 lts](https://www.odoo.com/forum/help-1/question/how-to-install-odoo-from-github-on-ubuntu-14-04-for-testing-purposes-only-ie-not-for-production-52627)
+```bash
+# Be Root ;)
+sudo su
+
+# get odoo-tools.sh
+wget https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/odoo-tools.sh
+
+# Prepare the Ubuntu Server (reboot after finish is recommended)
+odoo-tools.sh prepare
+
+# Setup a new instance: 
+# USAGE: odoo-tools.sh setup   {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}
+odoo-tools.sh setup cus_hof afg#3$56 www.hofer.com 
+```
 
 
 ## DEVELOPMENT
@@ -78,6 +88,10 @@ git push origin master
 ```
 
 
+## How to Update a Custommer Instance
+This is for now only a placeholder but will describe the update process of a customer instance. Keep tuned ;)
+
+
 ## DOCUMENTATION
 
 #### odoo v8
@@ -108,3 +122,8 @@ git push origin master
 - [Adding an existing project to github](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
 - [Push to a Remote](https://help.github.com/articles/pushing-to-a-remote/)
 - [README.md Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
+
+#### Odoo Setup in Ubuntu
+- [odoo v7 setup scripts](https://github.com/OpenAT/odoo-tools/tree/7.0)
+- [odoo 8 setup script by Andre Schenkel](https://github.com/lukebranch/odoo-install-scripts/blob/master/odoo-saas4/ubuntu-14-04/odoo_install.sh)
+- [odoo setup ubuntu 14 lts](https://www.odoo.com/forum/help-1/question/how-to-install-odoo-from-github-on-ubuntu-14-04-for-testing-purposes-only-ie-not-for-production-52627)
