@@ -40,12 +40,24 @@ else
     fi
 fi
 
+# ----- Repo Path for all odoo instances:
+REPOPATH="/opt/odoo/${SOURCE_REPO}"
+if [ -d ${REPOPATH} ]; then
+    echo -e "Directory ${REPOPATH} exists."
+else
+    if  mkdir ${REPOPATH} ; then
+	    echo -e "Created directory ${REPOPATH}"
+    else
+        echo -e "ERROR: Could not create directory REPOPATH!"; exit 2
+    fi
+fi
+
 # ----- Base Log Files Path for all odoo instances:
 LOGPATH="/var/log/${SOURCE_REPO}"
 if [ -d ${LOGPATH} ]; then
     echo -e "Directory ${LOGPATH} exists."
 else
-    if mkdir ${LOGPATH} ; then
+    if  mkdir ${LOGPATH} ; then
 	    echo -e "Created directory ${LOGPATH}"
     else
         echo -e "ERROR: Could not create directory ${LOGPATH}!"; exit 2
@@ -57,7 +69,7 @@ SETUP_LOG="${BASEPATH}/odoo_setup.log"
 if [ -w "$SETUP_LOG" ] ; then
     echo -e "Setup log file: ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
 else
-    if touch $SETUP_LOG ; then
+    if  touch $SETUP_LOG ; then
         echo -e "Setup log file ist at ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
     else
         echo -e "ERROR: Could not create log file ${SETUP_LOG}!"
@@ -208,7 +220,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         echo -e "ERROR: ${INSTANCE_SETUPLOG} already exists!"
         exit 2
     else
-        if touch ${INSTANCE_SETUPLOG} ; then
+        if  touch ${INSTANCE_SETUPLOG} ; then
             echo -e "Instance-Setup-Log: ${INSTANCE_SETUPLOG}. DO NOT MODIFY OR DELETE!"
         else
             echo -e "ERROR: Could not create log file ${INSTANCE_SETUPLOG}!"
@@ -222,7 +234,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         echo -e "ERROR: ${INSTANCE_LOGFILE} already exists!"
         exit 2
     else
-        if touch ${INSTANCE_LOGFILE} ; then
+        if  touch ${INSTANCE_LOGFILE} ; then
             echo -e "Instance-Log-File: ${INSTANCE_LOGFILE}."
         else
             echo -e "ERROR: Could not create log file ${INSTANCE_LOGFILE}!"
@@ -233,9 +245,9 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ---- Set BASEPORT
     COUNTERFILE=$BASEPATH/INSTANCE.counter
     if [ -f ${COUNTERFILE} ]; then
-        echo -e "File $COUNTERFILE exists."
+        echo -e "File ${COUNTERFILE} exists."
     else
-        if [ touch ${COUNTERFILE} ]; then
+        if  touch ${COUNTERFILE} ; then
             echo -e "40" > ${COUNTERFILE};
             echo -e "File ${COUNTERFILE} created."
         else
@@ -245,7 +257,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     fi
     typeset -i BASEPORT
     BASEPORT=`cat ${COUNTERFILE}`+1
-    if ${BASEPORT} < 40 ]; then
+    if [ ${BASEPORT} < 40 ]; then
         echo echo -e "ERROR: Could not Update ${BASEPORT}!"
         exit 2
     fi
@@ -275,7 +287,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     echo -e "Instance Etherpad SESSION KEY     :  $ETHERPADKEY" | tee -a $INSTANCE_SETUPLOG
     echo -e ""
     echo -e "Would you like to setup a new odoo instance with this settings? ( Y/N ): "; read answer
-    if [ $answer != "Y" ]; then
+    if [ "$answer" != "Y" ]; then
         while [ "$answer" != "Y" ]; do
             if [ "$answer" == "n" ] || [ "$answer" == "N" ]; then
                 echo "SETUP APPORTED: EXITING SCRIPT!"
