@@ -55,3 +55,4 @@ unicodecsv==0.9.4
 wkhtmltopdf==0.2
 gengo==0.1.18
 pywebdav==0.9.4
+pyOpenSSL==0.13
