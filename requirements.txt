@@ -53,7 +53,6 @@ PyChart==1.39
 jcconv==0.2.3
 sass==2.3
 unicodecsv==0.9.4
-#vboxapi==1.0
-#virtualenv==1.11.6
 wkhtmltopdf==0.2
 gengo==0.1.18
+pywebdav==0.9.4
