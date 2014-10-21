@@ -11,22 +11,22 @@ Customer specific developments and fixes work like
 - **cus_hof-dev-ckeditor_advanced**
 - **cus_hof-fix-3425**
 
-## Features
 
-### Better version and update handling
+## GOALS
+
+#### Better version and update handling
 - updated requirements.txt to install with pip install -r /path/to/requirements.txt
 - all third party addons as well as odoo itself are linked as submodules
 
-
-### Planned: Simple setup through setup-tools.sh
-setup-tools.sh will be a simple setup script that is able to 
+#### Planned: Simple setup through odoo-tools.sh
+odoo-tools.sh will be a simple setup script that is able to 
 - setup new instances of odoo on the local server
 - deploy addon(s) to one or more databases on the local server
 - backup and restore databases (and data-dir) on the local server
 
 
 ## SETUP
-Right now the Setup process is still done manualy - but in the ner future setup-tools.sh will handls everything. As
+Right now the Setup process is still done manualy - but in the near future odoo-tools.sh will handle everything. As
 soon as this script is finished it will be documented here.
 
 You could find some guidance for the setup script here:
@@ -80,7 +80,7 @@ git push origin master
 
 ## DOCUMENTATION
 
-### odoo v8
+#### odoo v8
 - [Latest Dev Docu](https://www.odoo.com/documentation/master/howtos/website.html)
 - [odoo v8 api guidelines](http://odoo-new-api-guide-line.readthedocs.org/en/latest/)
 - [Technical Memento](https://www.odoo.com/files/memento/OpenERP_Technical_Memento_latest.pdf)
@@ -101,7 +101,7 @@ git push origin master
 - http://djpatelblog.blogspot.in/2014/09/odoo-new-api-recordsets.html
 - http://wirtel.be/posts/en/2011/11/02/nginx-proxy-openerp/
 
-### git, git workflow and github
+#### git, git workflow and github
 - [Github Rebase Workflow](http://mettadore.com/2011/09/07/the-ever-deployable-github-workflow/)
 - [Git Submodules](http://git-scm.com/docs/git-submodule)
 - [Github Using Pull Requests](https://help.github.com/articles/using-pull-requests/)
