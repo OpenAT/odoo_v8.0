@@ -55,15 +55,14 @@ else
 fi
 
 # ----- SETUP LOG-File:
-SETUP_LOG="${BASEPATH}/${REPONAME}-system-prepare.log"
+SETUP_LOG="${BASEPATH}/prepare-${REPONAME}-`date +%Y-%m-%d__%H-%M`.log"
 if [ -w "$SETUP_LOG" ] ; then
     echo -e "Setup log file: ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
 else
     if  touch $SETUP_LOG 2>&1>/dev/null; then
         echo -e "Setup log file ist at ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
     else
-        echo -e "ERROR: Could not create log file ${SETUP_LOG}!"
-	    exit 2
+        echo -e "ERROR: Could not create log file ${SETUP_LOG}!"; exit 2
 	fi
 fi
 
@@ -140,19 +139,32 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     pip install pyserial >> $SETUP_LOG
     pip install qrcode >> $SETUP_LOG
     pip install --pre pyusb >> $SETUP_LOG
-    echo -e "\nInstall wkhtmltopdf"
+    echo -e "\nInstall Wkhtmltopdf 0.12.1"
     apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> $SETUP_LOG
     apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> $SETUP_LOG
-    apt-get install wkhtmltopdf -y >> $SETUP_LOG
+    ## curl -L to follow mirror redirect from sourceforge.net (eg. kaz.sourceforge.net...)
+    cd ${BASEPATH}
+    wget http://kaz.dl.sourceforge.net/project/wkhtmltopdf/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
+    dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
+    cp /usr/local/bin/wkhtmltopdf /usr/bin >> $SETUP_LOG
+    cp /usr/local/bin/wkhtmltoimage /usr/bin >> $SETUP_LOG
     apt-get install flashplugin-nonfree -y >> $SETUP_LOG
     pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> $SETUP_LOG
     echo -e "\nInstall requirements.txt"
     wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/requirements.txt > $BASEPATH/requirements.txt
-    pip install -r $BASEPATH/requirements.txt >> $SETUP_LOG
+    while read line; do
+        if pip install ${line} >> $SETUP_LOG; then
+            echo -e "SUCCESS: pip install ${line}"
+        else
+            echo -e "\n\nWARNING: pip install ${line} failed!\n\n" | tee -a $SETUP_LOG
+        fi
+    done < $BASEPATH/requirements.txt | grep -v '.*#'
+    #pip install -r ${BASEPATH}/requirements.txt >> $SETUP_LOG
     echo -e "----- Install Python Packages Done"
 
     # ----- Install Packages for AerooReports
     echo -e "\n----- Install Packages for AerooReports"
+    # ATTENTION: # START - LibreOffice-Python 2.7 Compatibility Script Author: Holger Brunn (https://gist.github.com/hbrunn/6f4a007a6ff7f75c0f8b)
     easy_install uno
     apt-get install ure uno-libs3 unoconv graphviz ghostscript\
                     libreoffice-core libreoffice-common libreoffice-base libreoffice-base-core \
@@ -160,7 +172,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
                     python-cupshelpers hyphen-de hyphen-en-us -y >> $SETUP_LOG
     echo -e "\nInstall Aeroolib"
     if pip freeze | grep aeroolib ; then
-        echo -e "\n\nWARNING: Aeroolib seems to be already installed!"
+        echo -e "\n\nWARNING: Aeroolib seems to be already installed!" | tee -a $SETUP_LOG
         echo -e "Please upgrade manually if needed!"
         echo -e "Aeroolib has to be at least aeroolib==1.2.0 to work with ${REPONAME}\n\n"
     else
@@ -183,7 +195,13 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     apt-get install nodejs abiword -y >> $SETUP_LOG
     echo -e "----- Install Packages for Etherpad Lite Done"
 
+    echo -e "\n!!!PLEASE REBOOT THIS SERVER NOW!!!\n"
+    echo -e "\n-----------------------------------------------------------------------"
+    echo -e " odoo-tools.sh prepare DONE"
+    echo -e "-----------------------------------------------------------------------"
+
 fi
+
 
 # -----------------------------------------------------------------------
 # $ odoo-tools.sh setup {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}
@@ -211,7 +229,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     fi    
 
     # ----- Create Instance Log File for SETUP
-    INSTANCE_SETUPLOG="$BASEPATH/${TARGET_BRANCH}_setup.log"
+    INSTANCE_SETUPLOG="$BASEPATH/setup-${TARGET_BRANCH}-`date +%Y-%m-%d__%H-%M`.log"
     if [ -w "${INSTANCE_SETUPLOG}" ] ; then
         echo -e "ERROR: ${INSTANCE_SETUPLOG} already exists!"
         exit 2
@@ -225,7 +243,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     fi
 
     # ----- Prepare Log Directory and Variable
-    INSTANCE_LOGPATH="/var/log/${TARGET_BRANCH}"
+    INSTANCE_LOGPATH="/var/log/${REPONAME}_${TARGET_BRANCH}"
     INSTANCE_LOGFILE="${INSTANCE_LOGPATH}/${TARGET_BRANCH}.log"
     if [ -d "${INSTANCE_LOGPATH}" ] ; then
         echo -e "ERROR: ${INSTANCE_LOGPATH} already exists!"
@@ -365,7 +383,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     if [ -s ${INSTANCE_LOGFILE} ]; then
         ln -s ${INSTANCE_LOGPATH} ${INSTANCE_PATH}/LOG
     else
-        echo -e "\n\n----------\nWARNING: Log file for instance was NOT created!\n----------\n\n"
+        echo -e "\n\n----------\nWARNING: Log file for instance was NOT created!\n----------\n\n" | tee -a $SETUP_LOG
     fi
 
 

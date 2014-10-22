@@ -29,8 +29,8 @@ PIDFILE=/var/run/$NAME.pid
 # Additional options that are passed to the Daemon.
 DAEMON_OPTS="-c $CONFIGFILE"
 
-echo -e "Daemon: $DAEMON"
-echo -e "Config file: $CONFIGFILE"
+echo "Daemon: $DAEMON"
+echo "Config: $CONFIGFILE"
 
 
 [ -x $DAEMON ] || exit 0
