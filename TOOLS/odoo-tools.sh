@@ -143,7 +143,8 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Install Python Packages
     echo -e "\n----- Install Python Packages"
-    apt-get install python-pip python-dev python-software-properties python-pychart  -y >> $SETUP_LOG
+    apt-get install python-pip python-dev python-software-properties python-pychart libxml2-dev libxslt-dev \
+        python-genshi python-pyhyphen-y >> $SETUP_LOG
     apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> $SETUP_LOG
     apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> $SETUP_LOG
     apt-get install wkhtmltopdf -y >> $SETUP_LOG
@@ -156,7 +157,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Install Packages for AerooReports
     echo -e "\n----- Install Packages for AerooReports"
-    apt-get install python-genshi python-pyhyphen ure uno-libs3 unoconv libxml2-dev libxslt-dev \
+    apt-get install ure uno-libs3 unoconv \
                     libreoffice-core libreoffice-common libreoffice-base libreoffice-base-core \
                     libreoffice-draw libreoffice-calc libreoffice-writer libreoffice-impress \
                     python-cupshelpers hyphen-de hyphen-en-us -y >> $SETUP_LOG
