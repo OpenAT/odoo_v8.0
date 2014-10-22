@@ -30,18 +30,6 @@ if [ "$EUID" -ne 0 ]; then
     echo -e "ERROR: Please run as root!"; exit 2
 fi
 
-# ----- Base Path for all odoo instances:
-BASEPATH="/opt/odoo"
-if [ -d ${BASEPATH} ]; then
-    echo -e "Directory ${BASEPATH} exists."
-else
-    if mkdir ${BASEPATH} 2>&1>/dev/null; then
-	    echo -e "Created directory ${BASEPATH}"
-    else
-        echo -e "ERROR: Could not create directory $BASEPATH!"; exit 2
-    fi
-fi
-
 # ----- Repo Path for all odoo instances:
 REPOPATH="/opt/odoo/${REPONAME}"
 if [ -d ${REPOPATH} ]; then
@@ -50,12 +38,26 @@ else
     if  mkdir ${REPOPATH} 2>&1>/dev/null; then
 	    echo -e "Created directory ${REPOPATH}"
     else
-        echo -e "ERROR: Could not create directory REPOPATH!"; exit 2
+        echo -e "ERROR: Could not create directory ${REPOPATH}!"; exit 2
     fi
 fi
+chmod 755 ${REPOPATH}
+
+# ----- Repo SETUP Path for all odoo instances:
+REPO_SETUPPATH="${REPOPATH}/SETUP"
+if [ -d ${REPO_SETUPPATH} ]; then
+    echo -e "Directory ${REPO_SETUPPATH} exists."
+else
+    if  mkdir ${REPO_SETUPPATH} 2>&1>/dev/null; then
+	    echo -e "Created directory ${REPO_SETUPPATH}"
+    else
+        echo -e "ERROR: Could not create directory ${REPO_SETUPPATH}!"; exit 2
+    fi
+fi
+chmod 755 ${REPOPATH}
 
 # ----- SETUP LOG-File:
-SETUP_LOG="${BASEPATH}/prepare-${REPONAME}-`date +%Y-%m-%d__%H-%M`.log"
+SETUP_LOG="${REPO_SETUPPATH}/prepare--`date +%Y-%m-%d__%H-%M`.log"
 if [ -w "$SETUP_LOG" ] ; then
     echo -e "Setup log file: ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
 else
@@ -102,7 +104,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         echo -e "ERROR: \"setup-toosl.sh prepare\" takes exactly one argument!"
         exit 2
     fi
-    cd ${BASEPATH}
+    cd ${REPO_SETUPPATH}
 
     # ----- Update Server
     echo -e "\n----- Update Server"
@@ -139,18 +141,22 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     pip install qrcode >> $SETUP_LOG
     pip install --pre pyusb >> $SETUP_LOG
     echo -e "\nInstall Wkhtmltopdf 0.12.1"
-    apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> $SETUP_LOG
-    apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> $SETUP_LOG
-    ## curl -L to follow mirror redirect from sourceforge.net (eg. kaz.sourceforge.net...)
-    cd ${BASEPATH}
-    wget http://kaz.dl.sourceforge.net/project/wkhtmltopdf/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
-    dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
-    cp /usr/local/bin/wkhtmltopdf /usr/bin >> $SETUP_LOG
-    cp /usr/local/bin/wkhtmltoimage /usr/bin >> $SETUP_LOG
-    apt-get install flashplugin-nonfree -y >> $SETUP_LOG
-    pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> $SETUP_LOG
+    if wkhtmltopdf -V | grep "wkhtmltopdf.*12.*" ; then
+      echo -e "\nWkhtmltopdf 0.12.1 seems to be installed! Skipping installation!\n"
+    else
+        apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> $SETUP_LOG
+        apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> $SETUP_LOG
+        ## curl -L to follow mirror redirect from sourceforge.net (eg. kaz.sourceforge.net...)
+        cd ${REPO_SETUPPATH}
+        wget http://kaz.dl.sourceforge.net/project/wkhtmltopdf/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
+        dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
+        cp /usr/local/bin/wkhtmltopdf /usr/bin >> $SETUP_LOG
+        cp /usr/local/bin/wkhtmltoimage /usr/bin >> $SETUP_LOG
+        apt-get install flashplugin-nonfree -y >> $SETUP_LOG
+        pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> $SETUP_LOG
+    fi
     echo -e "\nInstall libs from requirements.txt"
-    wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/requirements.txt | grep -v '.*#' > $BASEPATH/requirements.txt
+    wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/requirements.txt | grep -v '.*#' > ${REPOPATH}/requirements.txt
     while read line; do
         if pip install ${line} >> $SETUP_LOG; then
             echo -e "Installed: ${line}"
@@ -162,7 +168,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         else
             echo -e "\n\nWARNING Python Package Missing: ${line} !\n\n" | tee -a $SETUP_LOG
         fi
-    done < $BASEPATH/requirements.txt
+    done < ${REPOPATH}/requirements.txt
     echo -e "----- Install Python Packages Done"
 
     # ----- Install Packages for AerooReports
@@ -180,20 +186,20 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         echo -e "Please upgrade manually if needed!"
         echo -e "Aeroolib has to be at least aeroolib==1.2.0 to work with ${REPONAME}\n\n"
     else
-        if [ -d ${BASEPATH}/aeroolib ]; then
-            echo -e "Do not clone aeroolib from github since directory ${BASEPATH}/aeroolib exists ."
+        if [ -d ${REPOPATH}/aeroolib ]; then
+            echo -e "Do not clone aeroolib from github since directory ${REPOPATH}/aeroolib exists ."
         else
             echo -e "Clone aeroolib from github."
             # TODO: Use our aeroolib from odoo_v8.0
-            git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${BASEPATH}/aeroolib >> $SETUP_LOG
+            git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${REPOPATH}/aeroolib >> $SETUP_LOG
         fi
-        cd ${BASEPATH}/aeroolib >> $SETUP_LOG
-        python ${BASEPATH}/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
-        cd ${BASEPATH} >> $SETUP_LOG
+        cd ${REPOPATH}/aeroolib >> $SETUP_LOG
+        python ${REPOPATH}/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
+        cd ${REPOPATH} >> $SETUP_LOG
         echo -e "\nInstall Aeroo LibreOffice Service to init.d as service aeroo"
-        wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/aeroo.init > $BASEPATH/aeroo.init
-        chmod ugo=rx $BASEPATH/aeroo.init >> $SETUP_LOG
-        ln -s $BASEPATH/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
+        wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/aeroo.init > ${REPOPATH}/aeroo.init
+        chmod ugo=rx ${REPOPATH}/aeroo.init >> $SETUP_LOG
+        ln -s ${REPOPATH}/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
         update-rc.d aeroo defaults >> $SETUP_LOG
         service aeroo stop
         service aeroo start
@@ -205,10 +211,10 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     apt-get install nodejs abiword -y >> $SETUP_LOG
     echo -e "----- Install Packages for Etherpad Lite Done"
 
-    echo -e "\n!!!PLEASE REBOOT THIS SERVER NOW!!!\n"
     echo -e "\n-----------------------------------------------------------------------"
     echo -e " odoo-tools.sh prepare DONE"
     echo -e "-----------------------------------------------------------------------"
+    echo -e "\n!!!PLEASE REBOOT THIS SERVER NOW!!!\n"
     exit 0
 fi
 
@@ -231,7 +237,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     SUPER_PASSWORD=$3
     DOMAIN_NAME=$4
 
-    INSTANCE_PATH="${BASEPATH}/${REPONAME}/${TARGET_BRANCH}"
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     
     # ----- Check if the TARGET_BRANCH already exists
     if git ls-remote ${SOURCE_REPO} | grep -sw "${TARGET_BRANCH}" 2>&1>/dev/null; then
@@ -239,7 +245,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     fi    
 
     # ----- Create Instance Log File for SETUP
-    INSTANCE_SETUPLOG="$BASEPATH/setup-${TARGET_BRANCH}-`date +%Y-%m-%d__%H-%M`.log"
+    INSTANCE_SETUPLOG="${REPOPATH}/setup-${TARGET_BRANCH}-`date +%Y-%m-%d__%H-%M`.log"
     if [ -w "${INSTANCE_SETUPLOG}" ] ; then
         echo -e "ERROR: ${INSTANCE_SETUPLOG} already exists!"
         exit 2
@@ -271,7 +277,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     chmod o=r ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
 
     # ---- Set BASEPORT
-    COUNTERFILE=$BASEPATH/${REPONAME}.counter
+    COUNTERFILE=${REPOPATH}/${REPONAME}.counter
     if [ -f ${COUNTERFILE} ]; then
         echo -e "File ${COUNTERFILE} exists."
     else
@@ -329,8 +335,9 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         while [ "${answer}" != "Y" ]; do
             if [ "${answer}" == "n" ] || [ "${answer}" == "N" ]; then
                 echo "SETUP APPORTED: EXITING SCRIPT!"
-                rm -f ${INSTANCE_PATH}
-                rm -f ${INSTANCE_LOGPATH}
+                rm ${INSTANCE_SETUPLOG}
+                rm -r ${INSTANCE_PATH}
+                rm -r ${INSTANCE_LOGPATH}
                 exit 1
             fi
             echo "Please enter Y (Yes) or N (No)"; read answer
@@ -365,9 +372,12 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ----- Setup the Linux User and Group and set Rights
     echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
     useradd -m -s /bin/bash ${DBUSER} | tee -a $INSTANCE_SETUPLOG
-    chown ${DBUSER}:${DBUSER} ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
-    chmod ug=rw ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
-    chmod o=r ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
+
+    # ----- Set correct Rights
+    chown -R ${DBUSER}:${DBUSER} ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
+    chmod 755 ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
+    chown -R ${DBUSER}:${DBUSER} ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
+    chmod 755 ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
 
     # ----- Create Database User
     echo -e "\n---- Create postgresql role $DBUSER"
@@ -377,14 +387,16 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ----- Create server.conf
     echo -e "\n---- Create odoo server config in: ${INSTANCE_PATH}/${TARGET_BRANCH}.conf"
     /bin/sed '{
+        s,'"addons_path = odoo/openerp/addons,odoo/addons,addons-loaded"','"addons_path = ${INSTANCE_PATH}/odoo/openerp/addons,${INSTANCE_PATH}/odoo/addons,${INSTANCE_PATH}/addons-loaded"',g
         s,'"admin_passwd = admin"','"admin_passwd = ${SUPER_PASSWORD}"',g
         s,'"data_dir = data_dir"','"data_dir = ${INSTANCE_PATH}/data_dir"',g
         s,'"db_password = odoo"','"db_password = ${DBPW}"',g
         s,'"db_user = odoo"','"db_user = ${DBUSER}"',g
         s,'"logfile = None"','"logfile = ${INSTANCE_LOGFILE}"',g
-        s,'"longpolling_port = 8072"','"longpolling_port = ${BASEPORT}8072"',g
-        s,'"xmlrpc_port = 8069"','"xmlrpc_port = ${BASEPORT}8069"',g
-        s,'"xmlrpcs_port = 8071"','"xmlrpcs_port = ${BASEPORT}8071"',g
+        s,'"logrotate = False"','"logrotate = True"',g
+        s,'"longpolling_port = 8072"','"longpolling_port = ${BASEPORT}72"',g
+        s,'"xmlrpc_port = 8069"','"xmlrpc_port = ${BASEPORT}69"',g
+        s,'"xmlrpcs_port = 8071"','"xmlrpcs_port = ${BASEPORT}71"',g
             }' ${INSTANCE_PATH}/TOOLS/server.conf > ${INSTANCE_PATH}/${TARGET_BRANCH}.conf | tee -a $INSTANCE_SETUPLOG
     chown root:root ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
     chmod ugo=r ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
@@ -417,6 +429,9 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ----- Setup cron backup script
 
     # Maybe: Test URL to database - should work with v8.0
+    echo -e "\n-----------------------------------------------------------------------"
+    echo -e " odoo-tools.sh setup {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} DONE"
+    echo -e "-----------------------------------------------------------------------"
     exit 0
 fi
 
