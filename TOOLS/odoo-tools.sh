@@ -152,7 +152,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> $SETUP_LOG
     echo -e "Install requirements.txt"
     wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/requirements.txt > $BASEPATH/requirements.txt
-    pip install -r $BASEPATH/requirements.txt | tee -a $SETUP_LOG
+    pip install -r $BASEPATH/requirements.txt >> $SETUP_LOG
     echo -e "----- Install Python Packages Done"
 
     # ----- Install Packages for AerooReports
