@@ -141,7 +141,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     pip install qrcode >> $SETUP_LOG
     pip install --pre pyusb >> $SETUP_LOG
     echo -e "\nInstall Wkhtmltopdf 0.12.1"
-    if wkhtmltopdf -V | grep "wkhtmltopdf.*12.*" ; then
+    if wkhtmltopdf -V | grep "wkhtmltopdf.*12.*" 2>&1>/dev/null; then
       echo -e "\nWkhtmltopdf 0.12.1 seems to be installed! Skipping installation!\n"
     else
         apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> $SETUP_LOG
@@ -161,12 +161,12 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         if pip install ${line} >> $SETUP_LOG; then
             echo -e "Installed: ${line}"
         else
-            echo -e "\n\nWARNING Install Package FAILED: ${line} !\n\n" | tee -a $SETUP_LOG
+            echo -e "\n\nWARNING Install FAILED: ${line} !\n\n" | tee -a $SETUP_LOG
         fi
         if pip freeze | grep ${line} >> $SETUP_LOG; then
-            echo -e "Python Package Exists: ${line} "
+            echo -e "PackageOK: ${line} "
         else
-            echo -e "\n\nWARNING Python Package Missing: ${line} !\n\n" | tee -a $SETUP_LOG
+            echo -e "\n\nWARNING Package MISSING: ${line} !\n\n" | tee -a $SETUP_LOG
         fi
     done < ${REPOPATH}/requirements.txt
     echo -e "----- Install Python Packages Done"
@@ -186,20 +186,20 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         echo -e "Please upgrade manually if needed!"
         echo -e "Aeroolib has to be at least aeroolib==1.2.0 to work with ${REPONAME}\n\n"
     else
-        if [ -d ${REPOPATH}/aeroolib ]; then
-            echo -e "Do not clone aeroolib from github since directory ${REPOPATH}/aeroolib exists ."
+        if [ -d ${REPO_SETUPPATH}/aeroolib ]; then
+            echo -e "Do not clone aeroolib from github since directory ${REPO_SETUPPATH}/aeroolib exists ."
         else
             echo -e "Clone aeroolib from github."
             # TODO: Use our aeroolib from odoo_v8.0
-            git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${REPOPATH}/aeroolib >> $SETUP_LOG
+            git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${REPO_SETUPPATH}/aeroolib >> $SETUP_LOG
         fi
-        cd ${REPOPATH}/aeroolib >> $SETUP_LOG
-        python ${REPOPATH}/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
-        cd ${REPOPATH} >> $SETUP_LOG
+        cd ${REPO_SETUPPATH}/aeroolib >> $SETUP_LOG
+        python ${REPO_SETUPPATH}/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
+        cd ${REPO_SETUPPATH} >> $SETUP_LOG
         echo -e "\nInstall Aeroo LibreOffice Service to init.d as service aeroo"
-        wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/aeroo.init > ${REPOPATH}/aeroo.init
-        chmod ugo=rx ${REPOPATH}/aeroo.init >> $SETUP_LOG
-        ln -s ${REPOPATH}/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
+        wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/aeroo.init > ${REPO_SETUPPATH}/aeroo.init
+        chmod ugo=rx ${REPO_SETUPPATH}/aeroo.init >> $SETUP_LOG
+        ln -s ${REPO_SETUPPATH}/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
         update-rc.d aeroo defaults >> $SETUP_LOG
         service aeroo stop
         service aeroo start
