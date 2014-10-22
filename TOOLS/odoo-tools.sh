@@ -144,7 +144,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install Python Packages
     echo -e "\n----- Install Python Packages"
     apt-get install python-pip python-dev python-software-properties python-pychart libxml2-dev libxslt-dev \
-        python-genshi python-pyhyphen-y >> $SETUP_LOG
+        python-genshi python-pyhyphen -y >> $SETUP_LOG
     apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> $SETUP_LOG
     apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> $SETUP_LOG
     apt-get install wkhtmltopdf -y >> $SETUP_LOG
