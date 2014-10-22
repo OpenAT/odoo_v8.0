@@ -23,6 +23,8 @@ docs/_build/
 target/
 
 #odoo
+BACKUP/
+LOG/
 data_dir/
 /*.conf
 /*.init

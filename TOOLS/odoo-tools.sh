@@ -1,7 +1,9 @@
 #!/bin/bash
 #######################################################################################################################
 
-SOURCE_REPO="odoo_v8.0"
+GITPATH="https://github.com/OpenAT"
+REPONAME="odoo_v8.0"
+SOURCE_REPO=${GITPATH}/${REPONAME}.git
 SCRIPT_MODE=$1
 
 # ---------------------------------------------------------
@@ -33,7 +35,7 @@ BASEPATH="/opt/odoo"
 if [ -d ${BASEPATH} ]; then
     echo -e "Directory ${BASEPATH} exists."
 else
-    if mkdir ${BASEPATH} ; then
+    if mkdir ${BASEPATH} 2>&1>/dev/null; then
 	    echo -e "Created directory ${BASEPATH}"
     else
         echo -e "ERROR: Could not create directory $BASEPATH!"; exit 2
@@ -41,35 +43,23 @@ else
 fi
 
 # ----- Repo Path for all odoo instances:
-REPOPATH="/opt/odoo/${SOURCE_REPO}"
+REPOPATH="/opt/odoo/${REPONAME}"
 if [ -d ${REPOPATH} ]; then
     echo -e "Directory ${REPOPATH} exists."
 else
-    if  mkdir ${REPOPATH} ; then
+    if  mkdir ${REPOPATH} 2>&1>/dev/null; then
 	    echo -e "Created directory ${REPOPATH}"
     else
         echo -e "ERROR: Could not create directory REPOPATH!"; exit 2
     fi
 fi
 
-# ----- Base Log Files Path for all odoo instances:
-LOGPATH="/var/log/${SOURCE_REPO}"
-if [ -d ${LOGPATH} ]; then
-    echo -e "Directory ${LOGPATH} exists."
-else
-    if  mkdir ${LOGPATH} ; then
-	    echo -e "Created directory ${LOGPATH}"
-    else
-        echo -e "ERROR: Could not create directory ${LOGPATH}!"; exit 2
-    fi
-fi
-
 # ----- SETUP LOG-File:
-SETUP_LOG="${BASEPATH}/odoo_setup.log"
+SETUP_LOG="${BASEPATH}/${REPONAME}-system-prepare.log"
 if [ -w "$SETUP_LOG" ] ; then
     echo -e "Setup log file: ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
 else
-    if  touch $SETUP_LOG ; then
+    if  touch $SETUP_LOG 2>&1>/dev/null; then
         echo -e "Setup log file ist at ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
     else
         echo -e "ERROR: Could not create log file ${SETUP_LOG}!"
@@ -117,13 +107,14 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Update Server
     echo -e "\n----- Update Server"
-    apt-get update >> $SETUP_LOG
     apt-get upgrade -y >> $SETUP_LOG
+    apt-get update >> $SETUP_LOG
     echo -e "----- Update Server Done"
 
     # ----- Install Basic Packages
     echo -e "\n----- Install Basic Packages"
-    apt-get install ssh wget sed git git-core gzip curl python libssl-dev build-essential -y >> $SETUP_LOG
+    apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev build-essential \
+        gcc mc bzr lptools make -y >> $SETUP_LOG
     echo -e "----- Install Basic Packages Done"
 
     # ----- Install postgresql
@@ -143,36 +134,46 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Install Python Packages
     echo -e "\n----- Install Python Packages"
-    apt-get install python-pip python-dev python-software-properties python-pychart libxml2-dev libxslt-dev \
-        python-genshi python-pyhyphen -y >> $SETUP_LOG
+    apt-get install python-pip python-dev python-software-properties python-pychart \
+        python-genshi python-pyhyphen python-ldap -y >> $SETUP_LOG
+    pip install --upgrade pip >> $SETUP_LOG
+    pip install pyserial >> $SETUP_LOG
+    pip install qrcode >> $SETUP_LOG
+    pip install --pre pyusb >> $SETUP_LOG
+    echo -e "\nInstall wkhtmltopdf"
     apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> $SETUP_LOG
     apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> $SETUP_LOG
     apt-get install wkhtmltopdf -y >> $SETUP_LOG
     apt-get install flashplugin-nonfree -y >> $SETUP_LOG
     pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> $SETUP_LOG
-    echo -e "Install requirements.txt"
+    echo -e "\nInstall requirements.txt"
     wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/requirements.txt > $BASEPATH/requirements.txt
     pip install -r $BASEPATH/requirements.txt >> $SETUP_LOG
     echo -e "----- Install Python Packages Done"
 
     # ----- Install Packages for AerooReports
     echo -e "\n----- Install Packages for AerooReports"
-    apt-get install ure uno-libs3 unoconv \
+    easy_install uno
+    apt-get install ure uno-libs3 unoconv graphviz ghostscript\
                     libreoffice-core libreoffice-common libreoffice-base libreoffice-base-core \
                     libreoffice-draw libreoffice-calc libreoffice-writer libreoffice-impress \
                     python-cupshelpers hyphen-de hyphen-en-us -y >> $SETUP_LOG
-    echo -e "\nInstall Aeroolib"
-    git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git $BASEPATH/aeroolib >> $SETUP_LOG
-    cd $BASEPATH/aeroolib
-    python $BASEPATH/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
-    cd $BASEPATH
-    echo -e "\nInstall Aeroo LibreOffice Service"
-    wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/aeroo.init > $BASEPATH/aeroo.init
-    chmod ugo=rx $BASEPATH/aeroo.init
-    ln -s $BASEPATH/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
-    update-rc.d aeroo defaults >> $SETUP_LOG
-    service aeroo stop
-    service aeroo start
+    if pip freeze | grep aeroolib || pstree | grep oosplash 2>&1>/dev/null; then
+        echo -e "\n\nWARNING: Aeroolib seems to be already installed!\nPlease upgrade manually if needed!\n\n"
+    else
+        echo -e "\nInstall Aeroolib"
+        git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${BASEPATH}/aeroolib >> $SETUP_LOG
+        cd ${BASEPATH}/aeroolib >> $SETUP_LOG
+        python ${BASEPATH}/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
+        cd ${BASEPATH} >> $SETUP_LOG
+        echo -e "\nInstall Aeroo LibreOffice Service"
+        wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/aeroo.init > $BASEPATH/aeroo.init
+        chmod ugo=rx $BASEPATH/aeroo.init >> $SETUP_LOG
+        ln -s $BASEPATH/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
+        update-rc.d aeroo defaults >> $SETUP_LOG
+        service aeroo stop
+        service aeroo start
+    fi
     echo -e "----- Install Packages for AerooReports Done"
 
     # ----- Install Packages for Etherpad Lite
@@ -200,20 +201,12 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     SUPER_PASSWORD=$3
     DOMAIN_NAME=$4
 
-    # ----- Create Instance Directory
-    INSTANCE_PATH="${BASEPATH}/${SOURCE_REPO}/${TARGET_BRANCH}"
-    #if [ -d ${INSTANCE_PATH} ]; then
-    #    echo -e "ERROR: ${INSTANCE_PATH} already exists!"; exit 2
-    #else
-    #    if mkdir ${INSTANCE_PATH} ; then
-    #        echo -e "Created directory ${INSTANCE_PATH}"
-    #        cd ${INSTANCE_PATH}
-    #        echo -e "Changed directory to ${INSTANCE_PATH}"
-    #    else
-    #        echo -e "ERROR: Could not create directory ${INSTANCE_PATH}!"
-    #        exit 2
-    #    fi
-    #fi
+    INSTANCE_PATH="${BASEPATH}/${REPONAME}/${TARGET_BRANCH}"
+    
+    # ----- Check if the TARGET_BRANCH already exists
+    if git ls-remote ${SOURCE_REPO} | grep -sw "${TARGET_BRANCH}" 2>&1>/dev/null; then
+        echo "ERROR: ${TARGET_BRANCH} already exists in ${REPONAME}!"; exit 2
+    fi    
 
     # ----- Create Instance Log File for SETUP
     INSTANCE_SETUPLOG="$BASEPATH/${TARGET_BRANCH}_setup.log"
@@ -221,8 +214,8 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         echo -e "ERROR: ${INSTANCE_SETUPLOG} already exists!"
         exit 2
     else
-        if  touch ${INSTANCE_SETUPLOG} ; then
-            echo -e "Instance-Setup-Log: ${INSTANCE_SETUPLOG}. DO NOT MODIFY OR DELETE!"
+        if  touch ${INSTANCE_SETUPLOG} 2>&1>/dev/null; then
+            echo -e "Setup log ${INSTANCE_SETUPLOG} created.\nUse tail -f ${INSTANCE_SETUPLOG} during install."
         else
             echo -e "ERROR: Could not create log file ${INSTANCE_SETUPLOG}!"
             exit 2
@@ -230,14 +223,14 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     fi
 
     # ----- Prepare Log Directory and Variable
-    INSTANCE_LOGPATH="${LOGPATH}/${SOURCE_REPO}"
+    INSTANCE_LOGPATH="/var/log/${TARGET_BRANCH}"
     INSTANCE_LOGFILE="${INSTANCE_LOGPATH}/${TARGET_BRANCH}.log"
     if [ -d "${INSTANCE_LOGPATH}" ] ; then
         echo -e "ERROR: ${INSTANCE_LOGPATH} already exists!"
         exit 2
     else
-        if  mkdir ${INSTANCE_LOGPATH} ; then
-            echo -e "Instance-Log-Directory created: ${INSTANCE_LOGPATH}."
+        if  mkdir ${INSTANCE_LOGPATH} 2>&1>/dev/null; then
+            echo -e "Log Directory ${INSTANCE_LOGPATH} created."
         else
             echo -e "ERROR: Could not create log directory ${INSTANCE_LOGPATH}!"
             exit 2
@@ -248,12 +241,22 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     chmod o=r ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
 
     # ---- Set BASEPORT
-    COUNTERFILE=$BASEPATH/INSTANCE.counter
+    COUNTERFILE=$BASEPATH/${REPONAME}.counter
     if [ -f ${COUNTERFILE} ]; then
         echo -e "File ${COUNTERFILE} exists."
     else
-        if  touch ${COUNTERFILE} ; then
-            echo -e "40" > ${COUNTERFILE};
+        if  touch ${COUNTERFILE} 2>&1>/dev/null; then
+            # Port Schema for odoo [0][00][00]
+            # [0]=Odoo_Version_Start [00-99]=Local_Instances [00-99]=Instance_Services
+            #
+            # [0] = Odoo Versions:
+            #       4 = odoo OLD setups 6or7 old install
+            #       1 = odoo 8 (=99 Instancen pro Server) e.g.: 10069 or 12369
+            #       2 = odoo 9
+            #       3 = odoo 10 usw e.g.: 30069
+            #
+            # Highest Linux Port Number (2^16)-1, or 0-65,535 (the -1 is because port 0 is reserved and unavailable)
+            echo -e "10" > ${COUNTERFILE};
             echo -e "File ${COUNTERFILE} created."
         else
             echo -e "ERROR: Could not create file ${COUNTERFILE}!"
@@ -262,7 +265,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     fi
     typeset -i BASEPORT
     BASEPORT=`cat ${COUNTERFILE}`+1
-    if [ ${BASEPORT} -lt 40 ]; then
+    if [ ${BASEPORT} -lt 10 ]; then
         echo echo -e "ERROR: Could not Update ${BASEPORT}!"
         exit 2
     fi
@@ -305,9 +308,9 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     fi
 
     # ----- Clone the Github Repo (Directory created here first!)
-    echo -e "\n---- Clone the Github Repo ${SOURCE_REPO}"
+    echo -e "\n---- Clone the Github Repo ${REPONAME}"
     git clone -b master --depth 1 --single-branch --recurse-submodules \
-        https://github.com/OpenAT/${SOURCE_REPO}.git ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
+        ${SOURCE_REPO} ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
     cd ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
     git branch ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
     git checkout ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
@@ -315,9 +318,13 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         echo -e "ERROR: Cloning the github repo failed!"; exit 2
     fi
 
-    # ----- Setup the Linux User and Group
+
+    # ----- Setup the Linux User and Group and set Rights
     echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
     useradd -m -s /bin/bash ${DBUSER} | tee -a $INSTANCE_SETUPLOG
+    chown ${DBUSER}:${DBUSER} ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
+    chmod ug=rw ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
+    chmod o=r ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
 
     # ----- Create Database User
     echo -e "\n---- Create postgresql role $DBUSER"
@@ -327,17 +334,17 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ---- Create server.conf
     echo -e "\n---- Create odoo server config in: ${INSTANCE_PATH}/${TARGET_BRANCH}.conf"
     /bin/sed '{
-        s,"admin_passwd = admin",'"admin_passwd = ${SUPER_PASSWORD}"',g
-        s,"data_dir = data_dir",'"data_dir = ${INSTANCE_PATH}/data_dir"',g
-        s,"db_password = odoo",'"db_password = ${DBPW}"',g
-        s,"db_user = odoo",'"db_user = ${DBUSER}"',g
-        s,"logfile = None",'"logfile = ${INSTANCE_LOGFILE}"',g
-        s,"longpolling_port = 8072",'"longpolling_port = ${BASEPORT}8072"',g
-        s,"xmlrpc_port = 8069",'"xmlrpc_port = ${BASEPORT}8069"',g
-        s,"xmlrpcs_port = 8071",'"xmlrpcs_port = ${BASEPORT}8071"',g
+        s,'"admin_passwd = admin"','"admin_passwd = ${SUPER_PASSWORD}"',g
+        s,'"data_dir = data_dir"','"data_dir = ${INSTANCE_PATH}/data_dir"',g
+        s,'"db_password = odoo"','"db_password = ${DBPW}"',g
+        s,'"db_user = odoo"','"db_user = ${DBUSER}"',g
+        s,'"logfile = None"','"logfile = ${INSTANCE_LOGFILE}"',g
+        s,'"longpolling_port = 8072"','"longpolling_port = ${BASEPORT}8072"',g
+        s,'"xmlrpc_port = 8069"','"xmlrpc_port = ${BASEPORT}8069"',g
+        s,'"xmlrpcs_port = 8071"','"xmlrpcs_port = ${BASEPORT}8071"',g
             }' ${INSTANCE_PATH}/TOOLS/server.conf > ${INSTANCE_PATH}/${TARGET_BRANCH}.conf | tee -a $INSTANCE_SETUPLOG
-        chown ${DBUSER}:${DBUSER} ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
-        chmod ugo=r ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
+    chown root:root ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
+    chmod ugo=r ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
 
     # ---- Create the Init Script for odoo
     echo -e "\n---- Setup init.d for instance: ${INSTANCE_PATH}/${TARGET_BRANCH}.init"
@@ -346,6 +353,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         s,TARGET_BRANCH,'"$TARGET_BRANCH"',g
         s,INSTANCE_PATH,'"$INSTANCE_PATH"',g
             }' ${INSTANCE_PATH}/TOOLS/server.init > ${INSTANCE_PATH}/${TARGET_BRANCH}.init | tee -a $INSTANCE_SETUPLOG
+    chown root:root ${INSTANCE_PATH}/${TARGET_BRANCH}.init
     chmod ugo=rx ${INSTANCE_PATH}/${TARGET_BRANCH}.init
     ln -s ${INSTANCE_PATH}/${TARGET_BRANCH}.init /etc/init.d/${TARGET_BRANCH} | tee -a $INSTANCE_SETUPLOG
     update-rc.d ${TARGET_BRANCH} defaults | tee -a $INSTANCE_SETUPLOG
