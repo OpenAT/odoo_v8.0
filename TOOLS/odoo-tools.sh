@@ -201,21 +201,21 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
 
     # ----- Create Instance Directory
     INSTANCE_PATH="${BASEPATH}/${SOURCE_REPO}/${TARGET_BRANCH}"
-    if [ -d ${INSTANCE_PATH} ]; then
-        echo -e "ERROR: ${INSTANCE_PATH} already exists!"; exit 2
-    else
-        if mkdir ${INSTANCE_PATH} ; then
-            echo -e "Created directory ${INSTANCE_PATH}"
-            cd ${INSTANCE_PATH}
-            echo -e "Changed directory to ${INSTANCE_PATH}"
-        else
-            echo -e "ERROR: Could not create directory ${INSTANCE_PATH}!"
-            exit 2
-        fi
-    fi
+    #if [ -d ${INSTANCE_PATH} ]; then
+    #    echo -e "ERROR: ${INSTANCE_PATH} already exists!"; exit 2
+    #else
+    #    if mkdir ${INSTANCE_PATH} ; then
+    #        echo -e "Created directory ${INSTANCE_PATH}"
+    #        cd ${INSTANCE_PATH}
+    #        echo -e "Changed directory to ${INSTANCE_PATH}"
+    #    else
+    #        echo -e "ERROR: Could not create directory ${INSTANCE_PATH}!"
+    #        exit 2
+    #    fi
+    #fi
 
-    # ----- Create Instance Setup Log File
-    INSTANCE_SETUPLOG="$INSTANCE_PATH/instance_setup.log"
+    # ----- Create Instance Log File for SETUP
+    INSTANCE_SETUPLOG="$BASEPATH/${TARGET_BRANCH}_setup.log"
     if [ -w "${INSTANCE_SETUPLOG}" ] ; then
         echo -e "ERROR: ${INSTANCE_SETUPLOG} already exists!"
         exit 2
@@ -228,19 +228,23 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         fi
     fi
 
-    # ----- Prepare Instance Log Directory and File
-    INSTANCE_LOGFILE="${LOGPATH}/${TARGET_BRANCH}-odoo.log"
-    if [ -w "${INSTANCE_LOGFILE}" ] ; then
-        echo -e "ERROR: ${INSTANCE_LOGFILE} already exists!"
+    # ----- Prepare Log Directory and Variable
+    INSTANCE_LOGPATH="${LOGPATH}/${SOURCE_REPO}"
+    INSTANCE_LOGFILE="${INSTANCE_LOGPATH}/${TARGET_BRANCH}.log"
+    if [ -d "${INSTANCE_LOGPATH}" ] ; then
+        echo -e "ERROR: ${INSTANCE_LOGPATH} already exists!"
         exit 2
     else
-        if  touch ${INSTANCE_LOGFILE} ; then
-            echo -e "Instance-Log-File: ${INSTANCE_LOGFILE}."
+        if  mkdir ${INSTANCE_LOGPATH} ; then
+            echo -e "Instance-Log-Directory created: ${INSTANCE_LOGPATH}."
         else
-            echo -e "ERROR: Could not create log file ${INSTANCE_LOGFILE}!"
+            echo -e "ERROR: Could not create log directory ${INSTANCE_LOGPATH}!"
             exit 2
         fi
     fi
+    chown ${DBUSER}:${DBUSER} ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
+    chmod ug=rw ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
+    chmod o=r ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
 
     # ---- Set BASEPORT
     COUNTERFILE=$BASEPATH/INSTANCE.counter
@@ -257,7 +261,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     fi
     typeset -i BASEPORT
     BASEPORT=`cat ${COUNTERFILE}`+1
-    if [ ${BASEPORT} < 40 ]; then
+    if [ ${BASEPORT} -lt 40 ]; then
         echo echo -e "ERROR: Could not Update ${BASEPORT}!"
         exit 2
     fi
@@ -287,19 +291,30 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     echo -e "Instance Etherpad SESSION KEY     :  $ETHERPADKEY" | tee -a $INSTANCE_SETUPLOG
     echo -e ""
     echo -e "Would you like to setup a new odoo instance with this settings? ( Y/N ): "; read answer
-    if [ "$answer" != "Y" ]; then
-        while [ "$answer" != "Y" ]; do
-            if [ "$answer" == "n" ] || [ "$answer" == "N" ]; then
+    if [ "${answer}" != "Y" ]; then
+        while [ "${answer}" != "Y" ]; do
+            if [ "${answer}" == "n" ] || [ "${answer}" == "N" ]; then
                 echo "SETUP APPORTED: EXITING SCRIPT!"
-                rm -f $INSTANCE_PATH
-                rm $INSTANCE_LOGFILE
+                rm -f ${INSTANCE_PATH}
+                rm -f ${INSTANCE_LOGPATH}
                 exit 1
             fi
             echo "Please enter Y (Yes) or N (No)"; read answer
         done
     fi
 
-    # ----- Create the Linux User and set Rights
+    # ----- Clone the Github Repo (Directory created here first!)
+    echo -e "\n---- Clone the Github Repo ${SOURCE_REPO}"
+    git clone -b master --depth 1 --single-branch --recurse-submodules \
+        https://github.com/OpenAT/${SOURCE_REPO}.git ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
+    cd ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
+    git branch ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
+    git checkout ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
+    if [ ! -d "${INSTANCE_PATH}/odoo" ]; then
+        echo -e "ERROR: Cloning the github repo failed!"; exit 2
+    fi
+
+    # ----- Setup the Linux User and Group
     echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
     useradd -m -s /bin/bash ${DBUSER} | tee -a $INSTANCE_SETUPLOG
 
@@ -307,21 +322,6 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     echo -e "\n---- Create postgresql role $DBUSER"
     sudo su - postgres -c \
         'psql -a -e -c "CREATE ROLE '${DBUSER}' WITH NOSUPERUSER CREATEDB LOGIN PASSWORD '\'${DBPW}\''"' | tee -a $INSTANCE_SETUPLOG
-
-    # ----- Clone the Github Repo
-    echo -e "\n---- Clone the Github Repo ${SOURCE_REPO}"
-    git clone -b master --depth 1 --single-branch --recurse-submodules \
-        https://github.com/OpenAT/${SOURCE_REPO}.git ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
-    cd ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
-    git branch ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
-    git checkout ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
-
-    # ----- Set Linux Rights
-    echo -e "\n---- Set Linux Rights ${SOURCE_REPO}"
-    chown ${DBUSER}:${DBUSER} ${INSTANCE_PATH} -Rf >> $INSTANCE_SETUPLOG
-    chown ${DBUSER}:${DBUSER} ${INSTANCE_LOGFILE} >> $INSTANCE_SETUPLOG
-    chmod ug=rw ${INSTANCE_LOGFILE} >> $INSTANCE_SETUPLOG
-    chmod o=r ${INSTANCE_LOGFILE} >> $INSTANCE_SETUPLOG
 
     # ---- Create server.conf
     echo -e "\n---- Create odoo server config in: ${INSTANCE_PATH}/${TARGET_BRANCH}.conf"
@@ -350,13 +350,18 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     update-rc.d ${TARGET_BRANCH} defaults | tee -a $INSTANCE_SETUPLOG
     service ${TARGET_BRANCH} start | tee -a $INSTANCE_SETUPLOG
 
+    # ----- Link Log File (should be there after first start!)
+    if [ -s ${INSTANCE_LOGFILE} ]; then
+        echo -e "----------\nWARNING: Log file for instance was NOT created!\n----------"
+    else
+        ln -s ${INSTANCE_LOGFILE} ${INSTANCE_PATH}
+    fi
 
 
-    # ----- Link the log file
-    # ----- Setup cron Logrotate
     # ----- Setup nginx # INFO Maybe check the proxy setting from v7 because of nginx ;)
 
-    # ----- Setup Etherpad
+    # ----- Setup Etherpad-Lite
+    # ----- Setup cron Logrotate for all Logfiles
     # ----- Setup cron backup script
 
     # Maybe: Test URL to database - should work with v8.0

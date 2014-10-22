@@ -123,7 +123,7 @@ This is for now only a placeholder but will describe the update process of a cus
 - http://erppeek.readthedocs.org/en/latest/index.html
 - http://odoohub.wordpress.com/2014/08/15/where-is-the-odoo-documentation/
 - http://djpatelblog.blogspot.in/2014/09/odoo-new-api-recordsets.html
-- http://wirtel.be/posts/en/2011/11/02/nginx-proxy-openerp/
+
 
 #### git, git workflow and github
 - [Github Rebase Workflow](http://mettadore.com/2011/09/07/the-ever-deployable-github-workflow/)
@@ -133,7 +133,11 @@ This is for now only a placeholder but will describe the update process of a cus
 - [Push to a Remote](https://help.github.com/articles/pushing-to-a-remote/)
 - [README.md Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
 
-#### Odoo Setup in Ubuntu
+#### Odoo Setup in Ubuntu 14.04 LTS
+- [nginx and odoo](http://wirtel.be/posts/en/2011/11/02/nginx-proxy-openerp/)
 - [odoo v7 setup scripts](https://github.com/OpenAT/odoo-tools/tree/7.0)
 - [odoo 8 setup script by Andre Schenkel](https://github.com/lukebranch/odoo-install-scripts/blob/master/odoo-saas4/ubuntu-14-04/odoo_install.sh)
 - [odoo setup ubuntu 14 lts](https://www.odoo.com/forum/help-1/question/how-to-install-odoo-from-github-on-ubuntu-14-04-for-testing-purposes-only-ie-not-for-production-52627)
+
+#### BASH Scripting
+- [if conditions](http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html)
