@@ -359,11 +359,11 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     update-rc.d ${TARGET_BRANCH} defaults | tee -a $INSTANCE_SETUPLOG
     service ${TARGET_BRANCH} start | tee -a $INSTANCE_SETUPLOG
 
-    # ----- Link Log File (should be there after first start!)
+    # ----- Link Log Path if logfile exists (should be there after first start!)
     if [ -s ${INSTANCE_LOGFILE} ]; then
-        echo -e "----------\nWARNING: Log file for instance was NOT created!\n----------"
+        ln -s ${INSTANCE_LOGPATH} ${INSTANCE_PATH}/LOG
     else
-        ln -s ${INSTANCE_LOGFILE} ${INSTANCE_PATH}
+        echo -e "\n\n----------\nWARNING: Log file for instance was NOT created!\n----------\n\n"
     fi
 
 
