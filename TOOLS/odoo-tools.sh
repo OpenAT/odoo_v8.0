@@ -158,10 +158,12 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
                     libreoffice-core libreoffice-common libreoffice-base libreoffice-base-core \
                     libreoffice-draw libreoffice-calc libreoffice-writer libreoffice-impress \
                     python-cupshelpers hyphen-de hyphen-en-us -y >> $SETUP_LOG
-    if pip freeze | grep aeroolib || pstree | grep oosplash 2>&1>/dev/null; then
-        echo -e "\n\nWARNING: Aeroolib seems to be already installed!\nPlease upgrade manually if needed!\n\n"
+    echo -e "\nInstall Aeroolib"
+    if pip freeze | grep aeroolib ; then
+        echo -e "\n\nWARNING: Aeroolib seems to be already installed!"
+        echo -e "Please upgrade manually if needed!"
+        echo -e "Aeroolib has to be at least aeroolib==1.2.0 to work with ${REPONAME}\n\n"
     else
-        echo -e "\nInstall Aeroolib"
         git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${BASEPATH}/aeroolib >> $SETUP_LOG
         cd ${BASEPATH}/aeroolib >> $SETUP_LOG
         python ${BASEPATH}/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
