@@ -180,7 +180,10 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         echo -e "Please upgrade manually if needed!"
         echo -e "Aeroolib has to be at least aeroolib==1.2.0 to work with ${REPONAME}\n\n"
     else
-        if [! -d ${BASEPATH}/aeroolib ]; then
+        if [ -d ${BASEPATH}/aeroolib ]; then
+            echo -e "Do not clone aeroolib from github since directory ${BASEPATH}/aeroolib exists ."
+        else
+            echo -e "Clone aeroolib from github."
             # TODO: Use our aeroolib from odoo_v8.0
             git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${BASEPATH}/aeroolib >> $SETUP_LOG
         fi
@@ -206,7 +209,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "\n-----------------------------------------------------------------------"
     echo -e " odoo-tools.sh prepare DONE"
     echo -e "-----------------------------------------------------------------------"
-
+    exit 0
 fi
 
 
@@ -414,7 +417,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ----- Setup cron backup script
 
     # Maybe: Test URL to database - should work with v8.0
-
+    exit 0
 fi
 
 
