@@ -31,7 +31,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # ----- Repo Path for all odoo instances:
-REPOPATH="/opt/odoo/${REPONAME}"
+REPOPATH="/opt/${REPONAME}"
 if [ -d ${REPOPATH} ]; then
     echo -e "Directory ${REPOPATH} exists."
 else
