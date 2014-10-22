@@ -150,13 +150,19 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     cp /usr/local/bin/wkhtmltoimage /usr/bin >> $SETUP_LOG
     apt-get install flashplugin-nonfree -y >> $SETUP_LOG
     pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> $SETUP_LOG
-    echo -e "\nInstall requirements.txt"
+    echo -e "\nInstall libs from requirements.txt"
     wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/requirements.txt > $BASEPATH/requirements.txt
     while read line; do
         if pip install ${line} >> $SETUP_LOG; then
             echo -e "SUCCESS: pip install ${line}"
         else
             echo -e "\n\nWARNING: pip install ${line} failed!\n\n" | tee -a $SETUP_LOG
+        fi
+    done < $BASEPATH/requirements.txt | grep -v '.*#'
+    echo -e "\nCheck libs from requirements.txt"
+    while read lineb; do
+        if ! pip freeze | grep ${lineb} >> $SETUP_LOG; then
+            echo -e "WARNING: ${lineb} not installed!" | tee -a $SETUP_LOG
         fi
     done < $BASEPATH/requirements.txt | grep -v '.*#'
     #pip install -r ${BASEPATH}/requirements.txt >> $SETUP_LOG
