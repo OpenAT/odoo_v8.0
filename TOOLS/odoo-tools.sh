@@ -133,13 +133,8 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Install Python Packages
     echo -e "\n----- Install Python Packages"
-    apt-get install python-pip python-dev python-software-properties python-pychart \
+    apt-get install python-pip python-virtualenv python-dev python-software-properties python-pychart \
         python-genshi python-pyhyphen python-ldap -y >> $SETUP_LOG
-    pip install --upgrade pip >> $SETUP_LOG
-    hash -r
-    which pip
-    # see http://stackoverflow.com/questions/16237490/i-screwed-up-the-system-version-of-python-pip-on-ubuntu-12-10
-    hash -r >> $SETUP_LOG
     pip install pyserial >> $SETUP_LOG
     pip install qrcode >> $SETUP_LOG
     pip install --pre pyusb >> $SETUP_LOG
@@ -168,13 +163,12 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
             echo -e "\n\nWARNING Python Package Missing: ${line} !\n\n" | tee -a $SETUP_LOG
         fi
     done < $BASEPATH/requirements.txt
-    #pip install -r ${BASEPATH}/requirements.txt >> $SETUP_LOG
-
     echo -e "----- Install Python Packages Done"
 
     # ----- Install Packages for AerooReports
     echo -e "\n----- Install Packages for AerooReports"
-    # ATTENTION: # START - LibreOffice-Python 2.7 Compatibility Script Author: Holger Brunn (https://gist.github.com/hbrunn/6f4a007a6ff7f75c0f8b)
+    # ATTENTION: LibreOffice-Python 2.7 Compatibility Script Author: Holger Brunn (https://gist.github.com/hbrunn/6f4a007a6ff7f75c0f8b)
+    # Maybe this is needed because of python-uno bridge?!?
     easy_install uno
     apt-get install ure uno-libs3 unoconv graphviz ghostscript\
                     libreoffice-core libreoffice-common libreoffice-base libreoffice-base-core \
@@ -186,11 +180,14 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         echo -e "Please upgrade manually if needed!"
         echo -e "Aeroolib has to be at least aeroolib==1.2.0 to work with ${REPONAME}\n\n"
     else
-        git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${BASEPATH}/aeroolib >> $SETUP_LOG
+        if [! -d ${BASEPATH}/aeroolib ]; then
+            # TODO: Use our aeroolib from odoo_v8.0
+            git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${BASEPATH}/aeroolib >> $SETUP_LOG
+        fi
         cd ${BASEPATH}/aeroolib >> $SETUP_LOG
         python ${BASEPATH}/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
         cd ${BASEPATH} >> $SETUP_LOG
-        echo -e "\nInstall Aeroo LibreOffice Service"
+        echo -e "\nInstall Aeroo LibreOffice Service to init.d as service aeroo"
         wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/aeroo.init > $BASEPATH/aeroo.init
         chmod ugo=rx $BASEPATH/aeroo.init >> $SETUP_LOG
         ln -s $BASEPATH/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
@@ -348,6 +345,19 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         echo -e "ERROR: Cloning the github repo failed!"; exit 2
     fi
 
+    # ----- ToDo virtualenv environment for our new instance
+    #virtualenv ${INSTANCE_PATH}/VIRTUALENV
+    #source ${INSTANCE_PATH}/VIRTUALENV/bin/activate
+    #pip install --upgrade pip
+    #pip install --upgrade virtualenv
+    #hash -r
+    #which pip
+    #
+    # DO ALL THE PACKAGE INSTALL LIKE IN PREPARE
+    #
+    # http://stackoverflow.com/questions/16237490/i-screwed-up-the-system-version-of-python-pip-on-ubuntu-12-10
+    # https://www.digitalocean.com/community/tutorials/common-python-tools-using-virtualenv-installing-with-pip-and-managing-packages
+    # http://wiki.ubuntuusers.de/virtualenv
 
     # ----- Setup the Linux User and Group and set Rights
     echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
@@ -361,7 +371,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     sudo su - postgres -c \
         'psql -a -e -c "CREATE ROLE '${DBUSER}' WITH NOSUPERUSER CREATEDB LOGIN PASSWORD '\'${DBPW}\''"' | tee -a $INSTANCE_SETUPLOG
 
-    # ---- Create server.conf
+    # ----- Create server.conf
     echo -e "\n---- Create odoo server config in: ${INSTANCE_PATH}/${TARGET_BRANCH}.conf"
     /bin/sed '{
         s,'"admin_passwd = admin"','"admin_passwd = ${SUPER_PASSWORD}"',g
@@ -376,7 +386,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     chown root:root ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
     chmod ugo=r ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
 
-    # ---- Create the Init Script for odoo
+    # ----- Create the Init Script for odoo
     echo -e "\n---- Setup init.d for instance: ${INSTANCE_PATH}/${TARGET_BRANCH}.init"
     /bin/sed '{
         s,DBUSER,'"$DBUSER"',g
