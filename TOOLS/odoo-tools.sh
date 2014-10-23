@@ -117,7 +117,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install Basic Packages
     echo -e "\n----- Install Basic Packages"
     apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev build-essential \
-        gcc mc bzr lptools make nodejs -y >> $SETUP_LOG
+        gcc mc bzr lptools make nodejs nodejs-dev nodejs-legacy pkg-config  -y >> $SETUP_LOG
     echo -e "----- Install Basic Packages Done"
 
     # ----- Install postgresql
@@ -188,7 +188,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
                     libreoffice-core libreoffice-common libreoffice-base libreoffice-base-core \
                     libreoffice-draw libreoffice-calc libreoffice-writer libreoffice-impress \
                     python-cupshelpers hyphen-de hyphen-en-us -y >> $SETUP_LOG
-    echo -e "\nInstall Aeroolib"
+    echo -e "\n\nInstall Aeroolib"
     if pip freeze | grep aeroolib ; then
         echo -e "\n\nWARNING: Aeroolib seems to be already installed!" | tee -a $SETUP_LOG
         echo -e "Please upgrade manually if needed!"
@@ -198,14 +198,19 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
             echo -e "Do not clone aeroolib from github since directory ${REPO_SETUPPATH}/aeroolib exists ."
         else
             echo -e "Clone aeroolib from github."
-            # TODO: Use our aeroolib from odoo_v8.0
+            # TODO: Maybe Use our aeroolib from odoo_v8.0
             git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${REPO_SETUPPATH}/aeroolib >> $SETUP_LOG
         fi
         cd ${REPO_SETUPPATH}/aeroolib >> $SETUP_LOG
-        python ${REPO_SETUPPATH}/aeroolib/aeroolib/setup.py install | tee -a $SETUP_LOG
+        python ${REPO_SETUPPATH}/aeroolib/setup.py install | tee -a $SETUP_LOG
+        if pip freeze | grep aeroolib ;  then
+            echo -e "\nAeroolib is successfully installed!\n"
+        else
+            echo -e "\nWARNING: Could not install aeroolib\n"
+        fi
         cd ${REPO_SETUPPATH} >> $SETUP_LOG
         echo -e "\nInstall Aeroo LibreOffice Service to init.d as service aeroo"
-        wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/aeroo.init > ${REPO_SETUPPATH}/aeroo.init
+        wget -O - ${GITRAW}/TOOLS/aeroo.init > ${REPO_SETUPPATH}/aeroo.init
         chmod ugo=rx ${REPO_SETUPPATH}/aeroo.init >> $SETUP_LOG
         ln -s ${REPO_SETUPPATH}/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
         update-rc.d aeroo defaults >> $SETUP_LOG
@@ -220,7 +225,8 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "----- Install Packages for Etherpad Lite Done"
 
     # ----- Install npm and Less compiler needed by Odoo 8 Website - added from https://gist.github.com/rm-jamotion/d61bc6525f5b76245b50
-    echo -e "----- Install npm (requires nodejs) and less compiler"
+    echo -e "\n----- Install npm (requires nodejs) and less compiler"
+    hash -r
     curl -L https://npmjs.org/install.sh | sh >> $SETUP_LOG
     npm install less >> $SETUP_LOG
     echo -e "----- Install nodejs and less compiler DONE"
@@ -306,7 +312,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
             #       3 = odoo 10 usw e.g.: 30069
             #
             # Highest Linux Port Number (2^16)-1, or 0-65,535 (the -1 is because port 0 is reserved and unavailable)
-            echo -e "10" > ${COUNTERFILE};
+            echo -e "100" > ${COUNTERFILE};
             echo -e "File ${COUNTERFILE} created."
         else
             echo -e "ERROR: Could not create file ${COUNTERFILE}!"
@@ -370,7 +376,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     fi
 
 
-    # ----- ToDo virtualenv environment for our new instance
+    # ----- ToDo: install our instance in virtualenv environment
     #virtualenv ${INSTANCE_PATH}/VIRTUALENV
     #source ${INSTANCE_PATH}/VIRTUALENV/bin/activate
     #pip install --upgrade pip
@@ -401,6 +407,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         'psql -a -e -c "CREATE ROLE '${DBUSER}' WITH NOSUPERUSER CREATEDB LOGIN PASSWORD '\'${DBPW}\''"' | tee -a $INSTANCE_SETUPLOG
 
     # ----- Create server.conf
+    INSTANCECONF=${INSTANCE_PATH}/${TARGET_BRANCH}.conf
     echo -e "\n---- Create odoo server config in: ${INSTANCE_PATH}/${TARGET_BRANCH}.conf"
     /bin/sed '{
         s!'"addons_path = odoo/openerp/addons,odoo/addons,addons-loaded"'!'"addons_path = ${INSTANCE_PATH}/odoo/openerp/addons,${INSTANCE_PATH}/odoo/addons,${INSTANCE_PATH}/addons-loaded"'!g
@@ -413,36 +420,96 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         s!'"longpolling_port = 8072"'!'"longpolling_port = ${BASEPORT}72"'!g
         s!'"xmlrpc_port = 8069"'!'"xmlrpc_port = ${BASEPORT}69"'!g
         s!'"xmlrpcs_port = 8071"'!'"xmlrpcs_port = ${BASEPORT}71"'!g
-            }' ${INSTANCE_PATH}/TOOLS/server.conf > ${INSTANCE_PATH}/${TARGET_BRANCH}.conf | tee -a $INSTANCE_SETUPLOG
-    chown root:root ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
-    chmod ugo=r ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
+            }' ${INSTANCE_PATH}/TOOLS/server.conf > ${INSTANCECONF} | tee -a $INSTANCE_SETUPLOG
+    chown root:root ${INSTANCECONF}
+    chmod ugo=r ${INSTANCECONF}
 
     # ----- Create the Init Script for odoo
     echo -e "\n---- Setup init.d for instance: ${INSTANCE_PATH}/${TARGET_BRANCH}.init"
+    INSTANCEINIT=${INSTANCE_PATH}/${TARGET_BRANCH}.init
     /bin/sed '{
         s,DBUSER,'"$DBUSER"',g
         s,TARGET_BRANCH,'"$TARGET_BRANCH"',g
         s,INSTANCE_PATH,'"$INSTANCE_PATH"',g
-            }' ${INSTANCE_PATH}/TOOLS/server.init > ${INSTANCE_PATH}/${TARGET_BRANCH}.init | tee -a $INSTANCE_SETUPLOG
-    chown root:root ${INSTANCE_PATH}/${TARGET_BRANCH}.init
-    chmod ugo=rx ${INSTANCE_PATH}/${TARGET_BRANCH}.init
-    ln -s ${INSTANCE_PATH}/${TARGET_BRANCH}.init /etc/init.d/${TARGET_BRANCH} | tee -a $INSTANCE_SETUPLOG
+            }' ${INSTANCE_PATH}/TOOLS/server.init > ${INSTANCEINIT} | tee -a $INSTANCE_SETUPLOG
+    chown root:root ${INSTANCEINIT}
+    chmod ugo=rx ${INSTANCEINIT}
+    ln -s ${INSTANCEINIT} /etc/init.d/${TARGET_BRANCH} | tee -a $INSTANCE_SETUPLOG
     update-rc.d ${TARGET_BRANCH} defaults | tee -a $INSTANCE_SETUPLOG
     service ${TARGET_BRANCH} start | tee -a $INSTANCE_SETUPLOG
 
-    # ----- Link Log Path if logfile exists (should be there after first start!)
-    if [ -s ${INSTANCE_LOGFILE} ]; then
-        ln -s ${INSTANCE_LOGPATH} ${INSTANCE_PATH}/LOG
+    # ----- Create Log Folder and link serverlog
+    echo -e "----- Create LOG Folder for log links"
+    LOGLINKSPATH=${INSTANCE_PATH}/LOG
+    if  mkdir ${LOGLINKSPATH} 2>&1>/dev/null; then
+        echo -e "Created directory ${LOGLINKSPATH}"
     else
-        echo -e "\n\n----------\nWARNING: Log file for instance was NOT created!\n----------\n\n" | tee -a $INSTANCE_SETUPLOG
+        echo -e "\nWARNING: Could not create directory ${LOGLINKSPATH}!\n"
     fi
+    chmod 755 ${LOGLINKSPATH}
+
+    echo -e "\n---- Link ${INSTANCE_LOGPATH} to  ${INSTANCE_PATH}/LOG"
+    ln -s ${INSTANCE_LOGFILE} ${LOGLINKSPATH}/
 
 
-    # ----- Setup nginx # INFO Maybe check the proxy setting from v7 because of nginx ;)
+    # ----- Setup nginx
+    echo -e "---- Create NGINX config file"
+    NGINXCONF=${INSTANCE_PATH}/${TARGET_BRANCH}-nginx.conf
+    /bin/sed '{
+        s,BASEPORT,'"${BASEPORT}"',g
+        s,TARGET_BRANCH,'"${TARGET_BRANCH}"',g
+        s,DOMAIN_NAME,'"${DOMAIN_NAME}"',g
+            }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a $INSTANCE_SETUPLOG
+    chown root:root ${NGINXCONF}
+    chmod ugo=r ${NGINXCONF}
+    ln -s ${NGINXCONF}  /etc/nginx/sites-enabled/${TARGET_BRANCH}-${DOMAIN_NAME}
+    service nginx restart
+    ln -s /var/log/nginx/${TARGET_BRANCH}-nginx-access.log ${INSTANCE_LOGFILE} ${LOGLINKSPATH}/
+    ln -s /var/log/nginx/${TARGET_BRANCH}-nginx-error.log ${INSTANCE_LOGFILE} ${LOGLINKSPATH}/
+    echo -e "---- Create NGINX config file DONE"
 
     # ----- Setup Etherpad-Lite
-    # ----- Setup cron Logrotate for all Logfiles
-    # ----- Setup cron backup script
+    echo -e "---- Setup Etherpad-Lite"
+    PADLOG=${INSTANCE_LOGPATH}/${TARGET_BRANCH}-pad.log
+    PADCONF=${INSTANCE_PATH}/${TARGET_BRANCH}-pad.conf
+    PADINIT=${INSTANCE_PATH}/${TARGET_BRANCH}-pad.init
+    # Create the etherpad database (utf8)
+    echo -e "Create DB for etherpad lite: ${TARGET_BRANCH}_pad Owner: ${DBUSER}"
+    sudo su - postgres -c \
+        'psql -a -e -c "CREATE DATABASE ${TARGET_BRANCH}_pad WITH OWNER '${DBUSER}' ENCODING '\'UTF8\''" ' | tee -a $INSTANCE_SETUPLOG
+    # etherpad-lite config file
+    echo -e "Create etherpad config file"
+    /bin/sed '{
+        s,BASEPORT,'"$BASEPORT"',g
+        s,SUPER_PASSWORD,'"$SUPER_PASSWORD"',g
+        s,DBUSER,'"$DBUSER"',g
+        s,DBPW,'"$DBPW"',g
+        s,TARGET_BRANCH,'"$TARGET_BRANCH"',g
+        s,ETHERPADKEY,'"$ETHERPADKEY"',g
+        }' ${INSTANCE_PATH}/TOOLS/etherpad.conf > ${PADCONF} | tee -a $INSTANCE_SETUPLOG
+    chown root:root ${PADCONF}
+    chmod ugo=r ${PADCONF}
+    # etherpad-lite init file
+    # START with run.sh -s to use your own config!
+    # Logfiles are set in init not in conf ;)
+    echo -e "Create etherpad init file and start service"
+    /bin/sed '{
+        s,DBUSER,'"$DBUSER"',g
+        s,INSTANCE_PATH,'"$INSTANCE_PATH"',g
+        s,TARGET_BRANCH,'"$TARGET_BRANCH"',g
+        s,PADLOG,'"$PADLOG"',g
+        s,PADCONF,'"$PADCONF"',g
+        }' ${INSTANCE_PATH}/TOOLS/etherpad.init > ${PADINIT} | tee -a $INSTANCE_SETUPLOG
+    chown root:root ${PADINIT}
+    chmod ugo=rx ${PADINIT}
+    ln -s ${PADINIT} /etc/init.d/${TARGET_BRANCH}-pad | tee -a $INSTANCE_SETUPLOG
+    update-rc.d ${TARGET_BRANCH}-pad defaults | tee -a $INSTANCE_SETUPLOG
+    service ${TARGET_BRANCH}-pad start
+    # Link logfile
+    ln -s ${PADLOG} ${LOGLINKSPATH}/
+
+    # TODO ----- Setup cron Logrotate for all Logfiles
+    # TODO ----- Setup cron backup script(s)
 
     # Maybe: Test URL to database - should work with v8.0
     echo -e "\n-----------------------------------------------------------------------"
