@@ -58,11 +58,6 @@ To use this branch for development use this workflow:
 # 1.) Clone the repo odoo_v8 branch master locally:
 git clone -b master --recurse-submodules https://github.com/OpenAT/odoo_v8.0.git ${instance_dir}
 
-# Tip if you want to speed up download you could also do this:
-git clone -b master https://github.com/OpenAT/odoo_v8.0.git ${instance_dir}
-cd ${instance_dir}
-git submodule update --init --recursive --depth 1
-
 # Check if the upstream (remote) is set correctly for the master branch
 git branch -vv
 git --set-upstream-to=https://github.com/OpenAT/odoo_v8.0.git master    # creates remotes and origin

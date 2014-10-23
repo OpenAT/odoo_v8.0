@@ -4,6 +4,9 @@
 GITPATH="https://github.com/OpenAT"
 REPONAME="odoo_v8.0"
 SOURCE_REPO=${GITPATH}/${REPONAME}.git
+
+GITRAW="https://raw.githubusercontent.com/OpenAT/${REPONAME}/master"
+
 SCRIPT_MODE=$1
 
 # ---------------------------------------------------------
@@ -56,42 +59,6 @@ else
 fi
 chmod 755 ${REPOPATH}
 
-# ----- SETUP LOG-File:
-SETUP_LOG="${REPO_SETUPPATH}/prepare--`date +%Y-%m-%d__%H-%M`.log"
-if [ -w "$SETUP_LOG" ] ; then
-    echo -e "Setup log file: ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
-else
-    if  touch $SETUP_LOG 2>&1>/dev/null; then
-        echo -e "Setup log file ist at ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
-    else
-        echo -e "ERROR: Could not create log file ${SETUP_LOG}!"; exit 2
-	fi
-fi
-
-# ----- Check locale settings:
-locale_set=false
-if ! [ -e "/etc/default/locale" ]; then
-    touch /etc/default/locale
-    locale_set=true
-fi
-
-if ! egrep -i "LANG=.*UTF-8" /etc/default/locale >> $SETUP_LOG; then
-    echo 'LANG="en_US.UTF-8"' >> /etc/default/locale
-    locale_set=true
-fi
-
-if ! egrep -i "LANGUAGE=...+" /etc/default/locale >> $SETUP_LOG; then
-    echo 'LANGUAGE="en_US.UTF-8"' >> /etc/default/locale
-    locale_set=true
-fi
-locale-gen en_US.UTF-8 >> $SETUP_LOG
-locale-gen de_AT.UTF-8 >> $SETUP_LOG
-update-locale >> $SETUP_LOG
-if [ "$locale_set" = true ]; then
-    echo "ERROR: Wrong locale settings (NOT UTF8)! Please logout completely, login and try again!"
-    exit 3
-fi
-
 
 # ---------------------------------------------------------
 # $ odoo-tools.sh PREPARE
@@ -105,6 +72,42 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     fi
     cd ${REPO_SETUPPATH}
 
+    # ----- Prepare LOG-File:
+    SETUP_LOG="${REPO_SETUPPATH}/prepare--`date +%Y-%m-%d__%H-%M`.log"
+    if [ -w "$SETUP_LOG" ] ; then
+        echo -e "Setup log file: ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
+    else
+        if  touch $SETUP_LOG 2>&1>/dev/null; then
+            echo -e "Setup log file ist at ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
+        else
+            echo -e "ERROR: Could not create log file ${SETUP_LOG}!"; exit 2
+        fi
+    fi
+
+    # ----- Check locale settings:
+    locale_set=false
+    if ! [ -e "/etc/default/locale" ]; then
+        touch /etc/default/locale
+        locale_set=true
+    fi
+
+    if ! egrep -i "LANG=.*UTF-8" /etc/default/locale >> $SETUP_LOG; then
+        echo 'LANG="en_US.UTF-8"' >> /etc/default/locale
+        locale_set=true
+    fi
+
+    if ! egrep -i "LANGUAGE=...+" /etc/default/locale >> $SETUP_LOG; then
+        echo 'LANGUAGE="en_US.UTF-8"' >> /etc/default/locale
+        locale_set=true
+    fi
+    locale-gen en_US.UTF-8 >> $SETUP_LOG
+    locale-gen de_AT.UTF-8 >> $SETUP_LOG
+    update-locale >> $SETUP_LOG
+    if [ "$locale_set" = true ]; then
+        echo "ERROR: Wrong locale settings (NOT UTF8)! Please logout completely, login and try again!"
+        exit 3
+    fi
+
     # ----- Update Server
     echo -e "\n----- Update Server"
     apt-get upgrade -y >> $SETUP_LOG
@@ -114,7 +117,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install Basic Packages
     echo -e "\n----- Install Basic Packages"
     apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev build-essential \
-        gcc mc bzr lptools make -y >> $SETUP_LOG
+        gcc mc bzr lptools make nodejs -y >> $SETUP_LOG
     echo -e "----- Install Basic Packages Done"
 
     # ----- Install postgresql
@@ -161,7 +164,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Install python libs from requirements.txt
     echo -e "\n----- Install python libs from requirements.txt"
-    wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/requirements.txt | grep -v '.*#' > ${REPO_SETUPPATH}/requirements.txt
+    wget -O - ${GITRAW}/TOOLS/requirements.txt | grep -v '.*#' > ${REPO_SETUPPATH}/requirements.txt
     while read line; do
         if pip install ${line} >> $SETUP_LOG; then
             echo -e "Installed: ${line}"
@@ -175,12 +178,6 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         fi
     done < ${REPO_SETUPPATH}/requirements.txt
     echo -e "----- Install python libs from requirements.txt Done"
-
-    # ----- Install npm and Less compiler needed by Odoo 8 Website - added from https://gist.github.com/rm-jamotion/d61bc6525f5b76245b50
-    echo -e "----- Install nodejs and less compiler"
-    curl -L https://npmjs.org/install.sh | sh >> $SETUP_LOG
-    npm install less >> $SETUP_LOG
-    echo -e "----- Install nodejs and less compiler DONE"
 
     # ----- Install Packages for AerooReports
     echo -e "\n----- Install Packages for AerooReports"
@@ -219,8 +216,14 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Install Packages for Etherpad Lite
     echo -e "\n----- Install Packages for Etherpad Lite"
-    apt-get install nodejs abiword -y >> $SETUP_LOG
+    apt-get install abiword -y >> $SETUP_LOG
     echo -e "----- Install Packages for Etherpad Lite Done"
+
+    # ----- Install npm and Less compiler needed by Odoo 8 Website - added from https://gist.github.com/rm-jamotion/d61bc6525f5b76245b50
+    echo -e "----- Install npm (requires nodejs) and less compiler"
+    curl -L https://npmjs.org/install.sh | sh >> $SETUP_LOG
+    npm install less >> $SETUP_LOG
+    echo -e "----- Install nodejs and less compiler DONE"
 
     echo -e "\n-----------------------------------------------------------------------"
     echo -e " odoo-tools.sh prepare DONE"
@@ -357,16 +360,13 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
 
     # ----- Clone the Github Repo (Directory created here first!)
     echo -e "\n---- Clone the Github Repo ${REPONAME}"
-    #git clone -b master --depth 1 --single-branch --recurse-submodules \
-    #    ${SOURCE_REPO} ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
-    git clone -b master \
+    git clone -b master --recurse-submodules \
         ${SOURCE_REPO} ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
     cd ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
-    git submodule update --init --recursive --depth 1
     git branch ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
     git checkout ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
-    if [ ! -d "${INSTANCE_PATH}/odoo" ]; then
-        echo -e "ERROR: Cloning the github repo failed!"; exit 2
+    if [ ! -d "${INSTANCE_PATH}/odoo/addons" ]; then
+        echo -e "\nERROR: Cloning the github repo failed!\n"; exit 2
     fi
 
 
@@ -434,7 +434,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     if [ -s ${INSTANCE_LOGFILE} ]; then
         ln -s ${INSTANCE_LOGPATH} ${INSTANCE_PATH}/LOG
     else
-        echo -e "\n\n----------\nWARNING: Log file for instance was NOT created!\n----------\n\n" | tee -a $SETUP_LOG
+        echo -e "\n\n----------\nWARNING: Log file for instance was NOT created!\n----------\n\n" | tee -a $INSTANCE_SETUPLOG
     fi
 
 
