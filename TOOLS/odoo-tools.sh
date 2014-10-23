@@ -117,7 +117,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install Basic Packages
     echo -e "\n----- Install Basic Packages"
     apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev build-essential \
-        gcc mc bzr lptools make nodejs nodejs-dev nodejs-legacy pkg-config  -y >> $SETUP_LOG
+        gcc mc bzr lptools make nodejs nodejs-dev nodejs-legacy pkg-config npm -y >> $SETUP_LOG
     echo -e "----- Install Basic Packages Done"
 
     # ----- Install postgresql
@@ -225,9 +225,9 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "----- Install Packages for Etherpad Lite Done"
 
     # ----- Install npm and Less compiler needed by Odoo 8 Website - added from https://gist.github.com/rm-jamotion/d61bc6525f5b76245b50
-    echo -e "\n----- Install npm (requires nodejs) and less compiler"
+    echo -e "\n----- Install less compiler"
     hash -r
-    curl -L https://npmjs.org/install.sh | sh >> $SETUP_LOG
+    #curl -L https://npmjs.org/install.sh | sh >> $SETUP_LOG # will not work with etherpad-lite
     npm install less >> $SETUP_LOG
     echo -e "----- Install nodejs and less compiler DONE"
 
@@ -476,7 +476,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # Create the etherpad database (utf8)
     echo -e "Create DB for etherpad lite: ${TARGET_BRANCH}_pad Owner: ${DBUSER}"
     sudo su - postgres -c \
-        'psql -a -e -c "CREATE DATABASE ${TARGET_BRANCH}_pad WITH OWNER '${DBUSER}' ENCODING '\'UTF8\''" ' | tee -a $INSTANCE_SETUPLOG
+        'psql -a -e -c "CREATE DATABASE '${TARGET_BRANCH}'_pad WITH OWNER '${DBUSER}' ENCODING '\'UTF8\''" ' | tee -a $INSTANCE_SETUPLOG
     # etherpad-lite config file
     echo -e "Create etherpad config file"
     /bin/sed '{
@@ -512,12 +512,27 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # TODO ----- Setup cron backup script(s)
 
     # Maybe: Test URL to database - should work with v8.0
-    echo -e "\n-----------------------------------------------------------------------"
+    echo -e "-------------------------------------------------------------------------"
     echo -e " odoo-tools.sh setup {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} DONE"
-    echo -e "-----------------------------------------------------------------------"
+    echo -e "-------------------------------------------------------------------------"
+
+    echo -e "\nAfter Install you should follow these steps:"
+    echo -e ""
+    echo -e "1) Open http://$DOMAIN_NAME/web/database/manager and create the DB: $TARGET_BRANCH (Master Password is $SUPER_PASSWORD)."
+    echo -e "2) Install the addon base_config in your new DB $TARGET_BRANCH."
+    echo -e "3) During install of base_config select austrian-chart-of-account and 20%-Mwst and 20%-Vst."
+    echo -e "4) After install set time period to month for HR."
+    echo -e "5) Enable Colaborative Pads at URL http://$DOMAIN_NAME/$TARGET_BRANCH-pad with PWD: $SUPER_PASSWORD"
+    echo -e "   You will find the API-KEY at: $INSTANCE_PATH/etherpad-lite/APIKEY.txt"
+    echo -e "   ATTENTION: First start of etherpad-lite takes a long time. Be patient - APIKEY will show up after first start!"
+    echo -e "\n Optional:"
+    echo -e "1) Set Company Details"
+    echo -e "2) Set Timezone, Signature and Mail-Options for Admin and Default user"
+    echo -e "3) Set RealTime Warehouse Accounts and Settings for Product Categories."
+
+    echo -e "\n!!!PLEASE UPLOAD YOUR INSTANCE TO GITHUB NOW!!!\ngit push origin $TARGET_BRANCH"
     exit 0
 fi
-
 
 # ---------------------------------------------------------
 # Script HELP

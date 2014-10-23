@@ -13,15 +13,14 @@
 PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/node/bin:"
 LOGFILE="PADLOG"
 EPLITE_DIR="INSTANCE_PATH/etherpad-lite"
-EPLITE_BIN="bin/safeRun.sh"
-
-# Additional options that are passed to the Daemon.
-DAEMON_OPTS="-s PADCONF $LOGFILE"
-
+EPLITE_BIN="bin/run.sh"
+DAEMON_OPTS="-s PADCONF PADLOG"
 USER="DBUSER"
 GROUP="DBUSER"
 DESC="Etherpad-Lite for TARGET_BRANCH"
 NAME="TARGET_BRANCH-pad"
+
+echo -e "Starting $NAME with options $DAEMON_OPTS"
 
 set -e
 
