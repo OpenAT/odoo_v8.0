@@ -176,6 +176,12 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     done < ${REPO_SETUPPATH}/requirements.txt
     echo -e "----- Install python libs from requirements.txt Done"
 
+    # ----- Install npm and Less compiler needed by Odoo 8 Website - added from https://gist.github.com/rm-jamotion/d61bc6525f5b76245b50
+    echo -e "----- Install nodejs and less compiler"
+    curl -L https://npmjs.org/install.sh | sh >> $SETUP_LOG
+    npm install less >> $SETUP_LOG
+    echo -e "----- Install nodejs and less compiler DONE"
+
     # ----- Install Packages for AerooReports
     echo -e "\n----- Install Packages for AerooReports"
     # ATTENTION: LibreOffice-Python 2.7 Compatibility Script Author: Holger Brunn (https://gist.github.com/hbrunn/6f4a007a6ff7f75c0f8b)
