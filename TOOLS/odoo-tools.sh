@@ -101,8 +101,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e " odoo-tools.sh prepare"
     echo -e "-----------------------------------------------------------------------"
     if [ $# -ne 1 ]; then
-        echo -e "ERROR: \"setup-toosl.sh prepare\" takes exactly one argument!"
-        exit 2
+        echo -e "ERROR: \"setup-toosl.sh prepare\" takes exactly one argument!"; exit 2
     fi
     cd ${REPO_SETUPPATH}
 
@@ -134,13 +133,16 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "----- Install nginx Done"
 
     # ----- Install Python Packages
-    echo -e "\n----- Install Python Packages"
+    echo -e "\n----- Install Python Apt Packages"
     apt-get install python-pip python-virtualenv python-dev python-software-properties python-pychart \
         python-genshi python-pyhyphen python-ldap -y >> $SETUP_LOG
     pip install pyserial >> $SETUP_LOG
     pip install qrcode >> $SETUP_LOG
     pip install --pre pyusb >> $SETUP_LOG
-    echo -e "\nInstall Wkhtmltopdf 0.12.1"
+    echo -e "\n----- Install Python Apt Packages DONE"
+
+    # ----- Install Wkhtmltopdf 0.12.1
+    echo -e "\n----- Install Wkhtmltopdf 0.12.1"
     if wkhtmltopdf -V | grep "wkhtmltopdf.*12.*" 2>&1>/dev/null; then
       echo -e "\nWkhtmltopdf 0.12.1 seems to be installed! Skipping installation!\n"
     else
@@ -155,8 +157,11 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         apt-get install flashplugin-nonfree -y >> $SETUP_LOG
         pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> $SETUP_LOG
     fi
-    echo -e "\nInstall libs from requirements.txt"
-    wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/requirements.txt | grep -v '.*#' > ${REPOPATH}/requirements.txt
+    echo -e "\n----- Install Wkhtmltopdf 0.12.1 DONE"
+
+    # ----- Install python libs from requirements.txt
+    echo -e "\n----- Install python libs from requirements.txt"
+    wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/requirements.txt | grep -v '.*#' > ${REPO_SETUPPATH}/requirements.txt
     while read line; do
         if pip install ${line} >> $SETUP_LOG; then
             echo -e "Installed: ${line}"
@@ -166,15 +171,15 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         if pip freeze | grep ${line} >> $SETUP_LOG; then
             echo -e "PackageOK: ${line} "
         else
-            echo -e "\n\nWARNING Package MISSING: ${line} !\n\n" | tee -a $SETUP_LOG
+            echo -e "\n\nWARNING: Package ${line} missing!\n\n" | tee -a $SETUP_LOG
         fi
-    done < ${REPOPATH}/requirements.txt
-    echo -e "----- Install Python Packages Done"
+    done < ${REPO_SETUPPATH}/requirements.txt
+    echo -e "----- Install python libs from requirements.txt Done"
 
     # ----- Install Packages for AerooReports
     echo -e "\n----- Install Packages for AerooReports"
     # ATTENTION: LibreOffice-Python 2.7 Compatibility Script Author: Holger Brunn (https://gist.github.com/hbrunn/6f4a007a6ff7f75c0f8b)
-    # Maybe this is needed because of python-uno bridge?!?
+    # Maybe this is needed because of python-uno bridge?!? - We will see when we start the test for aeroo reports in v8
     easy_install uno
     apt-get install ure uno-libs3 unoconv graphviz ghostscript\
                     libreoffice-core libreoffice-common libreoffice-base libreoffice-base-core \
@@ -226,7 +231,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     echo -e "\n-----------------------------------------------------------------------"
     echo -e " odoo-tools.sh setup {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}"
     echo -e "-----------------------------------------------------------------------"
-    echo -e " You have to run \"odoo-tools.sh prepare\" before setting up your first instance!"
+    echo -e "You have to run \"odoo-tools.sh prepare\" before setting up your first instance!\n"
     if [ $# -ne 4 ]; then
         echo -e "ERROR: \"setup-toosl.sh prepare\" takes exactly four arguments!"
         exit 2
@@ -245,13 +250,13 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     fi    
 
     # ----- Create Instance Log File for SETUP
-    INSTANCE_SETUPLOG="${REPOPATH}/setup-${TARGET_BRANCH}-`date +%Y-%m-%d__%H-%M`.log"
+    INSTANCE_SETUPLOG="${REPO_SETUPPATH}/setup--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
     if [ -w "${INSTANCE_SETUPLOG}" ] ; then
         echo -e "ERROR: ${INSTANCE_SETUPLOG} already exists!"
         exit 2
     else
         if  touch ${INSTANCE_SETUPLOG} 2>&1>/dev/null; then
-            echo -e "Setup log ${INSTANCE_SETUPLOG} created.\nUse tail -f ${INSTANCE_SETUPLOG} during install."
+            echo -e "Setup log ${INSTANCE_SETUPLOG} created. (Use tail -f ${INSTANCE_SETUPLOG} during install.)"
         else
             echo -e "ERROR: Could not create log file ${INSTANCE_SETUPLOG}!"
             exit 2
@@ -277,7 +282,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     chmod o=r ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
 
     # ---- Set BASEPORT
-    COUNTERFILE=${REPOPATH}/${REPONAME}.counter
+    COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
     if [ -f ${COUNTERFILE} ]; then
         echo -e "File ${COUNTERFILE} exists."
     else
@@ -346,14 +351,18 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
 
     # ----- Clone the Github Repo (Directory created here first!)
     echo -e "\n---- Clone the Github Repo ${REPONAME}"
-    git clone -b master --depth 1 --single-branch --recurse-submodules \
+    #git clone -b master --depth 1 --single-branch --recurse-submodules \
+    #    ${SOURCE_REPO} ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
+    git clone -b master \
         ${SOURCE_REPO} ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
     cd ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
+    git submodule update --init --recursive --depth 1
     git branch ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
     git checkout ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
     if [ ! -d "${INSTANCE_PATH}/odoo" ]; then
         echo -e "ERROR: Cloning the github repo failed!"; exit 2
     fi
+
 
     # ----- ToDo virtualenv environment for our new instance
     #virtualenv ${INSTANCE_PATH}/VIRTUALENV
@@ -369,7 +378,8 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # https://www.digitalocean.com/community/tutorials/common-python-tools-using-virtualenv-installing-with-pip-and-managing-packages
     # http://wiki.ubuntuusers.de/virtualenv
 
-    # ----- Setup the Linux User and Group and set Rights
+
+    # ----- Setup the Linux User and Group
     echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
     useradd -m -s /bin/bash ${DBUSER} | tee -a $INSTANCE_SETUPLOG
 
@@ -387,16 +397,16 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ----- Create server.conf
     echo -e "\n---- Create odoo server config in: ${INSTANCE_PATH}/${TARGET_BRANCH}.conf"
     /bin/sed '{
-        s,'"addons_path = odoo/openerp/addons,odoo/addons,addons-loaded"','"addons_path = ${INSTANCE_PATH}/odoo/openerp/addons,${INSTANCE_PATH}/odoo/addons,${INSTANCE_PATH}/addons-loaded"',g
-        s,'"admin_passwd = admin"','"admin_passwd = ${SUPER_PASSWORD}"',g
-        s,'"data_dir = data_dir"','"data_dir = ${INSTANCE_PATH}/data_dir"',g
-        s,'"db_password = odoo"','"db_password = ${DBPW}"',g
-        s,'"db_user = odoo"','"db_user = ${DBUSER}"',g
-        s,'"logfile = None"','"logfile = ${INSTANCE_LOGFILE}"',g
-        s,'"logrotate = False"','"logrotate = True"',g
-        s,'"longpolling_port = 8072"','"longpolling_port = ${BASEPORT}72"',g
-        s,'"xmlrpc_port = 8069"','"xmlrpc_port = ${BASEPORT}69"',g
-        s,'"xmlrpcs_port = 8071"','"xmlrpcs_port = ${BASEPORT}71"',g
+        s!'"addons_path = odoo/openerp/addons,odoo/addons,addons-loaded"'!'"addons_path = ${INSTANCE_PATH}/odoo/openerp/addons,${INSTANCE_PATH}/odoo/addons,${INSTANCE_PATH}/addons-loaded"'!g
+        s!'"admin_passwd = admin"'!'"admin_passwd = ${SUPER_PASSWORD}"'!g
+        s!'"data_dir = data_dir"'!'"data_dir = ${INSTANCE_PATH}/data_dir"'!g
+        s!'"db_password = odoo"'!'"db_password = ${DBPW}"'!g
+        s!'"db_user = odoo"'!'"db_user = ${DBUSER}"'!g
+        s!'"logfile = None"'!'"logfile = ${INSTANCE_LOGFILE}"'!g
+        s!'"logrotate = False"'!'"logrotate = True"'!g
+        s!'"longpolling_port = 8072"'!'"longpolling_port = ${BASEPORT}72"'!g
+        s!'"xmlrpc_port = 8069"'!'"xmlrpc_port = ${BASEPORT}69"'!g
+        s!'"xmlrpcs_port = 8071"'!'"xmlrpcs_port = ${BASEPORT}71"'!g
             }' ${INSTANCE_PATH}/TOOLS/server.conf > ${INSTANCE_PATH}/${TARGET_BRANCH}.conf | tee -a $INSTANCE_SETUPLOG
     chown root:root ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
     chmod ugo=r ${INSTANCE_PATH}/${TARGET_BRANCH}.conf
@@ -443,7 +453,8 @@ echo -e "\n----- SCRIPT USAGE -----"
 echo -e "$ odoo-tools.sh {prepare|setup|deploy|backup|restore} ...\n"
 echo -e "$ odoo-tools.sh prepare"
 echo -e "$ odoo-tools.sh setup   {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}"
-echo -e "$ odoo-tools.sh deploy  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
-echo -e "$ odoo-tools.sh backup  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all}"
-echo -e "$ odoo-tools.sh restore {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {DUMP_TO_RESTORE}"
+echo -e "TODO: $ odoo-tools.sh update  {TARGET_BRANCH}"
+echo -e "TODO: $ odoo-tools.sh deploy  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
+echo -e "TODO: $ odoo-tools.sh backup  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all}"
+echo -e "TODO: $ odoo-tools.sh restore {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {DUMP_TO_RESTORE}"
 echo -e "------------------------\n"

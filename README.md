@@ -3,13 +3,14 @@ This repo is used for production for odoo v8 installations. It is also the place
 odoo. The *master* branch of this repo is alway the deployable production ready branch. All branch names uploaded here
 have to follow this rules:
 
-- **dev-[module name OR feature name]** e.g.: *dev-ckeditor_advanced* = DEVELOPMENT
-- **fix-[ISSUE Number]** e.g.: *fix-1234*  = FIXES - (Make github Issue first!)
+- **dev_[module_name |feature_name | update_%Y%M%D]** e.g.: *dev_ckeditor_advanced* = DEVELOPMENT 
+    - Development of modules, fixes and just pure updates e.g. **dev_update20141203**
+- **fix_[ISSUE Number]** e.g.: *fix_1234*  = FIXES - (Make github Issue first!)
 - **cus_[customer id]** e.g.: *cus_hof* = CUSTOMER - (**Attention: underscore! not -**)
 
 Customer specific developments and fixes work like 
-- **cus_hof-dev-ckeditor_advanced**
-- **cus_hof-fix-3425**
+- **cus_hof-dev_ckeditor_advanced**
+- **cus_hof-fix_3425**
 
 
 ## GOALS
@@ -55,7 +56,12 @@ To use this branch for development use this workflow:
 
 ```bash
 # 1.) Clone the repo odoo_v8 branch master locally:
-git clone -b master --depth 1 --single-branch --recurse-submodules https://github.com/OpenAT/odoo_v8.0.git [instance_dir]
+git clone -b master --recurse-submodules https://github.com/OpenAT/odoo_v8.0.git ${instance_dir}
+
+# Tip if you want to speed up download you could also do this:
+git clone -b master https://github.com/OpenAT/odoo_v8.0.git ${instance_dir}
+cd ${instance_dir}
+git submodule update --init --recursive --depth 1
 
 # Check if the upstream (remote) is set correctly for the master branch
 git branch -vv
@@ -143,3 +149,4 @@ This is for now only a placeholder but will describe the update process of a cus
 
 #### BASH Scripting
 - [if conditions](http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html)
+- [sed](http://wiki.ubuntuusers.de/sed)
