@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          TARGET_BRANCH-pad
+# Provides:          DBNAME-pad
 # Required-Start:    $local_fs $remote_fs $network $syslog
 # Required-Stop:     $local_fs $remote_fs $network $syslog
 # Default-Start:     2 3 4 5
@@ -11,14 +11,13 @@
 ### END INIT INFO
 
 PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/node/bin:"
-LOGFILE="PADLOG"
 EPLITE_DIR="INSTANCE_PATH/etherpad-lite"
 EPLITE_BIN="bin/run.sh"
 DAEMON_OPTS="-s PADCONF PADLOG"
 USER="DBUSER"
 GROUP="DBUSER"
-DESC="Etherpad-Lite for TARGET_BRANCH"
-NAME="TARGET_BRANCH-pad"
+DESC="Etherpad-Lite for DBNAME"
+NAME="DBNAME-pad"
 
 echo -e "Starting $NAME with options $DAEMON_OPTS"
 

@@ -121,9 +121,18 @@ This is for now only a placeholder but will describe the update process of a cus
 - http://stackoverflow.com/questions/9377402/insert-into-many-to-many-openerp/9387447#9387447
 
 #### Other odoo Tools and Docs
-- http://erppeek.readthedocs.org/en/latest/index.html
+- [carddav for odoo](https://github.com/initOS/openerp-dav)
 - http://odoohub.wordpress.com/2014/08/15/where-is-the-odoo-documentation/
 - http://djpatelblog.blogspot.in/2014/09/odoo-new-api-recordsets.html
+- [db_filter parameter](https://www.odoo.com/forum/help-1/question/domain-based-db-filter-6583)
+
+#### XMLRPC, ErpPeek, Connector ...
+- [XMLRPC and erppeek by wirtel](http://wirtel.be/posts/en/2014/06/13/using_erppeek_to_discuss_with_openerp/)
+- [erppeek](http://erppeek.readthedocs.org/en/latest/index.html)
+- [oerplib](https://github.com/osiell/oerplib)
+- [oerlib docu](https://pythonhosted.org/OERPLib/#supported-openerp-odoo-server-versions)
+- [xmlrpc lib docu](https://docs.python.org/2/library/xmlrpclib.html)
+- [odoo connector](http://odoo-connector.com)
 
 #### git, git workflow and github
 - [Github Rebase Workflow](http://mettadore.com/2011/09/07/the-ever-deployable-github-workflow/)
@@ -140,6 +149,7 @@ This is for now only a placeholder but will describe the update process of a cus
 - [odoo setup ubuntu 14 lts](https://www.odoo.com/forum/help-1/question/how-to-install-odoo-from-github-on-ubuntu-14-04-for-testing-purposes-only-ie-not-for-production-52627)
 
 #### Python, PIP, VirtualEnv
+- [PYTHON](https://www.python.org)
 - [PIP Docu](http://pip.readthedocs.org/en/latest/user_guide.html#requirements-files)
 
 #### BASH Scripting

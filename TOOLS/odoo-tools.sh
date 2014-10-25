@@ -3,6 +3,7 @@
 
 GITPATH="https://github.com/OpenAT"
 REPONAME="odoo_v8.0"
+REPOID="o8"
 SOURCE_REPO=${GITPATH}/${REPONAME}.git
 
 GITRAW="https://raw.githubusercontent.com/OpenAT/${REPONAME}/master"
@@ -240,32 +241,29 @@ fi
 
 
 # -----------------------------------------------------------------------
-# $ odoo-tools.sh setup {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}
+# $ odoo-tools.sh setup {TARGET_BRANCH}
 # -----------------------------------------------------------------------
 if [ "$SCRIPT_MODE" = "setup" ]; then
     echo -e "\n-----------------------------------------------------------------------"
-    echo -e " odoo-tools.sh setup {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}"
+    echo -e " odoo-tools.sh setup {TARGET_BRANCH}"
     echo -e "-----------------------------------------------------------------------"
     echo -e "You have to run \"odoo-tools.sh prepare\" before setting up your first instance!\n"
-    if [ $# -ne 4 ]; then
-        echo -e "ERROR: \"setup-toosl.sh prepare\" takes exactly four arguments!"
+    if [ $# -ne 3 ]; then
+        echo -e "ERROR: \"setup-toosl.sh setup\" takes exactly four arguments!"
         exit 2
     fi
 
-    # ----- Set CMD Variables
+    # ----- Set Variables
     TARGET_BRANCH=$2
-    SUPER_PASSWORD=$3
-    DOMAIN_NAME=$4
-
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
-    
+
     # ----- Check if the TARGET_BRANCH already exists
     if git ls-remote ${SOURCE_REPO} | grep -sw "${TARGET_BRANCH}" 2>&1>/dev/null; then
         echo "ERROR: ${TARGET_BRANCH} already exists in ${REPONAME}!"; exit 2
     fi    
 
     # ----- Create Instance Log File for SETUP
-    INSTANCE_SETUPLOG="${REPO_SETUPPATH}/setup--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
+    INSTANCE_SETUPLOG="${REPO_SETUPPATH}/${SCRIPT_MODE}--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
     if [ -w "${INSTANCE_SETUPLOG}" ] ; then
         echo -e "ERROR: ${INSTANCE_SETUPLOG} already exists!"
         exit 2
@@ -278,77 +276,16 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         fi
     fi
 
-    # ----- Prepare Log Directory and Variable
-    INSTANCE_LOGPATH="/var/log/${REPONAME}_${TARGET_BRANCH}"
-    INSTANCE_LOGFILE="${INSTANCE_LOGPATH}/${TARGET_BRANCH}.log"
-    if [ -d "${INSTANCE_LOGPATH}" ] ; then
-        echo -e "ERROR: ${INSTANCE_LOGPATH} already exists!"
-        exit 2
-    else
-        if  mkdir ${INSTANCE_LOGPATH} 2>&1>/dev/null; then
-            echo -e "Log Directory ${INSTANCE_LOGPATH} created."
-        else
-            echo -e "ERROR: Could not create log directory ${INSTANCE_LOGPATH}!"
-            exit 2
-        fi
-    fi
-    chown ${DBUSER}:${DBUSER} ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
-    chmod ug=rw ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
-    chmod o=r ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
-
-    # ---- Set BASEPORT
-    COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
-    if [ -f ${COUNTERFILE} ]; then
-        echo -e "File ${COUNTERFILE} exists."
-    else
-        if  touch ${COUNTERFILE} 2>&1>/dev/null; then
-            # Port Schema for odoo [0][00][00]
-            # [0]=Odoo_Version_Start [00-99]=Local_Instances [00-99]=Instance_Services
-            #
-            # [0] = Odoo Versions:
-            #       4 = odoo OLD setups 6or7 old install
-            #       1 = odoo 8 (=99 Instancen pro Server) e.g.: 10069 or 12369
-            #       2 = odoo 9
-            #       3 = odoo 10 usw e.g.: 30069
-            #
-            # Highest Linux Port Number (2^16)-1, or 0-65,535 (the -1 is because port 0 is reserved and unavailable)
-            echo -e "100" > ${COUNTERFILE};
-            echo -e "File ${COUNTERFILE} created."
-        else
-            echo -e "ERROR: Could not create file ${COUNTERFILE}!"
-            exit 2
-        fi
-    fi
-    typeset -i BASEPORT
-    BASEPORT=`cat ${COUNTERFILE}`+1
-    if [ ${BASEPORT} -lt 10 ]; then
-        echo echo -e "ERROR: Could not Update ${BASEPORT}!"
-        exit 2
-    fi
-    echo $BASEPORT > ${COUNTERFILE}
-
-    # ----- Basic Variables
-    DBUSER="${TARGET_BRANCH}"
-    DBPW=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 8 | head -1`
-    ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
-
     # ----- Allow the user to check all arguments:
     echo -e ""
     echo -e "\$1 Script Mode                    :  $SCRIPT_MODE" | tee -a $INSTANCE_SETUPLOG
     echo -e "\$2 Target Branch                  :  $TARGET_BRANCH" | tee -a $INSTANCE_SETUPLOG
-    echo -e "\$3 Super Password                 :  $SUPER_PASSWORD" | tee -a $INSTANCE_SETUPLOG
-    echo -e "\$4 Domain Name                    :  $DOMAIN_NAME" | tee -a $INSTANCE_SETUPLOG
     echo -e ""
     echo -e "Instance Setuplog File            :  $INSTANCE_SETUPLOG" | tee -a $INSTANCE_SETUPLOG
     echo -e ""
-    echo -e "Instance Instance Name            :  $TARGET_BRANCH" | tee -a $INSTANCE_SETUPLOG
+    echo -e "Instance Branch Name              :  $TARGET_BRANCH" | tee -a $INSTANCE_SETUPLOG
     echo -e "Instance Base Directory           :  $INSTANCE_PATH" | tee -a $INSTANCE_SETUPLOG
-    echo -e "Instance Logfile                  :  $INSTANCE_LOGFILE" | tee -a $INSTANCE_SETUPLOG
-    echo -e "Instance Baseport                 :  $BASEPORT" | tee -a $INSTANCE_SETUPLOG
-    echo -e "Instance Database User Name       :  $DBUSER" | tee -a $INSTANCE_SETUPLOG
-    echo -e "Instance Database User Password   :  $DBPW" | tee -a $INSTANCE_SETUPLOG
-    echo -e "Instance LINUX User               :  $DBUSER" | tee -a $INSTANCE_SETUPLOG
-    echo -e "Instance Etherpad SESSION KEY     :  $ETHERPADKEY" | tee -a $INSTANCE_SETUPLOG
+    echo -e "Instance LINUX User               :  $TARGET_BRANCH" | tee -a $INSTANCE_SETUPLOG
     echo -e ""
     echo -e "Would you like to setup a new odoo instance with this settings? ( Y/N ): "; read answer
     if [ "${answer}" != "Y" ]; then
@@ -357,7 +294,6 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
                 echo "SETUP APPORTED: EXITING SCRIPT!"
                 rm ${INSTANCE_SETUPLOG}
                 rm -r ${INSTANCE_PATH}
-                rm -r ${INSTANCE_LOGPATH}
                 exit 1
             fi
             echo "Please enter Y (Yes) or N (No)"; read answer
@@ -375,7 +311,6 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
         echo -e "\nERROR: Cloning the github repo failed!\n"; exit 2
     fi
 
-
     # ----- ToDo: install our instance in virtualenv environment
     #virtualenv ${INSTANCE_PATH}/VIRTUALENV
     #source ${INSTANCE_PATH}/VIRTUALENV/bin/activate
@@ -390,103 +325,281 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # https://www.digitalocean.com/community/tutorials/common-python-tools-using-virtualenv-installing-with-pip-and-managing-packages
     # http://wiki.ubuntuusers.de/virtualenv
 
-
     # ----- Setup the Linux User and Group
-    echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
-    useradd -m -s /bin/bash ${DBUSER} | tee -a $INSTANCE_SETUPLOG
+    echo -e "\n----- Create Instance Linux User and Group: ${TARGET_BRANCH}"
+    useradd -m -s /bin/bash ${TARGET_BRANCH} | tee -a $INSTANCE_SETUPLOG
 
-    # ----- Set correct Rights
-    chown -R ${DBUSER}:${DBUSER} ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
+    # ----- Set Linux Rights
+    chown -R ${TARGET_BRANCH}:${TARGET_BRANCH} ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
     chmod 755 ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
-    chown -R ${DBUSER}:${DBUSER} ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
-    chmod 755 ${INSTANCE_LOGPATH} >> $INSTANCE_SETUPLOG
+
+    echo -e "-------------------------------------------------------------------------"
+    echo -e " odoo-tools.sh setup {TARGET_BRANCH} DONE"
+    echo -e "-------------------------------------------------------------------------"
+    echo -e "\n!!!PLEASE UPLOAD YOUR INSTANCE TO GITHUB NOW!!!\ngit push origin $TARGET_BRANCH"
+    exit 0
+fi
+
+
+# ---------------------------------------------------------------------------------------
+# $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}
+# ---------------------------------------------------------------------------------------
+if [ "$SCRIPT_MODE" = "newdb" ]; then
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " odoo-tools.sh newdb {TARGET_BRANCH (=InstanceName)} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    echo -e "DATABASE_NAME should be something like: hof, hof_demo, hof_test ... !"
+    echo -e "So customer_id (hof) and maybe \"_\" something if more than one db for this customer is needed!"
+    if [ $# -ne 5 ]; then
+        echo -e "ERROR: \"setup-toosl.sh newdb\" takes exactly four arguments!"
+        exit 2
+    fi
+
+    # INFO:
+    #
+    # Variable Names:
+    # If it is a path usw no trailing "/" and use PATH in the variable_name:
+    # So variables without PATH can be anything including files e.g. DB_SETUPLOG
+    #
+    # Conventions:
+    # Use $REPOID (o8) for odoo_v8.0 in DBNAME to identify corresponding Repo in case other repos (_v7.0) are installed
+    # on this server too. o8_ is used because postgres user- and db-names should only contain a-z 0-9 and _
+    #
+    # One repo can only be installed once on a server (but with many instances)
+    #
+    # max 99 Databases are allowed for all databases of all instances of one repo on this server because of port limit
+    # see BASEPORT later down
+    #
+    # New Port Schema:
+    # [v][dd][pp]    [v]=Odoo_Version [dd]=Database    [pp]=Instance_Services
+    #  e.g.: 10169 = [1]=odoo_v8.0    [01]=database_01 [69]=port_69
+    # [0]=Odoo Versions:
+    #       4 = odoo OLD setups 6or7 old install
+    #       1 = odoo v8.0
+    #       2 = odoo v9.0
+    #
+    # Highest Linux Port Number (2^16)-1, or 0-65,535 (the -1 is because port 0 is reserved and unavailable)
+
+    # ----- Set Variables
+    TARGET_BRANCH=$2
+    SUPER_PASSWORD=$3
+    DOMAIN_NAME=$4
+
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+
+    DBNAME="${REPOID}_${TARGET_BRANCH}_$5"
+    DBUSER="${DBNAME}"
+    DBPW=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 8 | head -1`
+
+    DBPATH="${INSTANCE_PATH}/${DBNAME}"
+    DBLOGPATH="/var/log/${DBNAME}"
+    DBLOGFILE="${DBLOGPATH}/${DBNAME}.log"
+    DB_SETUPLOG="${DBPATH}/{$SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
+
+    ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
+
+    # ----- TODO: Allow only lowercase a-z and 0-9 and _ in TARGET_BRANCH and DATABASE_NAME ($5) or exit 2
+    # Target_Branch should be already checked at odoo-tools.sh setup
+    # Maybe we only check DBNAME because everything is in there
+
+    # ----- TODO: Check if the database name already exists (and exit with error if yes)
+
+    # ----- Check if the TARGET_BRANCH (Instance) directory exists
+    if ! [ -d ${INSTANCE_PATH} ]; then
+        echo -e "ERROR: Instance Directory ${INSTANCE_PATH} is missing!"; exit 2
+    fi
+
+    # ----- Create base directory for the new database
+    if [ -d "${DBPATH}" ]; then
+        echo -e "ERROR: ${DBPATH} already exists!"; exit 2
+    else
+        if  mkdir ${DBPATH} 2>&1>/dev/null; then
+            echo -e "Database Directory ${DBPATH} created."
+        else
+            echo -e "ERROR: Could not create directory ${DBPATH}!"; exit 2
+        fi
+    fi
+
+    # ----- Create odoo addons directory for the new database
+    DBADDONSPATH="${DBPATH}/addons"
+    if  mkdir ${DBADDONSPATH} 2>&1>/dev/null; then
+        echo -e "Database odoo addons Directory ${DBADDONSPATH} created."
+    else
+        echo -e "ERROR: Could not create directory ${DBADDONSPATH}!"; exit 2
+    fi
+
+    # ----- Create log directory
+    if  mkdir ${DBLOGPATH} 2>&1>/dev/null; then
+        echo -e "Database Log Directory ${DBLOGPATH} created."
+    else
+        echo -e "ERROR: Could not create directory ${DBLOGPATH}!"; exit 2
+    fi
+
+    # ----- Create setup (newdb) log file (Log from here on)
+    if [ -w "${DB_SETUPLOG}" ] ; then
+        echo -e "ERROR: ${DB_SETUPLOG} already exists!"; exit 2
+    else
+        if  touch ${DB_SETUPLOG} 2>&1>/dev/null; then
+            echo -e "DB setup log file ${DB_SETUPLOG} created.\nUse tail -f ${DB_SETUPLOG} during install."
+        else
+            echo -e "ERROR: Could not create log file ${DB_SETUPLOG}!"; exit 2
+        fi
+    fi
+
+    # ----- Set Linux Rights
+    chown -R ${TARGET_BRANCH}:${TARGET_BRANCH} ${DBPATH} >> $DB_SETUPLOG
+    chmod 755 ${DBPATH} >> $DB_SETUPLOG
+    chown -R ${TARGET_BRANCH}:${TARGET_BRANCH} ${DBLOGPATH} >> $DB_SETUPLOG
+    chmod 777 ${DBLOGPATH} >> $DB_SETUPLOG
+
+    # ---- Read (or set) and increment BASEPORT
+    COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
+    if [ -f ${COUNTERFILE} ]; then
+        echo -e "File ${COUNTERFILE} exists."
+    else
+        if  touch ${COUNTERFILE} 2>&1>/dev/null; then
+            # SEE INFO ABOVE!
+            echo -e "100" > ${COUNTERFILE};
+            echo -e "File ${COUNTERFILE} created."
+        else
+            echo -e "ERROR: Could not create file ${COUNTERFILE}!"
+            exit 2
+        fi
+    fi
+    typeset -i BASEPORT
+    BASEPORT=`cat ${COUNTERFILE}`+1
+    if [ ${BASEPORT} -lt 100 ]; then
+        echo echo -e "ERROR: Could not update or read BASEPORT (${BASEPORT}) !"; exit 2
+    fi
+    echo ${BASEPORT} > ${COUNTERFILE}
+
+    # ----- Allow the user to check all arguments:
+    echo -e ""
+    echo -e "\$1 Script Mode                    :  $SCRIPT_MODE" | tee -a $DB_SETUPLOG
+    echo -e "\$2 TARGET_BRANCH                  :  $TARGET_BRANCH" | tee -a $DB_SETUPLOG
+    echo -e "\$3 SUPER_PASSWORD                 :  $SUPER_PASSWORD" | tee -a $DB_SETUPLOG
+    echo -e "\$4 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a $DB_SETUPLOG
+    echo -e "\$5 DATABASE_NAME                  :  $5" | tee -a $DB_SETUPLOG
+    echo -e ""
+    echo -e "Database Setup Log File           :  $DB_SETUPLOG" | tee -a $DB_SETUPLOG
+    echo -e ""
+    echo -e "Database FINAL Name               :  $DBNAME" | tee -a $DB_SETUPLOG
+    echo -e "Database Directory                :  $DBPATH" | tee -a $DB_SETUPLOG
+    echo -e "Database Logfile                  :  $DBLOGFILE" | tee -a $DB_SETUPLOG
+    echo -e "Database Baseport                 :  $BASEPORT" | tee -a $DB_SETUPLOG
+    echo -e "Database Database User Name       :  $DBUSER" | tee -a $DB_SETUPLOG
+    echo -e "Database Database User Password   :  $DBPW" | tee -a $DB_SETUPLOG
+    echo -e "Database LINUX User               :  $TARGET_BRANCH" | tee -a $DB_SETUPLOG
+    echo -e "Database Etherpad SESSION KEY     :  $ETHERPADKEY" | tee -a $DB_SETUPLOG
+    echo -e ""
+    echo -e "ATTENTION: The password for the admin user of the new database will be \"adminpw\"!\n"
+    echo -e "Would you like to setup a new odoo database ${DBNAME} at ${DBPATH} with this settings?"
+    echo -e "Please enter Y (Yes) or N (No):"; read answer
+    if [ "${answer}" != "Y" ]; then
+        while [ "${answer}" != "Y" ]; do
+            if [ "${answer}" == "n" ] || [ "${answer}" == "N" ]; then
+                echo "SETUP APPORTED: EXITING SCRIPT!"
+                echo -e "Removing directory ${DBLOGPATH}"
+                rm -r ${DBLOGPATH}
+                echo -e "Removing directory ${DBPATH}"
+                rm -r ${DBPATH}
+                BASEPORT=${BASEPORT}-1
+                echo -e "Resetting BASEPORT to: ${BASEPORT}"
+                echo ${BASEPORT} > ${COUNTERFILE}
+                exit 1
+            fi
+            echo "Please enter Y (Yes) or N (No): "; read answer
+        done
+    fi
+
 
     # ----- Create Database User
     echo -e "\n---- Create postgresql role $DBUSER"
     sudo su - postgres -c \
-        'psql -a -e -c "CREATE ROLE '${DBUSER}' WITH NOSUPERUSER CREATEDB LOGIN PASSWORD '\'${DBPW}\''"' | tee -a $INSTANCE_SETUPLOG
+        'psql -a -e -c "CREATE ROLE '${DBUSER}' WITH NOSUPERUSER CREATEDB LOGIN PASSWORD '\'${DBPW}\''"' | tee -a $DB_SETUPLOG
 
     # ----- Create server.conf
-    INSTANCECONF=${INSTANCE_PATH}/${TARGET_BRANCH}.conf
-    echo -e "\n---- Create odoo server config in: ${INSTANCE_PATH}/${TARGET_BRANCH}.conf"
+    DBCONF=${DBPATH}/${DBNAME}.conf
+    echo -e "\n---- Create DB odoo server config file: ${DBCONF}"
     /bin/sed '{
-        s!'"addons_path = odoo/openerp/addons,odoo/addons,addons-loaded"'!'"addons_path = ${INSTANCE_PATH}/odoo/openerp/addons,${INSTANCE_PATH}/odoo/addons,${INSTANCE_PATH}/addons-loaded"'!g
+        s!'"addons_path = odoo/openerp/addons,odoo/addons,addons-loaded"'!'"addons_path = ${INSTANCE_PATH}/odoo/openerp/addons,${INSTANCE_PATH}/odoo/addons,${INSTANCE_PATH}/addons-loaded,${DBADDONSPATH}"'!g
         s!'"admin_passwd = admin"'!'"admin_passwd = ${SUPER_PASSWORD}"'!g
-        s!'"data_dir = data_dir"'!'"data_dir = ${INSTANCE_PATH}/data_dir"'!g
+        s!'"data_dir = data_dir"'!'"data_dir = ${DBPATH}/data_dir"'!g
         s!'"db_password = odoo"'!'"db_password = ${DBPW}"'!g
         s!'"db_user = odoo"'!'"db_user = ${DBUSER}"'!g
-        s!'"logfile = None"'!'"logfile = ${INSTANCE_LOGFILE}"'!g
+        s!'"logfile = None"'!'"logfile = ${DBLOGFILE}"'!g
         s!'"logrotate = False"'!'"logrotate = True"'!g
         s!'"longpolling_port = 8072"'!'"longpolling_port = ${BASEPORT}72"'!g
         s!'"xmlrpc_port = 8069"'!'"xmlrpc_port = ${BASEPORT}69"'!g
         s!'"xmlrpcs_port = 8071"'!'"xmlrpcs_port = ${BASEPORT}71"'!g
-            }' ${INSTANCE_PATH}/TOOLS/server.conf > ${INSTANCECONF} | tee -a $INSTANCE_SETUPLOG
-    chown root:root ${INSTANCECONF}
-    chmod ugo=r ${INSTANCECONF}
+        }' ${INSTANCE_PATH}/TOOLS/server.conf > ${DBCONF} | tee -a $DB_SETUPLOG
+    chown root:root ${DBCONF}
+    chmod ugo=r ${DBCONF}
+
 
     # ----- Create the Init Script for odoo
     echo -e "\n---- Setup init.d for instance: ${INSTANCE_PATH}/${TARGET_BRANCH}.init"
-    INSTANCEINIT=${INSTANCE_PATH}/${TARGET_BRANCH}.init
+    DBINIT=${DBPATH}/${DBNAME}.init
     /bin/sed '{
-        s,DBUSER,'"$DBUSER"',g
-        s,TARGET_BRANCH,'"$TARGET_BRANCH"',g
-        s,INSTANCE_PATH,'"$INSTANCE_PATH"',g
-            }' ${INSTANCE_PATH}/TOOLS/server.init > ${INSTANCEINIT} | tee -a $INSTANCE_SETUPLOG
-    chown root:root ${INSTANCEINIT}
-    chmod ugo=rx ${INSTANCEINIT}
-    ln -s ${INSTANCEINIT} /etc/init.d/${TARGET_BRANCH} | tee -a $INSTANCE_SETUPLOG
-    update-rc.d ${TARGET_BRANCH} defaults | tee -a $INSTANCE_SETUPLOG
-    service ${TARGET_BRANCH} start | tee -a $INSTANCE_SETUPLOG
+        s!'"DAEMON=INSTANCE_PATH/odoo/openerp-server"'!'"DAEMON=${INSTANCE_PATH}/odoo/openerp-server"'!g
+        s!'"USER="'!'"USER=${TARGET_BRANCH}"'!g
+        s!'"CONFIGFILE="'!'"CONFIGFILE=${DBCONF}"'!g
+        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-c ${DBCONF} -d ${DBNAME}\""'!g
+        s!DBNAME!'"$DBNAME"'!g
+        }' ${INSTANCE_PATH}/TOOLS/server.init > ${DBINIT} | tee -a $DB_SETUPLOG
+    chown root:root ${DBINIT}
+    chmod ugo=rx ${DBINIT}
+    ln -s ${DBINIT} /etc/init.d/${DBNAME} | tee -a $DB_SETUPLOG
+    update-rc.d ${DBNAME} defaults | tee -a $DB_SETUPLOG
+    service ${DBNAME} start | tee -a $DB_SETUPLOG
 
-    # ----- Create Log Folder and link serverlog
-    echo -e "----- Create LOG Folder for log links"
-    LOGLINKSPATH=${INSTANCE_PATH}/LOG
-    if  mkdir ${LOGLINKSPATH} 2>&1>/dev/null; then
-        echo -e "Created directory ${LOGLINKSPATH}"
+    # ----- Create a new Database
+    echo -e "\n----- Create Database ${DBNAME}"
+    chmod 775 ${INSTANCE_PATH}/TOOLS/create_db.py
+    if ${INSTANCE_PATH}/TOOLS/create_db.py -b ${BASEPORT}69 -s $SUPER_PASSWORD -d $DBNAME -p adminpw ; then
+        echo -e "Database created!" | tee -a $DB_SETUPLOG
     else
-        echo -e "\nWARNING: Could not create directory ${LOGLINKSPATH}!\n"
+        echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" | tee -a $DB_SETUPLOG
     fi
-    chmod 755 ${LOGLINKSPATH}
 
-    echo -e "\n---- Link ${INSTANCE_LOGPATH} to  ${INSTANCE_PATH}/LOG"
-    ln -s ${INSTANCE_LOGFILE} ${LOGLINKSPATH}/
-
+    # ----- Link Log Folder
+    echo -e "\n---- Link ${DBLOGPATH} to ${DBPATH}/LOG"
+    ln -s ${DBLOGPATH} ${DBPATH}/LOG | tee -a $DB_SETUPLOG
 
     # ----- Setup nginx
     echo -e "---- Create NGINX config file"
-    NGINXCONF=${INSTANCE_PATH}/${TARGET_BRANCH}-nginx.conf
+    NGINXCONF=${DBPATH}/${DBNAME}-nginx.conf
     /bin/sed '{
-        s,BASEPORT,'"${BASEPORT}"',g
-        s,TARGET_BRANCH,'"${TARGET_BRANCH}"',g
-        s,DOMAIN_NAME,'"${DOMAIN_NAME}"',g
-            }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a $INSTANCE_SETUPLOG
+        s!BASEPORT!'"${BASEPORT}"'!g
+        s!DBNAME!'"${DBNAME}"'!g
+        s!DOMAIN_NAME!'"${DOMAIN_NAME}"'!g
+        s!DBLOGPATH!'"${DBLOGPATH}"'!g
+            }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a $DB_SETUPLOG
     chown root:root ${NGINXCONF}
     chmod ugo=r ${NGINXCONF}
-    ln -s ${NGINXCONF}  /etc/nginx/sites-enabled/${TARGET_BRANCH}-${DOMAIN_NAME}
+    ln -s ${NGINXCONF}  /etc/nginx/sites-enabled/${DBNAME}-${DOMAIN_NAME}
     service nginx restart
-    ln -s /var/log/nginx/${TARGET_BRANCH}-nginx-access.log ${INSTANCE_LOGFILE} ${LOGLINKSPATH}/
-    ln -s /var/log/nginx/${TARGET_BRANCH}-nginx-error.log ${INSTANCE_LOGFILE} ${LOGLINKSPATH}/
     echo -e "---- Create NGINX config file DONE"
 
     # ----- Setup Etherpad-Lite
     echo -e "---- Setup Etherpad-Lite"
-    PADLOG=${INSTANCE_LOGPATH}/${TARGET_BRANCH}-pad.log
-    PADCONF=${INSTANCE_PATH}/${TARGET_BRANCH}-pad.conf
-    PADINIT=${INSTANCE_PATH}/${TARGET_BRANCH}-pad.init
+    PADLOG=${DBLOGPATH}/${DBNAME}-pad.log
+    PADCONF=${DBPATH}/${DBNAME}-pad.conf
+    PADINIT=${DBPATH}/${DBNAME}-pad.init
     # Create the etherpad database (utf8)
-    echo -e "Create DB for etherpad lite: ${TARGET_BRANCH}_pad Owner: ${DBUSER}"
+    echo -e "Create DB for etherpad lite: ${DBNAME}_pad Owner: ${DBUSER}"
     sudo su - postgres -c \
-        'psql -a -e -c "CREATE DATABASE '${TARGET_BRANCH}'_pad WITH OWNER '${DBUSER}' ENCODING '\'UTF8\''" ' | tee -a $INSTANCE_SETUPLOG
+        'psql -a -e -c "CREATE DATABASE '${DBNAME}'_pad WITH OWNER '${DBUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
     # etherpad-lite config file
     echo -e "Create etherpad config file"
     /bin/sed '{
-        s,BASEPORT,'"$BASEPORT"',g
-        s,SUPER_PASSWORD,'"$SUPER_PASSWORD"',g
-        s,DBUSER,'"$DBUSER"',g
-        s,DBPW,'"$DBPW"',g
-        s,TARGET_BRANCH,'"$TARGET_BRANCH"',g
-        s,ETHERPADKEY,'"$ETHERPADKEY"',g
-        }' ${INSTANCE_PATH}/TOOLS/etherpad.conf > ${PADCONF} | tee -a $INSTANCE_SETUPLOG
+        s!BASEPORT!'"$BASEPORT"'!g
+        s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
+        s!DBUSER!'"$DBUSER"'!g
+        s!DBPW!'"$DBPW"'!g
+        s!DBNAME!'"$DBNAME"'!g
+        s!ETHERPADKEY!'"$ETHERPADKEY"'!g
+        }' ${INSTANCE_PATH}/TOOLS/etherpad.conf > ${PADCONF} | tee -a $DB_SETUPLOG
     chown root:root ${PADCONF}
     chmod ugo=r ${PADCONF}
     # etherpad-lite init file
@@ -494,45 +607,42 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # Logfiles are set in init not in conf ;)
     echo -e "Create etherpad init file and start service"
     /bin/sed '{
-        s,DBUSER,'"$DBUSER"',g
-        s,INSTANCE_PATH,'"$INSTANCE_PATH"',g
-        s,TARGET_BRANCH,'"$TARGET_BRANCH"',g
-        s,PADLOG,'"$PADLOG"',g
-        s,PADCONF,'"$PADCONF"',g
-        }' ${INSTANCE_PATH}/TOOLS/etherpad.init > ${PADINIT} | tee -a $INSTANCE_SETUPLOG
+        s!DBUSER!'"$DBUSER"'!g
+        s!INSTANCE_PATH!'"$INSTANCE_PATH"'!g
+        s!DBNAME!'"$DBNAME"'!g
+        s!PADLOG!'"$PADLOG"'!g
+        s!PADCONF!'"$PADCONF"'!g
+        }' ${INSTANCE_PATH}/TOOLS/etherpad.init > ${PADINIT} | tee -a $DB_SETUPLOG
     chown root:root ${PADINIT}
     chmod ugo=rx ${PADINIT}
-    ln -s ${PADINIT} /etc/init.d/${TARGET_BRANCH}-pad | tee -a $INSTANCE_SETUPLOG
-    update-rc.d ${TARGET_BRANCH}-pad defaults | tee -a $INSTANCE_SETUPLOG
-    service ${TARGET_BRANCH}-pad start
-    # Link logfile
-    ln -s ${PADLOG} ${LOGLINKSPATH}/
+    ln -s ${PADINIT} /etc/init.d/${DBNAME}-pad | tee -a $DB_SETUPLOG
+    update-rc.d ${DBNAME}-pad defaults | tee -a $DB_SETUPLOG
+    service ${DBNAME}-pad start
 
     # TODO ----- Setup cron Logrotate for all Logfiles
+
     # TODO ----- Setup cron backup script(s)
 
-    # Maybe: Test URL to database - should work with v8.0
-    echo -e "-------------------------------------------------------------------------"
-    echo -e " odoo-tools.sh setup {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} DONE"
-    echo -e "-------------------------------------------------------------------------"
-
-    echo -e "\nAfter Install you should follow these steps:"
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " odoo-tools.sh newdb {TARGET_BRANCH (=InstanceName)} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME} DONE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    echo -e "\nAfter database install you should follow these steps:"
     echo -e ""
-    echo -e "1) Open http://$DOMAIN_NAME/web/database/manager and create the DB: $TARGET_BRANCH (Master Password is $SUPER_PASSWORD)."
-    echo -e "2) Install the addon base_config in your new DB $TARGET_BRANCH."
+    echo -e "1) Open http://$DOMAIN_NAME (admin password is \"adminpw\")."
+    echo -e "2) Install the addon base_config in your new DB $DBNAME."
     echo -e "3) During install of base_config select austrian-chart-of-account and 20%-Mwst and 20%-Vst."
     echo -e "4) After install set time period to month for HR."
-    echo -e "5) Enable Colaborative Pads at URL http://$DOMAIN_NAME/$TARGET_BRANCH-pad with PWD: $SUPER_PASSWORD"
+    echo -e "5) Enable Colaborative Pads at URL http://$DOMAIN_NAME/pad with PWD: $SUPER_PASSWORD"
     echo -e "   You will find the API-KEY at: $INSTANCE_PATH/etherpad-lite/APIKEY.txt"
     echo -e "   ATTENTION: First start of etherpad-lite takes a long time. Be patient - APIKEY will show up after first start!"
     echo -e "\n Optional:"
     echo -e "1) Set Company Details"
     echo -e "2) Set Timezone, Signature and Mail-Options for Admin and Default user"
     echo -e "3) Set RealTime Warehouse Accounts and Settings for Product Categories."
-
-    echo -e "\n!!!PLEASE UPLOAD YOUR INSTANCE TO GITHUB NOW!!!\ngit push origin $TARGET_BRANCH"
     exit 0
 fi
+
+
 
 # ---------------------------------------------------------
 # Script HELP
@@ -541,6 +651,7 @@ echo -e "\n----- SCRIPT USAGE -----"
 echo -e "$ odoo-tools.sh {prepare|setup|deploy|backup|restore} ...\n"
 echo -e "$ odoo-tools.sh prepare"
 echo -e "$ odoo-tools.sh setup   {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}"
+echo -e "$ odoo-tools.sh newdb   {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}"
 echo -e "TODO: $ odoo-tools.sh update  {TARGET_BRANCH}"
 echo -e "TODO: $ odoo-tools.sh deploy  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $ odoo-tools.sh backup  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all}"

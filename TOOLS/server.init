@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### BEGIN INIT INFO
-# Provides:             TARGET_BRANCH
+# Provides:             DBNAME
 # Required-Start:       $remote_fs $syslog $postgresql
 # Required-Stop:        $remote_fs $syslog $postgresql
 # Should-Start:         $network
@@ -12,22 +12,22 @@
 # Description:          odoo is a complete ERP, CRM and WEB-CMS.
 ### END INIT INFO
 
-PATH=/bin:/sbin:/usr/bin
+PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/node/bin:"
 DAEMON=INSTANCE_PATH/odoo/openerp-server
-NAME=TARGET_BRANCH
-DESC=TARGET_BRANCH
+NAME=DBNAME
+DESC=DBNAME
 
 # Specify the user name
-USER=DBUSER
+USER=
 
 # Specify an alternate server config file
-CONFIGFILE="INSTANCE_PATH/TARGET_BRANCH.conf"
+CONFIGFILE=
 
 # pidfile
 PIDFILE=/var/run/$NAME.pid
 
 # Additional options that are passed to the Daemon.
-DAEMON_OPTS="-c $CONFIGFILE"
+DAEMON_OPTS=
 
 echo "Daemon: $DAEMON"
 echo "Config: $CONFIGFILE"
