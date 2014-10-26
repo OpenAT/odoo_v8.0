@@ -248,8 +248,8 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     echo -e " odoo-tools.sh setup {TARGET_BRANCH}"
     echo -e "-----------------------------------------------------------------------"
     echo -e "You have to run \"odoo-tools.sh prepare\" before setting up your first instance!\n"
-    if [ $# -ne 3 ]; then
-        echo -e "ERROR: \"setup-toosl.sh setup\" takes exactly four arguments!"
+    if [ $# -ne 2 ]; then
+        echo -e "ERROR: \"setup-toosl.sh setup\" takes exactly two arguments!"
         exit 2
     fi
 
@@ -302,7 +302,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
 
     # ----- Clone the Github Repo (Directory created here first!)
     echo -e "\n---- Clone the Github Repo ${REPONAME}"
-    git clone -b master --recurse-submodules \
+    git clone -b masterg --recurse-submodules \
         ${SOURCE_REPO} ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
     cd ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
     git branch ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
@@ -394,7 +394,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DBPATH="${INSTANCE_PATH}/${DBNAME}"
     DBLOGPATH="/var/log/${DBNAME}"
     DBLOGFILE="${DBLOGPATH}/${DBNAME}.log"
-    DB_SETUPLOG="${DBPATH}/{$SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
+    DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
 
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
 
@@ -552,6 +552,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     ln -s ${DBINIT} /etc/init.d/${DBNAME} | tee -a $DB_SETUPLOG
     update-rc.d ${DBNAME} defaults | tee -a $DB_SETUPLOG
     service ${DBNAME} start | tee -a $DB_SETUPLOG
+    echo -e "Wait 8s for service ${DBNAME} to start..."
+    sleep 8
 
     # ----- Create a new Database
     echo -e "\n----- Create Database ${DBNAME}"
@@ -594,6 +596,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "Create etherpad config file"
     /bin/sed '{
         s!BASEPORT!'"$BASEPORT"'!g
+        s!TARGET_BRANCH!'"$TARGET_BRANCH"'!g
         s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
         s!DBUSER!'"$DBUSER"'!g
         s!DBPW!'"$DBPW"'!g
@@ -650,9 +653,9 @@ fi
 echo -e "\n----- SCRIPT USAGE -----"
 echo -e "$ odoo-tools.sh {prepare|setup|deploy|backup|restore} ...\n"
 echo -e "$ odoo-tools.sh prepare"
-echo -e "$ odoo-tools.sh setup   {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}"
+echo -e "$ odoo-tools.sh setup   {TARGET_BRANCH}"
 echo -e "$ odoo-tools.sh newdb   {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}"
-echo -e "TODO: $ odoo-tools.sh update  {TARGET_BRANCH}"
+echo -e "TODO: $ odoo-tools.sh update  {TARGET_BRANCH} {DATABASE_NAME}"
 echo -e "TODO: $ odoo-tools.sh deploy  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $ odoo-tools.sh backup  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all}"
 echo -e "TODO: $ odoo-tools.sh restore {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {DUMP_TO_RESTORE}"

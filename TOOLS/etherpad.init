@@ -14,8 +14,8 @@ PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/node/bin
 EPLITE_DIR="INSTANCE_PATH/etherpad-lite"
 EPLITE_BIN="bin/run.sh"
 DAEMON_OPTS="-s PADCONF PADLOG"
-USER="DBUSER"
-GROUP="DBUSER"
+USER="TARGET_BRANCH"
+GROUP="TARGET_BRANCH"
 DESC="Etherpad-Lite for DBNAME"
 NAME="DBNAME-pad"
 
