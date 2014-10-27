@@ -349,8 +349,8 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}
 # ---------------------------------------------------------------------------------------
-MODENEWDB="odoo-tools.sh newdb       {TARGET_BRANCH =Instance} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME}"
-MODEDUPDB="odoo-tools.sh duplicatedb {TARGET_BRANCH =Instance} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {DATABASE_TEMPLATE}"
+MODENEWDB="odoo-tools.sh newdb       {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME}"
+MODEDUPDB="odoo-tools.sh duplicatedb {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {DATABASE_TEMPLATE}"
 if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODENEWDB"
@@ -390,11 +390,11 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     # ----- Set Variables
     TARGET_BRANCH=$2
     SUPER_PASSWORD=$3
-    DOMAIN_NAME=$4
+    DOMAIN_NAME=$5
 
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
 
-    DBNAME="${REPOID}_${TARGET_BRANCH}_$5"
+    DBNAME="${REPOID}_${TARGET_BRANCH}_$4"
     DBUSER="${DBNAME}"
     DBPW=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 8 | head -1`
 
@@ -485,8 +485,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\$1 Script Mode                    :  $SCRIPT_MODE" | tee -a $DB_SETUPLOG
     echo -e "\$2 TARGET_BRANCH                  :  $TARGET_BRANCH" | tee -a $DB_SETUPLOG
     echo -e "\$3 SUPER_PASSWORD                 :  $SUPER_PASSWORD" | tee -a $DB_SETUPLOG
-    echo -e "\$4 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a $DB_SETUPLOG
-    echo -e "\$5 DATABASE_NAME                  :  $5" | tee -a $DB_SETUPLOG
+    echo -e "\$4 DATABASE_NAME                  :  $4" | tee -a $DB_SETUPLOG
+    echo -e "\$5 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a $DB_SETUPLOG
     echo -e ""
     echo -e "Database Setup Log File           :  $DB_SETUPLOG" | tee -a $DB_SETUPLOG
     echo -e ""
