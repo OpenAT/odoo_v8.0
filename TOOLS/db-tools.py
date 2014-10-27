@@ -36,11 +36,10 @@ def dupdb(args):
 # Backup DB
 # service/db.py:   def exp_dump(db_name):
 def backup(args):
-    print 'Backup Database: %s' % args.database
     with open(args.filedump, 'w') as f:
-        f.write(server.dump(args.superpwd, args.database))
+        f.write(server.dump(args.superpwd, args.database).decode('base64'))
         if f:
-            print 'Backup File Name: %s' % f.name
+            print 'Database Backup File Name: %s' % f.name
             sys.exit(0)
         else:
             sys.exit(2)

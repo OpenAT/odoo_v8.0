@@ -11,18 +11,20 @@ If they do not follow this conventions they are considered to be test branches. 
 Names will look like on a server following this conventions consider teh following examples. REPO (o8) and BRANCH 
 (= Instance Name) will be automatically added by odoo-tools.sh!
 
-#### Examples of full Database Names [REPO]_[BRANCH]_[DATABASE]:
+#### Examples of full Database Names: 
+
+**[REPO]_[BRANCH]_[DATABASE]**
 
 - o8_exthof_hof
 - o8_exthof_schulung
 - o8_exthof_demo
-
+-
 - o8_intnpodemos_demo
 - o8_intnpodemos_pfo
 - o8_intnpodemos_car
-
+-
 - o8_intope_erp
-
+-
 - o8_intdad_web
 
 
