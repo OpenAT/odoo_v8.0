@@ -1,16 +1,29 @@
 # odoo_v8.0
 This repo is used for production for odoo v8 installations. It is also the place where we develop our own addons for
-odoo. The *master* branch of this repo is alway the deployable production ready branch. All branch names uploaded here
-have to follow this rules:
+odoo. The *master* branch of this repo is always a deployable production ready branch. All branch names (=Instances) 
+uploaded here have to follow this examples:
 
-- **dev_[module_name |feature_name | update_%Y%M%D]** e.g.: *dev_ckeditor_advanced* = DEVELOPMENT 
-    - Development of modules, fixes and just pure updates e.g. **dev_update20141203**
-- **fix_[ISSUE Number]** e.g.: *fix_1234*  = FIXES - (Make github Issue first!)
-- **cus_[customer id]** e.g.: *cus_hof* = CUSTOMER - (**Attention: underscore! not -**)
+- **fix[ISSUE Number]** e.g.: *fix1234*  = FIXES, Developments, Updates - (Make github Issue first!)
+- **int[customer id]** e.g.: *intdemo* = Production Instances hosted on our servers
+- **ext[customer id]** e.g.: *exthof* = Production Instances hosted on external servers
 
-Customer specific developments and fixes work like 
-- **cus_hof-dev_ckeditor_advanced**
-- **cus_hof-fix_3425**
+If they do not follow this conventions they are considered to be test branches. To get a better idea how final Database
+Names will look like on a server following this conventions consider teh following examples. REPO (o8) and BRANCH 
+(= Instance Name) will be automatically added by odoo-tools.sh!
+
+#### Examples of full Database Names [REPO]_[BRANCH]_[DATABASE]:
+
+- o8_exthof_hof
+- o8_exthof_schulung
+- o8_exthof_demo
+
+- o8_intnpodemos_demo
+- o8_intnpodemos_pfo
+- o8_intnpodemos_car
+
+- o8_intope_erp
+
+- o8_intdad_web
 
 
 ## GOALS
@@ -19,11 +32,21 @@ Customer specific developments and fixes work like
 - updated requirements.txt to install with pip install -r /path/to/requirements.txt
 - all third party addons as well as odoo itself are linked as submodules
 
-#### Planned: Simple setup through odoo-tools.sh
-odoo-tools.sh will be a simple setup script that is able to 
+#### Simple setup through odoo-tools.sh
+**odoo-tools.sh** is a simple setup script that is able to
+- prepare an ubuntu 14.04 LTS server for odoo
 - setup new instances of odoo on the local server
-- deploy addon(s) to one or more databases on the local server
-- backup and restore databases (and data-dir) on the local server
+- create new databases for a local instance with setup of:
+    - postgres user
+    - server.conf und server.init
+    - database creation
+    - etherpad setup
+    - nginx setup (match url to local db)
+    - backup and logrotate cron jobs
+- ToDo: update an instance to branch master from github
+- ToDo: deploy addon(s) to one or more databases on the local server
+
+Also there is a tool called **db-tools.sh** to backup and restore local databases.
 
 
 ## SETUP
@@ -31,28 +54,33 @@ This setup process will only work on a fresh install of Ubuntu 14.04 LTS. Make s
 has internet access!
 
 ```bash
-# Be Root ;)
+# 1.) Be Root ;)
 sudo su
 
-# get odoo-tools.sh
+# 2.) get odoo-tools.sh
 wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/odoo-tools.sh > odoo-tools.sh
+chmod 755 odoo-tools.sh
 
-# Prepare the Ubuntu Server (reboot after finish is recommended)
+# 3.) Prepare the Ubuntu Server (reboot after finish is recommended)
 odoo-tools.sh prepare
 
-# Setup a new instance: 
-# USAGE: odoo-tools.sh setup   {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME}
-odoo-tools.sh setup cus_hof afg#3$56 www.hofer.com 
+# 4.) Setup a new instance:
+# USAGE: odoo-tools.sh setup {TARGET_BRANCH}
+odoo-tools.sh setup intdemo 
 
-#After the Install you should immediately push your new branch to github!
-# HINT: Dont worry *.conf and *.init files as well as data-dir is in .gitignore !
+# 5.) Create a new Database:
+# USAGE: odoo-tools.sh newdb {TARGET_BRANCH (=InstanceName)} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}
+odoo-tools.sh newdb intdemo afg#3$56 erp.hofer.test demo
+
+#For Production Instances you should immediately push your new branch to github!
+# HINT: Dont worry *.conf *.log and *.init files and database directories o8_*/ are in .gitignore !
 git push origin YOURBRANCH
 ```
 
 
 ## DEVELOPMENT
 
-To use this branch for development use this workflow:
+To develop with this repo use this workflow:
 
 ```bash
 # 1.) Clone the repo odoo_v8 branch master locally:
@@ -99,7 +127,8 @@ git submodule add -b master --depth 1 https://github.com/ether/etherpad-lite.git
 ```
 
 
-## How to Update a Custommer Instance
+## UPDATE OF AN INSTANCE (and its DBs)
+
 This is for now only a placeholder but will describe the update process of a customer instance. Keep tuned ;)
 
 
@@ -124,7 +153,7 @@ This is for now only a placeholder but will describe the update process of a cus
 - [carddav for odoo](https://github.com/initOS/openerp-dav)
 - http://odoohub.wordpress.com/2014/08/15/where-is-the-odoo-documentation/
 - http://djpatelblog.blogspot.in/2014/09/odoo-new-api-recordsets.html
-- [db_filter parameter](https://www.odoo.com/forum/help-1/question/domain-based-db-filter-6583)
+- [server.conf db_filter= parameter](https://www.odoo.com/forum/help-1/question/domain-based-db-filter-6583)
 
 #### XMLRPC, ErpPeek, Connector ...
 - [XMLRPC and erppeek by wirtel](http://wirtel.be/posts/en/2014/06/13/using_erppeek_to_discuss_with_openerp/)
@@ -150,7 +179,9 @@ This is for now only a placeholder but will describe the update process of a cus
 
 #### Python, PIP, VirtualEnv
 - [PYTHON](https://www.python.org)
+- [Python Quick Ref](http://rgruet.free.fr/#QuickRef)
 - [PIP Docu](http://pip.readthedocs.org/en/latest/user_guide.html#requirements-files)
+- [argparse](https://docs.python.org/2.7/library/argparse.html#other-utilities)
 
 #### BASH Scripting
 - [if conditions](http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html)

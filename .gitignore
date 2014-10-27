@@ -23,9 +23,7 @@ docs/_build/
 target/
 
 #odoo
-BACKUP/
-LOG/
-data_dir/
+o8_*/
 /*.conf
 /*.init
 /*.log

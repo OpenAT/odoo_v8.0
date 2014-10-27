@@ -64,9 +64,10 @@ chmod 755 ${REPOPATH}
 # ---------------------------------------------------------
 # $ odoo-tools.sh PREPARE
 # ---------------------------------------------------------
+MODEPREPARE="odoo-tools.sh prepare"
 if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "\n-----------------------------------------------------------------------"
-    echo -e " odoo-tools.sh prepare"
+    echo -e " $MODEPREPARE"
     echo -e "-----------------------------------------------------------------------"
     if [ $# -ne 1 ]; then
         echo -e "ERROR: \"setup-toosl.sh prepare\" takes exactly one argument!"; exit 2
@@ -199,7 +200,6 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
             echo -e "Do not clone aeroolib from github since directory ${REPO_SETUPPATH}/aeroolib exists ."
         else
             echo -e "Clone aeroolib from github."
-            # TODO: Maybe Use our aeroolib from odoo_v8.0
             git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${REPO_SETUPPATH}/aeroolib >> $SETUP_LOG
         fi
         cd ${REPO_SETUPPATH}/aeroolib >> $SETUP_LOG
@@ -232,8 +232,12 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     npm install less >> $SETUP_LOG
     echo -e "----- Install nodejs and less compiler DONE"
 
+    # ---- Todo: Harden linux server
+    #      - enable ufw firewall (open http(s), smtp(s) ports)
+    #      - set postgres to listen only on localhost
+
     echo -e "\n-----------------------------------------------------------------------"
-    echo -e " odoo-tools.sh prepare DONE"
+    echo -e " $MODEPREPARE DONE"
     echo -e "-----------------------------------------------------------------------"
     echo -e "\n!!!PLEASE REBOOT THIS SERVER NOW!!!\n"
     exit 0
@@ -243,13 +247,14 @@ fi
 # -----------------------------------------------------------------------
 # $ odoo-tools.sh setup {TARGET_BRANCH}
 # -----------------------------------------------------------------------
+MODESETUP="odoo-tools.sh setup       {TARGET_BRANCH}"
 if [ "$SCRIPT_MODE" = "setup" ]; then
     echo -e "\n-----------------------------------------------------------------------"
-    echo -e " odoo-tools.sh setup {TARGET_BRANCH}"
+    echo -e "$MODESETUP"
     echo -e "-----------------------------------------------------------------------"
-    echo -e "You have to run \"odoo-tools.sh prepare\" before setting up your first instance!\n"
+    echo -e "ATTENTION: You have to run \"odoo-tools.sh prepare\" before setting up your first instance!\n"
     if [ $# -ne 2 ]; then
-        echo -e "ERROR: \"setup-toosl.sh setup\" takes exactly two arguments!"
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
         exit 2
     fi
 
@@ -302,7 +307,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
 
     # ----- Clone the Github Repo (Directory created here first!)
     echo -e "\n---- Clone the Github Repo ${REPONAME}"
-    git clone -b masterg --recurse-submodules \
+    git clone -b master --recurse-submodules \
         ${SOURCE_REPO} ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
     cd ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
     git branch ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
@@ -334,7 +339,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     chmod 755 ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
 
     echo -e "-------------------------------------------------------------------------"
-    echo -e " odoo-tools.sh setup {TARGET_BRANCH} DONE"
+    echo -e " $MODESETUP DONE"
     echo -e "-------------------------------------------------------------------------"
     echo -e "\n!!!PLEASE UPLOAD YOUR INSTANCE TO GITHUB NOW!!!\ngit push origin $TARGET_BRANCH"
     exit 0
@@ -344,14 +349,16 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}
 # ---------------------------------------------------------------------------------------
+MODENEWDB="odoo-tools.sh newdb       {TARGET_BRANCH =Instance} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME}"
+MODEDUPDB="odoo-tools.sh duplicatedb {TARGET_BRANCH =Instance} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {DATABASE_TEMPLATE}"
 if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
-    echo -e " odoo-tools.sh newdb {TARGET_BRANCH (=InstanceName)} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}"
+    echo -e " $MODENEWDB"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    echo -e "DATABASE_NAME should be something like: hof, hof_demo, hof_test ... !"
-    echo -e "So customer_id (hof) and maybe \"_\" something if more than one db for this customer is needed!"
+    echo -e "DATABASE_NAME should be something like: hof, hof01, db01, erp, test or demo!"
+    echo -e "So customer_id (e.g.: hof) or keyword depending on the instance! Do not use \"_\" in db names!"
     if [ $# -ne 5 ]; then
-        echo -e "ERROR: \"setup-toosl.sh newdb\" takes exactly four arguments!"
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly four arguments!"
         exit 2
     fi
 
@@ -544,7 +551,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!'"DAEMON=INSTANCE_PATH/odoo/openerp-server"'!'"DAEMON=${INSTANCE_PATH}/odoo/openerp-server"'!g
         s!'"USER="'!'"USER=${TARGET_BRANCH}"'!g
         s!'"CONFIGFILE="'!'"CONFIGFILE=${DBCONF}"'!g
-        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-c ${DBCONF} -d ${DBNAME}\""'!g
+        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-c ${DBCONF} -d ${DBNAME} --db-filter=^${DBNAME}$\""'!g
         s!DBNAME!'"$DBNAME"'!g
         }' ${INSTANCE_PATH}/TOOLS/server.init > ${DBINIT} | tee -a $DB_SETUPLOG
     chown root:root ${DBINIT}
@@ -558,7 +565,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     # ----- Create a new Database
     echo -e "\n----- Create Database ${DBNAME}"
     chmod 775 ${INSTANCE_PATH}/TOOLS/create_db.py
-    if ${INSTANCE_PATH}/TOOLS/create_db.py -b ${BASEPORT}69 -s $SUPER_PASSWORD -d $DBNAME -p adminpw ; then
+    if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT}69 -s $SUPER_PASSWORD newdb -d $DBNAME -p adminpw ; then
         echo -e "Database created!" | tee -a $DB_SETUPLOG
     else
         echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" | tee -a $DB_SETUPLOG
@@ -602,18 +609,17 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!DBPW!'"$DBPW"'!g
         s!DBNAME!'"$DBNAME"'!g
         s!ETHERPADKEY!'"$ETHERPADKEY"'!g
+        s!PADLOG!'"$PADLOG"'!g
         }' ${INSTANCE_PATH}/TOOLS/etherpad.conf > ${PADCONF} | tee -a $DB_SETUPLOG
     chown root:root ${PADCONF}
     chmod ugo=r ${PADCONF}
     # etherpad-lite init file
-    # START with run.sh -s to use your own config!
-    # Logfiles are set in init not in conf ;)
     echo -e "Create etherpad init file and start service"
     /bin/sed '{
         s!DBUSER!'"$DBUSER"'!g
         s!INSTANCE_PATH!'"$INSTANCE_PATH"'!g
+        s!TARGET_BRANCH!'"$TARGET_BRANCH"'!g
         s!DBNAME!'"$DBNAME"'!g
-        s!PADLOG!'"$PADLOG"'!g
         s!PADCONF!'"$PADCONF"'!g
         }' ${INSTANCE_PATH}/TOOLS/etherpad.init > ${PADINIT} | tee -a $DB_SETUPLOG
     chown root:root ${PADINIT}
@@ -624,10 +630,10 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 
     # TODO ----- Setup cron Logrotate for all Logfiles
 
-    # TODO ----- Setup cron backup script(s)
+    # TODO ----- Setup cron job for backup script(s)
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
-    echo -e " odoo-tools.sh newdb {TARGET_BRANCH (=InstanceName)} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME} DONE"
+    echo -e " $MODENEWDB DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
     echo -e "\nAfter database install you should follow these steps:"
     echo -e ""
@@ -635,13 +641,13 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "2) Install the addon base_config in your new DB $DBNAME."
     echo -e "3) During install of base_config select austrian-chart-of-account and 20%-Mwst and 20%-Vst."
     echo -e "4) After install set time period to month for HR."
-    echo -e "5) Enable Colaborative Pads at URL http://$DOMAIN_NAME/pad with PWD: $SUPER_PASSWORD"
+    echo -e "5) Enable Colaborative Pads at URL http://$DOMAIN_NAME/pad (PWD: $SUPER_PASSWORD)"
     echo -e "   You will find the API-KEY at: $INSTANCE_PATH/etherpad-lite/APIKEY.txt"
     echo -e "   ATTENTION: First start of etherpad-lite takes a long time. Be patient - APIKEY will show up after first start!"
     echo -e "\n Optional:"
     echo -e "1) Set Company Details"
     echo -e "2) Set Timezone, Signature and Mail-Options for Admin and Default user"
-    echo -e "3) Set RealTime Warehouse Accounts and Settings for Product Categories."
+    echo -e "3) Set RealTime Warehouse Accounts for Product Categories: Maybe obsolete in v8 new wms?"
     exit 0
 fi
 
@@ -651,12 +657,13 @@ fi
 # Script HELP
 # ---------------------------------------------------------
 echo -e "\n----- SCRIPT USAGE -----"
-echo -e "$ odoo-tools.sh {prepare|setup|deploy|backup|restore} ...\n"
-echo -e "$ odoo-tools.sh prepare"
-echo -e "$ odoo-tools.sh setup   {TARGET_BRANCH}"
-echo -e "$ odoo-tools.sh newdb   {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}"
-echo -e "TODO: $ odoo-tools.sh update  {TARGET_BRANCH} {DATABASE_NAME}"
-echo -e "TODO: $ odoo-tools.sh deploy  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
-echo -e "TODO: $ odoo-tools.sh backup  {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all}"
-echo -e "TODO: $ odoo-tools.sh restore {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {DUMP_TO_RESTORE}"
+echo -e "$ odoo-tools.sh {prepare|setup|newdb|dupdb|deploy|backup|restore}\n"
+echo -e "$ $MODEPREPARE"
+echo -e "$ $MODESETUP"
+echo -e "$ $MODENEWDB"
+echo -e "TODO: $ odoo-tools.sh dupdb"
+echo -e "TODO: $ odoo-tools.sh updateinst  {TARGET_BRANCH}"
+echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
+echo -e "TODO: $ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all}"
+echo -e "TODO: $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_TO_RESTORE}"
 echo -e "------------------------\n"
