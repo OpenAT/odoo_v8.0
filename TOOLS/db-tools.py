@@ -36,14 +36,19 @@ def dupdb(args):
 # service/db.py:   def exp_dump(db_name):
 def backup(args):
     print 'Backup Database: %s' % args.database
-
-
-
+    if server.dump(args.superpwd, args.database):
+        sys.exit(0)
+    else:
+        sys.exit(2)
 
 # Restore DB
 # service/db.py:   def exp_restore(db_name, data, copy=False):
 def restore(args):
     print 'Restore Database: %s' % args.database
+    if server.restore(args.superpwd, args.database, args.filedump):
+        sys.exit(0)
+    else:
+        sys.exit(2)
 
 
 # ----------------------------
