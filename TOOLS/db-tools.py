@@ -9,6 +9,7 @@
 import os
 import sys
 import argparse
+import tempfile
 from xmlrpclib import ServerProxy
 
 
@@ -17,7 +18,7 @@ def newdb(args):
     # Create the Database
     # service/db.py:   def exp_create_database(db_name, demo, lang, user_password='admin'):
     print 'Creating Database: %s' % args.database
-    if server.create_database(args.superpwd, args.database, 'False', 'de_DE', args.password):
+    if server.create_database(args.superpwd, args.database, False, 'de_DE', args.password):
         sys.exit(0)
     else:
         sys.exit(2)
@@ -36,10 +37,13 @@ def dupdb(args):
 # service/db.py:   def exp_dump(db_name):
 def backup(args):
     print 'Backup Database: %s' % args.database
-    if server.dump(args.superpwd, args.database):
-        sys.exit(0)
-    else:
-        sys.exit(2)
+    with open(args.filedump, 'w') as f:
+        f.write(server.dump(args.superpwd, args.database))
+        if f:
+            print 'Backup File Name: %s' % f.name
+            sys.exit(0)
+        else:
+            sys.exit(2)
 
 # Restore DB
 # service/db.py:   def exp_restore(db_name, data, copy=False):
