@@ -630,7 +630,18 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 
     # TODO ----- Setup cron Logrotate for all Logfiles
 
-    # TODO ----- Setup cron job for backup script(s)
+    # TODO ----- Create backup script and Setup cron job for backup script
+        # Todo: Create $DBPATH/BACKUP folder
+        # Todo: CD to BACKUP folder
+            # Todo Create DBMANE-backup.sh in BACKUP folder
+                # Todo: check disk space and apport if under 500 Mb
+                # Todo: create daily backup with dbname--day--DAYNAME.zip where DAYNAME is Monday-Saturday but not Sunday (on Sunday we do a weekly backup)
+                # Todo: create weekly backup (if Sunday) with dbname--week--WEEKNUMBER.zip where WEEKNUMBER IS an INT like "12"
+                # Because of this we do have a backup of every week and also a backup of the last 7 days
+                # if somewone is really crazy or has a a really small database we could also do somtihing like every 4 hours
+                # MAYBE: create hourly backup with dbname--hour--HOUR.zip where HOUR is 0-24
+                # Todo: Send Mail with Backup status
+
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODENEWDB DONE"
@@ -652,6 +663,80 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 fi
 
 
+# ---------------------------------------------------------------------------------------
+# $ odoo-tools.sh updateinst  {TARGET_BRANCH}
+# ---------------------------------------------------------------------------------------
+MODEUPDATEINST="$ odoo-tools.sh updateinst  {TARGET_BRANCH}"
+if [ "$SCRIPT_MODE" = "updateinst" ]; then
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MODEUPDATEINST"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    if [ $# -ne 2 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
+        exit 2
+    fi
+
+    # TODO: Stop all o8_INSTANCENAME_* Services (remember all that where running!!!)
+    # TODO: Stop all o8_INSTANCENAME PAD SERVICES (because etherpad-lite is maybe updated as well)
+    # ATTENTION: Do not stop aeroo service (important if more than one instance is on the server)
+    # Todo: git fetch, git checkout master, git pull, git checkout INSTANCENAME, git rebase
+    # todo: start all pad services
+    # todo: start the odoo services (only those who where running before)
+
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MODEUPDATEINST DONE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+fi
+
+# ---------------------------------------------------------------------------------------
+# $ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}
+# ---------------------------------------------------------------------------------------
+MODEBACKUP="$ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
+if [ "$SCRIPT_MODE" = "backup" ]; then
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MODEBACKUP"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    if [ $# -ne 2 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly four arguments!"
+        exit 2
+    fi
+
+    # TODO: check or create INSTANCE/DATABASE/BACKUP folder
+    # Todo: CD to BACKUP folder
+    # Todo: create backup with dbname--DATE.zip with DATE in Format 2014-12-30--24-59
+
+
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MODEBACKUP DONE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+fi
+
+# ---------------------------------------------------------------------------------------
+# $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}
+# ---------------------------------------------------------------------------------------
+MODERESTORE="$ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}"
+if [ "$SCRIPT_MODE" = "restore" ]; then
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MODERESTORE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    if [ $# -ne 2 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly five arguments!"
+        exit 2
+    fi
+
+    # Todo: Check if BACKUPFILE_NAME exists and is readable
+    # Todo: Try to restore BACKUPFILE_NAME to DBNAME_restoretest
+        # If success Todo: Remove DB DBNAME_restoretest
+    # Todo: Backup DBNAME
+        # check size, and if restoreabel - so restore and if success remove db again :)
+        # If success Todo: Remove DBNAME
+        # Todo: Restore BACKUPFILE_NAME to DBNAME
+            # If success restart DBNAME service
+
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MODERESTORE DONE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+fi
 
 # ---------------------------------------------------------
 # Script HELP
@@ -661,9 +746,9 @@ echo -e "$ odoo-tools.sh {prepare|setup|newdb|dupdb|deploy|backup|restore}\n"
 echo -e "$ $MODEPREPARE"
 echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
-echo -e "TODO: $ odoo-tools.sh dupdb"
-echo -e "TODO: $ odoo-tools.sh updateinst  {TARGET_BRANCH}"
+echo -e "TODO: $ odoo-tools.sh dupdb {BRANCH} {SOURCE_SUPER_PASSWORD} {SOURCE_DBNAME} {TARGET_DBNAME} {TARGET_DOMAIN}"
+echo -e "TODO: $MODEUPDATEINST"
 echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
-echo -e "TODO: $ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
-echo -e "TODO: $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_TO_RESTORE}"
+echo -e "TODO: $MODEBACKUP"
+echo -e "TODO: $MODERESTORE"
 echo -e "------------------------\n"
