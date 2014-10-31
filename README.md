@@ -129,6 +129,11 @@ git submodule add -b master https://github.com/ether/etherpad-lite.git etherpad-
 ## UPDATE OF AN INSTANCE (and its DBs)
 
 This is for now only a placeholder but will describe the update process of a customer instance. Keep tuned ;)
+```bash
+# pull latest changes from remote origin and remote branch origin to current local branch
+# This way you do not have to checkout master ;)
+git pull origin master
+```
 
 
 ## DOCUMENTATION

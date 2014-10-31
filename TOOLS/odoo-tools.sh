@@ -407,41 +407,31 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
 
-    # ----- TODO: Allow only lowercase a-z and 0-9 and _ in TARGET_BRANCH and DATABASE_NAME ($5) or exit 2
-    # Target_Branch should be already checked at odoo-tools.sh setup
-    # Maybe we only check DBNAME because everything is in there
+    # ----- TODO: Some Security Checks
 
-    # ----- TODO: Check if the database name already exists (and exit with error if yes)
+    # todo Allow only lowercase a-z and 0-9 and _ in TARGET_BRANCH and DATABASE_NAME ($5) or exit 2
+        # Target_Branch should be already checked at odoo-tools.sh setup
+        # Maybe we only check DBNAME because everything is in there
 
-    # ----- Check if the TARGET_BRANCH (Instance) directory exists
+    # todo Check if a database with this name already exists (and exit with error if yes)
+
+    # todo Check if the domain already exists in any nginx conf file
+
+    # Check if the TARGET_BRANCH (Instance) directory exists
     if ! [ -d ${INSTANCE_PATH} ]; then
         echo -e "ERROR: Instance Directory ${INSTANCE_PATH} is missing!"; exit 2
     fi
 
-    # ----- Create base directory for the new database
+
+    # ----- Setup the Linux User and Group and create it's Home Directory
+    echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
+    useradd -m -d ${DBPATH} -s /bin/bash -U -G ${TARGET_BRANCH} -p ${DBPW} ${DBUSER} | tee -a $INSTANCE_SETUPLOG
+
+    # Check if the home dir was created
     if [ -d "${DBPATH}" ]; then
-        echo -e "ERROR: ${DBPATH} already exists!"; exit 2
+        echo -e "Database Directory ${DBPATH} exists."
     else
-        if  mkdir ${DBPATH} 2>&1>/dev/null; then
-            echo -e "Database Directory ${DBPATH} created."
-        else
-            echo -e "ERROR: Could not create directory ${DBPATH}!"; exit 2
-        fi
-    fi
-
-    # ----- Create odoo addons directory for the new database
-    DBADDONSPATH="${DBPATH}/addons"
-    if  mkdir ${DBADDONSPATH} 2>&1>/dev/null; then
-        echo -e "Database odoo addons Directory ${DBADDONSPATH} created."
-    else
-        echo -e "ERROR: Could not create directory ${DBADDONSPATH}!"; exit 2
-    fi
-
-    # ----- Create log directory
-    if  mkdir ${DBLOGPATH} 2>&1>/dev/null; then
-        echo -e "Database Log Directory ${DBLOGPATH} created."
-    else
-        echo -e "ERROR: Could not create directory ${DBLOGPATH}!"; exit 2
+        echo -e "ERROR: ${DBPATH} could not be created!"; exit 2
     fi
 
     # ----- Create BACKUP directory
@@ -450,6 +440,22 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     else
         echo -e "ERROR: Could not create directory ${DBBACKUPPATH}!"; exit 2
     fi
+
+    # ----- Create odoo ADDONS directory
+    DBADDONSPATH="${DBPATH}/addons"
+    if  mkdir ${DBADDONSPATH} 2>&1>/dev/null; then
+        echo -e "Database odoo addons Directory ${DBADDONSPATH} created."
+    else
+        echo -e "ERROR: Could not create directory ${DBADDONSPATH}!"; exit 2
+    fi
+
+    # ----- Create LOG directory
+    if  mkdir ${DBLOGPATH} 2>&1>/dev/null; then
+        echo -e "Database Log Directory ${DBLOGPATH} created."
+    else
+        echo -e "ERROR: Could not create directory ${DBLOGPATH}!"; exit 2
+    fi
+
 
     # ----- Create setup (newdb) log file (Log from here on)
     if [ -w "${DB_SETUPLOG}" ] ; then
@@ -461,6 +467,12 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
             echo -e "ERROR: Could not create log file ${DB_SETUPLOG}!"; exit 2
         fi
     fi
+
+    # ----- Set Linux Rights
+    chown -R ${DBUSER}:${DBUSER} ${DBPATH} >> $DB_SETUPLOG
+    chmod 755 ${DBPATH} >> $DB_SETUPLOG
+    chown -R ${DBUSER}:${DBUSER} ${DBLOGPATH} >> $DB_SETUPLOG
+    chmod 777 ${DBLOGPATH} >> $DB_SETUPLOG
 
     # ---- Read (or set) and increment BASEPORT
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
@@ -499,7 +511,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "Database Baseport                 :  $BASEPORT" | tee -a $DB_SETUPLOG
     echo -e "Database Database User Name       :  $DBUSER" | tee -a $DB_SETUPLOG
     echo -e "Database Database User Password   :  $DBPW" | tee -a $DB_SETUPLOG
-    echo -e "Database LINUX User               :  $TARGET_BRANCH" | tee -a $DB_SETUPLOG
+    echo -e "Database LINUX User               :  $DBUSER" | tee -a $DB_SETUPLOG
+    echo -e "Database LINUX User Password      :  $DBPW" | tee -a $DB_SETUPLOG
     echo -e "Database Etherpad SESSION KEY     :  $ETHERPADKEY" | tee -a $DB_SETUPLOG
     echo -e ""
     echo -e "ATTENTION: The password for the admin user of the new database will be \"adminpw\"!\n"
@@ -509,10 +522,10 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         while [ "${answer}" != "Y" ]; do
             if [ "${answer}" == "n" ] || [ "${answer}" == "N" ]; then
                 echo "SETUP APPORTED: EXITING SCRIPT!"
-                echo -e "Removing directory ${DBLOGPATH}"
+                echo -e "Removing log directory ${DBLOGPATH}"
                 rm -r ${DBLOGPATH}
-                echo -e "Removing directory ${DBPATH}"
-                rm -r ${DBPATH}
+                echo -e "Removing Linux user ${DBNAME} and home directory ${DBPATH}"
+                userdel -r ${DBNAME}
                 BASEPORT=${BASEPORT}-1
                 echo -e "Resetting BASEPORT to: ${BASEPORT}"
                 echo ${BASEPORT} > ${COUNTERFILE}
@@ -521,16 +534,6 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
             echo "Please enter Y (Yes) or N (No): "; read answer
         done
     fi
-
-    # ----- Setup the Linux User and Group
-    echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
-    useradd -m -d ${DBPATH} -s /bin/bash -U -G ${TARGET_BRANCH} -p ${DBPW} ${DBUSER} | tee -a $INSTANCE_SETUPLOG
-
-    # ----- Set Linux Rights
-    chown -R ${DBUSER}:${DBUSER} ${DBPATH} >> $DB_SETUPLOG
-    chmod 755 ${DBPATH} >> $DB_SETUPLOG
-    chown -R ${DBUSER}:${DBUSER} ${DBLOGPATH} >> $DB_SETUPLOG
-    chmod 777 ${DBLOGPATH} >> $DB_SETUPLOG
 
     # ----- Create Database User
     echo -e "\n---- Create postgresql role $DBUSER"
@@ -556,8 +559,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     chmod ugo=r ${DBCONF}
 
     # ----- Create the Init Script for odoo
-    echo -e "\n---- Setup init.d for instance: ${INSTANCE_PATH}/${TARGET_BRANCH}.init"
     DBINIT=${DBPATH}/${DBNAME}.init
+    echo -e "\n---- Setup init.d for instance: ${DBINIT}"
     /bin/sed '{
         s!'"DAEMON=INSTANCE_PATH/odoo/openerp-server"'!'"DAEMON=${INSTANCE_PATH}/odoo/openerp-server"'!g
         s!'"USER="'!'"USER=${DBUSER}"'!g
@@ -575,7 +578,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 
     # ----- Create a new Database
     echo -e "\n----- Create Database ${DBNAME}"
-    chmod 775 ${INSTANCE_PATH}/TOOLS/create_db.py
+    chmod 775 ${INSTANCE_PATH}/TOOLS/db-tools.py
     if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT}69 -s $SUPER_PASSWORD newdb -d $DBNAME -p adminpw ; then
         echo -e "Database created!" | tee -a $DB_SETUPLOG
     else
