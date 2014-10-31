@@ -122,7 +122,7 @@ git push origin master
 Adding new Submodules to the repo:
 ```bash
 # This is an example how to add a submodule:
-git submodule add -b master --depth 1 https://github.com/ether/etherpad-lite.git etherpad-lite
+git submodule add -b master https://github.com/ether/etherpad-lite.git etherpad-lite
 ```
 
 
