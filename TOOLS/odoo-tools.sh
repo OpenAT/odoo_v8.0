@@ -407,15 +407,21 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
 
-    # ----- TODO: Some Security Checks
+    # ----- Basic Checks
 
-    # todo Allow only lowercase a-z and 0-9 and _ in TARGET_BRANCH and DATABASE_NAME ($5) or exit 2
-        # Target_Branch should be already checked at odoo-tools.sh setup
-        # Maybe we only check DBNAME because everything is in there
+    # todo Allow only lowercase a-z and 0-9 and _ in DBNAME (= TARGET_BRANCH and DATABASE_NAME)
 
-    # todo Check if a database with this name already exists (and exit with error if yes)
+    # Check if a database with this name already exists (and exit with error if yes)
+    if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
+        echo -e "ERROR: Database ${DBNAME} already exists!"
+        exit 2
+    fi
 
-    # todo Check if the domain already exists in any nginx conf file
+    # Check if the domain already exists in any nginx conf file
+    if grep -i -r "${DOMAIN_NAME}" /etc/nginx/sites-enabled/* ; then
+        echo -e "ERROR: Domain Name ${DOMAIN_NAME} already used in a nginx config file in /etc/nginx/sites-enabled/"
+        exit 2
+    fi
 
     # Check if the TARGET_BRANCH (Instance) directory exists
     if ! [ -d ${INSTANCE_PATH} ]; then
