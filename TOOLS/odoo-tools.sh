@@ -425,7 +425,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 
     # ----- Setup the Linux User and Group and create it's Home Directory
     echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
-    useradd -m -d ${DBPATH} -s /bin/bash -U -G ${TARGET_BRANCH} -p ${DBPW} ${DBUSER} | tee -a $INSTANCE_SETUPLOG
+    useradd -m -d ${DBPATH} -s /bin/bash -U -G ${TARGET_BRANCH} -p $(echo "${DBPW}" | openssl passwd -1 -stdin) ${DBUSER} | tee -a $INSTANCE_SETUPLOG
 
     # Check if the home dir was created
     if [ -d "${DBPATH}" ]; then
