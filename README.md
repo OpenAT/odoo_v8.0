@@ -18,13 +18,10 @@ Names will look like on a server following this conventions consider teh followi
 - o8_exthof_hof
 - o8_exthof_schulung
 - o8_exthof_demo
--
 - o8_intnpodemos_demo
 - o8_intnpodemos_pfo
-- o8_intnpodemos_car
--
+- o8_intnpodemos_pfo
 - o8_intope_erp
--
 - o8_intdad_web
 
 

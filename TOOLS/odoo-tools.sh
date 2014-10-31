@@ -341,6 +341,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     echo -e "-------------------------------------------------------------------------"
     echo -e " $MODESETUP DONE"
     echo -e "-------------------------------------------------------------------------"
+    echo -e "\n!!!START EHTERPAD-LITE now with run.sh to create the APIKEY.txt!!!"
     echo -e "\n!!!PLEASE UPLOAD YOUR INSTANCE TO GITHUB NOW!!!\ngit push origin $TARGET_BRANCH"
     exit 0
 fi
@@ -401,6 +402,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DBPATH="${INSTANCE_PATH}/${DBNAME}"
     DBLOGPATH="/var/log/${DBNAME}"
     DBLOGFILE="${DBLOGPATH}/${DBNAME}.log"
+    DBBACKUPPATH="${DBPATH}/BACKUP"
     DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
 
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
@@ -442,6 +444,13 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         echo -e "ERROR: Could not create directory ${DBLOGPATH}!"; exit 2
     fi
 
+    # ----- Create BACKUP directory
+    if  mkdir ${DBBACKUPPATH} 2>&1>/dev/null; then
+        echo -e "Database BACKUP Directory ${DBBACKUPPATH} created."
+    else
+        echo -e "ERROR: Could not create directory ${DBBACKUPPATH}!"; exit 2
+    fi
+
     # ----- Create setup (newdb) log file (Log from here on)
     if [ -w "${DB_SETUPLOG}" ] ; then
         echo -e "ERROR: ${DB_SETUPLOG} already exists!"; exit 2
@@ -452,12 +461,6 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
             echo -e "ERROR: Could not create log file ${DB_SETUPLOG}!"; exit 2
         fi
     fi
-
-    # ----- Set Linux Rights
-    chown -R ${TARGET_BRANCH}:${TARGET_BRANCH} ${DBPATH} >> $DB_SETUPLOG
-    chmod 755 ${DBPATH} >> $DB_SETUPLOG
-    chown -R ${TARGET_BRANCH}:${TARGET_BRANCH} ${DBLOGPATH} >> $DB_SETUPLOG
-    chmod 777 ${DBLOGPATH} >> $DB_SETUPLOG
 
     # ---- Read (or set) and increment BASEPORT
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
@@ -519,6 +522,15 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         done
     fi
 
+    # ----- Setup the Linux User and Group
+    echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
+    useradd -m -d ${DBPATH} -s /bin/bash -U -G ${TARGET_BRANCH} -p ${DBPW} ${DBUSER} | tee -a $INSTANCE_SETUPLOG
+
+    # ----- Set Linux Rights
+    chown -R ${DBUSER}:${DBUSER} ${DBPATH} >> $DB_SETUPLOG
+    chmod 755 ${DBPATH} >> $DB_SETUPLOG
+    chown -R ${DBUSER}:${DBUSER} ${DBLOGPATH} >> $DB_SETUPLOG
+    chmod 777 ${DBLOGPATH} >> $DB_SETUPLOG
 
     # ----- Create Database User
     echo -e "\n---- Create postgresql role $DBUSER"
@@ -543,13 +555,12 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     chown root:root ${DBCONF}
     chmod ugo=r ${DBCONF}
 
-
     # ----- Create the Init Script for odoo
     echo -e "\n---- Setup init.d for instance: ${INSTANCE_PATH}/${TARGET_BRANCH}.init"
     DBINIT=${DBPATH}/${DBNAME}.init
     /bin/sed '{
         s!'"DAEMON=INSTANCE_PATH/odoo/openerp-server"'!'"DAEMON=${INSTANCE_PATH}/odoo/openerp-server"'!g
-        s!'"USER="'!'"USER=${TARGET_BRANCH}"'!g
+        s!'"USER="'!'"USER=${DBUSER}"'!g
         s!'"CONFIGFILE="'!'"CONFIGFILE=${DBCONF}"'!g
         s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-c ${DBCONF} -d ${DBNAME} --db-filter=^${DBNAME}$\""'!g
         s!DBNAME!'"$DBNAME"'!g
@@ -599,7 +610,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "Create DB for etherpad lite: ${DBNAME}_pad Owner: ${DBUSER}"
     sudo su - postgres -c \
         'psql -a -e -c "CREATE DATABASE '${DBNAME}'_pad WITH OWNER '${DBUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
-    # etherpad-lite config file
+    #
+    # etherpad-lite CONFIG file
     echo -e "Create etherpad config file"
     /bin/sed '{
         s!BASEPORT!'"$BASEPORT"'!g
@@ -613,12 +625,12 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         }' ${INSTANCE_PATH}/TOOLS/etherpad.conf > ${PADCONF} | tee -a $DB_SETUPLOG
     chown root:root ${PADCONF}
     chmod ugo=r ${PADCONF}
-    # etherpad-lite init file
+    #
+    # etherpad-lite INIT file
     echo -e "Create etherpad init file and start service"
     /bin/sed '{
         s!DBUSER!'"$DBUSER"'!g
         s!INSTANCE_PATH!'"$INSTANCE_PATH"'!g
-        s!TARGET_BRANCH!'"$TARGET_BRANCH"'!g
         s!DBNAME!'"$DBNAME"'!g
         s!PADCONF!'"$PADCONF"'!g
         }' ${INSTANCE_PATH}/TOOLS/etherpad.init > ${PADINIT} | tee -a $DB_SETUPLOG
@@ -628,19 +640,32 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     update-rc.d ${DBNAME}-pad defaults | tee -a $DB_SETUPLOG
     service ${DBNAME}-pad start
 
-    # TODO ----- Setup cron Logrotate for all Logfiles
+    # ----- Setup cron Logrotate for all Logfiles
+    DBLOGROT="${DBPATH}/${DBNAME}-logrotate.conf"
+    echo -e "${DBLOGPATH}/*.log" > ${DBLOGROT}
+    echo -e "{"                  >> ${DBLOGROT}
+    echo -e "   rotate 53"       >> ${DBLOGROT}
+    echo -e "	weekly"          >> ${DBLOGROT}
+    echo -e "   notifempty"      >> ${DBLOGROT}
+    echo -e "   copytruncate"    >> ${DBLOGROT}
+    echo -e "   compress"        >> ${DBLOGROT}
+    echo -e "   delaycompress"   >> ${DBLOGROT}
+    echo -e "}"                  >> ${DBLOGROT}
+    ln -s ${DBLOGROT} /etc/logrotate.d/${DBNAME}
 
-    # TODO ----- Create backup script and Setup cron job for backup script
-        # Todo: Create $DBPATH/BACKUP folder
-        # Todo: CD to BACKUP folder
-            # Todo Create DBMANE-backup.sh in BACKUP folder
-                # Todo: check disk space and apport if under 500 Mb
-                # Todo: create daily backup with dbname--day--DAYNAME.zip where DAYNAME is Monday-Saturday but not Sunday (on Sunday we do a weekly backup)
-                # Todo: create weekly backup (if Sunday) with dbname--week--WEEKNUMBER.zip where WEEKNUMBER IS an INT like "12"
-                # Because of this we do have a backup of every week and also a backup of the last 7 days
-                # if somewone is really crazy or has a a really small database we could also do somtihing like every 4 hours
-                # MAYBE: create hourly backup with dbname--hour--HOUR.zip where HOUR is 0-24
-                # Todo: Send Mail with Backup status
+    # ----- Create backup script and Setup cron job for backup script
+    DBBACKUPSCRIPT="${DBPATH}/${DBNAME}-backup.sh"
+    echo -e "Create database backup script and link to cron daily"
+    /bin/sed '{
+        s!BASEPORT!'"$BASEPORT"'!g
+        s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
+        s!INSTANCE_PATH!'"$INSTANCE_PATH"'!g
+        s!DBNAME!'"$DBNAME"'!g
+        s!DBBACKUPPATH!'"$DBBACKUPPATH"'!g
+        }' ${INSTANCE_PATH}/TOOLS/backup.sh > ${DBBACKUPSCRIPT} | tee -a $DB_SETUPLOG
+    chown root:root ${DBBACKUPSCRIPT}
+    chmod ugo=rx ${DBBACKUPSCRIPT}
+    ln -s ${DBBACKUPSCRIPT} /etc/cron.daily/${DBNAME}-backup | tee -a $DB_SETUPLOG
 
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
