@@ -671,8 +671,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     OWNCLOUDPATH=${DBPATH}/owncloud
     # download owncloud and create directory owncloud with tar
     cd ${DBPATH} | tee -a $DB_SETUPLOG
-    wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2 | tee -a $DB_SETUPLOG
-    tar -xjf owncloud-7.0.2.tar.bz2 | tee -a $DB_SETUPLOG
+    wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2
+    tar -xjf owncloud-7.0.2.tar.bz2
     mkdir ${OWNCLOUDPATH}/data | tee -a $DB_SETUPLOG
     chown -R ${DBUSER}:${DBUSER} ${OWNCLOUDPATH} | tee -a $DB_SETUPLOG
     chown -R www-data:www-data ${OWNCLOUDPATH}/config/ ${OWNCLOUDPATH}/apps/ ${OWNCLOUDPATH}/data/ | tee -a $DB_SETUPLOG
@@ -720,10 +720,10 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "2) Install the addon base_config in your new DB $DBNAME."
     echo -e "3) During install of base_config select austrian-chart-of-account and 20%-Mwst and 20%-Vst."
     echo -e "4) After install set time period to month for HR."
-    echo -e "5) Enable Colaborative Pads at URL http://pad.${DOMAIN_NAME} (PWD: $SUPER_PASSWORD)"
+    echo -e "\n5) Enable Colaborative Pads at URL http://pad.${DOMAIN_NAME} (PWD: $SUPER_PASSWORD)"
     echo -e "   You will find the API-KEY at: ${PADPATH}/APIKEY.txt"
     echo -e "   ATTENTION: First start of etherpad-lite takes a long time. Be patient - APIKEY will show up after first start!"
-    echo -e "6) Start owncloud at URL http://cloud.${DOMAIN_NAME} with DB: $DBNAME User: $DBUSER PW: $DBPW"
+    echo -e "\n6) Start owncloud at URL http://cloud.${DOMAIN_NAME} with DB: $DBNAME User: $DBUSER PW: $DBPW"
     echo -e "   ATTENTION: Make sure $DOMAIN_NAME is resolvable via DNS on the server. (dig $DOMAIN_NAME)!"
     echo -e "\n Optional:"
     echo -e "1) Set Company Details"
