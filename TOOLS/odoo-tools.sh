@@ -623,28 +623,35 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "---- Create NGINX config file DONE"
 
     # ----- Setup Etherpad-Lite
-    echo -e "---- Setup Etherpad-Lite"
+    echo -e "\n---- Setup Etherpad-Lite"
     PADLOG=${DBLOGPATH}/${DBNAME}-pad.log
     PADCONF=${DBPATH}/${DBNAME}-pad.conf
     PADINIT=${DBPATH}/${DBNAME}-pad.init
     PADPATH=${DBPATH}/etherpad-lite
+    PADDB=${DBNAME}_pad
+    PADUSER=${DBUSER}_pad
+    PADPW=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 8 | head -1`
     # clone etherpad-lite stable branch (=master) from github
     git clone -b master https://github.com/ether/etherpad-lite.git ${PADPATH} | tee -a $DB_SETUPLOG
     chown -R ${DBUSER}:${DBUSER} ${PADPATH} | tee -a $DB_SETUPLOG
-    # Create the etherpad database (utf8)
-    echo -e "Create DB for etherpad-lite: ${DBNAME}_pad Owner: ${DBUSER}"
+    echo -e "\n---- Create etherpad-lite db role $PADUSER"
     sudo su - postgres -c \
-        'psql -a -e -c "CREATE DATABASE '${DBNAME}'_pad WITH OWNER '${DBUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
+        'psql -a -e -c "CREATE ROLE '${PADUSER}' WITH NOSUPERUSER LOGIN PASSWORD '\'${PADPW}\''"' | tee -a $DB_SETUPLOG
+    # Create the owncloud database (utf8)
+    # Create the etherpad database (utf8)
+    echo -e "Create DB for etherpad-lite: ${PADDB} Owner: ${PADUSER}"
+    sudo su - postgres -c \
+        'psql -a -e -c "CREATE DATABASE '${PADDB}' WITH OWNER '${PADUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
     #
     # etherpad-lite CONFIG file
     echo -e "Create etherpad config file"
     /bin/sed '{
         s!BASEPORT!'"$BASEPORT"'!g
-        s!TARGET_BRANCH!'"$TARGET_BRANCH"'!g
         s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
-        s!DBUSER!'"$DBUSER"'!g
-        s!DBPW!'"$DBPW"'!g
         s!DBNAME!'"$DBNAME"'!g
+        s!PADDB!'"PADDB"'!g
+        s!PADUSER!'"PADUSER"'!g
+        s!PADPW!'"PADPW"'!g
         s!ETHERPADKEY!'"$ETHERPADKEY"'!g
         s!PADLOG!'"$PADLOG"'!g
         }' ${INSTANCE_PATH}/TOOLS/etherpad.conf > ${PADCONF} | tee -a $DB_SETUPLOG
@@ -667,8 +674,11 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "---- Setup etherpad-Lite DONE"
 
     # ----- Setup owncloud
-    echo -e "---- Setup owncloud"
+    echo -e "\n---- Setup owncloud"
     OWNCLOUDPATH=${DBPATH}/owncloud
+    CLOUDDB=${DBNAME}_cloud
+    CLOUDUSER=${DBUSER}_cloud
+    CLOUDPW=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 8 | head -1`
     # download owncloud and create directory owncloud with tar
     cd ${DBPATH}
     wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2 -O ${DBPATH}/owncloud-7.0.2.tar.bz2
@@ -676,10 +686,15 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     mkdir ${OWNCLOUDPATH}/data | tee -a $DB_SETUPLOG
     chown -R ${DBUSER}:${DBUSER} ${OWNCLOUDPATH} | tee -a $DB_SETUPLOG
     chown -R www-data:www-data ${OWNCLOUDPATH}/config/ ${OWNCLOUDPATH}/apps/ ${OWNCLOUDPATH}/data/ | tee -a $DB_SETUPLOG
-    # Create the owncloud database (utf8)
-    echo -e "Create DB for owncloud: ${DBNAME}_cloud Owner: ${DBUSER}"
+    # Create owncloud db user
+    echo -e "\n---- Create owncloud db role: $CLOUDUSER"
     sudo su - postgres -c \
-        'psql -a -e -c "CREATE DATABASE '${DBNAME}'_cloud WITH OWNER '${DBUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
+        'psql -a -e -c "CREATE ROLE '${CLOUDUSER}' WITH NOSUPERUSER LOGIN PASSWORD '\'${CLOUDPW}\''"' | tee -a $DB_SETUPLOG
+    # Create the owncloud database (utf8)
+    echo -e "\n---- Create owncloud DB: $CLOUDDB"
+    echo -e "Create DB for owncloud: ${CLOUDDB} Owner: ${CLOUDUSER}"
+    sudo su - postgres -c \
+        'psql -a -e -c "CREATE DATABASE '${CLOUDDB}' WITH OWNER '${CLOUDUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
     #
     echo -e "---- Setup owncloud DONE"
 
@@ -723,8 +738,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n5) Enable Colaborative Pads at URL http://pad.${DOMAIN_NAME} (PWD: $SUPER_PASSWORD)"
     echo -e "   You will find the API-KEY at: ${PADPATH}/APIKEY.txt"
     echo -e "   ATTENTION: First start of etherpad-lite takes a long time. Be patient - APIKEY will show up after first start!"
-    echo -e "\n6) Start owncloud at URL http://cloud.${DOMAIN_NAME} with DB: $DBNAME User: $DBUSER PW: $DBPW"
-    echo -e "   ATTENTION: Make sure $DOMAIN_NAME is resolvable via DNS on the server. (dig $DOMAIN_NAME)!"
+    echo -e "\n6) Start owncloud at URL http://cloud.${DOMAIN_NAME} with DB: ${CLOUDDB} User: ${CLOUDUSER} PW: ${CLOUDPW}"
+    echo -e "   ATTENTION: Make sure cloud.${DOMAIN_NAME} is resolvable via DNS on the server. (dig cloud.${DOMAIN_NAME})!"
     echo -e "\n Optional:"
     echo -e "1) Set Company Details"
     echo -e "2) Set Timezone, Signature and Mail-Options for Admin and Default user"
