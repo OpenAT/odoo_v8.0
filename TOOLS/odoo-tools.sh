@@ -649,9 +649,9 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!BASEPORT!'"$BASEPORT"'!g
         s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
         s!DBNAME!'"$DBNAME"'!g
-        s!PADDB!'"PADDB"'!g
-        s!PADUSER!'"PADUSER"'!g
-        s!PADPW!'"PADPW"'!g
+        s!PADDB!'"$PADDB"'!g
+        s!PADUSER!'"$PADUSER"'!g
+        s!PADPW!'"$PADPW"'!g
         s!ETHERPADKEY!'"$ETHERPADKEY"'!g
         s!PADLOG!'"$PADLOG"'!g
         }' ${INSTANCE_PATH}/TOOLS/etherpad.conf > ${PADCONF} | tee -a $DB_SETUPLOG
