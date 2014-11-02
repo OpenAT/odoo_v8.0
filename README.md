@@ -68,10 +68,10 @@ odoo-tools.sh prepare
 odoo-tools.sh setup intdemo 
 
 # 5.) Create a new Database:
-# USAGE: odoo-tools.sh newdb {TARGET_BRANCH (=InstanceName)} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}
-odoo-tools.sh newdb intdemo afg#3$56 erp.hofer.test demo
+# Start once with no options to see usage (look for newdb)
+odoo-tools.sh newdb <...>
 
-#For Production Instances you should immediately push your new branch to github!
+#For Production Instances ONLY!: you should immediately push your new branch to github!
 # HINT: Dont worry *.conf *.log and *.init files and database directories o8_*/ are in .gitignore !
 git push origin YOURBRANCH
 ```

@@ -19,3 +19,6 @@ else
     BACKUPFILE="DBBACKUPPATH/DBNAME--day${WEEKDAY}.zip"
 fi
 INSTANCE_PATH/TOOLS/db-tools.py -b BASEPORT69 -s SUPER_PASSWORD backup -d DBNAME -f ${BACKUPFILE}
+
+# Todo: Backup etherpad-lite database
+# Todo: Backup owncloud database and data directory

@@ -11,7 +11,7 @@
 ### END INIT INFO
 
 PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/node/bin:"
-EPLITE_DIR="INSTANCE_PATH/etherpad-lite"
+EPLITE_DIR="PADPATH"
 EPLITE_BIN="bin/run.sh"
 DAEMON_OPTS="-s PADCONF"
 USER="DBUSER"

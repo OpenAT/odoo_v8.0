@@ -232,6 +232,15 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     npm install less >> $SETUP_LOG
     echo -e "----- Install nodejs and less compiler DONE"
 
+    # ----- Install packages for owncloud
+    echo -e "\n----- Install packages for owncloud"
+    apt-get install php5-fpm -y >> $SETUP_LOG
+    apt-get install php5-cgi php5-pgsql php5-gd php5-curl php5-intl php5-mcrypt php5-ldap php5-gpm php5-imagick \
+                    libav-tools php5-readline -y >> $SETUP_LOG
+    update-rc.d -f apache2 disable >> $SETUP_LOG
+    echo -e "\n----- Install packages for done"
+
+
     # ---- Todo: Harden linux server
     #      - enable ufw firewall (open http(s), smtp(s) ports)
     #      - set postgres to listen only on localhost
@@ -603,6 +612,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!DBNAME!'"${DBNAME}"'!g
         s!DOMAIN_NAME!'"${DOMAIN_NAME}"'!g
         s!DBLOGPATH!'"${DBLOGPATH}"'!g
+        s!DBPATH!'"${DBPATH}"'!g
             }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a $DB_SETUPLOG
     chown root:root ${NGINXCONF}
     chmod ugo=r ${NGINXCONF}
@@ -615,8 +625,12 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     PADLOG=${DBLOGPATH}/${DBNAME}-pad.log
     PADCONF=${DBPATH}/${DBNAME}-pad.conf
     PADINIT=${DBPATH}/${DBNAME}-pad.init
+    PADPATH=${DBPATH}/etherpad-lite
+    # clone etherpad-lite stable branch (=master) from github
+    git clone -b master https://github.com/ether/etherpad-lite.git ${PADPATH} | tee -a $DB_SETUPLOG
+    chown -R ${DBUSER}:${DBUSER} ${PADPATH} | tee -a $DB_SETUPLOG
     # Create the etherpad database (utf8)
-    echo -e "Create DB for etherpad lite: ${DBNAME}_pad Owner: ${DBUSER}"
+    echo -e "Create DB for etherpad-lite: ${DBNAME}_pad Owner: ${DBUSER}"
     sudo su - postgres -c \
         'psql -a -e -c "CREATE DATABASE '${DBNAME}'_pad WITH OWNER '${DBUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
     #
@@ -639,7 +653,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "Create etherpad init file and start service"
     /bin/sed '{
         s!DBUSER!'"$DBUSER"'!g
-        s!INSTANCE_PATH!'"$INSTANCE_PATH"'!g
+        s!PADPATH!'"$PADPATH"'!g
         s!DBNAME!'"$DBNAME"'!g
         s!PADCONF!'"$PADCONF"'!g
         }' ${INSTANCE_PATH}/TOOLS/etherpad.init > ${PADINIT} | tee -a $DB_SETUPLOG
@@ -648,6 +662,24 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     ln -s ${PADINIT} /etc/init.d/${DBNAME}-pad | tee -a $DB_SETUPLOG
     update-rc.d ${DBNAME}-pad defaults | tee -a $DB_SETUPLOG
     service ${DBNAME}-pad start
+    echo -e "---- Setup etherpad-Lite DONE"
+
+    # ----- Setup owncloud
+    echo -e "---- Setup owncloud"
+    OWNCLOUDPATH=${DBPATH}/owncloud
+    # download owncloud and create directory owncloud with tar
+    cd ${DBPATH} | tee -a $DB_SETUPLOG
+    wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2 | tee -a $DB_SETUPLOG
+    tar -xjf owncloud-7.0.2.tar.bz2 | tee -a $DB_SETUPLOG
+    mkdir ${OWNCLOUDPATH}/data | tee -a $DB_SETUPLOG
+    chown -R ${DBUSER}:${DBUSER} ${OWNCLOUDPATH} | tee -a $DB_SETUPLOG
+    chown -R www-data:www-data ${OWNCLOUDPATH}/config/ ${OWNCLOUDPATH}/apps/ ${OWNCLOUDPATH}/data/ | tee -a $DB_SETUPLOG
+    # Create the owncloud database (utf8)
+    echo -e "Create DB for owncloud: ${DBNAME}_cloud Owner: ${DBUSER}"
+    sudo su - postgres -c \
+        'psql -a -e -c "CREATE DATABASE '${DBNAME}'_cloud WITH OWNER '${DBUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
+    #
+    echo -e "---- Setup owncloud DONE"
 
     # ----- Setup cron Logrotate for all Logfiles
     DBLOGROT="${DBPATH}/${DBNAME}-logrotate.conf"
@@ -682,13 +714,15 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "--------------------------------------------------------------------------------------------------------"
     echo -e "\nAfter database install you should follow these steps:"
     echo -e ""
-    echo -e "1) Open http://$DOMAIN_NAME (admin password is \"adminpw\")."
+    echo -e "1) Open http://$DOMAIN_NAME with USER: \"admin\" PASSWORD: \"adminpw\")."
     echo -e "2) Install the addon base_config in your new DB $DBNAME."
     echo -e "3) During install of base_config select austrian-chart-of-account and 20%-Mwst and 20%-Vst."
     echo -e "4) After install set time period to month for HR."
-    echo -e "5) Enable Colaborative Pads at URL http://$DOMAIN_NAME/pad (PWD: $SUPER_PASSWORD)"
-    echo -e "   You will find the API-KEY at: $INSTANCE_PATH/etherpad-lite/APIKEY.txt"
+    echo -e "5) Enable Colaborative Pads at URL http://pad.${DOMAIN_NAME} (PWD: $SUPER_PASSWORD)"
+    echo -e "   You will find the API-KEY at: ${PADPATH}/APIKEY.txt"
     echo -e "   ATTENTION: First start of etherpad-lite takes a long time. Be patient - APIKEY will show up after first start!"
+    echo -e "6) Start owncloud at URL http://cloud.${DOMAIN_NAME} with DB: $DBNAME User: $DBUSER PW: $DBPW"
+    echo -e "   ATTENTION: Make sure $DOMAIN_NAME is resolvable via DNS on the server. (dig $DOMAIN_NAME)!"
     echo -e "\n Optional:"
     echo -e "1) Set Company Details"
     echo -e "2) Set Timezone, Signature and Mail-Options for Admin and Default user"
