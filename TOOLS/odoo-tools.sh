@@ -670,9 +670,9 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "---- Setup owncloud"
     OWNCLOUDPATH=${DBPATH}/owncloud
     # download owncloud and create directory owncloud with tar
-    cd ${DBPATH} | tee -a $DB_SETUPLOG
-    wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2
-    tar -xjf owncloud-7.0.2.tar.bz2
+    cd ${DBPATH}
+    wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2 -O ${DBPATH}/owncloud-7.0.2.tar.bz2
+    tar -xjf ${DBPATH}/owncloud-7.0.2.tar.bz2 -C ${DBPATH}
     mkdir ${OWNCLOUDPATH}/data | tee -a $DB_SETUPLOG
     chown -R ${DBUSER}:${DBUSER} ${OWNCLOUDPATH} | tee -a $DB_SETUPLOG
     chown -R www-data:www-data ${OWNCLOUDPATH}/config/ ${OWNCLOUDPATH}/apps/ ${OWNCLOUDPATH}/data/ | tee -a $DB_SETUPLOG
