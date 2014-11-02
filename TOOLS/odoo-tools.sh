@@ -235,7 +235,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install packages for owncloud
     echo -e "\n----- Install packages for owncloud"
     apt-get install php5-fpm -y >> $SETUP_LOG
-    apt-get install php5-cgi php5-pgsql php5-gd php5-curl php5-intl php5-mcrypt php5-ldap php5-gpm php5-imagick \
+    apt-get install php5-cgi php5-pgsql php5-gd php5-curl php5-intl php5-mcrypt php5-ldap php5-gmp php5-imagick \
                     libav-tools php5-readline -y >> $SETUP_LOG
     update-rc.d -f apache2 disable >> $SETUP_LOG
     echo -e "\n----- Install packages for done"
@@ -408,6 +408,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DBUSER="${DBNAME}"
     DBPW=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 8 | head -1`
 
+    LINUXPW=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 8 | head -1`
+
     DBPATH="${INSTANCE_PATH}/${DBNAME}"
     DBLOGPATH="/var/log/${DBNAME}"
     DBLOGFILE="${DBLOGPATH}/${DBNAME}.log"
@@ -440,7 +442,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 
     # ----- Setup the Linux User and Group and create it's Home Directory
     echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
-    useradd -m -d ${DBPATH} -s /bin/bash -U -G ${TARGET_BRANCH} -p $(echo "${DBPW}" | openssl passwd -1 -stdin) ${DBUSER} | tee -a $INSTANCE_SETUPLOG
+    useradd -m -d ${DBPATH} -s /bin/bash -U -G ${TARGET_BRANCH} -p $(echo "${LINUXPW}" | openssl passwd -1 -stdin) ${DBUSER} | tee -a $INSTANCE_SETUPLOG
 
     # Check if the home dir was created
     if [ -d "${DBPATH}" ]; then
@@ -527,7 +529,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "Database Database User Name       :  $DBUSER" | tee -a $DB_SETUPLOG
     echo -e "Database Database User Password   :  $DBPW" | tee -a $DB_SETUPLOG
     echo -e "Database LINUX User               :  $DBUSER" | tee -a $DB_SETUPLOG
-    echo -e "Database LINUX User Password      :  $DBPW" | tee -a $DB_SETUPLOG
+    echo -e "Database LINUX User Password      :  $LINUXPW" | tee -a $DB_SETUPLOG
     echo -e "Database Etherpad SESSION KEY     :  $ETHERPADKEY" | tee -a $DB_SETUPLOG
     echo -e ""
     echo -e "ATTENTION: The password for the admin user of the new database will be \"adminpw\"!\n"
@@ -727,6 +729,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "1) Set Company Details"
     echo -e "2) Set Timezone, Signature and Mail-Options for Admin and Default user"
     echo -e "3) Set RealTime Warehouse Accounts for Product Categories: Maybe obsolete in v8 new wms?"
+    echo -e "\n SSH to this server with \"ssh ${DBUSER}@${DOMAIN_NAME}\" PASSWORD: ${LINUXPW}\n"
     exit 0
 fi
 
