@@ -60,7 +60,7 @@ You still need to do some things by Hand after installing this module:
     'author': "OpenAT",
     'website': "http://www.openat.at/",
     'category': 'Uncategorized',
-    'version': '0.1',
+    'version': '0.2',
     'installable': True,
     'application': True,
     'auto_install': False,
@@ -80,7 +80,7 @@ You still need to do some things by Hand after installing this module:
         'website_payment', 'website_project', 'website_quote', 'website_report', 'website_sale',
         'website_sale_delivery', 'website_sale_options', 'website_twitter',
         'base_location', 'base_location_geonames_import', 'dbfilter_from_header', 'disable_openerp_online',
-        'mass_editing', 'web_export_view',
+        'mass_editing', 'web_export_view', 'base_iban', 
     ],
     'data': [
         # DATA
