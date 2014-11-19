@@ -190,3 +190,6 @@ git pull origin master
 #### BASH Scripting
 - [if conditions](http://www.tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html)
 - [sed](http://wiki.ubuntuusers.de/sed)
+
+#### Java Script
+- https://developer.mozilla.org/de/docs/Web/JavaScript
