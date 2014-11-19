@@ -136,6 +136,15 @@ git pull origin master
 ```
 
 
+## Update of all Submodules of branch master
+```bash
+git checkout master
+git pull
+git submodule update --remote --rebase --recursive
+git commit -am "[UPDATE] all submodules updated"
+# then you have to push master branch back to origin/master
+```
+
 ## DOCUMENTATION
 
 #### odoo v8
