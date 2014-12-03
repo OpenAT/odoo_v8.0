@@ -27,6 +27,10 @@ o8_*/
 /*.conf
 /*.init
 /*.log
+/*.pid
+
+#pycharm
+.idea/
 
 #Mac OSX
 .DS_*
