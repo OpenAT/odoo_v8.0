@@ -21,14 +21,20 @@
 ##############################################################################
 
 {
-    'name': "website_crm_sendmail",
+    'name': "website_crm_extended",
     'summary': """Send E-Mail to company mail address for contact form of website""",
     'description': """
 
 website_crm_sendmail
 ====================
 
-A very simple addon to send an E-Mail to the company E-Mail address.
+A very simple addon to post an additional Chatter notification with better information on lead creation
+if someone uses the oddo cms contact form. Also it sets the sales team for the new lead to website sales so you could
+configure the follwoers and therefore the external mails send.
+
+This is also the place to add additional extensions to the website.crm addon (the website contact form of odoo):
+
+- Added: Add res.partner to lead if E-Mail or name matches
 
     """,
     'author': "OpenAT",
@@ -39,28 +45,4 @@ A very simple addon to send an E-Mail to the company E-Mail address.
         'base', 'website_crm',
     ],
     'installable': True,
-    'css': [
-        #'static/src/css/chatter.css',
-        #'static/src/css/backend.css',
-        ],
-    'data': [
-        # DATA
-        #'data/data.xml',
-        # SECURITY FILES
-        #'security/ir.model.access.csv',
-        #'security/ir_ui_view.xml',
-        # VIEWS AND TEMPLATES
-        #'views/res_config.xml',
-        #'views/ir_actions.xml',
-        #'views/templates.xml',
-        #'views/snippets.xml',
-        #'views/views.xml',
-    ],
-    'js': [
-        #'static/src/js/default.js',
-    ],
-    # only loaded in demonstration mode
-    'demo': [
-        #'data/demo.xml',
-    ],
 }
