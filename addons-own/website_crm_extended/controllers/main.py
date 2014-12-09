@@ -5,6 +5,7 @@
 # import openerp.addons.website_crm.controllers.main as main
 
 from openerp import http, SUPERUSER_ID
+from openerp.tools.translate import _
 from openerp.http import request
 
 import openerp.addons.website_crm.controllers.main as main
@@ -19,7 +20,9 @@ class contactus_extended(main.contactus):
         newlead = request.registry['crm.lead'].create(request.cr, SUPERUSER_ID, values, request.context)
 
         # Get a Recordset from crm.lead - in this case a singleton for the new lead
-        leadrecord = request.env['crm.lead'].browse(newlead)
+        # Create an additional environment with user superuser
+        env = request.env(user=SUPERUSER_ID)
+        leadrecord = env['crm.lead'].browse(newlead)
 
         # Search if a res.partner with the same E-Mail or with an similar name exists and add this to the
         # lead. If more then one partner is found assign none for safety (assign it manually later)
