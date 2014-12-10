@@ -444,6 +444,11 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
     useradd -m -d ${DBPATH} -s /bin/bash -U -G ${TARGET_BRANCH} -p $(echo "${LINUXPW}" | openssl passwd -1 -stdin) ${DBUSER} | tee -a $INSTANCE_SETUPLOG
 
+    # create sudoers file
+    echo "${DBUSER} ALL=(root) NOPASSWD: /usr/bin/service ${DBNAME} restart, /usr/bin/service ${DBNAME} stop, /usr/bin/service ${DBNAME} start" > ${DBPATH}/${DBUSER}.sudo
+    echo "${DBUSER} ALL=(root) NOPASSWD: /usr/bin/service ${DBNAME}-pad restart, /usr/bin/service ${DBNAME}-pad stop, /usr/bin/service ${DBNAME}-pad start" >> ${DBPATH}/${DBUSER}.sudo
+    ln -s ${DBPATH}/${DBUSER}.sudo /etc/sudoers.d/${DBUSER}.sudo
+
     # Check if the home dir was created
     if [ -d "${DBPATH}" ]; then
         echo -e "Database Directory ${DBPATH} exists."
