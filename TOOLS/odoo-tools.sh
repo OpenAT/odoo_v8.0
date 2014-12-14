@@ -139,7 +139,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Install Python Packages
     echo -e "\n----- Install Python Apt Packages"
-    apt-get install python-pip python-virtualenv python-dev python-software-properties python-pychart \
+    apt-get install libldap2-dev libsasl2-dev python-pip python-virtualenv python-dev python-software-properties python-pychart \
         python-genshi python-pyhyphen python-ldap -y >> $SETUP_LOG
     pip install pyserial >> $SETUP_LOG
     pip install qrcode >> $SETUP_LOG
