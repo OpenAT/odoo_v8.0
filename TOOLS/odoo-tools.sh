@@ -181,6 +181,14 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     done < ${REPO_SETUPPATH}/requirements.txt
     echo -e "----- Install python libs from requirements.txt Done"
 
+    # ----- Make sure Pil is used not Pillow
+    echo -e "\n----- Make sure Pil is used and not Pillow"
+    apt-get remove pil pillow -y >> $SETUP_LOG
+    pip uninstall pil
+    pip uninstall pillow
+    apt-get install libjpeg-dev libfreetype6-dev zlib1g-dev libtiff4 libtiff4-dev python-libtiff -y >> $SETUP_LOG
+    pip install Pillow==2.5.1 --upgrade
+
     # ----- Install Packages for AerooReports
     echo -e "\n----- Install Packages for AerooReports"
     # ATTENTION: LibreOffice-Python 2.7 Compatibility Script Author: Holger Brunn (https://gist.github.com/hbrunn/6f4a007a6ff7f75c0f8b)
