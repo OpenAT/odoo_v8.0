@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- More Info: https://doc.odoo.com/trunk/server/form-view-guidelines/ -->
+<openerp>
+    <data>
+        <!-- openat_produktpass.zertifikate form, tree und search View -->
+        <record model="ir.ui.view" id="openat_produktpass_zertifikate_form">
+            <field name="name">openat_produktpass.zertifikate_form</field>
+            <field name="model">openat_produktpass.zertifikate</field>
+            <field name="arch" type="xml">
+                <form string="Zertifikate" version="7.0">
+                    <group>
+                        <field name="name"/>
+                        <field name="niveau"/>
+                        <field name="valid_until"/>
+                        <field name="openat_produktpass_ids" widget="many2many_tags"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_zertifikate_tree">
+            <field name="name">openat_produktpass.zertifikate_tree</field>
+            <field name="model">openat_produktpass.zertifikate</field>
+            <field name="arch" type="xml">
+                <tree string="Zertifikate" version="7.0">
+                    <field name="name"/>
+                    <field name="niveau"/>
+                    <field name="valid_until"/>
+                    <field name="openat_produktpass_ids"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_zertifikate_search">
+            <field name="name">openat_produktpass.zertifikate_search</field>
+            <field name="model">openat_produktpass.zertifikate</field>
+            <field name="arch" type="xml">
+                <search string="zertifikate" version="7.0">
+                    <field name="name"/>
+                    <field name="niveau"/>
+                    <field name="valid_until"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="openat_produktpass_zertifikate_action">
+            <field name="name">Zertifikate</field>
+            <field name="res_model">openat_produktpass.zertifikate</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="openat_produktpass_zertifikate_tree"/>
+            <field name="search_view_id" ref="openat_produktpass_zertifikate_search"/>
+        </record>
+    </data>
+</openerp>

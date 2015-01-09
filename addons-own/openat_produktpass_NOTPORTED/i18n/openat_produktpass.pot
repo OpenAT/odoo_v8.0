@@ -1,0 +1,1068 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* openat_produktpass
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-11 15:57+0000\n"
+"PO-Revision-Date: 2014-08-11 15:57+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: openat_produktpass
+#: field:product.product,openat_be:0
+msgid "BE"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Internal Name"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_mikrob_id:0
+msgid "Microbiological Limits KBE/g"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_zertifikate
+msgid "openat_produktpass.zertifikate"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.display,name:0
+msgid "Art. Nr."
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Product Manager"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+#: field:product.product,openat_nettofuellgewicht:0
+msgid "Net Fill Weight (g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Access"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_lagerundtransport
+msgid "openat_produktpass.lagerundtransport"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.konservierungsmethode,openat_schutzbegasung:0
+#: field:product.product,openat_schutzbegasung:0
+msgid "Protective Gas"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_mikrob
+msgid "openat_produktpass.mikrob"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_chem_fett_kodex:0
+msgid "Fat (%/100g) Minimum"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_coliforme:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_coliforme:0
+msgid "Coliforme (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:openat_produktpass.mikrob:0
+msgid "http://www.dghm.org/m_275"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Filter By"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.konservierungsmethode,openat_temp:0
+#: field:openat_produktpass.lagerundtransport,openat_temperatur:0
+msgid "Temperature °C"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_temp:0
+msgid "Temperature (°C)"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Zusammensetzung von Gewuerzen und Aromen. Den pflanzlichen Ursprung von oelen, Fetten usw. Art der Kraeuter wenn anwendbar. Verwendete Mikroorganismen bei Joghurt bzw. eingesetzte Kulturen etc."
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,user_update:0
+msgid "Last Import by"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_getreide:0
+#: field:product.product,openat_allergene_getreide_text:0
+msgid "Glutenhaltiges Getreide sowie daraus hergestellte Erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.kennzeichnung,openat_produktpass_ids:0
+#: field:openat_produktpass.konservierungsmethode,openat_produktpass_ids:0
+#: field:openat_produktpass.lagerundtransport,openat_produktpass_ids:0
+#: field:openat_produktpass.markenname,produktpass_ids:0
+#: field:openat_produktpass.mikrob,openat_produktpass_ids:0
+#: field:openat_produktpass.zertifikate,openat_produktpass_ids:0
+#: field:res.partner,openat_produktpass_ids:0
+msgid "Product Passes"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_ei:0
+#: field:product.product,openat_allergene_ei_text:0
+msgid "Ei u. -erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,create_uid:0
+msgid "Created by"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.partnerlines,name:0
+#: view:product.product:0
+#: field:product.product,openat_partnerlines_ids:0
+msgid "Partner Article Name"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Approved"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_ean_bestell:0
+msgid "EAN-CODE Order Unit"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,nuts_approved_date:0
+msgid "Nuts Approved Date"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_weichtiere:0
+#: field:product.product,openat_allergene_weichtiere_text:0
+msgid "Weichtiere u. -erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Follow the Changes of this Prdouct Pass"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_display_ids:0
+msgid "Displaysortierung"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_produkte_menu
+msgid "Products"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_entero:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_entero:0
+msgid "Enterokokken (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_milch:0
+#: field:product.product,openat_allergene_milch_text:0
+msgid "Milch u. -erzeugnisse "
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,nuts_approved_user:0
+msgid "Nuts Approved by"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_display_action
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_display_menu
+#: view:openat_produktpass.display:0
+#: field:product.product,openat_display:0
+msgid "Display"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Last Import by User"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Group by"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_konservierungsmethode
+msgid "openat_produktpass.konservierungsmethode"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_konservierungsmethode_action
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_konservierungsmethode_menu
+#: view:openat_produktpass.konservierungsmethode:0
+#: field:product.product,openat_konservierungsmethode_id:0
+msgid "Preservation Method"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_rohstoffe:0
+msgid "Other Ingredients / Details"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_verkehrsbezeichnung:0
+msgid "Trading Name"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+#: field:product.product,write_date:0
+msgid "Change Date"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Changed Last 30 Days"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.zertifikate,valid_until:0
+msgid "Valid Until"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_res_partner
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_contacts_menu
+#: field:openat_produktpass.partnerlines,openat_partner_id:0
+#: view:product.product:0
+#: field:product.product,openat_partnerlines_partner_ids:0
+msgid "Partner"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_markenname_action
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_markenname_menu
+#: view:openat_produktpass.markenname:0
+#: field:product.product,openat_markenname_ids:0
+msgid "Brand Names"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:openat_produktpass.mikrob:0
+msgid "bei Ende MHD - Hoechstwert"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.kennzeichnung,name:0
+msgid "Name of Austrian Labeling"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_chem_eiweiss:0
+msgid "Protein (%/100g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+#: field:product.product,date_update:0
+msgid "Last Import Date"
+msgstr ""
+
+#. module: openat_produktpass
+#: sql_constraint:product.product:0
+msgid "CSB Article ID has to be unique!"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_staphy:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_staphy:0
+msgid "koag. pos. Staphylokokken (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Nutritional Value"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_fisch:0
+#: field:product.product,openat_allergene_fisch_text:0
+msgid "Fisch u. - erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_zertifikate_menu
+#: field:product.product,openat_zertifikate_ids:0
+msgid "Certificates"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_bezeichnung:0
+msgid "Article Name"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+#: field:product.product,openat_produktionsstaette:0
+msgid "Production Facility"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "New"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Palletization"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_genusstauglichkeitskennzeichen
+msgid "openat_produktpass.genusstauglichkeitskennzeichen"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+#: field:product.product,create_date:0
+msgid "Creation Date"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Pallet Dimension"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Remaining Life (days)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_lieferanweisung:0
+#: field:product.product,openat_lieferanweisung:0
+msgid "Transport Instructions"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_configuration_menu
+msgid "Configuration"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_krebstiere:0
+#: field:product.product,openat_allergene_krebstiere_text:0
+msgid "Krebstiere u. -erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "(Allergene laut LMKV 1993 i.d.g.F.)"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Changed by Last User"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_zertifikate_action
+#: view:openat_produktpass.zertifikate:0
+msgid "Zertifikate"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Allergens"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Group by State"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_clost:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_clost:0
+msgid "mes. sulfitred. Clostridien (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_referenzprodukte:0
+msgid "Reference Products"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Expiry (days)"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Approved Last 7 Days"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_brennwert_kcal:0
+msgid "Calorific Value (kcal)*"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_chem_fett:0
+msgid "Fat (%/100g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_bruttofuellgewicht:0
+msgid "Gross Fill Weight (g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "NUTS Manager"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Storage and Transport Instruction"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_lageranweisung:0
+#: field:product.product,openat_lageranweisung:0
+msgid "Storage Instructions"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_so2_sulfite:0
+#: field:product.product,openat_allergene_so2_sulfite_text:0
+msgid "SO2 u. Sulfite [c > 10 mg/kg od. 10 mg/L as SO2]"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Laut LMIV inkl. QUID - Regelung"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Storage, Transport, Preservation"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_erdnuesse:0
+#: field:product.product,openat_allergene_erdnuesse_text:0
+msgid "Erdnuesse u. -erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Weight"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_lt_beschreibung:0
+msgid "Storage and Transport Method Description"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.genusstauglichkeitskennzeichen,openat_gtk_image:0
+msgid "Image"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_ballaststoffe:0
+msgid "Dietary Fibre (g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_luftfeuchte:0
+msgid "Humidity %"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_mehrfach_ungesaettigte_fettsauren:0
+msgid "Polyunsaturated Fatty Acids (g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_genusstauglichkeitskennzeichen_action
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_genusstauglichkeitskennzeichen_menu
+#: view:openat_produktpass.genusstauglichkeitskennzeichen:0
+#: field:product.product,openat_genusstauglichkeitskennzeichen_id:0
+msgid "Genusstauglichkeitskennzeichen"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,name:0
+msgid "Name of Instruction"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_senf:0
+#: field:product.product,openat_allergene_senf_text:0
+msgid "Senf u. - erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+#: field:product.product,date_init:0
+msgid "First Import Date"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,user_init:0
+msgid "First Import by"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_temperatur:0
+msgid "Temperature"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:openat_produktpass.mikrob:0
+msgid "Bei Ende MHD - Richtwert"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Created Last 7 Days"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Approved Last 30 Days"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_lupine:0
+#: field:product.product,openat_allergene_lupine_text:0
+msgid "Lupine u. -erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_markenname
+msgid "openat_produktpass.markenname"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Imported Last 7 Days"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "System Units and Packaging"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Referenzmenge fuer einen durchschnittlichen Erwachsenen (8400 kJ/2000 kcal). Salz (NaCl) berechnet aus Natrium."
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_ean_verkauf:0
+msgid "EAN-CODE Unit of Sale"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_licht:0
+#: field:product.product,openat_licht:0
+msgid "Lighting Conditions"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Expiry"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_einfach_ungesaettigte_fettsauren:0
+msgid "Monounsaturated Fatty Acids (g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.zertifikate,niveau:0
+msgid "Niveau - Grad"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:res.partner:0
+msgid "Related Product Passes"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:openat_produktpass.mikrob:0
+msgid "Muss mindestens den Grenzen der Verordnung EG Nr. 2073/2005 der Kommission ueber\n"
+"                        mikrobiologische Kriterien fuer Lebensmittel und der DGHM entprechend.\n"
+"                        Siehe:"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_salz:0
+msgid "Salt (g)*"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_chem_eiweiss_kodex:0
+msgid "Protein (%/100g) Minimum"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "User Approved"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_action
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_menu
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_main_menu
+#: field:openat_produktpass.display,produktpass_id:0
+#: field:openat_produktpass.genusstauglichkeitskennzeichen,openat_produktpass_ids:0
+#: field:openat_produktpass.partnerlines,openat_produktpass_id:0
+#: view:product.product:0
+msgid "Product Pass"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_menu
+#: view:product.product:0
+msgid "Product Sheet"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_tara:0
+msgid "Tara (g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,approved_user:0
+msgid "Approved by"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Imported Last 30 Days"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:openat_produktpass.zertifikate:0
+msgid "zertifikate"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_sellerie:0
+#: field:product.product,openat_allergene_sellerie_text:0
+msgid "Sellerie u. - erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_eiweiss:0
+msgid "Protein (g)*"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_coli:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_coli:0
+msgid "E. Coli (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_kohlenhydrate_zucker:0
+msgid "Carbohydrates Sugar (g)*"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_display
+msgid "openat_produktpass.display"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_lagerundtransport_action
+#: view:openat_produktpass.lagerundtransport:0
+#: field:product.product,openat_lagerundtransport_id:0
+msgid "Storage / Transport Instructions"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_fett:0
+msgid "Fat (g)*"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+#: field:product.product,openat_csb_nummer:0
+msgid "CSB Article ID"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_partnerlines
+msgid "openat_produktpass.partnerlines"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_keim:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_keim:0
+msgid "Aer. mes. Gesamtkeimzahl (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_gesaettigte_fettsauren:0
+msgid "Saturated Fatty Acids (g)*"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,csb_data_date:0
+msgid "CSB-Data from"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_mikrob_action
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_mikrob_menu
+#: view:openat_produktpass.mikrob:0
+msgid "Microbiological Limits"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_chem_wasser:0
+msgid "Water (%/100g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_soja:0
+#: field:product.product,openat_allergene_soja_text:0
+msgid "Soja u. -erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_chem_wasser_kodex:0
+msgid "Water (%/100g) Minimum"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.display,openat_quantity:0
+msgid "Quantity"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_listeria:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_listeria:0
+msgid "Listeria monocytogenes (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Creator"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.genusstauglichkeitskennzeichen,openat_gtk_number:0
+msgid "Number"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_schimmel:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_schimmel:0
+msgid "Schimmel (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_kohlenhydrate:0
+msgid "Carbohydrates (g)*"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:openat_produktpass.mikrob:0
+msgid "Microbiological Limits KBE / g"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_cerus:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_cerus:0
+msgid "Bacillus cereus (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.konservierungsmethode,openat_zeit:0
+#: field:product.product,openat_zeit:0
+msgid "Time"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Chem. Assay"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_chem_kohlenhydrate:0
+msgid "Carbohydrates (%/100g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_zutatenliste:0
+msgid "Ingredients"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_zubereitungshinweise:0
+msgid "Cooking"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+#: field:product.product,approved_date:0
+msgid "Approved Date"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_kennzeichnung
+msgid "openat_produktpass.kennzeichnung"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_chem_kohlenhydrate_kodex:0
+msgid "Carbohydrates (%/100g) Minimum"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_sesam:0
+#: field:product.product,openat_allergene_sesam_text:0
+msgid "Sesamsamen u. -erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Approve NUTS Data"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Packaging"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_brennwert_kj:0
+msgid "Calorific Value (kJ)*"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.display,openat_bezeichnung:0
+#: field:openat_produktpass.kennzeichnung,openat_beschreibung:0
+#: field:openat_produktpass.konservierungsmethode,openat_beschreibung:0
+#: field:openat_produktpass.lagerundtransport,openat_beschreibung:0
+#: view:product.product:0
+#: field:product.product,openat_km_beschreibung:0
+msgid "Description"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.markenname,name:0
+msgid "Brand Name"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Markennamen..."
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "User Approved NUTS"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Zutatenliste laut LMIV inkl. QUID - Regelung"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,nuts_manager:0
+msgid "Nuts Data Manager"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.zertifikate,name:0
+msgid "Name of Certificate"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Minimum Value from Kodex:"
+msgstr ""
+
+#. module: openat_produktpass
+#: constraint:openat_produktpass.partnerlines:0
+msgid "Only one alternative Partner Article Name allowed! Please to do not use the same PP and Partner combination twice"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_enterob:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_enterob:0
+msgid "Enterobacteriaceen (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_allergene_schalenf:0
+#: field:product.product,openat_allergene_schalenf_text:0
+msgid "Schalenfruechte u. -erzeugnisse"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Basics"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.genusstauglichkeitskennzeichen,name:0
+#: field:openat_produktpass.mikrob,name:0
+msgid "Name"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.konservierungsmethode,name:0
+msgid "Name of Preservation Method"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_product_product
+msgid "Product"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Created Last 30 Days"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_luftfeuchte:0
+msgid "Humidity"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "- - -"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_product_template
+msgid "Product Template"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_kennzeichnung_action
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_kennzeichnung_menu
+#: view:openat_produktpass.kennzeichnung:0
+#: field:product.product,openat_kennzeichnung_id:0
+msgid "Austrian Labeling"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.display,openat_eancode:0
+msgid "EAN-Code"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Changed Last 7 Days"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "Approve"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "To Check"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.konservierungsmethode,openat_gaszusammensetzung:0
+#: field:product.product,openat_gaszusammensetzung:0
+msgid "Gas Types"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_hefen:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_hefen:0
+msgid "Hefen (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_salmonellen:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_salmonellen:0
+msgid "Salmonellen (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "NUTS"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_lacto:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_lacto:0
+msgid "Lactobacillen (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_lagerundtransport_menu
+msgid "Storage / Transport"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,nuts_data_date:0
+msgid "Nuts-Data from"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:product.product:0
+msgid "*Nutritional Value BIG 7 (verpflichtend nach LMIV)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,write_uid:0
+msgid "Changed by"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.mikrob,openat_mikrob_max_ehec:0
+#: field:openat_produktpass.mikrob,openat_mikrob_norm_ehec:0
+msgid "EHEC (KBE / g)"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_auslobungen:0
+msgid "Additional Labelings"
+msgstr ""
+

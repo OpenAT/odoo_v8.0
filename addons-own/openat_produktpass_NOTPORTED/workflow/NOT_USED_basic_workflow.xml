@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="openat_produktpass_workflow" model="workflow">
+            <field name="name">product.product.produktpass_workflow</field>
+            <field name="osv">product.product</field>
+            <field name="on_create" eval="1"/>
+        </record>
+
+        <!-- Workflow Nodes -->
+        <record id="act_ppnew" model="workflow.activity">
+            <field name="name">new</field>
+            <field name="flow_start">True</field>
+            <field name="wkf_id" ref="openat_produktpass_workflow"/>
+            <field name="kind">dummy</field>
+        </record>
+
+        <record id="act_pptocheck" model="workflow.activity">
+            <field name="name">tocheck</field>
+            <field name="wkf_id" ref="openat_produktpass_workflow"/>
+            <field name="kind">function</field>
+            <field name="action">action_pptocheck()</field>
+        </record>
+
+        <record id="act_ppapproved" model="workflow.activity">
+            <field name="name">approved</field>
+            <field name="flow_stop">True</field>
+            <field name="wkf_id" ref="openat_produktpass_workflow"/>
+            <field name="kind">function</field>
+            <field name="action">action_ppapproved()</field>
+        </record>
+
+
+        <!-- Workflow Transitions -->
+        <record id="trans_produktpass_ppnew_pptocheck" model="workflow.transition">
+            <field name="act_from" ref="act_ppnew"/>
+            <field name="act_to" ref="act_pptocheck"/>
+            <field name="signal">button_tocheck</field>
+        </record>
+
+        <record id="trans_produktpass_pptocheck_ppapproved" model="workflow.transition">
+            <field name="act_from" ref="act_pptocheck"/>
+            <field name="act_to" ref="act_ppapproved"/>
+            <field name="signal">button_approved</field>
+        </record>
+
+        <record id="trans_produktpass_ppapproved_pptocheck" model="workflow.transition">
+            <field name="act_from" ref="act_ppapproved"/>
+            <field name="act_to" ref="act_pptocheck"/>
+            <field name="signal">button_tocheck</field>
+        </record>
+
+    </data>
+</openerp>

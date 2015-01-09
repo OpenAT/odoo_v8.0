@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- More Info: https://doc.odoo.com/trunk/server/form-view-guidelines/ -->
+<openerp>
+    <data>
+        <!-- openat_produktpass.genusstauglichkeitskennzeichen form, tree und search View -->
+        <record model="ir.ui.view" id="openat_produktpass_genusstauglichkeitskennzeichen_form">
+            <field name="name">openat_produktpass.genusstauglichkeitskennzeichen_form</field>
+            <field name="model">openat_produktpass.genusstauglichkeitskennzeichen</field>
+            <field name="arch" type="xml">
+                <form string="Genusstauglichkeitskennzeichen" version="7.0">
+                    <group>
+                        <field name="name"/>
+                        <field name="openat_gtk_number"/>
+                        <field name="openat_gtk_image" widget="image" options='{"size": [256, 256]}'/>
+                        <field name="openat_produktpass_ids" widget="many2many_tags"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_genusstauglichkeitskennzeichen_tree">
+            <field name="name">openat_produktpass.genusstauglichkeitskennzeichen_tree</field>
+            <field name="model">openat_produktpass.genusstauglichkeitskennzeichen</field>
+            <field name="arch" type="xml">
+                <tree string="Genusstauglichkeitskennzeichen" version="7.0">
+                    <field name="name"/>
+                    <field name="openat_gtk_number"/>
+                    <field name="openat_produktpass_ids"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_genusstauglichkeitskennzeichen_search">
+            <field name="name">openat_produktpass.genusstauglichkeitskennzeichen_search</field>
+            <field name="model">openat_produktpass.genusstauglichkeitskennzeichen</field>
+            <field name="arch" type="xml">
+                <search string="Genusstauglichkeitskennzeichen" version="7.0">
+                    <field name="name"/>
+                    <field name="openat_gtk_number"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="openat_produktpass_genusstauglichkeitskennzeichen_action">
+            <field name="name">Genusstauglichkeitskennzeichen</field>
+            <field name="res_model">openat_produktpass.genusstauglichkeitskennzeichen</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="openat_produktpass_genusstauglichkeitskennzeichen_tree"/>
+            <field name="search_view_id" ref="openat_produktpass_genusstauglichkeitskennzeichen_search"/>
+        </record>
+    </data>
+</openerp>

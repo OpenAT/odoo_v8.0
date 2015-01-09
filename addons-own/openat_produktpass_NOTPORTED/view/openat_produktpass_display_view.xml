@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- More Info: https://doc.odoo.com/trunk/server/form-view-guidelines/ -->
+<openerp>
+    <data>
+        <!-- openat_produktpass.display form, tree und search View -->
+        <record model="ir.ui.view" id="openat_produktpass_display_form">
+            <field name="name">openat_produktpass.display_form</field>
+            <field name="model">openat_produktpass.display</field>
+            <field name="arch" type="xml">
+                <form string="Display" version="7.0">
+                    <group>
+                        <field name="name"/>
+                        <field name="openat_bezeichnung"/>
+                        <field name="openat_eancode"/>
+                        <field name="openat_quantity"/>
+                        <field name="produktpass_id" invisible="True"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_display_tree">
+            <field name="name">openat_produktpass.display_tree</field>
+            <field name="model">openat_produktpass.display</field>
+            <field name="arch" type="xml">
+                <tree string="Display" version="7.0">
+                    <field name="name"/>
+                    <field name="openat_bezeichnung"/>
+                    <field name="openat_eancode"/>
+                    <field name="openat_quantity"/>
+                    <field name="produktpass_id" invisible="True"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_display_search">
+            <field name="name">openat_produktpass.display_search</field>
+            <field name="model">openat_produktpass.display</field>
+            <field name="arch" type="xml">
+                <search string="Display" version="7.0">
+                    <field name="name"/>
+                    <field name="openat_bezeichnung"/>
+                    <field name="openat_eancode"/>
+                    <field name="produktpass_id"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="openat_produktpass_display_action">
+            <field name="name">Display</field>
+            <field name="res_model">openat_produktpass.display</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="openat_produktpass_display_tree"/>
+            <field name="search_view_id" ref="openat_produktpass_display_search"/>
+        </record>
+    </data>
+</openerp>

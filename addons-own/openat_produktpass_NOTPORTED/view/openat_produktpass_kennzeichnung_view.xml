@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- More Info: https://doc.odoo.com/trunk/server/form-view-guidelines/ -->
+<openerp>
+    <data>
+        <!-- openat_produktpass.kennzeichnung form, tree und search View -->
+        <record model="ir.ui.view" id="openat_produktpass_kennzeichnung_form">
+            <field name="name">openat_produktpass.kennzeichnung_form</field>
+            <field name="model">openat_produktpass.kennzeichnung</field>
+            <field name="arch" type="xml">
+                <form string="Austrian Labeling" version="7.0">
+                    <group>
+                        <field name="name"/>
+                        <field name="openat_beschreibung"/>
+                        <field name="openat_produktpass_ids" widget="many2many_tags"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_kennzeichnung_tree">
+            <field name="name">openat_produktpass.kennzeichnung_tree</field>
+            <field name="model">openat_produktpass.kennzeichnung</field>
+            <field name="arch" type="xml">
+                <tree string="Austrian Labeling" version="7.0">
+                    <field name="name"/>
+                    <field name="openat_beschreibung"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_kennzeichnung_search">
+            <field name="name">openat_produktpass.kennzeichnung_search</field>
+            <field name="model">openat_produktpass.kennzeichnung</field>
+            <field name="arch" type="xml">
+                <search string="Austrian Labeling" version="7.0">
+                    <field name="name"/>
+                    <field name="openat_beschreibung"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="openat_produktpass_kennzeichnung_action">
+            <field name="name">Austrian Labeling</field>
+            <field name="res_model">openat_produktpass.kennzeichnung</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="openat_produktpass_kennzeichnung_tree"/>
+            <field name="search_view_id" ref="openat_produktpass_kennzeichnung_search"/>
+        </record>
+    </data>
+</openerp>

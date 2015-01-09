@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- More Info: https://doc.odoo.com/trunk/server/form-view-guidelines/ -->
+<openerp>
+    <data>
+        <!-- Menueeintraege -->
+        <menuitem id="openat_produktpass_menu" name="Product Pass" sequence="10"/>
+            <menuitem id="openat_produktpass_produktpass_menu" name="Product Sheet" parent="openat_produktpass_menu" sequence="20"/>
+                <menuitem id="openat_produktpass_produktpass_main_menu" name="Product Pass" parent="openat_produktpass_produktpass_menu" action="openat_produktpass_action" groups="base.group_user,base.group_partner_manager" sequence="30"/>
+                <menuitem id="openat_produktpass_contacts_menu" name="Partner" parent="openat_produktpass_produktpass_menu" action="contacts.action_contacts" sequence="40"/>
+
+            <menuitem id="openat_produktpass_configuration_menu" name="Configuration" parent="openat_produktpass_menu" sequence="60"/>
+                <menuitem id="openat_produktpass_produktpass_markenname_menu" name="Brand Names" parent="openat_produktpass_configuration_menu" action="openat_produktpass_markenname_action" sequence="69"/>
+                <menuitem id="openat_produktpass_produktpass_lagerundtransport_menu" name="Storage / Transport" parent="openat_produktpass_configuration_menu" action="openat_produktpass_lagerundtransport_action" sequence="70"/>
+                <menuitem id="openat_produktpass_produktpass_konservierungsmethode_menu" name="Preservation Method" parent="openat_produktpass_configuration_menu" action="openat_produktpass_konservierungsmethode_action" sequence="71"/>
+                <menuitem id="openat_produktpass_produktpass_kennzeichnung_menu" name="Austrian Labeling" parent="openat_produktpass_configuration_menu" action="openat_produktpass_kennzeichnung_action" sequence="72"/>
+                <menuitem id="openat_produktpass_produktpass_genuss_menu" name="Genusstauglichkeitskennzeichen" parent="openat_produktpass_configuration_menu" action="openat_produktpass_genusstauglichkeitskennzeichen_action" sequence="73"/>
+                <menuitem id="openat_produktpass_produktpass_zertifikate_menu" name="Certificates" parent="openat_produktpass_configuration_menu" action="openat_produktpass_zertifikate_action" sequence="74"/>
+                <menuitem id="openat_produktpass_produktpass_display_menu" name="Display" parent="openat_produktpass_configuration_menu" action="openat_produktpass_display_action" sequence="75"/>
+                <menuitem id="openat_produktpass_produktpass_mikrob_menu" name="Microbiological Limits" parent="openat_produktpass_configuration_menu" action="openat_produktpass_mikrob_action" sequence="76"/>
+                <menuitem id="openat_produktpass_produktpass_produkte_menu" name="Products" parent="openat_produktpass_configuration_menu" action="product.product_normal_action" sequence="80"/>
+    </data>
+</openerp>

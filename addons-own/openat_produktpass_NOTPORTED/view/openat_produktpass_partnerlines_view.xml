@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- More Info: https://doc.odoo.com/trunk/server/form-view-guidelines/ -->
+<openerp>
+    <data>
+        <!-- openat_produktpass.partnerlines form, tree und search View -->
+        <record model="ir.ui.view" id="openat_produktpass_partnerlines_form">
+            <field name="name">openat_produktpass.partnerlines_form</field>
+            <field name="model">openat_produktpass.partnerlines</field>
+            <field name="arch" type="xml">
+                <form string="Partner Article Name" version="7.0">
+                    <group>
+                        <field name="openat_partner_id"/>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_partnerlines_tree">
+            <field name="name">openat_produktpass.partnerlines_tree</field>
+            <field name="model">openat_produktpass.partnerlines</field>
+            <field name="arch" type="xml">
+                <tree string="Partner Article Name" version="7.0">
+                        <field name="openat_partner_id"/>
+                        <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_partnerlines_search">
+            <field name="name">openat_produktpass.partnerlines_search</field>
+            <field name="model">openat_produktpass.partnerlines</field>
+            <field name="arch" type="xml">
+                <search string="Partner Article Name" version="7.0">
+                        <field name="openat_partner_id"/>
+                        <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="openat_produktpass_partnerlines_action">
+            <field name="name">Partner Article Name</field>
+            <field name="res_model">openat_produktpass.partnerlines</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="openat_produktpass_partnerlines_tree"/>
+            <field name="search_view_id" ref="openat_produktpass_partnerlines_search"/>
+        </record>
+    </data>
+</openerp>

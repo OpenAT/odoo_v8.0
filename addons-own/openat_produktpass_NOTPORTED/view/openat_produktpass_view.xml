@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- More Info: https://doc.odoo.com/trunk/server/form-view-guidelines/ -->
+<openerp>
+    <data>
+        <!-- Erweiterung des res.partner form views um das Feld openat_produktpass_ids -->
+        <record model="ir.ui.view" id="res_partner_openat_produktpass">
+            <field name="name">res.partner.openat_produktpass</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='category_id']" position="after">
+                        <field name="openat_produktpass_ids" widget="many2many_tags" placeholder="Related Product Passes"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+        <!-- Erweiterung des product.product form views um den Reiter Produktpass -->
+        <record model="ir.ui.view" id="product_product_openat_produktpass">
+            <field name="name">product.product.openat_produktpass</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//page[@string='Information']" position="before">
+                        <page string="Product Sheet">
+                            <group>
+                                <field name="openat_csb_nummer"/>
+                                <field name="openat_bezeichnung"/>
+                                <field name="openat_markenname_ids" widget="many2many_tags" placeholder="Markennamen..."/>
+                                <field name="openat_verkehrsbezeichnung"/>
+                                <field name="openat_ean_verkauf"/>
+                                <field name="openat_ean_bestell"/>
+                                <field name="weight_net" string="Net Fill Weight (g)"/>
+                                <field name="openat_referenzprodukte"/>
+                                <field name="openat_produktionsstaette"/>
+                            </group>
+                            <separator string="Storage and Transport Instruction"/>
+                            <group>
+                                <field name="openat_lagerundtransport_id"/>
+                                <field name="openat_konservierungsmethode_id"/>
+                            </group>
+                        </page>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+        <!-- openat_produktpass form, tree, search view and action -->
+        <record model="ir.ui.view" id="openat_produktpass_form">
+            <field name="name">openat_produktpass_form</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <form string="Product Pass" version="7.0">
+                    <header>
+                        <button name="button_tocheck"  states="ppnew,ppapproved" string="To Check" type="object"/>
+                        <button name="button_approved" states="pptocheck" string="Approve" type="object"/>
+                        <button name="button_nuts_approved" string="Approve NUTS Data" type="object"
+                                attrs="{'invisible': [('product_manager','=','user.id')]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="ppnew,pptocheck,ppapproved"/>
+                    </header>
+                    <sheet>
+                        <field name="image_medium" widget='image' class="oe_avatar oe_right" options='{"preview_image": "image_medium", "size": [128, 128]}'/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Internal Name"/>
+                                <field name="openat_csb_nummer" placeholder="CSB Article ID"/>
+                            </h1>
+                            <div style="margin: 4px 0;">
+                                <field name="categ_id"/>
+                            </div>
+                        </div>
+                        <hr class="oe_clear" style="color: white; height: 12px; border: none;"/>
+                        <group>
+                            <group>
+                                <field name="openat_bezeichnung"/>
+                                <field name="openat_markenname_ids" widget="many2many_tags" placeholder="Markennamen..."/>
+                                <field name="openat_verkehrsbezeichnung"/>
+                                <field name="openat_referenzprodukte"/>
+                                <field name="openat_produktionsstaette" context="{'show_address': 1}"/>
+                                <field name="openat_display"/>
+                            </group>
+                            <group>
+                                <field name="openat_ean_verkauf"/>
+                                <field name="openat_ean_bestell"/>
+                                <field name="openat_kennzeichnung_id"/>
+                                <field name="openat_auslobungen"/>
+                                <field name="openat_genusstauglichkeitskennzeichen_id"/>
+                                <field name="openat_zertifikate_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                        <label for="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
+                        <field name="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
+                        <notebook>
+                            <page string="Basics">
+                                <group>
+                                    <group string="Weight">
+                                        <field name="openat_nettofuellgewicht"/>
+                                        <field name="openat_tara"/>
+                                        <field name="openat_bruttofuellgewicht"/>
+                                    </group>
+                                    <group string="Expiry">
+                                        <field name="life_time" string="Expiry (days)"/>
+                                        <field name="use_time" string="Remaining Life (days)"/>
+                                        <field name="removal_time" invisible="1"/>
+                                        <field name="alert_time" invisible="1"/>
+                                    </group>
+                                </group>
+                                <group string="Storage, Transport, Preservation">
+                                    <field name="openat_lagerundtransport_id"/>
+
+                                    <field name="openat_temperatur" invisible="1"/>
+                                    <field name="openat_luftfeuchte" invisible="1"/>
+                                    <field name="openat_licht" invisible="1"/>
+                                    <field name="openat_lageranweisung" invisible="1"/>
+                                    <field name="openat_lieferanweisung" invisible="1"/>
+                                    <field name="openat_lt_beschreibung" invisible="1"/>
+
+                                    <field name="openat_konservierungsmethode_id"/>
+
+                                    <field name="openat_temp" invisible="1"/>
+                                    <field name="openat_zeit" invisible="1"/>
+                                    <field name="openat_schutzbegasung" invisible="1"/>
+                                    <field name="openat_gaszusammensetzung" invisible="1"/>
+                                    <field name="openat_km_beschreibung" invisible="1"/>
+                                </group>
+                                <group string="System Units and Packaging">
+                                    <group>
+                                        <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)"/>
+                                        <field name="weight_net"/>
+                                        <field name="weight"/>
+                                    </group>
+                                    <group>
+                                        <field name="uom_po_id" groups="product.group_uom"/>
+                                        <field name="uos_id" groups="product.group_uos"/>
+                                        <field name="uos_coeff" groups="product.group_uos"/>
+                                        <field name="mes_type" groups="product.group_uos"/>
+                                    </group>
+                                </group>
+                                <!--<label for="packaging" class="oe_horizontal_separator oe_clear"/>-->
+                                <!--<field name="packaging" groups="product.group_stock_packaging">-->
+                                    <!--<form string="Packaging" version="7.0">-->
+                                        <!--<group col="4">-->
+                                            <!--<field name="ean"/>-->
+                                            <!--<field name="sequence" invisible="1"/>-->
+                                            <!--<newline/>-->
+                                            <!--<field name="qty"/>-->
+                                            <!--<field name="ul"/>-->
+                                            <!--<field name="weight_ul"/>-->
+                                            <!--<separator colspan="4" string="Palletization"/>-->
+                                            <!--<field name="ul_qty"/>-->
+                                            <!--<field name="rows"/>-->
+                                            <!--<field name="weight"/>-->
+                                            <!--<separator colspan="4" string="Pallet Dimension"/>-->
+                                            <!--<field name="height"/>-->
+                                            <!--<field name="width"/>-->
+                                            <!--<field name="length"/>-->
+                                        <!--</group>-->
+                                        <!--<separator colspan="4" string="Description"/>-->
+                                        <!--<field name="name"/>-->
+                                    <!--</form>-->
+                                <!--</field>-->
+                            </page>
+                            <page string="Partner">
+                                <field name="openat_partnerlines_ids">
+                                    <tree string="Partner Article Name" version="7.0" editable="top">
+                                        <field name="openat_partner_id"/>
+                                        <field name="name"/>
+                                    </tree>
+                                </field>
+                                <!-- field name="openat_partnerlines_partner_ids"/ -->
+                            </page>
+                            <page string="Access">
+                                <group>
+                                    <group>
+                                        <field name="product_manager"/>
+                                        <field name="nuts_manager"/>
+                                        <field name="csb_data_date"/>
+                                        <field name="nuts_data_date"/>
+                                        <field name="user_init" string="- - -"/>
+                                        <field name="date_init"/>
+                                        <field name="user_update"/>
+                                        <field name="date_update"/>
+                                    </group>
+                                    <group>
+                                        <field name="create_uid" color="red"/>
+                                        <field name="create_date"/>
+                                        <field name="write_uid"/>
+                                        <field name="write_date"/>
+                                        <field name="approved_user"/>
+                                        <field name="approved_date"/>
+                                        <field name="nuts_approved_user"/>
+                                        <field name="nuts_approved_date"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="NUTS">
+                                <label for="openat_zutatenliste" placeholder="Laut LMIV inkl. QUID - Regelung"/>
+                                <field name="openat_zutatenliste" placeholder="Zutatenliste laut LMIV inkl. QUID - Regelung"/>
+                                <label for="openat_rohstoffe" style="margin-top: 1em; display: block;"/>
+                                <field name="openat_rohstoffe" placeholder="Zusammensetzung von Gewuerzen und Aromen. Den pflanzlichen Ursprung von oelen, Fetten usw. Art der Kraeuter wenn anwendbar. Verwendete Mikroorganismen bei Joghurt bzw. eingesetzte Kulturen etc."/>
+                                <label for="openat_mikrob_id" style="margin-top: 1em; display: block;"/>
+                                <field name="openat_mikrob_id"/>
+                                <group>
+                                    <group string="Nutritional Value">
+                                        <field name="openat_brennwert_kj" color="red"/>
+                                        <field name="openat_brennwert_kcal"/>
+                                        <field name="openat_fett"/>
+                                        <field name="openat_gesaettigte_fettsauren"/>
+                                        <field name="openat_einfach_ungesaettigte_fettsauren"/>
+                                        <field name="openat_mehrfach_ungesaettigte_fettsauren"/>
+                                        <field name="openat_kohlenhydrate"/>
+                                        <field name="openat_kohlenhydrate_zucker"/>
+                                        <field name="openat_ballaststoffe"/>
+                                        <field name="openat_eiweiss"/>
+                                        <field name="openat_salz"/>
+                                        <field name="openat_be"/>
+                                        <div colspan="2" style=" margin-top: 2em; color: grey; font-size: 10px">
+                                            <span style="font-weight: bold">*Nutritional Value BIG 7 (verpflichtend nach LMIV)</span><br />
+                                            Referenzmenge fuer einen durchschnittlichen Erwachsenen (8400 kJ/2000 kcal). Salz (NaCl) berechnet aus Natrium.
+                                        </div>
+                                    </group>
+                                    <group string="Chem. Assay">
+                                        <field name="openat_chem_wasser"/>
+                                        <field name="openat_chem_fett"/>
+                                        <field name="openat_chem_eiweiss"/>
+                                        <field name="openat_chem_kohlenhydrate"/>
+                                        <div colspan="2" style="font-weight:bold; margin: 1em 0 0.5em 0; color: #7c7bad;">Minimum Value from Kodex:</div>
+                                        <field name="openat_chem_wasser_kodex"/>
+                                        <field name="openat_chem_fett_kodex"/>
+                                        <field name="openat_chem_eiweiss_kodex"/>
+                                        <field name="openat_chem_kohlenhydrate_kodex"/>
+                                    </group>
+                                </group>
+                                <label for="openat_zubereitungshinweise" />
+                                <field name="openat_zubereitungshinweise"/>
+                            </page>
+                            <page string="Allergens">
+                                <group string="Allergens">
+                                    <field name="openat_allergene_getreide"/>
+                                    <field name="openat_allergene_getreide_text" attrs="{'invisible': [('openat_allergene_getreide','=', False)]}"/>
+                                    <field name="openat_allergene_krebstiere"/>
+                                    <field name="openat_allergene_krebstiere_text" attrs="{'invisible': [('openat_allergene_krebstiere','=', False)]}"/>
+                                    <field name="openat_allergene_weichtiere"/>
+                                    <field name="openat_allergene_weichtiere_text" attrs="{'invisible': [('openat_allergene_weichtiere','=', False)]}"/>
+                                    <field name="openat_allergene_ei"/>
+                                    <field name="openat_allergene_ei_text" attrs="{'invisible': [('openat_allergene_ei','=', False)]}"/>
+                                    <field name="openat_allergene_fisch"/>
+                                    <field name="openat_allergene_fisch_text" attrs="{'invisible': [('openat_allergene_fisch','=', False)]}"/>
+                                    <field name="openat_allergene_erdnuesse"/>
+                                    <field name="openat_allergene_erdnuesse_text" attrs="{'invisible': [('openat_allergene_erdnuesse','=', False)]}"/>
+                                    <field name="openat_allergene_soja"/>
+                                    <field name="openat_allergene_soja_text" attrs="{'invisible': [('openat_allergene_soja','=', False)]}"/>
+                                    <field name="openat_allergene_milch"/>
+                                    <field name="openat_allergene_milch_text" attrs="{'invisible': [('openat_allergene_milch','=', False)]}"/>
+                                    <field name="openat_allergene_schalenf"/>
+                                    <field name="openat_allergene_schalenf_text" attrs="{'invisible': [('openat_allergene_schalenf','=', False)]}"/>
+                                    <field name="openat_allergene_lupine"/>
+                                    <field name="openat_allergene_lupine_text" attrs="{'invisible': [('openat_allergene_lupine','=', False)]}"/>
+                                    <field name="openat_allergene_sellerie"/>
+                                    <field name="openat_allergene_sellerie_text" attrs="{'invisible': [('openat_allergene_sellerie','=', False)]}"/>
+                                    <field name="openat_allergene_senf"/>
+                                    <field name="openat_allergene_senf_text" attrs="{'invisible': [('openat_allergene_senf','=', False)]}"/>
+                                    <field name="openat_allergene_sesam"/>
+                                    <field name="openat_allergene_sesam_text" attrs="{'invisible': [('openat_allergene_sesam','=', False)]}"/>
+                                    <field name="openat_allergene_so2_sulfite"/>
+                                    <field name="openat_allergene_so2_sulfite_text" attrs="{'invisible': [('openat_allergene_so2_sulfite','=', False)]}"/>
+                                </group>
+                                <div style="margin-bottom: 3em; color: grey;">(Allergene laut LMKV 1993 i.d.g.F.)</div>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" help="Follow the Changes of this Prdouct Pass"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_tree">
+            <field name="name">openat_produktpass_tree</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <tree string="Product Pass" version="7.0" colors="grey:state not in ('pptocheck', 'ppapproved');red:state=='pptocheck';green:state=='ppapproved'">
+                    <field name="openat_csb_nummer"/>
+                    <field name="name"/>
+                    <field name="openat_bezeichnung"/>
+                    <field name="openat_verkehrsbezeichnung"/>
+                    <field name="state"/>
+
+                    <!-- field name="openat_markenname_ids" invisible="True"/ -->
+
+                    <field name="openat_partnerlines_ids" invisible="True"/>
+                    <field name="product_manager" invisible="True"/>
+                    <field name="nuts_manager" invisible="True"/>
+                    <field name="approved_user" invisible="True"/>
+                    <field name="approved_date" invisible="True"/>
+
+                    <field name="nuts_approved_user" invisible="True"/>
+                    <field name="nuts_approved_date" invisible="True"/>
+
+                    <field name="openat_produktionsstaette" invisible="True"/>
+                    <field name="create_uid" invisible="True"/>
+                    <field name="create_date" invisible="True"/>
+                    <field name="write_uid" invisible="True"/>
+                    <field name="write_date" invisible="True"/>
+                    <!-- field name="date_init" invisible="True"/ -->
+                    <!-- field name="user_init" invisible="True"/ -->
+                    <!-- field name="date_update" invisible="True"/ -->
+
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_search">
+            <field name="name">openat_produktpass_search</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <search string="Product Pass" version="7.0">
+                    <group string="Group by">
+                        <filter string="Group by State" domain="[]" context="{'group_by':'state'}"/>
+                        <!-- filter string="Group by Brand Name" domain="[]" context="{'group_by':'openat_markenname_ids'}"/ -->
+                        <filter string="Product Manager" domain="[]" context="{'group_by':'product_manager'}"/>
+                        <filter string="NUTS Manager" domain="[]" context="{'group_by':'nuts_manager'}"/>
+                        <separator />
+                        <filter string="User Approved" domain="[]" context="{'group_by':'approved_user'}"/>
+                        <filter string="Approved Date" domain="[]" context="{'group_by':'approved_date'}"/>
+                        <filter string="User Approved NUTS" domain="[]" context="{'group_by':'nuts_approved_user'}"/>
+                        <filter string="Production Facility" domain="[]" context="{'group_by':'openat_produktionsstaette'}"/>
+                        <separator />
+                        <filter string="Creator" domain="[]" context="{'group_by':'create_uid'}"/>
+                        <filter string="Creation Date" domain="[]" context="{'group_by':'create_date'}"/>
+                        <filter string="Changed by Last User" domain="[]" context="{'group_by':'write_uid'}"/>
+                        <filter string="Change Date" domain="[]" context="{'group_by':'write_date'}"/>
+                        <separator />
+                        <filter string="First Import Date" domain="[]" context="{'group_by':'date_init'}"/>
+                        <filter string="Last Import by User" domain="[]" context="{'group_by':'user_init'}"/>
+                        <filter string="Last Import Date" domain="[]" context="{'group_by':'date_update'}"/>
+                    </group>
+                    <group string="Filter By">
+                        <filter string="Created Last 7 Days" name="create_last7"
+                                domain="[
+                                         ( 'create_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'create_date','&gt;=',( (context_today()-datetime.timedelta(days=7)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <filter string="Changed Last 7 Days" name="write_last7"
+                                domain="[
+                                         ( 'write_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'write_date','&gt;=',( (context_today()-datetime.timedelta(days=7)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <filter string="Approved Last 7 Days" name="ppapproved_last7"
+                                domain="[
+                                         ( 'approved_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'approved_date','&gt;=',( (context_today()-datetime.timedelta(days=7)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <filter string="Imported Last 7 Days" name="imported_last7"
+                                domain="[
+                                         ( 'date_update','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'date_update','&gt;=',( (context_today()-datetime.timedelta(days=7)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <separator />
+                        <filter string="Created Last 30 Days" name="create_last7"
+                                domain="[
+                                         ( 'create_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'create_date','&gt;=',( (context_today()-datetime.timedelta(days=30)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <filter string="Changed Last 30 Days" name="write_last7"
+                                domain="[
+                                         ( 'write_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'write_date','&gt;=',( (context_today()-datetime.timedelta(days=30)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <filter string="Approved Last 30 Days" name="ppapproved_last7"
+                                domain="[
+                                         ( 'approved_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'approved_date','&gt;=',( (context_today()-datetime.timedelta(days=30)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <filter string="Imported Last 30 Days" name="imported_last7"
+                                domain="[
+                                         ( 'date_update','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'date_update','&gt;=',( (context_today()-datetime.timedelta(days=30)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <separator />
+                        <filter string="New" domain="[('state','=','ppnew')]" context="{}"/>
+                        <filter string="To Check" domain="[('state','=','pptocheck')]" context="{}"/>
+                        <filter string="Approved" domain="[('state','=','ppapproved')]" context="{}"/>
+                        <separator />
+                    </group>
+                    <field name="name" filter_domain="['|', '|', '|',  '|',
+                                           ('name','ilike',self),
+                                           ('openat_csb_nummer','ilike',self),
+                                           ('openat_bezeichnung','ilike',self),
+                                           ('openat_verkehrsbezeichnung','ilike',self),
+                                           ('openat_partnerlines_ids.name','ilike',self)
+                                          ]" />
+                    <field name="openat_partnerlines_partner_ids" widget="selection" context="{'name':self}"/>
+                    <!-- field name="openat_partnerlines_partner_ids" string="TEST B"/ -->
+                    <field name="openat_markenname_ids" widget="selection" context="{'name':self}"/>
+                    <field name="approved_user" widget="selection" context="{'approved_user':self}"/>
+                    <!-- field name="openat_ean_verkauf"/>
+                    <field name="openat_ean_bestell"/ -->
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="openat_produktpass_action">
+            <field name="name">Product Pass</field>
+            <field name="res_model">product.product</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="openat_produktpass_tree"/>
+            <field name="search_view_id" ref="openat_produktpass_search"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="openat_produktpass_action_view_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="openat_produktpass_tree"/>
+            <field name="act_window_id" ref="openat_produktpass_action"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="openat_produktpass_action_view_form">
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="openat_produktpass_form"/>
+            <field name="act_window_id" ref="openat_produktpass_action"/>
+        </record>
+    </data>
+</openerp>
