@@ -30,7 +30,3 @@
 	path = addons-thirdparty/odoo-india
 	url = https://github.com/Odoo-India/odoo-india.git
 	branch = master
-[submodule "etherpad-lite"]
-	path = etherpad-lite
-	url = https://github.com/ether/etherpad-lite.git
-	branch = master
