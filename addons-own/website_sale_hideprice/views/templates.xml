@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <template id="products_item_hideprice" inherit_id="website_sale.products_item" active="False" customize_show="True" name="Hide Price">
+        <xpath expr="//div[@class='product_price']" position="replace">
+            <div></div>
+        </xpath>
+    </template>
+
+</data>
+</openerp>
