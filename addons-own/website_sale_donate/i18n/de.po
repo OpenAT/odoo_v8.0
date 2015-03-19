@@ -1,0 +1,1559 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* website_sale
+#	* website_sale_donate
+#	* website_sale_delivery
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-03-19 13:04+0000\n"
+"PO-Revision-Date: 2015-03-19 13:04+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: website_sale_donate
+#: view:product.template:website_sale_donate.product_template_form_view
+msgid "# Info found here http://ludwiktrammer.github.io/odoo/form-widgets-many2one-fields-options-odoo.html"
+msgstr "# Info found here http://ludwiktrammer.github.io/odoo/form-widgets-many2one-fields-options-odoo.html"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.products_item
+msgid "&nbsp;"
+msgstr "&nbsp;"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.city_mandatory_bill else 'font-weight: normal'"
+msgstr "'' if website.city_mandatory_bill else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.city_mandatory_ship else 'font-weight: normal'"
+msgstr "'' if website.city_mandatory_ship else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.country_id_mandatory_bill else 'font-weight: normal'"
+msgstr "'' if website.country_id_mandatory_bill else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.country_id_mandatory_ship else 'font-weight: normal'"
+msgstr "'' if website.country_id_mandatory_ship else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.email_mandatory_bill else 'font-weight: normal'"
+msgstr "'' if website.email_mandatory_bill else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.phone_mandatory_bill else 'font-weight: normal'"
+msgstr "'' if website.phone_mandatory_bill else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.phone_mandatory_ship else 'font-weight: normal'"
+msgstr "'' if website.phone_mandatory_ship else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.state_id_mandatory_bill else 'font-weight: normal'"
+msgstr "'' if website.state_id_mandatory_bill else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.state_id_mandatory_ship else 'font-weight: normal'"
+msgstr "'' if website.state_id_mandatory_ship else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.street2_mandatory_bill else 'font-weight: normal'"
+msgstr "'' if website.street2_mandatory_bill else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.street_mandatory_bill else 'font-weight: normal'"
+msgstr "'' if website.street_mandatory_bill else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.street_mandatory_ship else 'font-weight: normal'"
+msgstr "'' if website.street_mandatory_ship else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.vat_mandatory_bill else 'font-weight: normal'"
+msgstr "'' if website.vat_mandatory_bill else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.zip_mandatory_bill else 'font-weight: normal'"
+msgstr "'' if website.zip_mandatory_bill else 'font-weight: normal'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "'' if website.zip_mandatory_ship else 'font-weight: normal'"
+msgstr "'' if website.zip_mandatory_ship else 'font-weight: normal'"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "'Content'"
+msgstr "'Inhalt'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.product
+msgid "'css_quantity input-group oe_website_spinner hidden' if product.hide_quantity else 'css_quantity input-group oe_website_spinner'"
+msgstr "'css_quantity input-group oe_website_spinner hidden' if product.hide_quantity else 'css_quantity input-group oe_website_spinner'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.product
+msgid "'js_add_cart_variants hidden' if product.hide_payment else 'js_add_cart_variants'"
+msgstr "'js_add_cart_variants hidden' if product.hide_payment else 'js_add_cart_variants'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.product_price
+msgid "'oe_price hidden' if product.price_donate else 'oe_price'"
+msgstr "'oe_price hidden' if product.price_donate else 'oe_price'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.products_item
+msgid "'product_price hidden' if product.hide_price else 'product_price'"
+msgstr "'product_price hidden' if product.hide_price else 'product_price'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.cart
+msgid "'text-danger hidden' if line.product_id.price_donate else 'text-danger'"
+msgstr "'text-danger hidden' if line.product_id.price_donate else 'text-danger'"
+
+#. module: website_sale_donate
+#: view:website:website_sale.product_price
+msgid "'text-danger oe_default_price hidden' if product.price_donate else 'text-danger oe_default_price'"
+msgstr "'text-danger oe_default_price hidden' if product.price_donate else 'text-danger oe_default_price'"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "-- Create a new address --"
+msgstr "-- Neue Adresse anlegen --"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "30-day money-back guarantee"
+msgstr "Sicheres Spenden"
+
+#. module: website_sale
+#: model:ir.actions.act_window,help:website_sale.product_public_category_action
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"            Click to define a new category.\n"
+"          </p><p>\n"
+"            Categories are used to browse your products through the\n"
+"            touchscreen interface.\n"
+"          </p><p>\n"
+"            If you put a photo on the category, the layout of the\n"
+"            touchscreen interface will automatically. We suggest not to put\n"
+"            a photo on categories for small (1024x768) screens.\n"
+"          </p>\n"
+"        "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"            Klicken Sie, um eine neue Kategorie zu erstellen.\n"
+"          </p><p>\n"
+"            Kategorien werden verwendet, um die Produkte zu durchsuchen.\n"
+"          </p><p>\n"
+"            Wenn Sie ein Foto für die Kategorie auswählen, wird sich das\n"
+"            Touch-Screen Interface automatisch anpassen. Wir empfehlen\n"
+"            kein Foto für Kategorien bei kleinen Bildschirmen (1024x768).\n"
+"          </p>\n"
+"        "
+
+#. module: website_sale
+#: field:product.template,accessory_product_ids:0
+msgid "Accessory Products"
+msgstr "Zugehörige Artikel"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.product
+msgid "Add to Cart"
+msgstr "In den Spendenkorb"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "All Products"
+msgstr "Alle Artikel"
+
+#. module: website_sale
+#: field:product.template,alternative_product_ids:0
+msgid "Alternative Products"
+msgstr "Alternative Artikel"
+
+#. module: website_sale
+#: help:product.template,alternative_product_ids:0
+msgid "Appear on the product page"
+msgstr "Auf der Spendenseite anzeigen"
+
+#. module: website_sale
+#: help:product.template,accessory_product_ids:0
+msgid "Appear on the shopping cart"
+msgstr "Im Spendenkorb anzeigen"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Apply"
+msgstr "Übernehmen"
+
+#. module: website_sale_donate
+#: view:website:website_sale.product_price
+msgid "Arbitrary Donation"
+msgstr "Freier Betrag"
+
+#. module: website_sale_donate
+#: field:product.template,price_donate:0
+msgid "Arbitrary Price"
+msgstr "Freier Betrag"
+
+#. modules: website_sale, website_sale_delivery
+#: field:product.template,website_published:0
+#: field:delivery.carrier,website_published:0
+msgid "Available in the website"
+msgstr "Im Online-Shop verfügbar"
+
+#. module: website_sale
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Bill To:"
+msgstr "Rechnungsadresse:"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Billing Information"
+msgstr "Ihre Informationen werden vertraulich behandelt!"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "Buy now, get in 2 days"
+msgstr "Steuerfrei Spenden"
+
+#. module: website_sale_delivery
+#: model:ir.model,name:website_sale_delivery.model_delivery_carrier
+msgid "Carrier"
+msgstr "Frachtführer"
+
+#. module: website_sale
+#: field:sale.order,cart_quantity:0
+msgid "Cart Quantity"
+msgstr "Anzahl der Artikel im Spendenkorb"
+
+#. module: website_sale
+#: view:website:website_sale.payment
+msgid "Change Address"
+msgstr "Adresse ändern"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:53
+#, python-format
+msgid "Change the price"
+msgstr "Summe ändern"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Checkout"
+msgstr "Checkout"
+
+#. module: website_sale
+#: field:product.public.category,child_id:0
+msgid "Children Categories"
+msgstr "Unterkategorien"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:33
+#, python-format
+msgid "Choose name"
+msgstr "Name eingeben"
+
+#. module: website_sale_delivery
+#: view:website:website_sale.payment
+msgid "Choose your Delivery Method"
+msgstr "Wählen Sie Ihre Liefermethode"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "City"
+msgstr "Stadt"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:41
+#, python-format
+msgid "Click <em>Continue</em> to create the product."
+msgstr "Auf <em>Weiter</em> klicken, um das Produkt zu erstellen."
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:19
+#, python-format
+msgid "Click here to add a new product."
+msgstr "Hier klicken, um einen neuen Artikel hinzuzufügen."
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:62
+#, python-format
+msgid "Click here to set an image describing your product."
+msgstr "Hier klicken, um ein Bild hinzuzufügen."
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:75
+#, python-format
+msgid "Click on save to add the image to the product decsription."
+msgstr "Auf Speichern klicken, um das Bild der Artikelbeschreibung hinzuzufügen."
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:104
+#, python-format
+msgid "Click to publish your product so your customers can see it."
+msgstr "Hier klicken, um den Artikel zu veröffentlichen, sodass es sichtbar wird."
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:110
+#, python-format
+msgid "Close Tutorial"
+msgstr "Beende Tutorial"
+
+#. module: website_sale
+#: selection:product.attribute,type:0
+msgid "Color"
+msgstr "Farbe"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Company Name"
+msgstr "Unternehmensname"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Confirm"
+msgstr "Zur Zahlung"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.checkout
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Confirmation"
+msgstr "Bestätigung"
+
+#. module: website_sale
+#: view:website:website_sale.confirmation
+msgid "Confirmed"
+msgstr "Bestätigt"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:108
+#, python-format
+msgid "Congratulations"
+msgstr "Glückwunsch"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:109
+#, python-format
+msgid "Congratulations! You just created and published your first product."
+msgstr "Glückwunsch! Soeben haben Sie ihren ersten Artikel erstellt und veröffentlicht."
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:47
+#: view:website:website_sale.cart
+#, python-format
+msgid "Continue"
+msgstr "Weiter"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Continue Shopping"
+msgstr "Surfen fortsetzen"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Country"
+msgstr "Land"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Country..."
+msgstr "Land ..."
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Coupon Code"
+msgstr "Gutscheincode"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:40
+#, python-format
+msgid "Create Product"
+msgstr "Artikel erstellen"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:25
+#, python-format
+msgid "Create a new product"
+msgstr "Neuen Artikel erstellen"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:8
+#, python-format
+msgid "Create a product"
+msgstr "Artikel erstellen"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:18
+#, python-format
+msgid "Create your first product"
+msgstr "Erstelle dein erstes Produkt"
+
+#. modules: website_sale, website_sale_donate
+#: field:product.public.category,create_uid:0
+#: field:product.style,create_uid:0
+#: field:product.payment_interval,create_uid:0
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. modules: website_sale, website_sale_donate
+#: field:product.public.category,create_date:0
+#: field:product.style,create_date:0
+#: field:product.payment_interval,create_date:0
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: website_sale
+#: field:website,currency_id:0
+msgid "Default Currency"
+msgstr "Standardwährung"
+
+#. module: website_sale
+#: field:website,pricelist_id:0
+msgid "Default Pricelist"
+msgstr "Standardpreisliste"
+
+#. module: website_sale_delivery
+#: field:sale.order,amount_delivery:0
+msgid "Delivery Amount"
+msgstr "Lieferpreis"
+
+#. module: website_sale_delivery
+#: view:website:website_sale.total
+msgid "Delivery will be updated after choosing a new delivery method"
+msgstr "Die Lieferung wird nach der Auswahl einer neuen Liefermethode aktualisiert."
+
+#. module: website_sale_delivery
+#: view:website:website_sale.total
+msgid "Delivery:"
+msgstr "Lieferung;"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:81
+#, python-format
+msgid "Describe the Product"
+msgstr "Beschreiben Sie den Artikel"
+
+#. module: website_sale_delivery
+#: field:delivery.carrier,website_description:0
+msgid "Description for the website"
+msgstr "Beschreibung für die Webseite"
+
+#. module: website_sale
+#: help:product.template,website_sequence:0
+msgid "Determine the display order in the Website E-commerce"
+msgstr "Legt die Reihenfolge auf der E-commerce Webseite fest"
+
+#. module: website_sale_donate
+#: field:sale.order.line,price_donate:0
+msgid "Donate Price"
+msgstr "Freier Betrag"
+
+#. module: website_sale_donate
+#: model:product.template,name:website_sale_donate.default_donation_product_template
+msgid "Donation"
+msgstr "Spende"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:88
+#, python-format
+msgid "Drag & Drop a block"
+msgstr "Einen Block hinzufügen"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:89
+#, python-format
+msgid "Drag the 'Big Picture' block and drop it in your page."
+msgstr "Klicken Sie auf den 'Großes Bild' Block, halten die Maustaste gedrückt und lassen an gewünschter Stelle los, um den Block in die Seite einzufügen."
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:54
+#, python-format
+msgid "Edit the price of this product by clicking on the amount."
+msgstr "Bearbeiten Sie den Betrag des Artikels indem Sie auf den Betrag klicken"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Email"
+msgstr "E-Mail"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:34
+#, python-format
+msgid "Enter a name for your new product then click 'Continue'."
+msgstr "Geben Sie einen Namen für den neuen Artikel ein und klicken Sie auf 'Weiter'"
+
+#. module: website_sale
+#: constraint:product.public.category:0
+msgid "Error ! You cannot create recursive categories."
+msgstr "Fehler! Rekursive Kategorien sind nicht zulässig"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "Free Shipping in U.S."
+msgstr "Steuerfrei für Privatpersonen"
+
+#. module: website_sale
+#: help:product.public.category,sequence:0
+msgid "Gives the sequence order when displaying a list of product categories."
+msgstr "Reihenfolge in Liste der Produktkategorien"
+
+#. module: website_sale
+#: field:product.style,html_class:0
+msgid "HTML Classes"
+msgstr "HTML Klassen"
+
+#. module: website_sale
+#: field:product.attribute.value,color:0
+msgid "HTML Color Index"
+msgstr "HTML Farb-Index"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Have a coupon code? Fill in this field and apply."
+msgstr "Haben Sie einen Gutscheincode? Bitte hier eingeben."
+
+#. module: website_sale
+#: help:product.attribute.value,color:0
+msgid "Here you can set a specific HTML color index (e.g. #ff0000) to display the color on the website if the attibute type is 'Color'."
+msgstr "Hier können Sie einen HTML-Farb-Index (z.B. #ff0000) angeben, um die Farbe im Online-Shop darzustellen, wenn der Attribut-Typ 'Farbe' ist."
+
+#. module: website_sale
+#: selection:product.attribute,type:0
+msgid "Hidden"
+msgstr "Verborgen"
+
+#. module: website_sale_donate
+#: field:product.template,hide_payment:0
+msgid "Hide Add-to-Cart-Form in Product Page"
+msgstr "Verstecke Zahlungsoptionen in der Artikelseite"
+
+#. module: website_sale_donate
+#: field:product.template,hide_price:0
+msgid "Hide Price in Shop overview Pages"
+msgstr "Zeige keinen Preis in Übersichten"
+
+#. module: website_sale_donate
+#: field:product.template,hide_quantity:0
+msgid "Hide Product Quantity Selector"
+msgstr "Verstecke die Mengenauswahl"
+
+#. module: website_sale_donate
+#: view:website:website_sale.product_price
+msgid "How frequent would you like to donate this amount:"
+msgstr "Wie häufig möchten Sie diesen Betrag spenden?"
+
+#. modules: website_sale, website_sale_donate
+#: field:product.public.category,id:0
+#: field:product.style,id:0
+#: field:product.payment_interval,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: website_sale
+#: field:product.public.category,image:0
+msgid "Image"
+msgstr "Bild"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:82
+#, python-format
+msgid "Insert blocks like text-image, or gallery to fully describe the product."
+msgstr "Fügen Sie Text-Bild-Blöcke oder Galerien ein, um das Produkt weiter zu beschreiben."
+
+#. modules: website_sale, website_sale_donate
+#: field:product.public.category,write_uid:0
+#: field:product.style,write_uid:0
+#: field:product.payment_interval,write_uid:0
+msgid "Last Updated by"
+msgstr "Zuletzt aktualisiert von"
+
+#. modules: website_sale, website_sale_donate
+#: field:product.public.category,write_date:0
+#: field:product.style,write_date:0
+#: field:product.payment_interval,write_date:0
+msgid "Last Updated on"
+msgstr "Zuletzt aktualisiert am"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:68
+#, python-format
+msgid "Let's select this image."
+msgstr "Let's select this image."
+
+#. module: website_sale_donate
+#: view:website.config.settings:website_sale_donate.view_website_sale_donate_config_settings
+msgid "Mandatory Billing Fields"
+msgstr "Pflichtfelder für die Rechnungsadresse"
+
+#. module: website_sale_donate
+#: view:website.config.settings:website_sale_donate.view_website_sale_donate_config_settings
+msgid "Mandatory Shipping Fields"
+msgstr "Pflichtfelder für die Lieferadresse"
+
+#. module: website_sale
+#: field:product.public.category,image_medium:0
+msgid "Medium-sized image"
+msgstr "Mittelgroßes Bild"
+
+#. module: website_sale
+#: help:product.public.category,image_medium:0
+msgid "Medium-sized image of the category. It is automatically resized as a 128x128px image, with aspect ratio preserved. Use this field in form views or some kanban views."
+msgstr "Bild mittlerer Größe für diese Kategorie. Es wird automatisch auf 128x128px skaliert, bei Beibehaltung des Formats. Sie können das Feld in einigen Formular- oder Kanban Ansichten verwenden."
+
+#. module: website_sale_donate
+#: field:product.template,price_donate_min:0
+msgid "Minimum Arbitrary Price"
+msgstr "Minimale Spendenhöhe"
+
+#. module: website_sale
+#: view:website:website.layout
+msgid "My cart"
+msgstr "Spendenkorb"
+
+#. module: website_sale
+#: field:product.public.category,complete_name:0
+#: field:product.public.category,name:0
+msgid "Name"
+msgstr "Name"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Name (Shipping)"
+msgstr "Name (Versand)"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/controllers/main.py:858
+#: code:addons/website_sale/static/src/js/website_sale.editor.js:11
+#: view:website:website.layout
+#, python-format
+msgid "New Product"
+msgstr "Neuer Artikel"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:45
+#, python-format
+msgid "New product created"
+msgstr "Neuer Artikel wurde erstellt"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "No product defined."
+msgstr "Es ist kein Artikel vorhanden."
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:96
+#, python-format
+msgid "Once you click on save, your product is updated."
+msgstr "Klicken auf Speichern, um den Artikel zu aktualisieren."
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "Options"
+msgstr "Alternativen"
+
+#. module: website_sale
+#: view:website:website_sale.confirmation
+msgid "Order"
+msgstr "Auftrag"
+
+#. module: website_sale
+#: field:sale.order,website_order_line:0
+msgid "Order Lines displayed on Website"
+msgstr "Auf der Webseite anzuzeigende Angebotsposten"
+
+#. module: website_sale
+#: help:sale.order,website_order_line:0
+msgid "Order Lines to be displayed on the website. They should not be used for computation purpose."
+msgstr "Angebotspositionen zur Anzeige in der Webseite. Sie sollten nicht zum Zweck der Berechnung eingesetzt werden."
+
+#. module: website_sale
+#: model:product.public.category,name:website_sale.categ_others
+msgid "Others"
+msgstr "Sonstiges"
+
+#. module: website_sale
+#: field:product.public.category,parent_id:0
+msgid "Parent Category"
+msgstr "Oberkategorie"
+
+#. module: website_sale
+#: code:addons/website_sale/controllers/main.py:657
+#: view:website:website_sale.payment
+#, python-format
+msgid "Pay Now"
+msgstr "Spenden"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.checkout
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Payment"
+msgstr "Zahlung"
+
+#. module: website_sale
+#: field:sale.order,payment_acquirer_id:0
+msgid "Payment Acquirer"
+msgstr "Zahlungsanbieter"
+
+#. module: website_sale_donate
+#: field:product.payment_interval,name:0
+msgid "Payment Interval"
+msgstr "Spendenintervall"
+
+#. module: website_sale_donate
+#: field:sale.order.line,payment_interval_id:0
+msgid "Payment Interval ID"
+msgstr "Spendenintervall ID"
+
+#. module: website_sale_donate
+#: field:sale.order.line,payment_interval_name:0
+#: field:sale.order.line,payment_interval_xmlid:0
+msgid "Payment Interval Name"
+msgstr "Spendenintervall Name"
+
+#. module: website_sale_donate
+#: model:ir.actions.act_window,name:website_sale_donate.website_sale_donate_payment_interval_action
+#: model:ir.ui.menu,name:website_sale_donate.website_sale_donate_payment_interval_menu
+#: view:product.payment_interval:website_sale_donate.website_sale_donate_payment_interval_form
+#: view:product.payment_interval:website_sale_donate.website_sale_donate_payment_interval_search
+#: view:product.payment_interval:website_sale_donate.website_sale_donate_payment_interval_tree
+#: field:product.template,payment_interval_ids:0
+msgid "Payment Intervals"
+msgstr "Spendenintervalle"
+
+#. module: website_sale_donate
+#: view:product.template:website_sale_donate.product_template_form_view
+msgid "Payment Intervals..."
+msgstr "Spendenintervalle..."
+
+#. module: website_sale
+#: view:website:website_sale.payment
+msgid "Payment Method:"
+msgstr "Zahlungsmethode:"
+
+#. module: website_sale
+#: model:ir.model,name:website_sale.model_payment_transaction
+msgid "Payment Transaction"
+msgstr "Zahlungstransaktion"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Phone"
+msgstr "Telefon"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Policies"
+msgstr "Richtlinien"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "Post"
+msgstr "Nachricht schreiben"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.payment
+msgid "Price"
+msgstr "Betrag"
+
+#. module: website_sale
+#: model:ir.model,name:website_sale.model_product_pricelist
+msgid "Pricelist"
+msgstr "Preisliste"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Process Checkout"
+msgstr "Ihre Daten"
+
+#. module: website_sale
+#: model:ir.model,name:website_sale.model_product_product
+#: view:website:website_sale.cart
+#: view:website:website_sale.payment
+msgid "Product"
+msgstr "Artikel"
+
+#. module: website_sale
+#: model:ir.model,name:website_sale.model_product_attribute
+msgid "Product Attribute"
+msgstr "Artikelattribut"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "Product Name"
+msgstr "Artikel Bezeichnung"
+
+#. module: website_sale
+#: view:product.public.category:website_sale.product_public_category_tree_view
+msgid "Product Product Categories"
+msgstr "Artikelkategorien"
+
+#. modules: website_sale, website_sale_donate
+#: model:ir.model,name:website_sale.model_product_template
+#: model:ir.model,name:website_sale_donate.model_product_template
+msgid "Product Template"
+msgstr "Artikelvorlage"
+
+#. module: website_sale
+#: view:website:website_sale.product
+#: view:website:website_sale.product_price
+msgid "Product not available"
+msgstr "Der Artikel ist nicht verfügbar."
+
+#. module: website_sale
+#: view:website:website_sale.404
+msgid "Product not found!"
+msgstr "Der Artikel wurde nicht gefunden!"
+
+#. modules: website_sale, website_sale_donate
+#: view:website:website_sale.product
+#: field:product.payment_interval,product_template_ids:0
+msgid "Products"
+msgstr "Artikel"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "Promote"
+msgstr "Werbung"
+
+#. module: website_sale
+#: field:product.pricelist,code:0
+msgid "Promotional Code"
+msgstr "Promotionscode"
+
+#. module: website_sale
+#: view:product.public.category:website_sale.product_public_category_form_view
+msgid "Public Categories"
+msgstr "Öffentliche Kategorien"
+
+#. module: website_sale
+#: model:ir.model,name:website_sale.model_product_public_category
+#: field:product.template,public_categ_ids:0
+msgid "Public Category"
+msgstr "Öffentliche Kategorie"
+
+#. module: website_sale
+#: model:ir.actions.act_window,name:website_sale.product_public_category_action
+#: model:ir.ui.menu,name:website_sale.menu_product_public_category
+msgid "Public Product Categories"
+msgstr "Öffentliche Artikelkategorien"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:103
+#, python-format
+msgid "Publish your product"
+msgstr "Veröffentlichen"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "Push down"
+msgstr "Nach unten"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "Push to bottom"
+msgstr "Nach oben"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "Push to top"
+msgstr "Nach unten"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "Push up"
+msgstr "Nach oben verschieben"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.payment
+msgid "Quantity"
+msgstr "Menge"
+
+#. module: website_sale
+#: selection:product.attribute,type:0
+msgid "Radio"
+msgstr "Radio"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Return to Cart"
+msgstr "Zurück zum Spendenkorb"
+
+#. module: website_sale
+#: view:website:website_sale.404
+msgid "Return to the product list."
+msgstr "Zurück zur Übersicht"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.checkout
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Review Order"
+msgstr "Spende überprüfen"
+
+#. module: website_sale
+#: view:website:website_sale.products_item
+msgid "Sale"
+msgstr "Verkauf"
+
+#. module: website_sale
+#: field:payment.transaction,sale_order_id:0
+msgid "Sale Order"
+msgstr "Verkaufsauftrag"
+
+#. modules: website_sale, website_sale_donate, website_sale_delivery
+#: model:ir.model,name:website_sale.model_sale_order
+#: model:ir.model,name:website_sale_delivery.model_sale_order
+#: model:ir.model,name:website_sale_donate.model_sale_order
+msgid "Sales Order"
+msgstr "Verkaufsauftrag"
+
+#. module: website_sale_donate
+#: model:ir.model,name:website_sale_donate.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Auftragsposition"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:74
+#, python-format
+msgid "Save this Image"
+msgstr "Bild speichern"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:95
+#, python-format
+msgid "Save your modifications"
+msgstr "Speichern Sie Ihre Änderungen"
+
+#. module: website_sale
+#: view:website:website_sale.search
+msgid "Search..."
+msgstr "Suche ..."
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Secure Payment"
+msgstr "Sichere Zahlung"
+
+#. module: website_sale
+#: selection:product.attribute,type:0
+msgid "Select"
+msgstr "Auswählen"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:26
+#, python-format
+msgid "Select 'New Product' to create it and manage its properties to boost your sales."
+msgstr "Selektieren Sie 'Neuer Artikel', und verwalten Sie alle Eigenschaften zur Steigerung Ihres Umsatz."
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:67
+#, python-format
+msgid "Select an Image"
+msgstr "Wählen Sie ein Bild"
+
+#. module: website_sale
+#: field:product.public.category,sequence:0
+#: field:product.template,website_sequence:0
+msgid "Sequence"
+msgstr "Reihenfolge"
+
+#. module: website_sale
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Ship To:"
+msgstr "Lieferanschrift:"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Ship to the same address"
+msgstr "An dieselbe Adresse"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Shipping"
+msgstr "Versand"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.checkout
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Shipping & Billing"
+msgstr "Ihre Daten"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Shipping Information"
+msgstr "Lieferadresse"
+
+#. module: website_sale
+#: view:website:website_sale.products
+#: model:website.menu,name:website_sale.menu_shop
+msgid "Shop"
+msgstr "Shop"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Shop - Checkout"
+msgstr "Shop-Abmelden"
+
+#. module: website_sale
+#: view:website:website_sale.confirmation
+msgid "Shop - Confirmed"
+msgstr "Shop-Bestätigung"
+
+#. module: website_sale
+#: view:website:website_sale.payment
+msgid "Shop - Select Payment Mode"
+msgstr "Shop-Selektiere Zahlungsmodus"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Shopping Cart"
+msgstr "Spendenkorb"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Sign in"
+msgstr "Anmelden"
+
+#. module: website_sale_donate
+#: field:product.template,simple_checkout:0
+msgid "Simple Checkout"
+msgstr "Simple Checkout"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "Size"
+msgstr "Größe"
+
+#. module: website_sale
+#: field:product.template,website_size_x:0
+msgid "Size X"
+msgstr "X-Größe"
+
+#. module: website_sale
+#: field:product.template,website_size_y:0
+msgid "Size Y"
+msgstr "Y-Größe"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:13
+#, python-format
+msgid "Skip It"
+msgstr "Überspringen"
+
+#. module: website_sale
+#: field:product.public.category,image_small:0
+msgid "Smal-sized image"
+msgstr "Kleines Bild"
+
+#. module: website_sale
+#: help:product.public.category,image_small:0
+msgid "Small-sized image of the category. It is automatically resized as a 64x64px image, with aspect ratio preserved. Use this field anywhere a small image is required."
+msgstr "Kleines Bild dieser Kategorie. Es wird automatisch auf 64x64px skaliert unter Beibehaltung der Optik. Benutzen Sie dieses Feld immer dann, wenn Sie ein keines Bild benötigen."
+
+#. module: website_sale
+#: view:website:website_sale.404
+msgid "Sorry, this product is not available anymore."
+msgstr "Entschuldigung, dieses Produkt ist nicht mehr verfügbar"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:13
+#, python-format
+msgid "Start Tutorial"
+msgstr "Beginne Tutorial"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "State / Province"
+msgstr "Bundesland / Region"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "State / Province..."
+msgstr "Bundesland / Routen ..."
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Street"
+msgstr "Straße"
+
+#. module: website_sale
+#: field:product.style,name:0
+msgid "Style Name"
+msgstr "Style Name"
+
+#. module: website_sale
+#: field:product.template,website_style_ids:0
+#: view:website:website_sale.products
+msgid "Styles"
+msgstr "Style"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Subtotal:"
+msgstr "Zwischensumme: "
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "Suggested alternatives:"
+msgstr "Vorgeschlagene Alternativen"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Suggested products:"
+msgstr "Vorgeschlagene Produkte"
+
+#. module: website_sale
+#: view:website:website_sale.total
+msgid "Taxes may be updated after providing shipping address"
+msgstr "Steuern werden nur nach Aktualisierung der Lieferadresse geändert"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+#: view:website:website_sale.total
+msgid "Taxes:"
+msgstr "Umsatzsteuer : "
+
+#. module: website_sale
+#: view:website:website_sale.confirmation
+msgid "Thank you for your order."
+msgstr "Vielen Dank für Ihre Spende"
+
+#. module: website_sale_delivery
+#: help:sale.order,amount_delivery:0
+msgid "The amount without tax."
+msgstr "Nettobetrag"
+
+#. module: website_sale
+#: code:addons/website_sale/controllers/main.py:755
+#, python-format
+msgid "The payment seems to have been canceled."
+msgstr "Es scheint als wurde diese Zahlung abgebrochen."
+
+#. module: website_sale
+#: code:addons/website_sale/controllers/main.py:731
+#: code:addons/website_sale/controllers/main.py:743
+#, python-format
+msgid "There seems to be an error with your request."
+msgstr "Es gibt ein Problem mit dieser Anfrage"
+
+#. module: website_sale
+#: help:product.public.category,image:0
+msgid "This field holds the image used as image for the category, limited to 1024x1024px."
+msgstr "Dieses Feld enthält ein Bild für die Kategorie. Maximalgröße 1024x1024 px"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:46
+#, python-format
+msgid "This page contains all the information related to the new product."
+msgstr "Diese Seite enthält alle Informationen mit Bezug zum neuen Artikel."
+
+#. module: website_sale
+#: help:product.template,public_categ_ids:0
+msgid "Those categories are used to group similar products for e-commerce."
+msgstr "Diese Kategorien werden für die Gruppierung vergleichbarer Artikel im E-Commerce benötigt."
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Total To Pay:"
+msgstr "Summe: "
+
+#. module: website_sale
+#: view:website:website_sale.total
+msgid "Total:"
+msgstr "Summe: "
+
+#. module: website_sale
+#: field:sale.order,payment_tx_id:0
+msgid "Transaction"
+msgstr "Geschäftsvorfall"
+
+#. module: website_sale
+#: field:product.attribute,type:0
+msgid "Type"
+msgstr "Typ"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:61
+#, python-format
+msgid "Update image"
+msgstr "Bild aktualisieren"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "Use the"
+msgstr "Benutzen Sie"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "VAT Number"
+msgstr "Steuernummer"
+
+#. module: website_sale
+#: view:website:website_sale.payment
+msgid "Validate Order"
+msgstr "Bestätige Spende"
+
+#. modules: website_sale, website_sale_donate
+#: model:ir.model,name:website_sale.model_website
+#: view:product.template:website_sale.product_template_form_view
+#: model:ir.model,name:website_sale_donate.model_website
+msgid "Website"
+msgstr "Webseite"
+
+#. module: website_sale
+#: field:product.template,website_message_ids:0
+msgid "Website Comments"
+msgstr "Webseite Kommentare"
+
+#. module: website_sale
+#: model:ir.actions.act_url,name:website_sale.action_open_website
+msgid "Website Shop"
+msgstr "Webseite Shop"
+
+#. module: website_sale
+#: field:product.template,website_meta_description:0
+msgid "Website meta description"
+msgstr "Webseite Metabeschreibung"
+
+#. module: website_sale
+#: field:product.template,website_meta_keywords:0
+msgid "Website meta keywords"
+msgstr "Webseite Metasuchbegriffe"
+
+#. module: website_sale
+#: field:product.template,website_meta_title:0
+msgid "Website meta title"
+msgstr "Webseite Metaüberschrift"
+
+#. module: website_sale
+#: field:product.product,website_url:0
+#: field:product.template,website_url:0
+msgid "Website url"
+msgstr "Webseite URL"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:11
+#, python-format
+msgid "Welcome to your shop"
+msgstr "Willkommen in Ihrem Shop"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "Write a comment..."
+msgstr "Schreiben Sie einen Kommentar ..."
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:12
+#, python-format
+msgid "You successfully installed the e-commerce. This guide will help you to create your product and promote your sales."
+msgstr "Sie haben das E-Commerce Modul erfolgreich installiert. Diese Anleitung hilft Ihnen bei der Erstellung eines Artikels und bei der Werbung für Ihre Veröffentlichungen."
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Your Address"
+msgstr "Ihre Daten"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Your Name"
+msgstr "Ihr Name"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Your Order"
+msgstr "Übersicht"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Your cart is empty!"
+msgstr "Ihr Spendenkorb ist leer!"
+
+#. module: website_sale
+#: code:addons/website_sale/controllers/main.py:753
+#, python-format
+msgid "Your payment has been received."
+msgstr "Ihre Spende ist eingegangen."
+
+#. module: website_sale
+#: code:addons/website_sale/controllers/main.py:757
+#: code:addons/website_sale/controllers/main.py:761
+#, python-format
+msgid "Your transaction is waiting confirmation."
+msgstr "Ihre Transaktion erwartet eine Bestätigung"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Zip / Postal Code"
+msgstr "PLZ"
+
+#. module: website_sale_donate
+#: model:product.payment_interval,name:website_sale_donate.annually
+msgid "annually"
+msgstr "jährlich"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "change"
+msgstr "ändern"
+
+#. module: website_sale_donate
+#: field:website,city_mandatory_bill:0
+#: field:website,city_mandatory_ship:0
+#: field:website.config.settings,city_mandatory_bill:0
+#: field:website.config.settings,city_mandatory_ship:0
+msgid "city"
+msgstr "Stadt"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "code..."
+msgstr "Code..."
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "col-md-3 hidden-xs"
+msgstr "col-md-3 hidden-xs"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "col-md-9"
+msgstr "col-md-9"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "comment"
+msgstr "Kommentar"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "comments"
+msgstr "Kommentierungen"
+
+#. module: website_sale_donate
+#: field:website,country_id_mandatory_bill:0
+#: field:website,country_id_mandatory_ship:0
+#: field:website.config.settings,country_id_mandatory_bill:0
+#: field:website.config.settings,country_id_mandatory_ship:0
+msgid "country_id"
+msgstr "country_id"
+
+#. module: website_sale_donate
+#: field:website,email_mandatory_bill:0
+#: field:website.config.settings,email_mandatory_bill:0
+msgid "email"
+msgstr "email"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "form-group col-lg-12 hidden"
+msgstr "form-group col-lg-12 hidden"
+
+#. module: website_sale_donate
+#: view:website:website_sale.payment
+msgid "hidden"
+msgstr "hidden"
+
+#. module: website_sale_donate
+#: view:website:website_sale.checkout
+msgid "js_shipping row mb16 hidden"
+msgstr "js_shipping row mb16 hidden"
+
+#. module: website_sale_donate
+#: model:product.payment_interval,name:website_sale_donate.monthly
+msgid "monthly"
+msgstr "monatlich"
+
+#. module: website_sale_donate
+#: field:website,name_mandatory_bill:0
+#: field:website,name_mandatory_ship:0
+#: field:website.config.settings,name_mandatory_bill:0
+#: field:website.config.settings,name_mandatory_ship:0
+msgid "name"
+msgstr "name"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "on"
+msgstr "am"
+
+#. module: website_sale_donate
+#: model:product.payment_interval,name:website_sale_donate.once_only
+msgid "once-only"
+msgstr "einmalig"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "or"
+msgstr "oder"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "pagination form-inline col-md-3"
+msgstr "Seitenzählung form-inline col-md-3"
+
+#. module: website_sale_donate
+#: field:website,phone_mandatory_bill:0
+#: field:website,phone_mandatory_ship:0
+#: field:website.config.settings,phone_mandatory_bill:0
+#: field:website.config.settings,phone_mandatory_ship:0
+msgid "phone"
+msgstr "phone"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "pull-right"
+msgstr "nach rechts schieben"
+
+#. module: website_sale_donate
+#: model:product.payment_interval,name:website_sale_donate.quarterly
+msgid "quarterly"
+msgstr "vierteljährlich"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "select..."
+msgstr "... auswählen"
+
+#. module: website_sale_donate
+#: field:website.config.settings,state_id_mandatory_bill:0
+msgid "state"
+msgstr "state"
+
+#. module: website_sale_donate
+#: field:website,state_id_mandatory_bill:0
+#: field:website,state_id_mandatory_ship:0
+#: field:website,vat_mandatory_bill:0
+#: field:website,vat_subjected_mandatory_bill:0
+#: field:website,zip_mandatory_bill:0
+#: field:website.config.settings,state_id_mandatory_ship:0
+msgid "state_id"
+msgstr "state_id"
+
+#. module: website_sale_donate
+#: field:website,street_mandatory_bill:0
+#: field:website,street_mandatory_ship:0
+#: field:website.config.settings,street_mandatory_bill:0
+#: field:website.config.settings,street_mandatory_ship:0
+msgid "street"
+msgstr "street"
+
+#. module: website_sale_donate
+#: field:website,street2_mandatory_bill:0
+#: field:website,zip_mandatory_ship:0
+#: field:website.config.settings,street2_mandatory_bill:0
+msgid "street2"
+msgstr "street2"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "top menu to create a new product."
+msgstr "Hauptmenü zur Erstellung eines neuen Artikels."
+
+#. module: website_sale_donate
+#: field:website.config.settings,vat_mandatory_bill:0
+msgid "vat"
+msgstr "vat"
+
+#. module: website_sale_donate
+#: field:website.config.settings,vat_subjected_mandatory_bill:0
+msgid "vat_subjected"
+msgstr "vat_subjected"
+
+#. module: website_sale_donate
+#: field:website.config.settings,zip_mandatory_bill:0
+#: field:website.config.settings,zip_mandatory_ship:0
+msgid "zip"
+msgstr "zip"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "☑ 256 bit encryption"
+msgstr "☑ Umfassender Datenschutz"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "☑ 30-days money-back guarantee"
+msgstr "☑ Jederzeit kündbar"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "☑ Invoice sent by e-Mail"
+msgstr "☑ Bestätigung per E-Mail"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "☑ Processed by Ogone"
+msgstr "☑ Sicheres Bezahlen"
+

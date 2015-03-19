@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_website_sale_donate_config_settings" model="ir.ui.view">
+            <field name="name">Website Sale Donate Config Settings</field>
+            <field name="model">website.config.settings</field>
+            <field name="inherit_id" ref="website.view_website_config_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@string='Domain']" position="after">
+                    <group string="Mandatory Billing Fields">
+                        <!-- NAME IS MANDATORY BY ODOO! -->
+                        <!--<label for="name_mandatory_bill"/>-->
+                        <!--<div name="name_mandatory_bill">-->
+                            <!--<div class="oe_inline">-->
+                                <!--<field name="name_mandatory_bill"/>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <label for="email_mandatory_bill"/>
+                        <div name="email_mandatory_bill">
+                            <div class="oe_inline">
+                                <field name="email_mandatory_bill"/>
+                            </div>
+                        </div>
+                        <label for="street2_mandatory_bill"/>
+                        <div name="street2_mandatory_bill">
+                            <div class="oe_inline">
+                                <field name="street2_mandatory_bill"/>
+                            </div>
+                        </div>
+                        <label for="city_mandatory_bill"/>
+                        <div name="city_mandatory_bill">
+                            <div class="oe_inline">
+                                <field name="city_mandatory_bill"/>
+                            </div>
+                        </div>
+                        <label for="country_id_mandatory_bill"/>
+                        <div name="country_id_mandatory_bill">
+                            <div class="oe_inline">
+                                <field name="country_id_mandatory_bill"/>
+                            </div>
+                        </div>
+                        <label for="phone_mandatory_bill"/>
+                        <div name="phone_mandatory_bill">
+                            <div class="oe_inline">
+                                <field name="phone_mandatory_bill"/>
+                            </div>
+                        </div>
+                        <label for="street_mandatory_bill"/>
+                        <div name="street_mandatory_bill">
+                            <div class="oe_inline">
+                                <field name="street_mandatory_bill"/>
+                            </div>
+                        </div>
+                        <label for="state_id_mandatory_bill"/>
+                        <div name="state_id_mandatory_bill">
+                            <div class="oe_inline">
+                                <field name="state_id_mandatory_bill"/>
+                            </div>
+                        </div>
+                        <label for="vat_mandatory_bill"/>
+                        <div name="vat_mandatory_bill">
+                            <div class="oe_inline">
+                                <field name="vat_mandatory_bill"/>
+                            </div>
+                        </div>
+                        <label for="zip_mandatory_bill"/>
+                        <div name="zip_mandatory_bill">
+                            <div class="oe_inline">
+                                <field name="zip_mandatory_bill"/>
+                            </div>
+                        </div>
+                    </group>
+                    <group string="Mandatory Shipping Fields">
+                        <!-- NAME IS MANDATORY BY ODOO! -->
+                        <!--<label for="name_mandatory_ship"/>-->
+                        <!--<div name="name_mandatory_ship">-->
+                            <!--<div class="oe_inline">-->
+                                <!--<field name="name_mandatory_ship"/>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <label for="phone_mandatory_ship"/>
+                        <div name="phone_mandatory_ship">
+                            <div class="oe_inline">
+                                <field name="phone_mandatory_ship"/>
+                            </div>
+                        </div>
+                        <label for="street_mandatory_ship"/>
+                        <div name="street_mandatory_ship">
+                            <div class="oe_inline">
+                                <field name="street_mandatory_ship"/>
+                            </div>
+                        </div>
+                        <label for="city_mandatory_ship"/>
+                        <div name="city_mandatory_ship">
+                            <div class="oe_inline">
+                                <field name="city_mandatory_ship"/>
+                            </div>
+                        </div>
+                        <label for="country_id_mandatory_ship"/>
+                        <div name="country_id_mandatory_ship">
+                            <div class="oe_inline">
+                                <field name="country_id_mandatory_ship"/>
+                            </div>
+                        </div>
+                        <label for="state_id_mandatory_ship"/>
+                        <div name="state_id_mandatory_ship">
+                            <div class="oe_inline">
+                                <field name="state_id_mandatory_ship"/>
+                            </div>
+                        </div>
+                        <label for="zip_mandatory_ship"/>
+                        <div name="zip_mandatory_ship">
+                            <div class="oe_inline">
+                                <field name="zip_mandatory_ship"/>
+                            </div>
+                        </div>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

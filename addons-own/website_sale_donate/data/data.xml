@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!-- Payment Intervals for Products -->
+        <record id="annually" model="product.payment_interval">
+            <field name="name">annually</field>
+        </record>
+        <record id="quarterly" model="product.payment_interval">
+            <field name="name">quarterly</field>
+        </record>
+        <record id="monthly" model="product.payment_interval">
+            <field name="name">monthly</field>
+        </record>
+        <record id="once_only" model="product.payment_interval">
+            <field name="name">once-only</field>
+        </record>
+
+        <!-- Default Donate Product -->
+        <record id="default_donation" model="product.product">
+            <field name="list_price">50.0</field>
+            <field name="standard_price">0</field>
+            <field name="uom_id" ref="product.product_uom_unit"/>
+            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="route_ids" eval="[(6,0,[])]"/>
+            <field name="sale_delay">0</field>
+            <field name="name">Donation</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="type">consu</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="False"/>
+            <field name="hide_price" eval="True"/>
+            <field name="hide_quantity" eval="True"/>
+            <field name="price_donate" eval="True"/>
+            <field name="price_donate_min">5</field>
+            <field name="simple_checkout" eval="True"/>
+            <!-- 6,0 means replace the list of linked ids -->
+            <field name="payment_interval_ids" eval="[(6,0,[annually, monthly, once_only])]"/>
+            <field name="taxes_id" eval="[(6,0,[])]"/>
+            <field name="supplier_taxes_id" eval="[(6,0,[])]"/>
+        </record>
+
+        <!-- Default Delivery Method -->
+        <record id="delivery_method_none" model="delivery.carrier">
+            <field name="name">None</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id" search="[]" model="res.partner"/>
+            <field name="product_id" ref="product.product_product_consultant"/>
+            <field name="normal_price">0</field>
+            <field name="website_published" eval="True"/>
+            <field name="website_description">None</field>
+        </record>
+
+    </data>
+</openerp>

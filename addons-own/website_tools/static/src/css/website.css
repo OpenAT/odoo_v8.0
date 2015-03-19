@@ -1,0 +1,6 @@
+
+/* Small Fix: Empty paragraphs would show a rectangle without this fix */
+#wrapwrap p:empty:after {
+    border: none;
+    color: transparent;
+}
