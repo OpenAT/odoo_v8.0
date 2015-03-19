@@ -130,9 +130,17 @@ git submodule add -b master https://github.com/ether/etherpad-lite.git etherpad-
 
 This is for now only a placeholder but will describe the update process of a customer instance. Keep tuned ;)
 ```bash
-# pull latest changes from remote origin and remote branch origin to current local branch
-# This way you do not have to checkout master ;)
-git pull origin master
+
+# Update Master
+git checkout master                             
+git pull                                        
+git submodule update --rebase --recusive
+
+# Update Branch (Code Repo for a server in this case)
+git checkout intdadi                            
+git rebase master
+git submodule update --rebase --recusive
+git push origin intdadi
 ```
 
 
