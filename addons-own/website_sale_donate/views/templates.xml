@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Load custom js -->
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="Shop Donate">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_donate.css' t-ignore="true"/>
+                <!-- HINT: jquery validate is loaded in website_tools -->
+                <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_product_price_form_validate.js"></script>
+                <!-- Disabled just prepared: <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_contact_form_validate.js"></script> -->
+                <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_hide_tax.js"></script>
+            </xpath>
+        </template>
+
+
+        <!-- PRODUCT PAGE: Product Price Sub-Template: -->
+        <!-- Hint: product.hide_price has not effect on the product page just on overview pages ! -->
+        <template id="wsd_product_price" inherit_id="website_sale.product_price" name="Product-Page Submit-Price-Form Extensions">
+            <!-- hide list price if an arbitrary price can be set -->
+            <xpath expr="//span[@t-field='product.lst_price']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'text-danger oe_default_price hidden' if product.price_donate else 'text-danger oe_default_price'</attribute>
+            </xpath>
+            <!-- hide price if an arbitrary price can be set -->
+            <xpath expr="//b[@t-field='product.price']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'oe_price hidden' if product.price_donate else 'oe_price'</attribute>
+            </xpath>
+            <!-- Add extra Options to product add to cart form -->
+            <xpath expr="//span[@itemprop='price']" position="before">
+                <!-- Show an input field to enter the arbitrary price -->
+                <t t-if="product.price_donate">
+                    <div class="form-group" style="padding-top: 1em;">
+                        <div class="input-group">
+                            <label for="price_donate" class="sr-only">Arbitrary Donation</label>
+                            <input type="number" class="form-control" name="price_donate" id="price_donate" t-att-min="product.price_donate_min or '1'" t-att-value="price_donate or product.price"/>
+                            <span class="input-group-addon" t-esc="user_id.partner_id.property_product_pricelist.currency_id.symbol"/>
+                        </div>
+                        <label id="price_donate-error" class="error" for="price_donate" style="font-size: 12px;">
+                        </label>
+                    </div>
+                </t>
+                <!-- show radio boxes to select the payment interval -->
+                <t t-if="product.payment_interval_ids">
+                    <div class="form-group" style="padding-top: 1em;">
+                        <div class="label label-default">How frequent would you like to donate this amount:</div>
+                        <div class="radio" t-foreach="product.payment_interval_ids" t-as="payint">
+                            <label>
+                                <input type="radio" name="payment_interval_id"  t-att-value="payint.id" t-att-checked="'checked' if payint.id == payment_interval_id else ''"/>
+                                <t t-esc="payint.name"/>
+                            </label>
+                        </div>
+                    </div>
+                </t>
+                <!-- redirect directly to checkout instead of cart -->
+                <t t-if="product.payment_interval_ids">
+                    <input type="text" name="simple_checkout" t-att-value="product.simple_checkout" style="display: none;"/>
+                </t>
+            </xpath>
+        </template>
+
+        <!-- PRODUCT PAGE: Product Quantity Sub-Template:
+             only show quantity selector if product.hide_quantity not set -->
+        <template id="wsd_product_quantity" inherit_id="website_sale.product_quantity" name="Product-Page Quantity Extensions">
+            <xpath expr="//div[@class='css_quantity input-group oe_website_spinner']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'css_quantity input-group oe_website_spinner hidden' if product.hide_quantity else 'css_quantity input-group oe_website_spinner'</attribute>
+            </xpath>
+        </template>
+
+        <!-- PRODUCT PAGE: hide add-to-cart form -->
+        <template id="wsd_product" inherit_id="website_sale.product" name="Product-Page Hide Payment Box">
+            <xpath expr="//form[@class='js_add_cart_variants']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'js_add_cart_variants hidden' if product.hide_payment else 'js_add_cart_variants'</attribute>
+            </xpath>
+        </template>
+
+        <!-- SHOPPING CART: payment interval, hide_price -->
+        <template id="wsd_cart_extended" inherit_id="website_sale.cart" name="Product-Cart Extensions">
+            <!-- Add payment interval as text under the product price -->
+            <xpath expr="//table[@id='cart_products']//td[@name='price']" position="inside">
+                <t t-if="line.payment_interval_id">
+                    <div class="small">(<t t-esc="line.payment_interval_id.name"/>)</div>
+                </t>
+            </xpath>
+            <!-- Correct a small odoo bug where False is written for so line description if no sales description text -->
+            <xpath expr="//table[@id='cart_products']//div[@class='text-muted']" position="replace">
+                    <t t-if="'\n'.join(line.name.splitlines()[1:]) != 'False'">
+                        <div class="text-muted" t-esc="'\n'.join(line.name.splitlines()[1:])"/>
+                    </t>
+            </xpath>
+            <!-- Change the product quantity controls (oe_website_spinner) to only show "-" if hide_quantity set -->
+            <xpath expr="//table[@id='cart_products']//div[@class='input-group oe_website_spinner']" position="replace">
+                <div class="input-group oe_website_spinner">
+                  <span class="input-group-addon" t-att-style="'width: 100%; padding: 9px 12px 9px 36px;' if line.product_id.hide_quantity else ''">
+                      <a t-attf-href="#" class="mb8 js_add_cart_json" data-no-instant="">
+                          <i class="fa fa-minus"></i>
+                      </a>
+                  </span>
+                  <input type="text"
+                      t-att-class="'js_quantity form-control' if line.product_id.hide_quantity == False else 'hidden js_quantity form-control'"
+                      t-att-data-line-id="line.id"
+                      t-att-data-product-id="line.product_id.id"
+                      t-att-value="int(line.product_uom_qty)"/>
+                  <span class="input-group-addon">
+                      <a t-attf-href="#"
+                         t-att-class="'mb8 float_left js_add_cart_json' if line.product_id.hide_quantity == False else 'hidden mb8 float_left js_add_cart_json'"
+                         data-no-instant="">
+                          <i class="fa fa-plus"></i>
+                      </a>
+                  </span>
+                </div>
+            </xpath>
+            <!-- Hide list price in shopping cart if price_donate true -->
+            <xpath expr="//table[@id='cart_products']//del[@t-field='line.product_id.lst_price']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'text-danger hidden' if line.product_id.price_donate else 'text-danger'</attribute>
+            </xpath>
+        </template>
+
+        <!-- SHOP: Hide Product Price for Grid and List View if hide_price set -->
+        <template id="wsd_product_item" inherit_id="website_sale.products_item" name="Product Item Extensions">
+            <xpath expr="//div[@class='product_price']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'product_price hidden' if product.hide_price else 'product_price'</attribute>
+            </xpath>
+        </template>
+
+        <!-- CHECKOUT: honor the mandatory fields -->
+        <template id="wsd_checkout" inherit_id="website_sale.checkout" name="Checkout Manadtory Fields">
+            <!-- BILLING -->
+            <xpath expr="//label[@for='contact_name']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.email_mandatory_bill else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='street2']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.street2_mandatory_bill else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='city']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.city_mandatory_bill else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='country_id']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.country_id_mandatory_bill else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='phone']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.phone_mandatory_bill else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='street']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.street_mandatory_bill else 'font-weight: normal'</attribute>
+            </xpath>
+
+            <xpath expr="//label[@for='state_id']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.state_id_mandatory_bill else 'font-weight: normal'</attribute>
+            </xpath>
+
+            <xpath expr="//label[@for='vat']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.vat_mandatory_bill else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='zip']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.zip_mandatory_bill else 'font-weight: normal'</attribute>
+            </xpath>
+            <!-- SHIPPING -->
+            <xpath expr="//label[@for='shipping_phone']" position="attributes">
+                <attribute name="t-att-style">'' if website.phone_mandatory_ship else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='shipping_street']" position="attributes">
+                <attribute name="t-att-style">'' if website.street_mandatory_ship else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='shipping_city']" position="attributes">
+                <attribute name="t-att-style">'' if website.city_mandatory_ship else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='shipping_zip']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.zip_mandatory_ship else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='shipping_country_id']" position="attributes">
+                <attribute name="t-att-style">'' if website.country_id_mandatory_ship else 'font-weight: normal'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='shipping_state_id']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.state_id_mandatory_ship else 'font-weight: normal'</attribute>
+            </xpath>
+        </template>
+
+        <!-- WEBSITE CUSTOM OPTION: PAYMENT: Hide Delivery Selector -->
+        <template id="hide_delivery_selector" inherit_id="website_sale_delivery.payment_delivery" active="True" customize_show="True" name="Hide Delivery Selector">
+            <xpath expr="//div[@id='delivery_carrier']" position="attributes">
+                <attribute name="class">hidden</attribute>
+            </xpath>
+        </template>
+
+        <!-- WEBSITE CUSTOM OPTION: CHECKOUT: Hide Shipping Address Selector -->
+        <template id="hide_shipping_address" inherit_id="website_sale.checkout" active="True" customize_show="True" name="Hide Shipping Address">
+            <xpath expr="//div[@class='form-group col-lg-12']" position="attributes">
+                <attribute name="class">form-group col-lg-12 hidden</attribute>
+            </xpath>
+            <xpath expr="//div[@class='js_shipping row mb16']" position="attributes">
+                <attribute name="class">js_shipping row mb16 hidden</attribute>
+            </xpath>
+        </template>
+        <!-- WEBSITE CUSTOM OPTION: PAYMENT: Hide Shipping address at right column -->
+        <template id="hide_shipping_address_payment" inherit_id="website_sale.payment" active="True" customize_show="True" name="Hide Shipping Address">
+            <xpath expr="//div[@id='right_column']//t" position="replace">
+                <div></div>
+            </xpath>
+        </template>
+
+        <!-- WEBSITE CUSTOM OPTION: PRODUCT OVERVIEW: Hide ALL! Prices -->
+        <template id="products_item_hideprice" inherit_id="website_sale.products_item" active="False" customize_show="True" name="Hide Price">
+            <xpath expr="//div[@class='product_price']" position="replace">
+                <div></div>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="frst_pp_assets">
+          <xpath expr="." position="inside">
+              <!-- HINT: website_tools loads the needed jquery validate library -->
+              <script type="text/javascript" src="/payment_frst/static/src/js/frst_form_validate.js"></script>
+          </xpath>
+        </template>
+
+        <template id="frst_acquirer_button">
+            <form id="frst" t-if="acquirer" t-att-action="tx_url" method="post" target="_self">
+                <t t-if="tx_values.get('return_url')">
+                    <input type='hidden' name='return_url' t-att-value='tx_values["return_url"]'/>
+                </t>
+                <input type='hidden' name='reference' t-att-value='reference'/>
+                <input type='hidden' name='amount' t-att-value='amount or "0.0"'/>
+                <input type='hidden' name='currency' t-att-value='currency.name'/>
+                <div class="form-group">
+                    <label for="frst_iban">IBAN</label>
+                    <input type="text" name='frst_iban' class="form-control" id="frst_iban" placeholder="Enter IBAN" t-att-value="partner_values['frst_iban']"/>
+                </div>
+                <div class="form-group">
+                    <label for="frst_bic">BIC</label>
+                    <input type="text" name='frst_bic' class="form-control" id="frst_bic" placeholder="Enter BIC" t-att-value="partner_values['frst_bic']"/>
+                </div>
+                <!-- submit -->
+                <button type="submit" width="100px"
+                    t-att-class="submit_class">
+                    <img t-if="not submit_txt" src="/payment_frst/static/src/img/frst_icon.png"/>
+                    <span t-if="submit_txt"><t t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/></span>
+                </button>
+            </form>
+        </template>
+
+    </data>
+</openerp>

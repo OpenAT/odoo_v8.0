@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Extend the product form to include the website_sale_donate fields -->
+        <record model="ir.ui.view" id="product_template_form_view">
+            <field name="name">product.template.product.website_donate.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <field name="accessory_product_ids" position="after">
+                    <field name="hide_payment"/>
+                    <field name="hide_price"/>
+                    <field name="hide_quantity"/>
+                    <field name="price_donate"/>
+                    <field name="price_donate_min" attrs="{'invisible': [('price_donate','=', False)]}"/>
+                    # Info found here http://ludwiktrammer.github.io/odoo/form-widgets-many2one-fields-options-odoo.html
+                    <field name="payment_interval_ids" widget="many2many_tags" placeholder="Payment Intervals..."/>
+                    <field name="simple_checkout"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Create form, tree and list view for the payment intervals -->
+        <!-- openat_produktpass.markenname form, tree und search View -->
+        <record model="ir.ui.view" id="website_sale_donate_payment_interval_form">
+            <field name="name">website_sale_donate.payment_interval_form</field>
+            <field name="model">product.payment_interval</field>
+            <field name="arch" type="xml">
+                <form string="Payment Intervals">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="website_sale_donate_payment_interval_tree">
+            <field name="name">website_sale_donate.payment_interval_tree</field>
+            <field name="model">product.payment_interval</field>
+            <field name="arch" type="xml">
+                <tree string="Payment Intervals">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="website_sale_donate_payment_interval_search">
+            <field name="name">website_sale_donate.payment_interval_search</field>
+            <field name="model">product.payment_interval</field>
+            <field name="arch" type="xml">
+                <search string="Payment Intervals">
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="website_sale_donate_payment_interval_action">
+            <field name="name">Payment Intervals</field>
+            <field name="res_model">product.payment_interval</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="website_sale_donate_payment_interval_tree"/>
+            <field name="search_view_id" ref="website_sale_donate_payment_interval_search"/>
+        </record>
+        <!-- And we add the Action to a Menu with the shortcut menuitem -->
+        <menuitem action="website_sale_donate_payment_interval_action" id="website_sale_donate_payment_interval_menu" name="Payment Intervals" parent="product.prod_config_main" sequence="60"/>
+
+    </data>
+</openerp>

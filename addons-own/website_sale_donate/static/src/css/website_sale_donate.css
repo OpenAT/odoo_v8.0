@@ -1,0 +1,4 @@
+/* Heart for the shopping cart in top menu */
+.fa-shopping-cart:before {
+  content: "\f004";
+}
