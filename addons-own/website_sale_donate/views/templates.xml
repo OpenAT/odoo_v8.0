@@ -114,7 +114,7 @@
                 </div>
             </xpath>
             <!-- Hide list price in shopping cart if price_donate true -->
-            <xpath expr="//table[@id='cart_products']//del[@t-field='line.product_id.lst_price']" position="attributes">
+            <xpath expr="//del[@t-field='line.product_id.lst_price']" position="attributes">
                 <attribute name="class"></attribute>
                 <attribute name="t-att-class">'text-danger hidden' if line.product_id.price_donate else 'text-danger'</attribute>
             </xpath>
