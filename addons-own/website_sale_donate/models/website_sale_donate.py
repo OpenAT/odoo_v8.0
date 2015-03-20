@@ -36,6 +36,7 @@ class website_sale_donate_settings(osv.Model):
         # Mandatory for billing
         'name_mandatory_bill': 1,
         'email_mandatory_bill': 1,
+        'country_id_mandatory_bill': 1,
         # Mandatory for shipping
         'name_mandatory_ship': 1,
         'phone_mandatory_ship': 1,
@@ -54,7 +55,7 @@ class payment_interval(osv.Model):
 
 payment_interval()
 
-# HINT: Since we set this fields on product.template it is not be possible to have different values for variants
+# HINT: Since we set this fields on product.template it is not possible to have different values for variants
 #       of this product template (= product.product) - which is the intended use-case and ok ;)
 class product_template(osv.Model):
     _inherit = "product.template"
@@ -72,7 +73,7 @@ class product_template(osv.Model):
     }
 
 
-# Sale order line um ein Feld price_donate erweitern
+# Extend sale.order.line to be able to store price_donate and payment interval information
 class sale_order_line(osv.Model):
     _inherit = "sale.order.line"
     _columns = {

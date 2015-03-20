@@ -193,6 +193,13 @@
             </xpath>
         </template>
 
+        <!-- CONFIRMATION: Headline appears on separate line -->
+        <template id="wsd_product_item" inherit_id="website_sale.confirmation" name="Confirmation Free Heading">
+            <xpath expr="//ul[@class='wizard pull-right']" position="after">
+                <div class="clearfix mb32"></div>
+            </xpath>
+        </template>
+
         <!-- WEBSITE CUSTOM OPTION: PAYMENT: Hide Delivery Selector -->
         <template id="hide_delivery_selector" inherit_id="website_sale_delivery.payment_delivery" active="True" customize_show="True" name="Hide Delivery Selector">
             <xpath expr="//div[@id='delivery_carrier']" position="attributes">
