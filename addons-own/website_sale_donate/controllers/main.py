@@ -70,7 +70,8 @@ class website_sale_donate(website_sale):
                                                                     **kw)
 
         # If simple_checkout is set for the product redirect directly to checkout instead of cart
-        if request.registry['product.product'].browse(cr, SUPERUSER_ID, int(product_id), context=context).hide_quantity:
+        if request.registry['product.product'].browse(cr, SUPERUSER_ID,
+                                                      int(product_id), context=context).simple_checkout:
             return request.redirect('/shop/checkout')
 
         return request.redirect("/shop/cart")

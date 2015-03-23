@@ -77,7 +77,7 @@
             </xpath>
         </template>
 
-        <!-- SHOPPING CART: payment interval, hide_price -->
+        <!-- SHOPPING CART: payment interval, quantity controls, correct odoo bug - dont write false if no sales text -->
         <template id="wsd_cart_extended" inherit_id="website_sale.cart" name="Product-Cart Extensions">
             <!-- Add payment interval as text under the product price -->
             <xpath expr="//table[@id='cart_products']//td[@name='price']" position="inside">
@@ -122,7 +122,7 @@
         </template>
 
         <!-- SHOP: Hide Product Price for Grid and List View if hide_price set -->
-        <template id="wsd_product_item" inherit_id="website_sale.products_item" name="Product Item Extensions">
+        <template id="wsd_products_item" inherit_id="website_sale.products_item" name="Product Item Extensions">
             <xpath expr="//div[@class='product_price']" position="attributes">
                 <attribute name="class"></attribute>
                 <attribute name="t-att-class">'product_price hidden' if product.hide_price else 'product_price'</attribute>
