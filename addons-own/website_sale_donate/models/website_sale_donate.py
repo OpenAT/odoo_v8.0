@@ -87,9 +87,20 @@ class sale_order_line(osv.Model):
 class sale_order(osv.Model):
     _inherit = "sale.order"
 
-    # Todo: No strikethrough original price if current price lower than price_unit if product_donate checkbox true
+    def _website_product_id_change(self, cr, uid, ids, order_id, product_id, qty=0, line_id=None, context=None):
+        context = context or {}
+        res = super(sale_order, self)._website_product_id_change(cr, uid, ids, order_id, product_id, qty=qty, line_id=line_id, context=context)
+        if context.get('price_donate'):
+            res.update({'price_unit': context.get('price_donate')})
+        return res
+
     # extend _cart_update to write price_donate and payment_interval to the sale.order.line if existing in kwargs
     def _cart_update(self, cr, uid, ids, product_id=None, line_id=None, add_qty=0, set_qty=0, context=None, **kwargs):
+
+        # Try to recalculate all functional fields on write
+        context = context or {}
+        context = dict(context, recompute=True)
+        context = dict(context, no_store_function=True)
 
         # Helper: Check if Argument is a Number and greater than zero
         def is_float_gtz(number=''):
@@ -111,12 +122,19 @@ class sale_order(osv.Model):
             else:
                 set_qty = 0
 
+        # Update context with price_donate and call super
+        price_donate = kwargs.get('price_donate')
+        if price_donate:
+            context.update({'price_donate': price_donate})
         cu = super(sale_order, self)._cart_update(cr, uid, ids,
                                                   product_id, line_id, add_qty, set_qty, context=context, **kwargs)
+        if context.get('price_donate'):
+            context.pop('price_donate', None)
+
+
+        payment_interval_id = kwargs.get('payment_interval_id')
         line_id = cu.get('line_id')
         quantity = cu.get('quantity')
-        price_donate = kwargs.get('price_donate')
-        payment_interval_id = kwargs.get('payment_interval_id')
         sol_obj = self.pool.get('sale.order.line')
         sol = sol_obj.browse(cr, SUPERUSER_ID, line_id, context=context)
 
@@ -133,11 +151,18 @@ class sale_order(osv.Model):
                     and sol.product_id.price_donate \
                     and price_donate >= sol.product_id.price_donate_min:
                 sol.price_donate = price_donate
+                #sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_donate': price_donate, }, context=context)
 
             # no matter where we come from if so line already exists and has filled price_donate field we have to
             # update the price_unit again to not loose our custom price price_donate
             if sol.price_donate:
                 sol.price_unit = sol.price_donate
+                #sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_unit': sol.price_donate, }, context=context)
+
+            # TODO: Hack: for no obvious reason functional fields do net get updated on sale.order.line writes ?!? so we do it manually!
+            # Sadly not working
+            # sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_subtotal': sol_obj._amount_line(cr, SUPERUSER_ID, [line_id], None, None, context=context), 'price_reduce': sol_obj._get_price_reduce(cr, SUPERUSER_ID, [line_id], None, None, context=context), }, context=context)
+
 
             # If Payment Interval is found in kwargs write it to the so line
             # Todo: SECURITY Check if payment_intervall_id: is an int and if it is available in product.payment_interval
@@ -147,5 +172,10 @@ class sale_order(osv.Model):
                 if sol.payment_interval_id.exists():
                     sol.payment_interval_name = sol.payment_interval_id.name
                     sol.payment_interval_xmlid = sol.payment_interval_id.get_metadata()[0]['xmlid']
+
+            # ToDo: Try to browse and write to the sales order to update relevant fields
+            # so_obj = self.pool.get('sale.order')
+            # so = so_obj.browse(cr, SUPERUSER_ID, sol.order_id.id, context=context)
+            # so.write(cr, SUPERUSER_ID, {}, context=context)
 
         return cu
