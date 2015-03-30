@@ -30,3 +30,15 @@
 	path = addons-thirdparty/odoo-india
 	url = https://github.com/Odoo-India/odoo-india.git
 	branch = master
+[submodule "addons-thirdparty/opensur"]
+	path = addons-thirdparty/opensur
+	url = https://github.com/OpenSur/Odoo_addons.git
+	branch = 8.0
+[submodule "addons-thirdparty/ascone-addons"]
+	path = addons-thirdparty/ascone-addons
+	url = https://github.com/acsone/acsone-addons.git
+	branch = 8.0
+[submodule "addons-thirdparty/website"]
+	path = addons-thirdparty/website
+	url = https://github.com/OCA/website.git
+	branch = 8.0
