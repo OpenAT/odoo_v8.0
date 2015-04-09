@@ -1,0 +1,82 @@
+<openerp>
+    <data>
+
+        <!-- Add etherpad description field and kanban fold option to project form -->
+        <record id="project_pad_description" model="ir.ui.view">
+            <field name="name">project_pad_description</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.edit_project"/>
+            <field name="arch" type="xml">
+                <notebook position="before">
+                    <field name="description_pad" widget="pad"/>
+                </notebook>
+                <field name="sequence" position="after">
+                    <field name="fold"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Add Sort order to project kanban view -->
+        <record id="project_kanban_sort_order" model="ir.ui.view">
+            <field name="name">project_kanban_sort_order</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.view_project_kanban"/>
+            <field name="arch" type="xml">
+                <kanban position="attributes">
+                    <attribute name="default_order">sequence</attribute>
+                    <!--<attribute name="default_group_by=">parent_id</attribute>-->
+                </kanban>
+                <field name="name" position="after">
+                    <field name="parent_id"/>
+                    <!-- sequence field has to be loaded or it can not be changed by drag and drop -->
+                    <field name="sequence"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Add Analytic Account Tree View to Project Configuration to easily sort Projects and set fold -->
+        <!-- Tree View -->
+        <record id="view_account_analytic_account_treeconf" model="ir.ui.view">
+            <field name="name">view_account_analytic_account_treeconf</field>
+            <field name="model">account.analytic.account</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <tree   editable="top"
+                        create="false"
+                        delete="false"
+                        default_order="sequence"
+                        string="Analytic Accounts">
+                    <field name="sequence" widget="handle"/>
+                    <field name="fold"/>
+                    <field name="name"/>
+                    <field name="partner_id" invisible="1"/>
+                    <field name="code" invisible="1"/>
+                    <field name="date_start" invisible="1"/>
+                    <field name="date" invisible="1"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="manager_id" invisible="1"/>
+                    <field name="parent_id"/>
+                    <field name="state" invisible="1"/>
+                    <field name="type" invisible="1"/>
+                    <field name="template_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+        <!-- Window Action -->
+        <record id="action_account_analytic_treeconf_action" model="ir.actions.act_window">
+            <field name="name">Analytic Accounts</field>
+            <field name="res_model">account.analytic.account</field>
+            <!--<field name="context">{'group_by':'parent_id'}</field>-->
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_analytic_account_treeconf"/>
+            <field name="search_view_id" ref="account.view_account_analytic_account_search"/>
+        </record>
+        <!-- Menu Item -->
+        <menuitem action="action_account_analytic_treeconf_action" id="action_account_analytic_treeconf_menu"
+            parent="base.menu_definitions"
+            groups="analytic.group_analytic_accounting"
+            sequence="1000"/>
+
+    </data>
+</openerp>
