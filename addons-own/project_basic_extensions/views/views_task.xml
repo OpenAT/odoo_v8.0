@@ -1,0 +1,136 @@
+<openerp>
+    <data>
+
+        <!-- ISSUE WINDOW ACTION: Add a new window action for tasks to be called from the smart button -->
+        <record id="action_view_issues_of_task" model="ir.actions.act_window">
+            <field name="res_model">project.issue</field>
+            <field name="view_type">form</field>
+            <field name="name">Issues</field>
+            <field name="view_mode">kanban,tree,form,calendar,graph</field>
+            <field name="context">{
+                'search_default_task_id': [active_id],
+                'default_task_id': active_id,
+            }</field>
+            <field name="help" type="html">
+                <p>
+                    The Odoo issues tacker allows you to efficiently manage things
+                    like internal requests, software development bugs, customer
+                    complaints, project troubles, material breakdowns, etc.
+                </p>
+            </field>
+        </record>
+
+        <!-- ISSUE SEARCH: Extend the Issue Search View to find Tasks too (without this the default search in context would not work-->
+        <record id="view_project_issue_filter_add_task" model="ir.ui.view">
+            <field name="name">Search Issues</field>
+            <field name="model">project.issue</field>
+            <field name="inherit_id" ref="project_issue.view_project_issue_filter"/>
+            <field name="arch" type="xml">
+                <field name="project_id" position="after">
+                    <field name="task_id"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- PROJECT SEARCH: Extend the Project Search View to find Tasks too (without this the default search in context would not work-->
+        <record id="view_project_project_filter_add_tasks" model="ir.ui.view">
+            <field name="name">Search Project</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.view_project_project_filter"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="task_ids" string="Task"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- TASK FORM: Add Issues Smart Button to Task Form -->
+        <record id="view_task_form2_issuesmartbutton" model="ir.ui.view" >
+            <field name="name">project.view_task_form2.issuesmartbutton</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2" />
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_right']" position="after">
+
+                    <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
+                        <!-- Could have used the action action_open_issue_kanban like in the kanban view
+                            Would be better becaues i could save the issue window action here BUT
+                            i left it that way to demonstrate both ways of doing it ;)
+                        -->
+                         <button class="oe_inline oe_stat_button" type="action"
+                                 name="%(action_view_issues_of_task)d"
+                                 context="{'default_project_id': project_id or False, 'default_partner_id': partner_id or False,}"
+                                 icon="fa-bug">
+                            <field string="Issues" name="issue_count" widget="statinfo"/>
+                        </button>
+                    </div>
+
+                </xpath>
+            </field>
+        </record>
+
+        <!-- TASK KANBAN: Add Issue link and counter, make the project name a link -->
+        <record id="view_task_kanban_add_issues" model="ir.ui.view">
+            <field name="name">view_task_kanban_add_issues</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_kanban"/>
+            <field name="arch" type="xml">
+                <field name="categ_ids" position="after">
+                    <field name="issue_count"/>
+                    <field name="issue_ids"/>
+                    <field name="id"/>
+                    <field name="project_id"/>
+                </field>
+                <!-- Add related Issues -->
+                <xpath expr="//div[@class='oe_kanban_footer_left']//span[@groups='project.group_time_work_estimation_tasks']" position="after">
+                    <div style="float: right;">
+                        <!-- HINT: if type="action" you need to escape the action name with Prozent
+                                   (can't give an example or view would be broken ;) )
+                            HINT2: There is no way to pass/change the context right now in kanban views
+                        -->
+                        <a name="action_open_issue_kanban" type="object">
+                            <t t-raw="record.issue_count.raw_value"/> Issues
+                        </a>
+                    </div>
+                </xpath>
+                <!-- Add linked Project -->
+                <xpath expr="//div[@class='oe_kanban_content']//field[@name='project_id']" position="replace">
+                    <t t-if="record.project_id.raw_value">
+                        <a  style="margin-right: 10px" name="action_open_related_project_form" type="object">
+                            <field name="project_id"/>
+                        </a>
+                    </t>
+                </xpath>
+                <xpath expr="//div[@class='oe_kanban_content']//br[1]" position="replace">
+                    <t t-if="record.project_id.raw_value">
+                        <br/>
+                    </t>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PROJECT KANBAN: Change Order of Done / Total (= Remaining + Done) -->
+        <record id="view_project_kanban_hours" model="ir.ui.view">
+            <field name="name">view_project_kanban_hours</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.view_project_kanban"/>
+            <field name="arch" type="xml">
+                <field name="planned_hours" position="after">
+                    <!--<field name="remaining_hours"/>-->
+                    <field name="total_hours"/>
+                </field>
+                <xpath expr="//div[@class='oe_kanban_footer_left']/span[@groups='project.group_time_work_estimation_tasks']" position="replace">
+                    <span groups="project.group_time_work_estimation_tasks" title="Remaining hours">
+                        <span class="oe_e">N</span>
+                        <t t-esc="Math.round(record.total_hours.raw_value - record.effective_hours.raw_value)"/>
+                    </span>
+                    <span groups="project.group_time_work_estimation_tasks">
+                        <span class="oe_e">R</span>
+                        <t t-esc="Math.round(record.effective_hours.raw_value)"/>/<t t-esc="Math.round(record.total_hours.raw_value)"/> <field name="company_uom_id"/>
+                    </span>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

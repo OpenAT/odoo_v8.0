@@ -36,7 +36,7 @@ Project, Task and Issues Extensions
 
 
     """,
-    'author': "Michael Karrer",
+    'author': "Michael Karrer michaelkarrer81@gmail.com",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
     'version': '0.1',
@@ -44,23 +44,11 @@ Project, Task and Issues Extensions
         'base',
         'project',
         'pad',
+        'project_issue',
     ],
     'installable': True,
-    'css': [
-        #'static/src/css/chatter.css',
-        #'static/src/css/backend.css',
-        ],
     'data': [
-        # DATA
-        #'data/data.xml',
-        # SECURITY FILES
-        #'security/ir.model.access.csv',
-        #'security/ir_ui_view.xml',
-        # VIEWS AND TEMPLATES
-        #'views/res_config.xml',
-        #'views/ir_actions.xml',
-        #'views/templates.xml',
-        #'views/snippets.xml',
-        'views/views.xml',
+        'views/views_project.xml',
+        'views/views_task.xml',
     ],
 }

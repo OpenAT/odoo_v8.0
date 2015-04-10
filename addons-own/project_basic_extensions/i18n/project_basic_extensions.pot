@@ -1,0 +1,101 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* project_basic_extensions
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-04-10 12:17+0000\n"
+"PO-Revision-Date: 2015-04-10 12:17+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: project_basic_extensions
+#: model:ir.actions.act_window,help:project_basic_extensions.action_view_issues_of_task
+msgid "<p>\n"
+"                    The Odoo issues tacker allows you to efficiently manage things\n"
+"                    like internal requests, software development bugs, customer\n"
+"                    complaints, project troubles, material breakdowns, etc.\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: project_basic_extensions
+#: model:ir.model,name:project_basic_extensions.model_account_analytic_account
+msgid "Analytic Account"
+msgstr ""
+
+#. module: project_basic_extensions
+#: view:account.analytic.account:project_basic_extensions.view_account_analytic_account_treeconf
+#: model:ir.actions.act_window,name:project_basic_extensions.action_account_analytic_treeconf_action
+#: model:ir.ui.menu,name:project_basic_extensions.action_account_analytic_treeconf_menu
+msgid "Analytic Accounts"
+msgstr ""
+
+#. module: project_basic_extensions
+#: help:account.analytic.account,sequence:0
+msgid "Custom Order Sequence for Analytic Accounts."
+msgstr ""
+
+#. module: project_basic_extensions
+#: field:account.analytic.account,fold:0
+msgid "Folded in Kanban Views"
+msgstr ""
+
+#. module: project_basic_extensions
+#: code:addons/project_basic_extensions/models/project.py:112
+#, python-format
+msgid "Issue"
+msgstr ""
+
+#. module: project_basic_extensions
+#: model:ir.actions.act_window,name:project_basic_extensions.action_view_issues_of_task
+#: view:project.task:project_basic_extensions.view_task_form2_issuesmartbutton
+#: view:project.task:project_basic_extensions.view_task_kanban_add_issues
+#: field:project.task,issue_count:0
+msgid "Issues"
+msgstr ""
+
+#. module: project_basic_extensions
+#: code:addons/project_basic_extensions/models/project.py:92
+#: model:ir.model,name:project_basic_extensions.model_project_project
+#, python-format
+msgid "Project"
+msgstr ""
+
+#. module: project_basic_extensions
+#: field:project.project,description:0
+msgid "Project Description"
+msgstr ""
+
+#. module: project_basic_extensions
+#: field:project.project,description_pad:0
+msgid "Project Description PAD"
+msgstr ""
+
+#. module: project_basic_extensions
+#: field:account.analytic.account,sequence:0
+msgid "Sequence"
+msgstr ""
+
+#. module: project_basic_extensions
+#: model:ir.model,name:project_basic_extensions.model_project_task
+#: view:project.project:project_basic_extensions.view_project_project_filter_add_tasks
+msgid "Task"
+msgstr ""
+
+#. module: project_basic_extensions
+#: view:project.project:project_basic_extensions.project_kanban_sort_order
+msgid "sequence"
+msgstr ""
+
+#. module: project_basic_extensions
+#: field:project.task,issue_ids:0
+msgid "unknown"
+msgstr ""
+
