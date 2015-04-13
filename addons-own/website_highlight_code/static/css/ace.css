@@ -1,0 +1,6 @@
+/* ace reset needed due to ckeditor style */
+.cke_pbckcode_ace.ace_editor * {
+    font-family : 'Monaco', 'Menlo', 'Ubuntu Mono', 'Droid Sans Mono', 'Consolas', monospace;
+    font-size   : 12px;
+    white-space: pre-wrap !important;
+}

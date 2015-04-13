@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+<template id="assets_frontend" inherit_id="website.assets_frontend" name="website_forum ckeditor advanced">
+    <xpath expr="." position="inside">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/darkula.min.css"/>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <script type="text/javascript" src="/website_highlight_code/static/js/website_forum_extended.js"/>
+    </xpath>
+</template>
+
+<!--<template id="assets_frontend" inherit_id="website_forum.assets_frontend" name="website_forum ckeditor advanced">-->
+    <!--<xpath expr="//script[@src='/website_forum/static/src/js/website_forum.js']" position="replace">-->
+        <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/darkula.min.css"/>-->
+        <!--<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>-->
+        <!--<script>hljs.initHighlightingOnLoad();</script>-->
+        <!--<script type="text/javascript" src="/website_highlight_code/static/js/website_forum.js"/>-->
+    <!--</xpath>-->
+<!--</template>-->
+
+</data>
+</openerp>
