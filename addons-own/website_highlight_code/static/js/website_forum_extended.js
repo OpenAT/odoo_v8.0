@@ -213,17 +213,23 @@
     });
     // END: Original Java script of /website_forum/static/src/js/website_forum.js except ckeditor parts
 
+    function website_forum_IsKarmaValid(eventNumber, minKarma){
+        "use strict";
+        if(parseInt($("#karma").val()) >= minKarma){
+            CKEDITOR.tools.callFunction(eventNumber, this);
+            return false;
+        } else {
+            alert("Sorry you need more than " + minKarma + " Karma.");
+        }
+    }
+
     // Wait until DOM is loaded then check if it is a .website_forum page and of test CKEDITOR and load it if needed
     // HINT: Loading of CKEDITOR is only needed if a portal user is logged in or no user is logged in at all
     $( document ).ready(function() {
         openerp.website.if_dom_contains('.website_forum', function () {
 
             function configureCKforForum() {
-
-                console.log('configureCKforForum' );
-
                 if ($('textarea.load_editor').length) {
-                    console.log( "START ckeditor forum config" );
                     CKEDITOR.plugins.addExternal('pbckcode', '/website_highlight_code/static/lib/ckeditor_plugins/pbckcode/', 'plugin.js');
                     CKEDITOR.plugins.addExternal('maximize', '/website_highlight_code/static/lib/ckeditor_plugins/maximize/', 'plugin.js');
                     CKEDITOR.config.extraAllowedContent = 'pre(*){*}[*]; code(*){*}[*];';
@@ -231,59 +237,35 @@
                     CKEDITOR.document.appendStyleSheet('/website_highlight_code/static/css/ace.css');
 
                     textareaname = $('textarea.load_editor').attr('name');
-
-                    console.log('Load ckeditor for textarea.load_editor with .attr("name"): ' + textareaname);
                     CKEDITOR.replace(textareaname, {customConfig: '/website_highlight_code/static/js/config.js'});
-                    CKEDITOR.instances.content.on('instanceReady', CKEDITORLoadComplete);
+                    if (textareaname == 'content') {
+                        CKEDITOR.instances[textareaname].on('instanceReady', CKEDITORLoadComplete);
+                    }
 
                     function CKEDITORLoadComplete() {
                         "use strict";
-                        console.log('inside CKEDITORLoadComplete');
+                        //console.log('inside CKEDITORLoadComplete');
                         $('.cke_button__link').attr('onclick', 'website_forum_IsKarmaValid(121,30)');
                         $('.cke_button__unlink').attr('onclick', 'website_forum_IsKarmaValid(125,30)');
                         $('.cke_button__image').attr('onclick', 'website_forum_IsKarmaValid(133,30)');
                     }
                 }
-                function website_forum_IsKarmaValid(eventNumber, minKarma){
-                    "use strict";
-                    console.log('inside website_forum_IsKarmaValid');
-                    console.log(eventNumber);
-                    console.log(this);
-                    console.log('inside website_forum_IsKarmaValid execuing callFunction');
-                    if(parseInt($("#karma").val()) >= minKarma){
-                        CKEDITOR.tools.callFunction(eventNumber, this);
-                        return false;
-                    } else {
-                        alert("Sorry you need more than " + minKarma + " Karma.");
-                    }
-                }
-
             }
 
             // Load CKEDITOR if needed and start its configuration in the callback function
             // HINT: we load configureCKforForum in the callback function of getScript to make sure ckeditor.js
             //       and all needed parts are fully loaded
-            console.log('CKEDITOR CHECK' );
             if (typeof CKEDITOR === 'undefined') {
                 path = window.location.protocol + '//' + window.location.host;
-                console.log('CKEDITOR NOT LOADED UNTIL NOW!' );
-                console.log('path: ' + path );
-                console.log( "Load ckeditor.js" );
                 $.getScript( path + "/web/static/lib/ckeditor/ckeditor.js", function( ) {
-                    console.log( "Load of ckeditor.js was performed." );
-                    console.log( "Load en.js" );
                     $.getScript( path + "/web/static/lib/ckeditor/lang/en.js", function( ) {
-                        console.log( "Load of en.js was performed." );
                         $.getScript( path + "/web/static/lib/ckeditor/styles.js", function( ) {
-                            console.log( "Load of styles.js was performed." );
-                            console.log( "Execute configureCKforForum" );
                             configureCKforForum();
                         });
                     });
                 });
 
             } else {
-                console.log('CKEDITOR was already loaded!' );
                 configureCKforForum();
             }
 
