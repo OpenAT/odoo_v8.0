@@ -10,9 +10,9 @@ CKEDITOR.editorConfig = function( config ) {
 
     config.skin = 'bootstrapck,/website_highlight_code/static/lib/ckeditor_skins/bootstrapck/';
 
-    config.extraPlugins = 'pbckcode';
+    config.extraPlugins = 'pbckcode,maximize';
 
-    config.toolbar = null;
+    // config.toolbar = null;
 
 	//The toolbar groups arrangement, optimized for a single toolbar row.
 	config.toolbarGroups = [
@@ -40,10 +40,10 @@ CKEDITOR.editorConfig = function( config ) {
 
 	// The default plugins included in the basic setup define some buttons that
 	// we don't want too have in a basic editor. We remove them here.
-	config.removeButtons = 'Cut,Copy,Paste,Undo,Redo,Anchor,Underline,Strike,Subscript,Superscript';
+	// config.removeButtons = 'Cut,Copy,Paste,Undo,Redo,Anchor,Underline,Strike,Subscript,Superscript';
 
 	// Let's have it basic on dialogs as well.
-	config.removeDialogTabs = 'link:advanced';
+	// config.removeDialogTabs = 'link:advanced';
 
     // These rules do only work in here (for the output), but not for the input (linebreaks etc)
 
@@ -65,20 +65,20 @@ CKEDITOR.editorConfig = function( config ) {
          cls : '',
 
          // The syntax highlighter you will use in the output view
-         highlighter : 'HIGHLIGHT',
+         highlighter : 'PRISM',
 
          // An array of the available modes for you plugin.
          // The key corresponds to the string shown in the select tag.
          // The value correspond to the loaded file for ACE Editor.
          modes :  [
-             ['SH', 'sh'], ['Markdown' , 'markdown'],
+             ['SH', 'sh'], ['Powershell' , 'powershel1'], ['Markdown' , 'markdown'],
              ['HTML', 'html'], ['CSS', 'css'], ['LESS' , 'less'],
              ['Python' , 'python'], ['JS', 'javascript'], ['XML', 'xml'], ['JSON' , 'json'],
              ['pgSQL', 'pgsql'], ['SQL', 'sql']
          ],
 
          // The theme of the ACE Editor of the plugin.
-         theme : 'monokai',
+         //theme : 'monokai',
 
          // Tab indentation (in spaces)
          tab_size : '4',

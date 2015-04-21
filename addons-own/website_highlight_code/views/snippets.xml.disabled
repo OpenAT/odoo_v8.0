@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+<template id="snippets" inherit_id="website.snippets" name="website_highlight_code snippets">
+  <xpath expr="//div[@id='snippet_structure']" position="inside">
+      <div>
+        <div class="oe_snippet_thumbnail">
+            <img class="oe_snippet_thumbnail_img" src="/website_highlight_code/static/img/block_code.png"/>
+            <span class="oe_snippet_thumbnail_title">SOURCE CODE</span>
+        </div>
+          <section class="oe_snippet_body prism_code">
+              <div class="container">
+                  <div class="row">
+                        <pre>
+                            <code class="language=python">
+                                # This is Code
+                            </code>
+                        </pre>
+                  </div>
+              </div>
+          </section>
+      </div>
+  </xpath>
+</template>
+
+<template id="snippet_options" inherit_id="website.snippet_options" name="website_highlight_code snippet options">
+    <xpath expr="//div[@data-snippet-option-id='image_floating_side']" position="after">
+
+        <div data-snippet-option-id='highlight_code'
+             data-selector=".o_highlight_code">
+            <li class="dropdown-submenu">
+                <a tabindex="-2" href="#">Code Language</a>
+                <ul class="dropdown-menu">
+                    <li data-value="language-css"><a>Css</a></li>
+                    <li data-value="language-python"><a>Python</a></li>
+                </ul>
+            </li>
+        </div>
+
+    </xpath>
+</template>
+
+
+</data>
+</openerp>

@@ -1,16 +1,17 @@
-ckeditor_advanced
-=================
+website_highlight_code
+======================
 
-All changes, for plugins, extra buttons ... for the integrated ckeditor of odoo belongs here.
+This addon integrates code highlighting to the odoo web CMS.
+Right now this only works for posts in website_forum!
 
-Also additional Styles, Fonts, Symbols ... will be integrated here.
+In future version there will be also options to include this in normal edit mode for webpages and not just in the Forum.
+(for this we would have to add a button to the inline CKEDITOR and make sure PRISM is not loaded in edit mode!)
 
 
-Tasks:
-------
-- Add Syntax highlight plugin to ckeditor and enable corresponding button in webcms
-- Add plugin to ckeditor to embedd gists
-- Add plugin in ckeditor to show files or part of files from github
+Optional Ideas (not done yet):
+------------------------------
+- Extend plugin pbckode to use external files like GIST with PRISM code highlighter (extra field)
+- Include pbckode also in normal edit mode (CKEDITOR inline mode for webcms)
 
 Info:
 -----
@@ -21,14 +22,13 @@ http://docs.ckeditor.com/#!/api/CKEDITOR.plugins-method-addExternal
 http://pierrebaron.fr/pbckcode/docs/
 https://highlightjs.org/download/
 http://stackoverflow.com/questions/20900041/how-to-remove-event-listeners-while-destroying-ckeditor
+http://docs.ckeditor.com/#!/guide/dev_jquery
+http://stackoverflow.com/questions/1794219/ckeditor-instance-already-exists
 
 http://ace.c9.io/#nav=about
 https://github.com/ajaxorg/ace-builds
 http://www.jsdelivr.com/#!ace
 http://cdnjs.com/libraries/ace/
 
-CKEDITOR.instances.content.destroy()
-CKEDITOR.replace('content', {uiColor: '#9AB8F3', removeButtons: ""})
-
-CKEditor will be loaded by website addon already for every input with id editor! Becuse of this the editor is already
-loaded even if website_forum.js is not.
+// Remove PRISM changes for already processes nodes e.g.: when switching to edit mod in web cms
+document.getElementsByTagName("CODE")[0].textContent = document.getElementsByTagName("CODE")[0].textContent;
