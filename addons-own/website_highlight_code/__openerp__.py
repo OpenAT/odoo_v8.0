@@ -48,5 +48,6 @@ And some more information
     'installable': True,
     'data': [
         'views/templates.xml',
+        #'views/snippets.xml',
     ],
 }
