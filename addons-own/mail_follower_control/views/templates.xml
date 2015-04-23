@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="mail.followers.partner">
+        <t t-jquery="a" t-operation="replace">      
+            <t t-if="record.notification_email_send == 'none'">
+                <a class="oe_follower_red" t-attf-href="#model=res.partner&amp;id=#{record.id}" t-att-title="record.name"><t t-esc="record.name"/></a>
+            </t> 
+            <t t-if="record.notification_email_send == 'email'">
+                <a class="oe_follower_orange" t-attf-href="#model=res.partner&amp;id=#{record.id}" t-att-title="record.name"><t t-esc="record.name"/></a>
+            </t>  
+            <t t-if="record.notification_email_send != 'email' and record.notification_email_send != 'none'">
+                <a t-attf-href="#model=res.partner&amp;id=#{record.id}" t-att-title="record.name"><t t-esc="record.name"/></a>
+            </t>                           
+        </t>
+    </t>
+
+    <t t-extend="mail.thread.message">
+        <t t-jquery=".oe_msg_footer" t-operation="after">
+            <div class="oe_msg_notify_mail">
+                Mail sent to:
+                <t t-if="widget.type == 'notification' or ( (widget.type == 'email' or widget.type == 'comment') and widget.subtype)">
+                    <!--<t t-foreach="widget.notified_email_ids.slice(0, 3)" t-as="partner">-->
+                    <span> MIKES TEST</span>
+                    <!--<t t-foreach="widget.notified_email_ids[0:3]" t-as="partner">-->
+                        <!--<span t-attf-class="oe_partner_follower">-->
+                            <!--<a t-if="widget.options.show_link" t-attf-href="#model=res.partner&amp;id=#{partner[0]}">-->
+                                <!--<t t-raw="partner[1]"/>-->
+                            <!--</a>-->
+                            <!--<t t-if="!widget.options.show_link" t-raw="partner[1]"/>-->
+                        <!--</span>-->
+                        <!--<t t-if="!partner_last">,</t>-->
+                    <!--</t>-->
+                </t>
+            </div>
+        </t>  
+    </t>
+</templates>

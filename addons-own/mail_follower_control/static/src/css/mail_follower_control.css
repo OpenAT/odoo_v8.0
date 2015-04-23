@@ -1,0 +1,15 @@
+
+.oe_follower_red { 
+    color: red !important;
+}
+
+.oe_follower_orange {
+    color: orange !important;
+}
+
+.oe_msg_notify_mail {
+    margin-left: 4px;
+    overflow: hidden;
+    margin-top: -4px;
+    font-size: 11px;
+}

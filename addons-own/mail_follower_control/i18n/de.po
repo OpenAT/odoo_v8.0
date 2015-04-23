@@ -1,0 +1,90 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#   * chatterimprovements
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0-20131022-232438\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-11-11 16:06+0000\n"
+"PO-Revision-Date: 2013-11-11 16:06+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#: code:addons/chatterimprovements/static/src/xml/chatter_improvements.xml:21
+#. module: chatterimprovements
+#. openerp-web
+#, python-format
+msgid "Mail sent to:"
+msgstr "Gesendet per Mail an:"
+
+#: view:mail.compose.message:0
+#. module: chatterimprovements
+msgid "onchange_partner_ids(partner_ids)"
+msgstr "onchange_partner_ids(partner_ids)"
+
+#: code:addons/chatterimprovements/chatter_improvements.py:137
+#. module: chatterimprovements
+#, python-format
+msgid "The following partners will not be notified by e-mail because of their settings:\n"
+"\n"
+"%s"
+msgstr "Die folgenden Partner werden aufgrund ihrer Einstellungen nicht per E-Mail benachrichtigt:\n"
+"\n"
+"%s"
+
+#: code:addons/chatterimprovements/chatter_improvements.py:136
+#. module: chatterimprovements
+#, python-format
+msgid "Some partners will not be notified"
+msgstr "Manche Partner werden nicht benachrichtigt"
+
+#: field:mail.compose.message,follower_ids:0
+#. module: chatterimprovements
+msgid "Recipients (Followers)"
+msgstr "Empfänger"
+
+#: model:ir.model,name:chatterimprovements.model_mail_notification
+#. module: chatterimprovements
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: model:ir.model,name:chatterimprovements.model_mail_thread
+#. module: chatterimprovements
+msgid "Email Thread"
+msgstr "E-Mail Thread"
+
+#: model:ir.model,name:chatterimprovements.model_res_partner
+#. module: chatterimprovements
+msgid "Partner"
+msgstr "Partner"
+
+#: model:ir.model,name:chatterimprovements.model_mail_mail
+#. module: chatterimprovements
+msgid "Outgoing Mails"
+msgstr "Postausgang"
+
+#: model:ir.model,name:chatterimprovements.model_mail_message
+#. module: chatterimprovements
+msgid "Message"
+msgstr "Nachricht"
+
+#: model:ir.model,name:chatterimprovements.model_mail_compose_message
+#. module: chatterimprovements
+msgid "Email composition wizard"
+msgstr "E-Mail Assistent"
+
+#: field:res.partner,no_subscribe:0
+#. module: chatterimprovements
+msgid "Do not add as Follower automatically"
+msgstr "Nicht automatisch als Follower hinzufügen"
+
+#: field:mail.notification,mail_sent:0
+#. module: chatterimprovements
+msgid "Sent Mail"
+msgstr "Mail gesendet"
+

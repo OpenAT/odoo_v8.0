@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <!-- Load CSS and JS into the Backend-->
+        <template id="assets_backend" name="mail_follower_control assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/mail_follower_control/static/src/css/mail_follower_control.css"/>
+                <script type="text/javascript" src="/mail_follower_control/static/src/js/mail_follower_control.js"></script>
+            </xpath>
+        </template>
+
+        <!-- Add no_subscribe checkbox to partner form -->
+        <record id="res_partner_form_view" model="ir.ui.view">
+            <field name="name">chatterimprovments.res_partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="mail.view_emails_partner_info_form"/>
+            <field name="arch" type="xml">
+                <field name="notify_email" position="after">
+                    <field name="no_subscribe"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Add follower_ids and an onchange event for partner_ids to mail compose wizard form
+             To warn if the notification setting of a partner would prevent to send him the mail  -->
+        <record id="mail_message_wizard_form_view" model="ir.ui.view">
+            <field name="name">chatterimprovments.mail_message_wizard.form</field>
+            <field name="model">mail.compose.message</field>
+            <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+            <field name="arch" type="xml">
+                <field name="notify" position="before">
+                    <field name="follower_ids" widget="many2many_tags_email"/>
+                </field>
+                <!--<xpath expr="//group/div/span[2]" position="replace"/>-->
+                <xpath expr="//field[@name='partner_ids']" position="attributes">
+                    <attribute name="on_change">onchange_partner_ids(partner_ids)</attribute>
+                </xpath>
+            </field>
+        </record>        
+
+    </data>
+</openerp>
