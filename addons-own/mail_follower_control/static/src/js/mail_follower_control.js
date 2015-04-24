@@ -4,13 +4,54 @@ openerp.chatterimprovements = function (openerp) {
     	
     	/**
     	 * Add field "notification_email_send" to follower records
+         * DISABLED BY MIKE: this was totally rewritten in the v8 version and also i can not find out why
+         *                   and where notification_email_send is used ?!?
     	 */
-        fetch_followers: function (value_) {
-            this.value = value_ || {};
-            return this.ds_follow.call('read', [this.value, ['name', 'user_ids','notification_email_send']])
-                .then(this.proxy('display_followers'), this.proxy('fetch_generic'))
-                .then(this.proxy('display_buttons'))
-                .then(this.proxy('fetch_subtypes'));
+        //fetch_followers: function (value_) {
+        //    this.value = value_ || {};
+        //    return this.ds_follow.call('read', [this.value, ['name', 'user_ids','notification_email_send']])
+        //        .then(this.proxy('display_followers'), this.proxy('fetch_generic'))
+        //        .then(this.proxy('display_buttons'))
+        //        .then(this.proxy('fetch_subtypes'));
+        //},
+
+        /** OVERWRITE: because we need to add one line: 'notify_email': ...
+         *  seems stupid but i can not see an other way.
+         * */
+        display_followers: function (records) {
+            var self = this;
+            this.message_is_follower = false;
+            console.log('RECORDS:');
+            console.log(records);
+            this.followers = records || this.followers;
+            // clean and display title
+            var node_user_list = this.$('.oe_follower_list').empty();
+            this.$('.oe_follower_title').html(this._format_followers(this.followers.length));
+            self.message_is_follower = _.indexOf(this.followers.map(function (rec) { return rec[2]['is_uid']}), true) != -1;
+            // truncate number of displayed followers
+            var truncated = this.followers.slice(0, this.displayed_nb);
+            _(truncated).each(function (record) {
+                partner = {
+                    'id': record[0],
+                    'name': record[1],
+                    'is_uid': record[2]['is_uid'],
+                    'is_editable': record[2]['is_editable'],
+                    'notify_email': record[2]['notify_email'],
+                    'avatar_url': mail.ChatterUtils.get_image(self.session, 'res.partner', 'image_small', record[0]),
+                };
+                $(session.web.qweb.render('mail.followers.partner', {'record': partner, 'widget': self})).appendTo(node_user_list);
+                // On mouse-enter it will show the edit_subtype pencil.
+                if (partner.is_editable) {
+                    self.$('.oe_follower_list').on('mouseenter mouseleave', function(e) {
+                        self.$('.oe_edit_subtype').toggleClass('oe_hidden', e.type == 'mouseleave');
+                        self.$('.oe_follower_list').find('.oe_partner').toggleClass('oe_partner_name', e.type == 'mouseenter');
+                    });
+                }
+            });
+            // FVA note: be sure it is correctly translated
+            if (truncated.length < this.followers.length) {
+                $(session.web.qweb.render('mail.followers.show_more', {'number': (this.followers.length - truncated.length)} )).appendTo(node_user_list);
+            }
         },
 	
 	    do_follow: function () {

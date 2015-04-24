@@ -2,19 +2,21 @@
 <templates id="template" xml:space="preserve">
 
     <t t-extend="mail.followers.partner">
-        <t t-jquery="a" t-operation="replace">      
-            <t t-if="record.notification_email_send == 'none'">
-                <a class="oe_follower_red" t-attf-href="#model=res.partner&amp;id=#{record.id}" t-att-title="record.name"><t t-esc="record.name"/></a>
-            </t> 
-            <t t-if="record.notification_email_send == 'email'">
-                <a class="oe_follower_orange" t-attf-href="#model=res.partner&amp;id=#{record.id}" t-att-title="record.name"><t t-esc="record.name"/></a>
-            </t>  
-            <t t-if="record.notification_email_send != 'email' and record.notification_email_send != 'none'">
-                <a t-attf-href="#model=res.partner&amp;id=#{record.id}" t-att-title="record.name"><t t-esc="record.name"/></a>
-            </t>                           
+        <t t-jquery="a" t-operation="replace">
+            <t t-if="record.notify_email == 'none'">
+                <span>A </span>
+                <a class="oe_follower_red" t-attf-href="#model=res.partner&amp;id=#{record.id}" t-att-title="record.name" t-att-data-partner="record.id"><t t-esc="record.name"/></a>
+            </t>
+            <t t-if="record.notify_email != 'none'">
+                <span>B <t t-esc="record.lang"/> - </span>
+                <a t-attf-href="#model=res.partner&amp;id=#{record.id}" t-att-title="record.name" t-att-data-partner="record.id"><t t-esc="record.name"/></a>
+            </t>
         </t>
     </t>
 
+    <!-- Add notified_email_ids for the Mail sent to message - this is bullshit because it still will
+        not 100% tell if the email was really sent ...
+    -->
     <t t-extend="mail.thread.message">
         <t t-jquery=".oe_msg_footer" t-operation="after">
             <div class="oe_msg_notify_mail">

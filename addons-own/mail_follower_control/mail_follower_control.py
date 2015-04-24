@@ -57,9 +57,28 @@ class res_partner(osv.Model):
 res_partner()
 
 # Do not subscript followers with no_subscribe=True (except force_subscription is in the context)
+# add data to mark follower in red that will not receive an email
 class mail_thread(osv.AbstractModel):
     _inherit = "mail.thread"
-    
+
+    # overwrite full function to add 'notify_email': --> stupid but needed
+    # (this function will be called by the java script mail_followers.js to get the follower data)
+    # we need to know notify_email in the qweb template to mark followers in red that will not receive an email
+    def read_followers_data(self, cr, uid, follower_ids, context=None):
+        result = []
+        technical_group = self.pool.get('ir.model.data').get_object(cr, uid, 'base', 'group_no_one', context=context)
+        for follower in self.pool.get('res.partner').browse(cr, uid, follower_ids, context=context):
+            is_editable = uid in map(lambda x: x.id, technical_group.users)
+            is_uid = uid in map(lambda x: x.id, follower.user_ids)
+            data = (follower.id,
+                    follower.name,
+                    {'is_editable': is_editable, 'is_uid': is_uid, 'notify_email': follower.notify_email, },
+                    )
+            result.append(data)
+        return result
+
+    # message_post will call message_subscribe to add followers
+    # we alter this method to take our new field no_subscribe into account
     def message_subscribe(self, cr, uid, ids, partner_ids, subtype_ids=None, context=None):
 
         if context is None:
@@ -85,6 +104,7 @@ class mail_thread(osv.AbstractModel):
         res = super(mail_thread, self).message_subscribe(cr, uid, ids, partner_ids, subtype_ids, context)
         return res
 mail_thread()
+
 
 # Allow to add followers with the invite wizard
 class invite_wizard(osv.osv_memory):
@@ -160,9 +180,8 @@ class mail_compose_message(osv.TransientModel):
         else:
             res = {}
         return res
-
-            
 mail_compose_message()
+
 
 class mail_message (osv.Model):
     _inherit = 'mail.message'
@@ -186,6 +205,7 @@ class mail_message (osv.Model):
             res.update(vals)
         
         return res
+
 
 class mail_mail(osv.Model):
     _inherit = 'mail.mail'
@@ -213,7 +233,8 @@ class mail_mail(osv.Model):
 
         return super(mail_mail, self)._postprocess_sent_message(cr=cr, uid=uid, mail=mail,
                                                                 context=context, mail_sent=mail_sent)
-    
+
+
 class mail_notification(osv.Model):
     _inherit = 'mail.notification'
     
