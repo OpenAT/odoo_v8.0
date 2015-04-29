@@ -1,7 +1,7 @@
-openerp.chatterimprovements = function (openerp) {
+openerp.mail_follower_control = function (session) {
 	
-	openerp.mail_followers.Followers = openerp.mail_followers.Followers.extend({
-    	
+	session.mail_followers.Followers = session.mail_followers.Followers.extend({
+
     	/**
     	 * Add field "notification_email_send" to follower records
          * DISABLED BY MIKE: this was totally rewritten in the v8 version and also i can not find out why
@@ -15,8 +15,10 @@ openerp.chatterimprovements = function (openerp) {
         //        .then(this.proxy('fetch_subtypes'));
         //},
 
-        /** OVERWRITE: because we need to add one line: 'notify_email': ...
-         *  seems stupid but i can not see an other way.
+        /** FULL OVERWRITE: because we need to add more data to the records: 'notify_email'
+         *  Do not forget to update the python function "read_followers_data" in "mail_follower_control.py"
+         *  ("read_followers_data" is called by JS function "fetch_followers" which then calls "display_followers")
+         *
          * */
         display_followers: function (records) {
             var self = this;
@@ -37,8 +39,10 @@ openerp.chatterimprovements = function (openerp) {
                     'is_uid': record[2]['is_uid'],
                     'is_editable': record[2]['is_editable'],
                     'notify_email': record[2]['notify_email'],
-                    'avatar_url': mail.ChatterUtils.get_image(self.session, 'res.partner', 'image_small', record[0]),
+                    'avatar_url': session.mail.ChatterUtils.get_image(self.session, 'res.partner', 'image_small', record[0])
                 };
+                console.log('partner');
+                console.log(partner);
                 $(session.web.qweb.render('mail.followers.partner', {'record': partner, 'widget': self})).appendTo(node_user_list);
                 // On mouse-enter it will show the edit_subtype pencil.
                 if (partner.is_editable) {
@@ -58,7 +62,8 @@ openerp.chatterimprovements = function (openerp) {
 	        /**
 	         * Add this context value to force subscription
 	         */	    	
-	        var context = new openerp.web.CompoundContext(this.build_context(), {'force_subscription': 1});
+	        var context = new session.web.CompoundContext(this.build_context(), {'force_subscription': 1});
+            console.log('do_follow');
 
 	        this.ds_model.call('message_subscribe_users', [[this.view.datarecord.id], [this.session.uid], undefined, context])
 	            .then(this.proxy('read_value'));
@@ -67,16 +72,23 @@ openerp.chatterimprovements = function (openerp) {
 	            $(record).attr('checked', 'checked');
 	        });
 	
-	    }, 
+	    }
     
     });
-	
+
+    // HINT: Add recipient_ids to MessageCommon - message common is extended by:
+    //       mail.ThreadMessage AND
+    //       mail.ThreadComposeMessage so both should have recipients_ids now for ThreadComposeMessage it will be
+    //       useless for now because this is updated after we post the message.
+    // session.mail.MessageCommon = session.mail.MessageCommon.extend({
+    // HINT2: mail.MessageCommon did not work ?!?
     openerp.mail.ThreadMessage = openerp.mail.ThreadMessage.extend({
     	template: 'mail.thread.message',
-    		
+
     	init: function (parent, datasets, options) {
     		this._super(parent, datasets, options);
-    		this.notified_email_ids = datasets.notified_email_ids ||  [];
+
+    		this.recipient_ids = datasets.recipient_ids || [];
     	}
     });
 
