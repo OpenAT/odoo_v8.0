@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <!-- Load CSS and JS into the Backend-->
+        <template id="assets_backend" name="mail_follower_control assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/mail_follower_control/static/src/css/mail_follower_control.css"/>
+                <script type="text/javascript" src="/mail_follower_control/static/src/js/mail_follower_control.js"></script>
+            </xpath>
+        </template>
+
+        <!-- Add no_subscribe checkbox to partner form -->
+        <record id="res_partner_form_view" model="ir.ui.view">
+            <field name="name">chatterimprovments.res_partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="mail.view_emails_partner_info_form"/>
+            <field name="arch" type="xml">
+                <field name="notify_email" position="after">
+                    <field name="no_subscribe"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Add follower_ids and an onchange event for partner_ids to mail compose wizard form
+             To warn if the notification setting of a partner would prevent to send an e-mail
+             and to show which res.partner will receive an e-mail -->
+        <record id="mail_message_wizard_form_view" model="ir.ui.view">
+            <field name="name">chatterimprovments.mail_message_wizard.form</field>
+            <field name="model">mail.compose.message</field>
+            <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+            <field name="arch" type="xml">
+
+                <!-- ADD field follower_ids which hold the res.partner ids that will get an eMail -->
+                <field name="notify" position="before">
+                    <label for="follower_ids" string="Notified by eMail"/>
+                    <div>
+                        <field name="follower_ids" widget="many2many_tags_email"/>
+                    </div>
+                </field>
+
+                <!-- ADD attribute onchange to partner_ids field-->
+                <xpath expr="//field[@name='partner_ids']" position="attributes">
+                    <attribute name="on_change">onchange_partner_ids(partner_ids, follower_ids, model, res_id, context)</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Show recipient_ids in mail_message form -->
+        <record id="mail_view_message_form_extended" model="ir.ui.view">
+            <field name="name">mail_view_message_form_extended</field>
+            <field name="model">mail.message</field>
+            <field name="inherit_id" ref="mail.view_message_form"/>
+            <field name="arch" type="xml">
+
+                <!-- ADD field recipient_ids which hold the res.partner ids that got an eMail -->
+                <field name="notified_partner_ids" position="after">
+                    <field name="notified_by_email_ids" widget="many2many_tags"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>
