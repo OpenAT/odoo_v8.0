@@ -106,6 +106,9 @@ class base_config_settings(osv.osv_memory):
         'module_website_highlight_code': fields.boolean('Forum Code Highlighting',
                                                       help='Includes highlight.js and add new addons to ckeditor of forum'
                                                            '\n Installs Module: website_sale_catdesc'),
+        'module_mail_follower_control': fields.boolean('Mail Follower Control',
+                                                      help='Control the Followers of E-Mails'
+                                                           '\n Installs Module: mail_follower_control'),
         'module_website_sale_catdesc': fields.boolean('Description for Website categories',
                                                       help='Description for Website categories shown in overview pages'
                                                            '\n Installs Module: website_sale_catdesc'),

@@ -136,6 +136,10 @@
                                     <label for="module_website_highlight_code" />
                                 </div>
                                 <div>
+                                    <field name="module_mail_follower_control" class="oe_inline" />
+                                    <label for="module_mail_follower_control" />
+                                </div>
+                                <div>
                                     <field name="module_website_sale_catdesc" class="oe_inline" />
                                     <label for="module_website_sale_catdesc" />
                                 </div>
