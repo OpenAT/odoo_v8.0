@@ -6,10 +6,13 @@
     <template id="assets_frontend_forum_disable_ckeditor" inherit_id="website_forum.assets_frontend" name="Do not load website_forum.js">
         <xpath expr="//script[@src='/website_forum/static/src/js/website_forum.js']" position="replace">
             <!-- DISABLED: Do not load website_forum.js -->
+            <script>/* disabled website_forum.js */</script>
         </xpath>
     </template>
+
     <template id="header_forum_disable_ckeditor" inherit_id="website_forum.header" name="Do not load CKEditor twice">
         <xpath expr="//t[@t-set='head']" position="replace">
+            <script>/* disabled to load ckeditor.js also in header just for the frontend forum */</script>
             <!-- DISABLED: Do not load ckeditor twice just for the forum!
                  CKEDITOR is already loaded because of website - and we are in backend mode anyway because one
                  has to be logged in to post or answer questions! -->
@@ -22,6 +25,7 @@
             <!--</script>-->
         </xpath>
     </template>
+
     <template id="ask_question_forum_disable_ckeditor" inherit_id="website_forum.ask_question" name="Do not load CKEditor">
         <xpath expr="//t[@t-call='website_forum.header']/script[1]" position="replace">
             <!-- DISABLED: Do not initialize ckeditor -->
