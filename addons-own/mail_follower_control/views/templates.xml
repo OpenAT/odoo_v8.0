@@ -21,10 +21,10 @@
     <t t-extend="mail.thread.message">
         <t t-jquery=".oe_msg_footer" t-operation="append">
             <div class="oe_msg_notify_mail">
-                By e-mail to:
+                <span>By e-mail to:</span>
                     <t t-if="widget.type == 'notification' or ( (widget.type == 'email' or widget.type == 'comment') and widget.subtype)">
 
-                        <t t-foreach="widget.recipient_ids" t-as="partner">
+                        <t t-foreach="widget.notified_by_email_ids" t-as="partner">
                             <span t-attf-class="oe_partner_follower">
                                 <a t-if="widget.options.show_link" t-attf-href="#model=res.partner&amp;id=#{partner[0]}">
                                     <t t-raw="partner[1]"/>

@@ -48,3 +48,17 @@ body .openerp .oe_mail .oe_msg .oe_msg_footer {
   border-radius: 3px;
   color: grey;
 }
+
+/* Better message footer */
+body .openerp .oe_mail .oe_msg .oe_msg_footer .oe_msg_notify_mail {
+    margin: 0;
+}
+
+body .openerp .oe_application .oe_mail .oe_msg .oe_msg_footer  a {
+  color: grey;
+}
+
+body .openerp .oe_application .oe_mail .oe_msg .oe_msg_footer  a:hover {
+    color: #7C7BAD;
+    text-decoration: underline;
+}

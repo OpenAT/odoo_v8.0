@@ -25,7 +25,7 @@
     'name': 'Mail Follower Control',
     'version': '1.0',
     'category': 'Custom',
-    'author': 'DataDialog (Michael Karrer), camadeus',
+    'author': 'DataDialog, Michael Karrer (original version for v7 by camdeus)',
     'website': 'http://www.datadialog.net',
     'installable': True,
     'description': """
@@ -39,12 +39,15 @@ Goals:
 
 - Checkbox "Do not automatically add as follower" for res.partner
 - Set this new Checkbox to True by default
-- Always show all the followers when sending an E-Mail AND allow to remove them
-- CC and BCC Field for all Chatter E-Mails
-    - Do NOT add BCC and CC Recipients as followers regardless of the checkbox "Do not automatically ad as follower"
+- Show the followers and additional recipients that will receive an email (notify always + email)
+- Show a warning when adding additional recipients if the new recipient will not receive an email
 - Show followers that will not receive Messages in Red
-- Show followers that will seldom receive Messages in Orange
-- Show a Warning when Sending an E-Mail if there are any Followers that will not receive the mail by config
+- Write the followers that received an email to mail.message in a new field to view them in message thread views
+
+- ToDo: Always show all the followers when writing a message in full message composer
+    - ToDo: Allow to remove some followers just for the current mail
+- ToDo: BCC Field for all Chatter E-Mails
+    - ToDo: Do NOT add BCC Recipients as followers regardless of the checkbox "Do not automatically ad as follower"
 
     """,
     'depends': ['web', 'mail'],

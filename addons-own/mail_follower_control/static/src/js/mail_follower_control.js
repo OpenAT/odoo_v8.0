@@ -2,19 +2,6 @@ openerp.mail_follower_control = function (session) {
 	
 	session.mail_followers.Followers = session.mail_followers.Followers.extend({
 
-    	/**
-    	 * Add field "notification_email_send" to follower records
-         * DISABLED BY MIKE: this was totally rewritten in the v8 version and also i can not find out why
-         *                   and where notification_email_send is used ?!?
-    	 */
-        //fetch_followers: function (value_) {
-        //    this.value = value_ || {};
-        //    return this.ds_follow.call('read', [this.value, ['name', 'user_ids','notification_email_send']])
-        //        .then(this.proxy('display_followers'), this.proxy('fetch_generic'))
-        //        .then(this.proxy('display_buttons'))
-        //        .then(this.proxy('fetch_subtypes'));
-        //},
-
         /** FULL OVERWRITE: because we need to add more data to the records: 'notify_email'
          *  Do not forget to update the python function "read_followers_data" in "mail_follower_control.py"
          *  ("read_followers_data" is called by JS function "fetch_followers" which then calls "display_followers")
@@ -88,7 +75,7 @@ openerp.mail_follower_control = function (session) {
     	init: function (parent, datasets, options) {
     		this._super(parent, datasets, options);
 
-    		this.recipient_ids = datasets.recipient_ids || [];
+    		this.notified_by_email_ids = datasets.notified_by_email_ids || [];
     	}
     });
 

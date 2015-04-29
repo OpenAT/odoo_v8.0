@@ -55,7 +55,7 @@
 
                 <!-- ADD field recipient_ids which hold the res.partner ids that got an eMail -->
                 <field name="notified_partner_ids" position="after">
-                    <field name="recipient_ids" widget="many2many_tags"/>
+                    <field name="notified_by_email_ids" widget="many2many_tags"/>
                 </field>
             </field>
         </record>

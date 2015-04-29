@@ -100,6 +100,10 @@ class mail_thread(osv.AbstractModel):
                 ('id', 'in', partner_ids),
             ])
 
+        # Remove force_subscription from the context after the filtering is done
+        if context.get('force_subscription'):
+            context.pop('force_subscription')
+
         res = super(mail_thread, self).message_subscribe(cr, uid, ids, partner_ids, subtype_ids, context)
         return res
 mail_thread()
@@ -121,12 +125,19 @@ invite_wizard()
 
 class mail_message(osv.Model):
     _inherit = "mail.message"
-    # Add field recipient_ids to store this data from mail.mail if a mail was sent
+    # Add field notified_by_email_ids to store this data from mail.mail if a mail was sent
+    # WARNING: do not use relation= for old style many2many fields - will be ignored!!!!
+    # WARNING: always use a custom name for the relation table e.g.: mail_message_res_partner_notified_by_email_rel
+    #          if you use none the system may generate one that is already in use and both fields will have
+    #          the related fields - which is very hard to debug.
     _columns = {
-        'recipient_ids': fields.many2many('res.partner', string='Partners notified by e-mail'),
+        'notified_by_email_ids': fields.many2many('res.partner',
+                                                  'mail_message_res_partner_notified_by_email_rel',
+                                                  'mail_message_id', 'res_partner_id',
+                                                  string='Partners notified by e-mail'),
     }
 
-    # Update Dict for JS rendering of messages with field recipient_ids
+    # Update Dict for JS rendering of messages with field notified_by_email_ids
     # HINT: _message_read_dict returns a dict representation of the message. This representation is
     #       used in the JS client code, to display the messages. Partners and
     #       attachments related stuff will be done in post-processing in batch.
@@ -134,7 +145,7 @@ class mail_message(osv.Model):
         res = super(mail_message, self)._message_read_dict(cr, uid, message, parent_id, context)
 
         # ToDo: Create a dict wich holds name and id for each id in ids (partner) - needed in template!
-        vals = {'recipient_ids': [[p.id, p.name] for p in message.recipient_ids]}
+        vals = {'notified_by_email_ids': [[p.id, p.name] for p in message.notified_by_email_ids]}
         # print 'vals: %s' % vals
         res.update(vals)
         return res
@@ -244,11 +255,11 @@ class mail_compose_message(osv.TransientModel):
         values = {'follower_ids': list(set(f_ids + parterns_to_notify)), }
 
 
-        # warn if any partners found that will not get an email
+        # Warn if any partners found that will not get an email
         if partner_names:
             warning = {
                 'title': _('Some partners will not be notified by e-mail!'),
-                'message': _('The following partners will not be notified by e-mail but they will still get a message in odoo (if they are have a login):\n\n%s') % ('\n'.join(partner_names))
+                'message': _('The following partners will not be notified by e-mail but they will still get a message in odoo (if they have a login):\n\n%s') % ('\n'.join(partner_names))
             }
             res = {'warning': warning, 'value': values}
         else:
@@ -266,19 +277,12 @@ class mail_mail(osv.Model):
 
     def _postprocess_sent_message(self, cr, uid, mail, context=None, mail_sent=True):
 
-        # Copy the recipient_ids to the mail.message
-        # Hint: It seems this is not necessary because at this stage recipient_ids of mail.message is already
-        #       the same than recipient_ids of mail.mail ?!? thgouth it would be different for inherit**s**
-        #       ToDo: Have to ask andi about this!!!
-        #if mail_sent and mail.recipient_ids and mail.mail_message_id:
-            #mail.mail_message_id.recipient_ids = mail.recipient_ids
+        # Copy the notified_by_email_ids to the mail.message
+        # Hint: It seems that notified_by_email_ids of mail.message is already there but in the state of the initial
+        #       setting so we have to update it here after we send the message to inculde the right notified_by_email_ids
+        if mail_sent and mail.recipient_ids and mail.mail_message_id:
+            mail.mail_message_id.notified_by_email_ids = mail.recipient_ids
+
 
         return super(mail_mail, self)._postprocess_sent_message(cr=cr, uid=uid, mail=mail,
                                                                 context=context, mail_sent=mail_sent)
-
-
-# class mail_notification(osv.Model):
-#     _inherit = 'mail.notification'
-#     _columns = {
-#         'mail_sent': fields.boolean('Sent Mail'),
-#     }
