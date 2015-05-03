@@ -64,5 +64,27 @@
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
         <menuitem action="website_sale_donate_payment_interval_action" id="website_sale_donate_payment_interval_menu" name="Payment Intervals" parent="product.prod_config_main" sequence="60"/>
 
+        <!-- Extend the Payment Acquirer View to include the field recurring_transactions -->
+        <record model="ir.ui.view" id="payment_acquirer_form_recurring">
+            <field name="name">payment_acquirer_form_recurring</field>
+            <field name="model">payment.acquirer</field>
+            <field name="inherit_id" ref="payment.acquirer_form"/>
+            <field name="arch" type="xml">
+                <!-- Replace the Name field and add recurring_transaction checkbox -->
+                <field name="name" position="replace">
+                    <field name="recurring_transactions"/>
+                </field>
+                <!-- Add the Name and the Icon (used in website too) before group name="acquirer_base" -->
+                <xpath expr="//group[@name='acquirer_base']" position="before">
+                    <div class="oe_left" style="width: 600px;">
+                        <field name="acquirer_icon" widget="image" class="oe_avatar oe_left"/>
+                        <div class="oe_title" style="width: 400px;">
+                            <label class="oe_edit_only" for="name" string="Acquirer Name"/>
+                            <h1><field name="name" class="oe_inline"/></h1>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
     </data>
 </openerp>

@@ -216,11 +216,40 @@
                 <attribute name="class">js_shipping row mb16 hidden</attribute>
             </xpath>
         </template>
+
         <!-- WEBSITE CUSTOM OPTION: PAYMENT: Hide Shipping address at right column -->
         <template id="hide_shipping_address_payment" inherit_id="website_sale.payment" active="True" customize_show="True" name="Hide Shipping Address">
             <xpath expr="//div[@id='right_column']//t" position="replace">
                 <div></div>
             </xpath>
+        </template>
+
+        <!-- PAYMENT: Hide Acquirer with recurring_transactions=False if -->
+        <template id="hide_acquierer_if_no_recurring" inherit_id="website_sale.payment" name="Hide Acquirers if not enabled for recurring transactions">
+
+            <!-- Add payment interval as text under the product price -->
+            <xpath expr="//table[@id='cart_products']//span[@t-field='line.price_unit']" position="after">
+                <t t-if="line.payment_interval_id">
+                    <div class="small">(<t t-esc="line.payment_interval_id.name"/>)</div>
+                </t>
+            </xpath>
+
+            <!-- Only show correct Acquirers -->
+            <xpath expr="//label[@t-if='acquirer.button']" position="attributes">
+                <attribute name="t-if">acquirer.button and ((website_sale_order.has_recurring and acquirer.recurring_transactions) or (not website_sale_order.has_recurring))</attribute>
+            </xpath>
+            <!-- ToDo: Only show correct Acquirer Buttons (but this is not a must since buttons are hidden anyway) -->
+
+            <!-- Add the custom image if available -->
+            <xpath expr="//img[@class='media-object']" position="attributes">
+                <attribute name="t-if">not acquirer.acquirer_icon</attribute>
+            </xpath>
+            <xpath expr="//img[@class='media-object']" position="after">
+                <t t-if="acquirer.acquirer_icon">
+                    <span  t-field="acquirer.acquirer_icon" t-field-options='{"widget": "image", "class": "media-object", "style": "max-width: 200px; display: inline-block;"}'/>
+                </t>
+            </xpath>
+
         </template>
 
         <!-- WEBSITE CUSTOM OPTION: PRODUCT OVERVIEW: Hide ALL! Prices -->
