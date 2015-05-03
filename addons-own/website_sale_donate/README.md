@@ -107,5 +107,11 @@ TIP: um nun später unsere Funktion zu realisieren, den preis frei wählen zu k�
  - extend _cart_update to include a new value of the **kwargs price_donate as price_unit submited py the add to cart form
  - 
 
+ INFOS:
  
+ Use Qweb Variables outside of Loops?
+ https://github.com/odoo/odoo/issues/4461
+ 
+ get id by xml id
+ http://stackoverflow.com/questions/8666809/how-to-get-the-database-id-from-an-xml-id
 

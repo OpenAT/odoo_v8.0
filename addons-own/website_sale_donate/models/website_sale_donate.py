@@ -179,3 +179,49 @@ class sale_order(osv.Model):
             # so.write(cr, SUPERUSER_ID, {}, context=context)
 
         return cu
+
+    # Check if there are any recurring transaction products in the sale order
+    def _has_recurring(self, cr, uid, ids, field_name, arg, context=None):
+        # HINT: functional Fields have to return an dict!
+        #       https://doc.odoo.com/6.0/developer/2_5_Objects_Fields_Methods/field_type/
+        res = {}
+
+        # Get th ID of payment interval with xml_id once_only to use it in the search domain
+        # HINT: get_object takes the module name where the record was created and NOT the model name as expected!
+        model_data_obj = self.pool.get('ir.model.data')
+        pi_once_only_id = model_data_obj.get_object(cr, uid, 'website_sale_donate', 'once_only').id
+
+        # check if we can find a related SO line with an payment interval other than None or once_only
+        for order in self.browse(cr, uid, ids, context=context):
+            domain = [('order_id', '=', order.id), ('payment_interval_id', '!=', pi_once_only_id)]
+            if self.pool.get('sale.order.line').search(cr, SUPERUSER_ID, domain, context=context):
+                res[order.id] = True
+            else:
+                res[order.id] = False
+
+        return res
+
+    _columns = {
+        'has_recurring': fields.function(_has_recurring,
+                                         type='boolean',
+                                         string='Has order lines with recurring transactions'),
+    }
+
+
+# Add the field - recurring_transactions to all payment providers and an image field for icons too
+# ToDo If this field is not enabled for a PP it will be hidden if there is any so line with
+#      a payment_interval_id in the current shopping cart. Seems that i have to do this by java script and not by
+#      the controller that renders the PP?!?
+# HINT: We also add a functional field to sale_order "has_recurring_transactions" type bool - This field is true
+#       if there are any recurring transaction products other than  "einmailig" which has an xml_id of
+#       "once_only" in this sale.order
+class PaymentAcquirer(osv.Model):
+    _inherit = 'payment.acquirer'
+    _columns = {
+        'recurring_transactions': fields.boolean('Recurring Transactions'),
+        'acquirer_icon': fields.binary("Acquirer Icon", help="Acquirer Icon 120x90 PNG 32Bit"),
+    }
+
+    _defaults = {
+        'recurring_transactions': False,
+    }
