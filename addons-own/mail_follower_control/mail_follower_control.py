@@ -83,15 +83,14 @@ class mail_thread(osv.AbstractModel):
         if context is None:
             context = {}
 
-        # Update context: Filter all mail_post_autofollow_partner_ids if they exists to respect the no_subscribe setting
-        # Todo: Ask Andi why mail_post_autofollow_partner_ids could be different from partner_ids which seems weird?
+        # 1.) Filter all mail_post_autofollow_partner_ids if they exists to respect the no_subscribe setting
         if context.get('mail_post_autofollow') and context.get('mail_post_autofollow_partner_ids'):
             context['mail_post_autofollow_partner_ids'] = self.pool.get('res.partner').search(cr, uid, [
                 ('no_subscribe', '=', False),
                 ('id', 'in', context.get('mail_post_autofollow_partner_ids'), )
             ])
         
-        # Filter partner_ids: to respect the no_subscribe setting (except 'force_subscription' is set)
+        # 2.) Filter partner_ids: to respect the no_subscribe setting (except 'force_subscription' is set)
         # HINT: force_subscription is set by java script to allow adding a follower with no_subscribe=True by the
         #       add followers links in the chatter window - without this the follower could not be added by any method.
         if not context.get('force_subscription'):
