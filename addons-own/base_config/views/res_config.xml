@@ -17,14 +17,15 @@
 					<separator string="Base Config" />
 					<div>
 						<p>
-							<label string="Allows you to install all own and third party addons in addons-loaded" />
+							<label string="Allows you to install all own- and third-party-addons in addons-loaded" />
 						</p>
 					</div>
-					<separator string="Third-Party Addons" />
+
+					<separator string="Working Third-Party Addons" />
 					<group>
-						<label for="id" string="addons-loaded-thirdparty" />
-						<div name="basic_modules">
-							<div name='basic_modules_container'>
+						<!--<label for="id" string="addons-loaded-thirdparty" />-->
+						<div name="third_party_addons_working">
+							<div name='third_party_addons_working_container'>
                                 <div>
                                     <field name="module_base_field_serialized" class="oe_inline" />
                                     <label for="module_base_field_serialized" />
@@ -50,15 +51,83 @@
                                     <label for="module_mass_editing" />
                                 </div>
                                 <div>
-                                    <field name="module_web_ckeditor4" class="oe_inline" />
-                                    <label for="module_web_ckeditor4" />
-                                </div>
-                                <div>
                                     <field name="module_web_export_view" class="oe_inline" />
                                     <label for="module_web_export_view" />
                                 </div>
+                                <div>
+                                    <field name="module_web_m2x_options" class="oe_inline" />
+                                    <label for="module_web_m2x_options" />
+                                </div>
+                                <div>
+                                    <field name="module_website_menu_by_user_status" class="oe_inline" />
+                                    <label for="module_website_menu_by_user_status" />
+                                </div>
+                                <div>
+                                    <field name="module_website_blog_mgmt" class="oe_inline" />
+                                    <label for="module_website_blog_mgmt" />
+                                </div>
+                                <div>
+                                    <field name="module_website_sale_collapse_categories" class="oe_inline" />
+                                    <label for="module_website_sale_collapse_categories" />
+                                </div>
+                                <div>
+                                    <field name="module_web_dialog_size" class="oe_inline" />
+                                    <label for="module_web_dialog_size" />
+                                </div>
+                                <div>
+                                    <field name="module_web_graph_improved" class="oe_inline" />
+                                    <label for="module_web_graph_improved" />
+                                </div>
+                                <div>
+                                    <field name="module_web_widget_many2many_tags_multi_selection" class="oe_inline" />
+                                    <label for="module_web_widget_many2many_tags_multi_selection" />
+                                </div>
+							</div>
+						</div>
+					</group>
 
+					<separator string="Own Addons" />
+					<group>
+						<!--<label for="id" string="addons-loaded-own" />-->
+						<div name="addons_own">
+							<div name='addons_own_container'>
+                                <div>
+                                    <field name="module_website_crm_extended" class="oe_inline" />
+                                    <label for="module_website_crm_extended" />
+                                </div>
+                                <div>
+                                    <field name="module_payment_frst" class="oe_inline" />
+                                    <label for="module_payment_frst" />
+                                </div>
+                                <div>
+                                    <field name="module_website_sale_donate" class="oe_inline" />
+                                    <label for="module_website_sale_donate" />
+                                </div>
+                                <div>
+                                    <field name="module_project_basic_extensions" class="oe_inline" />
+                                    <label for="module_project_basic_extensions" />
+                                </div>
+                                <div>
+                                    <field name="module_website_highlight_code" class="oe_inline" />
+                                    <label for="module_website_highlight_code" />
+                                </div>
+                                <div>
+                                    <field name="module_mail_follower_control" class="oe_inline" />
+                                    <label for="module_mail_follower_control" />
+                                </div>
+							</div>
+						</div>
+					</group>
 
+					<separator string="BUGY Third-Party Addons. Do not link or install!" />
+					<group>
+						<!--<label for="id" string="addons-loaded-thirdparty" />-->
+						<div name="third_party_addons_bugy">
+							<div name='third_party_addons_bugy_container'>
+                                <div>
+                                    <field name="module_web_ckeditor4" class="oe_inline" />
+                                    <label for="module_web_ckeditor4" />
+                                </div>
                                 <div>
                                     <field name="module_web_tree_many2one_clickable" class="oe_inline" />
                                     <label for="module_web_tree_many2one_clickable" />
@@ -70,10 +139,6 @@
                                 <div>
                                     <field name="module_web_recipients_uncheck" class="oe_inline" />
                                     <label for="module_web_recipients_uncheck" />
-                                </div>
-                                <div>
-                                    <field name="module_web_m2x_options" class="oe_inline" />
-                                    <label for="module_web_m2x_options" />
                                 </div>
                                 <div>
                                     <field name="module_email_cc_bcc" class="oe_inline" />
@@ -106,42 +171,6 @@
                                 <div>
                                     <field name="module_website_lang_flags" class="oe_inline" />
                                     <label for="module_website_lang_flags" />
-                                </div>
-							</div>
-						</div>
-					</group>
-					<separator string="Own Addons" />
-					<group>
-						<label for="id" string="addons-loaded-own" />
-						<div name="basic_modules">
-							<div name='own_modules_container'>
-                                <div>
-                                    <field name="module_website_crm_extended" class="oe_inline" />
-                                    <label for="module_website_crm_extended" />
-                                </div>
-                                <div>
-                                    <field name="module_payment_frst" class="oe_inline" />
-                                    <label for="module_payment_frst" />
-                                </div>
-                                <div>
-                                    <field name="module_website_sale_donate" class="oe_inline" />
-                                    <label for="module_website_sale_donate" />
-                                </div>
-                                <div>
-                                    <field name="module_project_basic_extensions" class="oe_inline" />
-                                    <label for="module_project_basic_extensions" />
-                                </div>
-                                <div>
-                                    <field name="module_website_highlight_code" class="oe_inline" />
-                                    <label for="module_website_highlight_code" />
-                                </div>
-                                <div>
-                                    <field name="module_mail_follower_control" class="oe_inline" />
-                                    <label for="module_mail_follower_control" />
-                                </div>
-                                <div>
-                                    <field name="module_website_sale_catdesc" class="oe_inline" />
-                                    <label for="module_website_sale_catdesc" />
                                 </div>
 							</div>
 						</div>

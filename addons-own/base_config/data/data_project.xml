@@ -1,31 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <openerp>
-    <data noupdate="0">
+    <data noupdate="1">
 
         <!-- Changed Original Task Stages -->
+        <!-- HINT: Stages will only be changed at module install but not on addon update, even if noupddate would be 0
+                   because in the original file in project.project has noupdate = 1 so all related xml_ids
+                   would have Non Updateable field True (ir.model.data noupdate)!
+                   uninstall and reinstall base_config if you need to update these records after base_config was
+                   installed.
+        -->
         <record id="project.project_tt_analysis" model="project.task.type">
-            <field name="sequence">510</field>
+            <field name="sequence">511</field>
+            <!--<field name="name">Analysis</field>-->
             <field name="case_default" eval="False"/>
         </record>
         <record id="project.project_tt_specification" model="project.task.type">
             <field name="sequence">520</field>
+            <!--<field name="name">Specification</field>-->
             <field name="case_default" eval="False"/>
         </record>
         <record id="project.project_tt_design" model="project.task.type">
             <field name="sequence">530</field>
+            <!--<field name="name">Design</field>-->
             <field name="case_default" eval="False"/>
         </record>
         <record id="project.project_tt_development" model="project.task.type">
             <field name="sequence">540</field>
+            <!--<field name="name">Development</field>-->
             <field name="case_default" eval="False"/>
         </record>
         <record id="project.project_tt_testing" model="project.task.type">
             <field name="sequence">550</field>
+            <!--<field name="name">Testing</field>-->
             <field name="case_default" eval="False"/>
         </record>
         <record id="project.project_tt_merge" model="project.task.type">
             <field name="sequence">560</field>
+            <!--<field name="name">Merge</field>-->
             <field name="case_default" eval="False"/>
             <field name="fold" eval="True"/>
         </record>
@@ -42,6 +54,7 @@
         </record>
 
         <!-- New Task Stages -->
+        <!-- HINT: external id will be e.g. base_config.project_tt_new -->
         <record id="project_tt_new" model="project.task.type">
             <field name="sequence">10</field>
             <field name="name">New</field>
@@ -60,6 +73,11 @@
         <record id="project_tt_inprogress" model="project.task.type">
             <field name="sequence">40</field>
             <field name="name">In Progress</field>
+            <field name="case_default" eval="True"/>
+        </record>
+        <record id="project_tt_nicetohave" model="project.task.type">
+            <field name="sequence">45</field>
+            <field name="name">NiceToHave</field>
             <field name="case_default" eval="True"/>
         </record>
 
