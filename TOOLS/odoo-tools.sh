@@ -126,6 +126,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "\n----- Install postgresql"
     apt-get install postgresql postgresql-server-dev-9.3 libpq-dev -y >> $SETUP_LOG
     update-rc.d postgresql defaults >> $SETUP_LOG
+    update-rc.d postgresql disable 4
     service postgresql restart | tee -a $SETUP_LOG
     echo -e "----- Install postgresql Done"
 
@@ -134,6 +135,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     apt-get remove apache2 apache2-mpm-event apache2-mpm-prefork apache2-mpm-worker -y >> $SETUP_LOG
     apt-get install nginx -y >> $SETUP_LOG
     update-rc.d nginx defaults >> $SETUP_LOG
+    update-rc.d nginx disable 4
     service nginx restart | tee -a $SETUP_LOG
     echo -e "----- Install nginx Done"
 
@@ -223,6 +225,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         chmod ugo=rx ${REPO_SETUPPATH}/aeroo.init >> $SETUP_LOG
         ln -s ${REPO_SETUPPATH}/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
         update-rc.d aeroo defaults >> $SETUP_LOG
+        update-rc.d aeroo disable 4
         service aeroo stop
         service aeroo start
     fi
@@ -602,6 +605,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     chmod ugo=rx ${DBINIT}
     ln -s ${DBINIT} /etc/init.d/${DBNAME} | tee -a $DB_SETUPLOG
     update-rc.d ${DBNAME} defaults | tee -a $DB_SETUPLOG
+    update-rc.d ${DBNAME} disable 4 | tee -a $DB_SETUPLOG
     service ${DBNAME} start | tee -a $DB_SETUPLOG
     echo -e "Wait 8s for service ${DBNAME} to start..."
     sleep 8
@@ -683,6 +687,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     chmod ugo=rx ${PADINIT}
     ln -s ${PADINIT} /etc/init.d/${DBNAME}-pad | tee -a $DB_SETUPLOG
     update-rc.d ${DBNAME}-pad defaults | tee -a $DB_SETUPLOG
+    update-rc.d ${DBNAME}-pad disable 4 | tee -a $DB_SETUPLOG
     service ${DBNAME}-pad start
     echo -e "---- Setup etherpad-Lite DONE"
 
