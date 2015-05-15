@@ -125,7 +125,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install postgresql
     echo -e "\n----- Install postgresql"
     apt-get install postgresql postgresql-server-dev-9.3 libpq-dev -y >> $SETUP_LOG
-    update-rc.d postgresql start 21 2 3 5 . stop 81 0 1 4 6 . >> $SETUP_LOG
+    update-rc.d postgresql start 19 2 3 5 . stop 81 0 1 4 6 . >> $SETUP_LOG
     service postgresql restart | tee -a $SETUP_LOG
     echo -e "----- Install postgresql Done"
 
