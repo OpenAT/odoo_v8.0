@@ -157,7 +157,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> $SETUP_LOG
         ## curl -L to follow mirror redirect from sourceforge.net (eg. kaz.sourceforge.net...)
         cd ${REPO_SETUPPATH}
-        wget http://kaz.dl.sourceforge.net/project/wkhtmltopdf/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
+        wget http://sourceforge.net/projects/wkhtmltopdf/files/archive/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
         dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
         cp /usr/local/bin/wkhtmltopdf /usr/bin >> $SETUP_LOG
         cp /usr/local/bin/wkhtmltoimage /usr/bin >> $SETUP_LOG
