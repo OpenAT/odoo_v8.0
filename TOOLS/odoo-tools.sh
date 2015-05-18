@@ -125,7 +125,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install postgresql
     echo -e "\n----- Install postgresql"
     apt-get install postgresql postgresql-server-dev-9.3 libpq-dev -y >> $SETUP_LOG
-    update-rc.d postgresql defaults >> $SETUP_LOG
+    update-rc.d postgresql start 19 2 3 5 . stop 81 0 1 4 6 . >> $SETUP_LOG
     service postgresql restart | tee -a $SETUP_LOG
     echo -e "----- Install postgresql Done"
 
@@ -133,7 +133,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "\n----- Install nginx"
     apt-get remove apache2 apache2-mpm-event apache2-mpm-prefork apache2-mpm-worker -y >> $SETUP_LOG
     apt-get install nginx -y >> $SETUP_LOG
-    update-rc.d nginx defaults >> $SETUP_LOG
+    update-rc.d nginx start 20 2 3 5 . stop 80 0 1 4 6 . >> $SETUP_LOG
     service nginx restart | tee -a $SETUP_LOG
     echo -e "----- Install nginx Done"
 
@@ -155,7 +155,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> $SETUP_LOG
         ## curl -L to follow mirror redirect from sourceforge.net (eg. kaz.sourceforge.net...)
         cd ${REPO_SETUPPATH}
-        wget http://kaz.dl.sourceforge.net/project/wkhtmltopdf/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
+        wget http://sourceforge.net/projects/wkhtmltopdf/files/archive/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
         dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
         cp /usr/local/bin/wkhtmltopdf /usr/bin >> $SETUP_LOG
         cp /usr/local/bin/wkhtmltoimage /usr/bin >> $SETUP_LOG
@@ -222,7 +222,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         wget -O - ${GITRAW}/TOOLS/aeroo.init > ${REPO_SETUPPATH}/aeroo.init
         chmod ugo=rx ${REPO_SETUPPATH}/aeroo.init >> $SETUP_LOG
         ln -s ${REPO_SETUPPATH}/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
-        update-rc.d aeroo defaults >> $SETUP_LOG
+        update-rc.d aeroo start 20 2 3 5 . stop 80 0 1 4 6 . >> $SETUP_LOG
         service aeroo stop
         service aeroo start
     fi
@@ -601,7 +601,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     chown root:root ${DBINIT}
     chmod ugo=rx ${DBINIT}
     ln -s ${DBINIT} /etc/init.d/${DBNAME} | tee -a $DB_SETUPLOG
-    update-rc.d ${DBNAME} defaults | tee -a $DB_SETUPLOG
+    update-rc.d ${DBNAME} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a $DB_SETUPLOG
     service ${DBNAME} start | tee -a $DB_SETUPLOG
     echo -e "Wait 8s for service ${DBNAME} to start..."
     sleep 8
@@ -682,7 +682,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     chown root:root ${PADINIT}
     chmod ugo=rx ${PADINIT}
     ln -s ${PADINIT} /etc/init.d/${DBNAME}-pad | tee -a $DB_SETUPLOG
-    update-rc.d ${DBNAME}-pad defaults | tee -a $DB_SETUPLOG
+    update-rc.d ${DBNAME}-pad start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a $DB_SETUPLOG
     service ${DBNAME}-pad start
     echo -e "---- Setup etherpad-Lite DONE"
 
