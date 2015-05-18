@@ -281,7 +281,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
 
     # ----- Check if the TARGET_BRANCH already exists
     if git ls-remote ${SOURCE_REPO} | grep -sw "${TARGET_BRANCH}" 2>&1>/dev/null; then
-        echo "ERROR: ${TARGET_BRANCH} already exists in ${REPONAME}!"; exit 2
+        echo "WARNING: ${TARGET_BRANCH} already exists in ${REPONAME}!";
     fi    
 
     # ----- Create Instance Log File for SETUP
