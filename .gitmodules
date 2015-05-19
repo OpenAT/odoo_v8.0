@@ -26,10 +26,6 @@
 	path = addons-thirdparty/aeroo_reports
 	url = https://github.com/aeroo/aeroo_reports.git
 	branch = master
-[submodule "addons-thirdparty/odoo-india"]
-	path = addons-thirdparty/odoo-india
-	url = https://github.com/Odoo-India/odoo-india.git
-	branch = master
 [submodule "addons-thirdparty/opensur"]
 	path = addons-thirdparty/opensur
 	url = https://github.com/OpenSur/Odoo_addons.git
