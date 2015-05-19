@@ -125,6 +125,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install postgresql
     echo -e "\n----- Install postgresql"
     apt-get install postgresql postgresql-server-dev-9.3 libpq-dev -y >> $SETUP_LOG
+    update-rc.d -f postgresql remove
     update-rc.d postgresql start 19 2 3 5 . stop 81 0 1 4 6 . >> $SETUP_LOG
     service postgresql restart | tee -a $SETUP_LOG
     echo -e "----- Install postgresql Done"
@@ -133,6 +134,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "\n----- Install nginx"
     apt-get remove apache2 apache2-mpm-event apache2-mpm-prefork apache2-mpm-worker -y >> $SETUP_LOG
     apt-get install nginx -y >> $SETUP_LOG
+    update-rc.d -f nginx remove
     update-rc.d nginx start 20 2 3 5 . stop 80 0 1 4 6 . >> $SETUP_LOG
     service nginx restart | tee -a $SETUP_LOG
     echo -e "----- Install nginx Done"
@@ -222,6 +224,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         wget -O - ${GITRAW}/TOOLS/aeroo.init > ${REPO_SETUPPATH}/aeroo.init
         chmod ugo=rx ${REPO_SETUPPATH}/aeroo.init >> $SETUP_LOG
         ln -s ${REPO_SETUPPATH}/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
+        update-rc.d -f aeroo remove
         update-rc.d aeroo start 20 2 3 5 . stop 80 0 1 4 6 . >> $SETUP_LOG
         service aeroo stop
         service aeroo start
