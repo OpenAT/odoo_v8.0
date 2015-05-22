@@ -5,7 +5,7 @@ GITPATH="https://github.com/OpenAT"
 REPONAME="odoo_v8.0"
 REPOID="o8"
 SOURCE_REPO=${GITPATH}/${REPONAME}.git
-
+FPMCONFIGPATH=/etc/php5/fpm/pool.d/www.conf
 GITRAW="https://raw.githubusercontent.com/OpenAT/${REPONAME}/master"
 
 SCRIPT_MODE=$1
@@ -248,6 +248,10 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     apt-get install php5-fpm -y >> $SETUP_LOG
     apt-get install php5-cgi php5-pgsql php5-gd php5-curl php5-intl php5-mcrypt php5-ldap php5-gmp php5-imagick \
                     libav-tools php5-readline -y >> $SETUP_LOG
+    # --- Make sure PHP-FPM is listening on unix socket and not on IP!
+    if /bin/grep -q "listen = 127.0.0.1:9000" ${FPMCONFIGPATH} ; then
+        sed -i "s|listen = 127.0.0.1:9000|listen = /var/run/php5-fpm.sock|g" ${FPMCONFIGPATH}
+    fi
     update-rc.d -f apache2 disable >> $SETUP_LOG
     echo -e "\n----- Install packages for done"
 
