@@ -13,12 +13,12 @@ fi
 #%V   ISO‐Wochennummer mit Montag als erstem Tag der Woche (01..53)
 WEEKDAY="`date +%u`"
 WEEKNUMBER="`date +%V`"
-if "${WEEKDAY}" == "7"; then
+if [ "${WEEKDAY}" == "7" ] ; then
     BACKUPFILE="DBBACKUPPATH/DBNAME--week${WEEKNUMBER}.zip"
 else
     BACKUPFILE="DBBACKUPPATH/DBNAME--day${WEEKDAY}.zip"
 fi
-INSTANCE_PATH/TOOLS/db-tools.py -b BASEPORT69 -s SUPER_PASSWORD backup -d DBNAME -f ${BACKUPFILE}
+INSTANCE_PATH/TOOLS/db-tools.py -b BASEPORT69 -s 'SUPER_PASSWORD' backup -d DBNAME -f ${BACKUPFILE}
 
 # Todo: Create Backup directory
 # Todo: Backup etherpad-lite database (pgdump)
