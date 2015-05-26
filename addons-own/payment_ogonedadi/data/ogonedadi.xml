@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="payment_acquirer_ogonedadi" model="payment.acquirer">
+            <field name="name">Credit Card</field>
+            <field name="provider">ogonedadi</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="view_template_id" ref="ogonedadi_acquirer_button"/>
+            <field name="environment">test</field>
+            <field name="pre_msg"><![CDATA[
+<p>You will be redirected to the Ogone website after clicking on the payment button.</p>]]></field>
+            <field name='ogonedadi_pspid'>dummy</field>
+            <field name='ogonedadi_userid'>dummy</field>
+            <field name='ogonedadi_password'>dummy</field>
+            <field name="ogonedadi_shakey_in">dummy</field>
+            <field name="ogonedadi_shakey_out">dummy</field>
+        </record>
+
+    </data>
+</openerp>

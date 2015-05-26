@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="acquirer_form_ogonedadi" model="ir.ui.view">
+            <field name="name">acquirer.form.ogonedadi</field>
+            <field name="model">payment.acquirer</field>
+            <field name="inherit_id" ref="payment.acquirer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//group[@name="acquirer_display"]' position='after'>
+                    <group attrs="{'invisible': [('provider', '!=', 'ogonedadi')]}">
+                        <field name="ogonedadi_pspid"/>
+                        <field name="ogonedadi_userid"/>
+                        <field name="ogonedadi_password"/>
+                        <field name="ogonedadi_shakey_in"/>
+                        <field name="ogonedadi_shakey_out"/>
+                        <field name="ogonedadi_pm"/>
+                        <field name="ogonedadi_brand"/>
+                        <field name="ogonedadi_tp"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="transaction_form_ogonedadi" model="ir.ui.view">
+            <field name="name">acquirer.transaction.form.ogonedadi</field>
+            <field name="model">payment.transaction</field>
+            <field name="inherit_id" ref="payment.transaction_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//notebook' position='inside'>
+                    <page string="ogonedadi TX Details">
+                        <group>
+                            <field name="ogonedadi_payid"/>
+                            <field name="ogonedadi_3ds"/>
+                            <field name="ogonedadi_3ds_html"/>
+                            <field name="ogonedadi_complus"/>
+                            <!-- By Mike: -->
+                            <field name="ogonedadi_orderid"/>
+                            <field name="ogonedadi_eci"/>
+                            <field name="ogonedadi_pm"/>
+                            <field name="ogonedadi_brand"/>
+                            <field name="ogonedadi_cardno"/>
+                            <field name="ogonedadi_cn"/>
+                            <field name="ogonedadi_amount"/>
+                            <field name="ogonedadi_currency"/>
+                            <field name="ogonedadi_ed"/>
+                            <field name="ogonedadi_status"/>
+                            <field name="ogonedadi_trxdate"/>
+                            <field name="ogonedadi_ncerror"/>
+                            <field name="ogonedadi_ncerrorplus"/>
+                            <field name="ogonedadi_ip"/>
+                            <field name="ogonedadi_return_url"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -94,6 +94,12 @@ class base_config_settings(osv.osv_memory):
         'module_mail_follower_control': fields.boolean('mail_follower_control -- Mail Follower Control',
                                                       help='Control the Followers of E-Mails'
                                                            '\n Installs Module: mail_follower_control'),
+        'module_website_sale_payment_fix': fields.boolean('website_sale_payment_fix -- Payment Transaction fix for the Webshop',
+                                                      help='Resets the Webshop after Payment Button is pressed for some PP'
+                                                           '\n Installs Module: website_sale_payment_fix'),
+        'module_payment_ogonedadi': fields.boolean('payment_ogonedadi -- Payment Provider Ogone extended by Dadi',
+                                                      help='Extended Ogone Payment Provider that will work with multible answers from ogone even if odoo web session is lost.'
+                                                           '\n Installs Module: payment_ogonedadi'),
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)
         'module_web_ckeditor4': fields.boolean('web_ckeditor4 -- DEPRECATED! CKeditor4 for any html/text field in the odoo backend!',
