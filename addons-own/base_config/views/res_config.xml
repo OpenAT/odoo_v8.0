@@ -115,6 +115,14 @@
                                     <field name="module_mail_follower_control" class="oe_inline" />
                                     <label for="module_mail_follower_control" />
                                 </div>
+                                <div>
+                                    <field name="module_website_sale_payment_fix" class="oe_inline" />
+                                    <label for="module_website_sale_payment_fix" />
+                                </div>
+                                <div>
+                                    <field name="module_payment_ogonedadi" class="oe_inline" />
+                                    <label for="module_payment_ogonedadi" />
+                                </div>
 							</div>
 						</div>
 					</group>
