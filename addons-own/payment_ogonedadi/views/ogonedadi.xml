@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <template id="ogonedadi_acquirer_button">
+            <form t-if="acquirer" t-att-action="tx_url" method="post" target="_self">
+
+                <!-- seller -->
+                <input type='hidden' name='PSPID' t-att-value='tx_values["PSPID"]'/>
+                <input type='hidden' name='ORDERID' t-att-value='tx_values["ORDERID"]'/>
+
+                <!-- cart -->
+                <input type='hidden' name='AMOUNT' t-att-value='tx_values["AMOUNT"] or "0.0"'/>
+                <input type='hidden' name='CURRENCY' t-att-value='tx_values["CURRENCY"]'/>
+
+                <!-- buyer -->
+                <input type='hidden' name='LANGUAGE' t-att-value='tx_values["LANGUAGE"]'/>
+                <input type='hidden' name='CN' t-att-value='tx_values["CN"]'/>
+                <input type='hidden' name='EMAIL' t-att-value='tx_values["EMAIL"]'/>
+                <input type='hidden' name='OWNERZIP' t-att-value='tx_values["OWNERZIP"]'/>
+                <input type='hidden' name='OWNERADDRESS' t-att-value='tx_values["OWNERADDRESS"]'/>
+                <input type='hidden' name='OWNERCTY' t-att-value='tx_values["OWNERCTY"]'/>
+                <input type='hidden' name='OWNERTOWN' t-att-value='tx_values["OWNERTOWN"]'/>
+                <input type='hidden' name='OWNERTELNO' t-att-value='tx_values["OWNERTELNO"]'/>
+
+                <!-- before payment verification -->
+                <input type='hidden' name='SHASIGN' t-att-value='tx_values["SHASIGN"]'/>
+
+                <!-- extra parameters -->
+                <t t-if='tx_values.get("PARAMPLUS")'>
+                    <input type='hidden' name="PARAMPLUS" t-att-value='tx_values["PARAMPLUS"]'/>
+                </t>
+
+                <!-- By Mike: extra Parameters -->
+                <t t-if='tx_values.get("PM")'>
+                    <input type='hidden' name="PM" t-att-value='tx_values["PM"]'/>
+                </t>
+                <t t-if='tx_values.get("BRAND")'>
+                    <input type='hidden' name="BRAND" t-att-value='tx_values["BRAND"]'/>
+                </t>
+                <t t-if='tx_values.get("TP")'>
+                    <input type='hidden' name="TP" t-att-value='tx_values["TP"]'/>
+                </t>
+
+                <!-- redirection -->
+                <input type='hidden' name='ACCEPTURL' t-att-value='tx_values["ACCEPTURL"]'/>
+                <input type='hidden' name='DECLINEURL' t-att-value='tx_values["DECLINEURL"]'/>
+                <input type='hidden' name='EXCEPTIONURL' t-att-value='tx_values["EXCEPTIONURL"]'/>
+                <input type='hidden' name='CANCELURL' t-att-value='tx_values["CANCELURL"]'/>
+
+                <!-- submit -->
+                <button type="submit" width="100px"
+                    t-att-class="submit_class">
+                    <img t-if="not submit_txt" src="/payment_ogonedadi/static/src/img/ogonedadi_icon.png"/>
+                    <span t-if="submit_txt"><t t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/></span>
+                </button>
+            </form>
+        </template>
+
+    </data>
+</openerp>
