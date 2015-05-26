@@ -716,6 +716,32 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     sudo su - postgres -c \
         'psql -a -e -c "CREATE DATABASE '${CLOUDDB}' WITH OWNER '${CLOUDUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
     #
+    # ----- Configure owncloud
+    OWNCLOUDCONFIGFILE="${DBPATH}/${CLOUDDB}-autoconfig.php"
+    echo -e "Create Configuration for owncloud and link it to owncloud config dir"
+    echo "<?php" >> ${OWNCLOUDCONFIGFILE}
+    echo     '$AUTOCONFIG = array (' >> ${OWNCLOUDCONFIGFILE}
+    echo      "'dbtype' => 'pgsql'," >> ${OWNCLOUDCONFIGFILE}
+    echo     "'dbname' => '${CLOUDDB}'," >> ${OWNCLOUDCONFIGFILE}
+    echo     "'dbuser' => '${CLOUDUSER}'," >> ${OWNCLOUDCONFIGFILE}
+    echo     "'dbpass' => '${CLOUDPW}'," >> ${OWNCLOUDCONFIGFILE}
+    echo     "'dbhost' => 'localhost'," >> ${OWNCLOUDCONFIGFILE}
+    echo     "'dbtableprefix' => ''," >> ${OWNCLOUDCONFIGFILE}
+#    echo    "'trusted_domains' =>" >> ${OWNCLOUDCONFIGFILE}
+#    echo    "array (" >> ${OWNCLOUDCONFIGFILE}
+#    echo       "0 => 'cloud.${DOMAIN_NAME}'," >> ${OWNCLOUDCONFIGFILE}
+#    echo     ")," >> ${OWNCLOUDCONFIGFILE}
+    echo     "'directory' => '${OWNCLOUDPATH}/data'," >> ${OWNCLOUDCONFIGFILE}
+#    echo     "'version' => '7.0.2.1'," >> ${OWNCLOUDCONFIGFILE}
+#    echo     "'installed' => 'true'," >> ${OWNCLOUDCONFIGFILE}
+#    echo     "'mail_smtpmode' => 'php'," >> ${OWNCLOUDCONFIGFILE}
+    echo     "'adminlogin' => 'cloudadmin'," >> ${OWNCLOUDCONFIGFILE}
+    echo     "'adminpass' => 'cloudadmin#1'," >> ${OWNCLOUDCONFIGFILE}
+    echo     ");" >> ${OWNCLOUDCONFIGFILE}
+#    ${OWNCLOUDCONFIGFILE} | tee -a /tmp/test.log
+    ln -s ${OWNCLOUDCONFIGFILE} ${OWNCLOUDPATH}/config/autoconfig.php
+    chown root:root ${OWNCLOUDCONFIGFILE}
+    chmod ugo=rx ${OWNCLOUDCONFIGFILE}
     echo -e "---- Setup owncloud DONE"
 
     # ----- Setup cron Logrotate for all Logfiles
@@ -758,7 +784,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n5) Enable Colaborative Pads at URL http://pad.${DOMAIN_NAME} (PWD: $SUPER_PASSWORD)"
     echo -e "   You will find the API-KEY at: ${PADPATH}/APIKEY.txt"
     echo -e "   ATTENTION: First start of etherpad-lite takes a long time. Be patient - APIKEY will show up after first start!"
-    echo -e "\n6) Start owncloud at URL http://cloud.${DOMAIN_NAME} with DB: ${CLOUDDB} User: ${CLOUDUSER} PW: ${CLOUDPW}"
+    echo -e "\n6) Start owncloud at URL http://cloud.${DOMAIN_NAME} with cloudadmin cloudadmin#1 and change cloudadmin password"
     echo -e "   ATTENTION: Make sure cloud.${DOMAIN_NAME} is resolvable via DNS on the server. (dig cloud.${DOMAIN_NAME})!"
     echo -e "\n Optional:"
     echo -e "1) Set Company Details"
