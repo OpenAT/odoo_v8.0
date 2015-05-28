@@ -766,11 +766,45 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!INSTANCE_PATH!'"$INSTANCE_PATH"'!g
         s!DBNAME!'"$DBNAME"'!g
         s!DBBACKUPPATH!'"$DBBACKUPPATH"'!g
+        s!BACKUPFILE!'"$DBBACKUPPATH/$DBNAME"'!g
+        s!BACKUPTYPE!'"odoo-backup-zip"'!g
         }' ${INSTANCE_PATH}/TOOLS/backup.sh > ${DBBACKUPSCRIPT} | tee -a $DB_SETUPLOG
     chown root:root ${DBBACKUPSCRIPT}
     chmod ugo=rx ${DBBACKUPSCRIPT}
     ln -s ${DBBACKUPSCRIPT} /etc/cron.daily/${DBNAME}-backup | tee -a $DB_SETUPLOG
 
+    # ----- Create backup script for PAD and Setup cron job for backup script
+    PADDBBACKUPSCRIPT="${DBPATH}/${PADDB}-backup-pad.sh"
+    echo -e "Create PAD database backup script and link to cron daily"
+    /bin/sed '{
+        s!BASEPORT!'"$BASEPORT"'!g
+        s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
+        s!INSTANCE_PATH!'"$INSTANCE_PATH"'!g
+        s!DBNAME!'"$PADDB"'!g
+        s!DBBACKUPPATH!'"$DBBACKUPPATH"'!g
+        s!BACKUPFILE!'"$DBBACKUPPATH/$PADDB"'!g
+        s!BACKUPTYPE!'"pad-backup-sql"'!g
+        }' ${INSTANCE_PATH}/TOOLS/backup.sh > ${PADDBBACKUPSCRIPT} | tee -a $DB_SETUPLOG
+    chown root:root ${PADDBBACKUPSCRIPT}
+    chmod ugo=rx ${PADDBBACKUPSCRIPT}
+    ln -s ${PADDBBACKUPSCRIPT} /etc/cron.daily/${PADDB}-backup-pad | tee -a $DB_SETUPLOG
+
+    # ----- Create backup script for OWNCLOUD and Setup cron job for backup script
+    CLOUDDBBACKUPSCRIPT="${DBPATH}/${CLOUDDB}-backup-owncloud.sh"
+    echo -e "Create PAD database backup script and link to cron daily"
+    /bin/sed '{
+        s!BASEPORT!'"$BASEPORT"'!g
+        s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
+        s!INSTANCE_PATH!'"$INSTANCE_PATH"'!g
+        s!DBNAME!'"$CLOUDDB"'!g
+        s!DBBACKUPPATH!'"$DBBACKUPPATH"'!g
+        s!BACKUPFILE!'"$DBBACKUPPATH/$CLOUDDB"'!g
+        s!BACKUPTYPE!'"owncloud-backup-sql"'!g
+        s!DBPATH!'"${DBPATH}"'!g
+        }' ${INSTANCE_PATH}/TOOLS/backup.sh > ${CLOUDDBBACKUPSCRIPT} | tee -a $DB_SETUPLOG
+    chown root:root ${CLOUDDBBACKUPSCRIPT}
+    chmod ugo=rx ${CLOUDDBBACKUPSCRIPT}
+    ln -s ${CLOUDDBBACKUPSCRIPT} /etc/cron.daily/${CLOUDDB}-backup-owncloud | tee -a $DB_SETUPLOG
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODENEWDB DONE"
