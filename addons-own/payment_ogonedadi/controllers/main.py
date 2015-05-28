@@ -66,7 +66,8 @@ class OgonedadiController(http.Controller):
         # all the stuff that could be done by /payment/validate for SO was already done by website_sale_payment_fix
         # form_feedback except sending the e-mail and so we are no longer session variable dependent!
         if tx and tx.sale_order_id:
-            return request.website.render("website_sale_payment_fix.confirmation_static", {'order': tx.sale_order_id})
+            #return request.website.render("website_sale_payment_fix.confirmation_static", {'order': tx.sale_order_id})
+            return request.redirect('/shop/confirmation_static?order_id=%s' % tx.sale_order_id.id)
 
         # If no tx or tx.sale_order_id was found simply return to the root page of the website
         # return werkzeug.utils.redirect(post.pop('return_url', '/'))
@@ -79,3 +80,8 @@ class OgonedadiController(http.Controller):
     #               state draft we will delete the tx and set the SO to state draft and set all relevant session
     #               variables if they are empty at current state. state 2 of ogone (user canceld payment) would also
     #               be valid!
+
+    # Add a route for the ogone template
+    @http.route(['/shop/ogonepayment', '/shop/ogonepayment.html'], type='http', auth="public", website=True)
+    def ogonepayment(self, **post):
+        return request.website.render("payment_ogonedadi.ogonepayment", {})

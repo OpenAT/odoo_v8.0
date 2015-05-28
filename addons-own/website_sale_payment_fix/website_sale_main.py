@@ -12,6 +12,7 @@ import numbers
 from openerp.addons.website_sale.controllers.main import website_sale
 
 class website_sale_payment_fix(website_sale):
+    # Overwrite the Json controller for the pay now button
     @http.route()
     def payment_transaction(self, acquirer_id):
         """ Method is valled by JSON if the pay now button at the payment page is pressed. The user will be redirected
@@ -46,3 +47,17 @@ class website_sale_payment_fix(website_sale):
                 })
 
         return tx_id
+
+    # Add a Route for the alternative confirmation page
+    @http.route(['/shop/confirmation_static'], type='http', auth="public", website=True)
+    def payment_confirmation_static(self, order_id=None, **post):
+        cr, uid, context = request.cr, request.uid, request.context
+        try:
+            order_id = int(order_id)
+            order = request.registry['sale.order'].browse(cr, SUPERUSER_ID, order_id, context=context)[0]
+            if order and order.name and order.payment_tx_id:
+                return request.website.render("website_sale_payment_fix.confirmation_static", {'order': order})
+            else:
+                raise
+        except:
+            return request.website.render("website_sale_payment_fix.confirmation_static", {'order': None})
