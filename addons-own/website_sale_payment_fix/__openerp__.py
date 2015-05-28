@@ -59,4 +59,7 @@ To solve this we did:
         'website_sale',
     ],
     'installable': True,
+    'data': [
+        'templates.xml',
+    ]
 }

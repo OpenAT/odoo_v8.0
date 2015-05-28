@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Alternative confirmation template that is not monitored by website_sale_validate.js in website sales -->
+        <template id="confirmation_static">
+            <t t-call="website.layout">
+                <t t-set="additional_title">Shop - Confirmed</t>
+                <div id="wrap">
+
+                    <div id="confirmation_static" class="container oe_website_sale">
+                        <ul class="wizard pull-right">
+                            <li class="text-muted">Review Order
+                                <span class="chevron"></span>
+                            </li>
+                            <li class="text-muted">Shipping &amp; Billing
+                                <span class="chevron"></span>
+                            </li>
+                            <li class="text-muted">Payment
+                                <span class="chevron"></span>
+                            </li>
+                            <li class="text-primary">Confirmation
+                                <span class="chevron"></span>
+                            </li>
+                        </ul>
+
+                        <h1 class="mb32" style="padding: 2.5em 0;">
+                            Order
+                            <em t-field="order.name"/>
+                            in state
+                            <em t-field="order.payment_tx_id.state"/>
+                        </h1>
+
+                        <div class="row">
+                            <div class="col-md-3 col-md-offset-1 text-muted" id="right_column">
+                                <h4>Bill To:</h4>
+                                <div t-field="order.partner_invoice_id" t-field-options='{
+                                "widget": "contact",
+                                "fields": ["address", "name", "phone", "email"]
+                                }'/>
+                                <t>
+                                    <h4 class="mt32">Ship To:</h4>
+                                    <t t-if="order.partner_shipping_id and order.partner_shipping_id.id != order.partner_invoice_id.id">
+                                        <div t-field="order.partner_shipping_id" t-field-options='{
+                                        "widget": "contact",
+                                        "fields": ["address", "name", "phone"]
+                                        }'/>
+                                    </t>
+                                    <address t-if="order.partner_shipping_id.id == order.partner_invoice_id.id">
+                                        Ship to the same address
+                                    </address>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="oe_structure"/>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</openerp>

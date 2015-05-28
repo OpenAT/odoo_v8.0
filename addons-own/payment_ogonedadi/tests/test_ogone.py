@@ -6,7 +6,7 @@ import urlparse
 
 from openerp.addons.payment.models.payment_acquirer import ValidationError
 from openerp.addons.payment.tests.common import PaymentAcquirerCommon
-from openerp.addons.payment_ogone.controllers.main import OgoneController
+from openerp.addons.payment_ogonedadi.controllers.main import OgonedadiController
 from openerp.tools import mute_logger
 
 
@@ -17,7 +17,7 @@ class OgonedadiPayment(PaymentAcquirerCommon):
         cr, uid = self.cr, self.uid
         self.base_url = self.registry('ir.config_parameter').get_param(cr, uid, 'web.base.url')
 
-        # get the adyen account
+        # get the ogone account
         model, self.ogonedadi_id = self.registry('ir.model.data').get_object_reference(cr, uid, 'payment_ogonedadi', 'payment_acquirer_ogonedadi')
 
     def test_10_ogonedadi_form_render(self):

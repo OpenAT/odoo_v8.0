@@ -66,7 +66,7 @@ class OgonedadiController(http.Controller):
         # all the stuff that could be done by /payment/validate for SO was already done by website_sale_payment_fix
         # form_feedback except sending the e-mail and so we are no longer session variable dependent!
         if tx and tx.sale_order_id:
-            return request.website.render("website_sale.confirmation", {'order': tx.sale_order_id})
+            return request.website.render("website_sale_payment_fix.confirmation_static", {'order': tx.sale_order_id})
 
         # If no tx or tx.sale_order_id was found simply return to the root page of the website
         # return werkzeug.utils.redirect(post.pop('return_url', '/'))
