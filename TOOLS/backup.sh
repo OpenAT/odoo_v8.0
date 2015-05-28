@@ -8,7 +8,7 @@ if [ ${freespace} -lt 1000000 ] ; then
     echo -e "ERROR: Backup apportet! Disk Space lower than 1GB!"
     exit 2
 fi
-
+TYPE=BACKUPTYPE
 #%u   Tag der Woche (1..7); 1 steht für Montag
 #%V   ISO‐Wochennummer mit Montag als erstem Tag der Woche (01..53)
 WEEKDAY="`date +%u`"
