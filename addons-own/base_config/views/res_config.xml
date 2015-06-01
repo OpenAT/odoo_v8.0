@@ -123,6 +123,10 @@
                                     <field name="module_payment_ogonedadi" class="oe_inline" />
                                     <label for="module_payment_ogonedadi" />
                                 </div>
+                                <div>
+                                    <field name="module_mail_global_bcc" class="oe_inline" />
+                                    <label for="module_mail_global_bcc" />
+                                </div>
 							</div>
 						</div>
 					</group>

@@ -152,7 +152,7 @@ class mail_message(osv.Model):
 mail_message()
 
 
-# Check Receipients while composing a mail (Full compsoing dialog not quick dialogue) and give a warning
+# Check Receipients while composing a mail (Full composing dialog not quick dialogue) and give a warning
 # if the added recipients will not receive an e-mail by setting
 class mail_compose_message(osv.TransientModel):
     _inherit = "mail.compose.message"

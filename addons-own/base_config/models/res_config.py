@@ -100,6 +100,9 @@ class base_config_settings(osv.osv_memory):
         'module_payment_ogonedadi': fields.boolean('payment_ogonedadi -- Payment Provider Ogone extended by Dadi',
                                                       help='Extended Ogone Payment Provider that will work with multible answers from ogone even if odoo web session is lost.'
                                                            '\n Installs Module: payment_ogonedadi'),
+        'module_mail_global_bcc': fields.boolean('mail_global_bcc -- send all outgoing emails to a email address defined in mail.outgoing.global.bcc',
+                                                      help='send all outgoing emails to a email address defined in mail.outgoing.global.bcc in the ir.config_parameter settings'
+                                                           '\n Installs Module: mail_global_bcc'),
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)
         'module_web_ckeditor4': fields.boolean('web_ckeditor4 -- DEPRECATED! CKeditor4 for any html/text field in the odoo backend!',
