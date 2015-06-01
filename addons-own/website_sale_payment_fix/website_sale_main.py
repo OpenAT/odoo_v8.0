@@ -15,7 +15,7 @@ class website_sale_payment_fix(website_sale):
     # Overwrite the Json controller for the pay now button
     @http.route()
     def payment_transaction(self, acquirer_id):
-        """ Method is valled by JSON if the pay now button at the payment page is pressed. The user will be redirected
+        """ Method is called by JSON if the pay now button at the payment page is pressed. The user will be redirected
         to the Payment Provider. Until we get an answer from the PP we have no idea what the real state of this process
         is so we lock the SO and reset the current shop session variables.
 

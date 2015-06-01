@@ -57,9 +57,11 @@ To solve this we did:
     'version': '0.1',
     'depends': [
         'website_sale',
+        'website_quote',
     ],
     'installable': True,
     'data': [
         'templates.xml',
+        'email_template_data.xml',
     ]
 }
