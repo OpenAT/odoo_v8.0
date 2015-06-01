@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Global BCC Email for outgoing mail messages -->
+        <record id="mail_outgoing_global_bcc" model="ir.config_parameter">
+            <field name="key">mail.outgoing.global.bcc</field>
+            <field name="value">NoMail</field>
+        </record>
+
+    </data>
+</openerp>
