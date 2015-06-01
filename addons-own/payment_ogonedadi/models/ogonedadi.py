@@ -286,7 +286,7 @@ class PaymentTxOgonedadi(osv.Model):
         ogonedadi_post_data = 'Received data from ogone: \n\n%s' % data
         self.message_post(cr, uid, tx.id, body=ogonedadi_post_data, content_subtype='plaintext', type='comment')
 
-        # By Mike: read all keys wit get and use datetime.now() for date_validate
+        # By Mike: read all keys with get and use datetime.now() for date_validate
         tx_write_data = {
             'acquirer_reference': data_upper.get('PAYID'),
             # 'date_validate': time.strptime(data_upper.get('TRXDATE'), "%m/%d/%y"),

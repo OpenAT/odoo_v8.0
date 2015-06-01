@@ -39,10 +39,15 @@ class OgonedadiController(http.Controller):
         request.registry['payment.transaction'].form_feedback(cr, uid, post, 'ogonedadi', context=context)
 
         # If the state changed send an E-Mail (have to do it here since we do not call /payment/validate for ogonedadi)
+        # HINT: we call a special E-Mail template "email_template_webshop" defined in website_sale_payment_fix
+        #       for this to work we extended "action_quotation_send" interface with email_template_modell and ..._name
         if tx.state != state_old:
             _logger.info('Ogonedadi: Send E-Mail for Sales order: \n%s\n', pprint.pformat(tx.sale_order_id.name))
             email_act = request.registry['sale.order'].action_quotation_send(cr, SUPERUSER_ID,
-                                                                             [tx.sale_order_id.id], context=context)
+                                                                             [tx.sale_order_id.id],
+                                                                             context=context,
+                                                                             email_template_modell='website_sale_payment_fix',
+                                                                             email_template_name='email_template_webshop')
             if email_act and email_act.get('context'):
                 composer_obj = request.registry['mail.compose.message']
                 composer_values = {}

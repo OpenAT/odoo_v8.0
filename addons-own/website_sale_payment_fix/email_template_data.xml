@@ -1,0 +1,88 @@
+<openerp>
+    <!-- Mail template is done in a NOUPDATE block
+         so users can freely customize/delete them -->
+    <data noupdate="1">
+
+        <!-- Webshop Email template -->
+        <record id="email_template_webshop" model="email.template">
+            <field name="name">Webshop Sales Order Transaction-State-Info</field>
+            <field name="email_from">${(object.user_id.email or '')|safe}</field>
+            <field name="subject">${object.company_id.name|safe} - Transaction Summary for ${object.name or 'n/a'}</field>
+            <field name="partner_to">${object.partner_invoice_id.id}</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="auto_delete" eval="True"/>
+            <!--<field name="report_template" ref="sale.report_sale_order"/>-->
+            <!--<field name="report_name">${(object.name or '').replace('/','_')}_${object.state == 'draft' and 'draft' or ''}</field>-->
+            <field name="lang">${object.partner_id.lang}</field>
+            <!--<field name="user_signature" eval="True"/>-->
+            <field name="body_html">
+<![CDATA[
+
+<div style="font-family: Arial, Verdana, sans-serif; font-size: 14px;">
+
+    <h2 style="padding-bottom: 0.5em">Hello ${object.partner_id.name},</h2>
+    <h3>Thank you very much for your trust!</h3>
+    <h3><br /><br />Summary of your transaction:</h3>
+    <p style="padding-left: 1em;">
+        ID: <strong>${object.name}</strong><br />
+        Total: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br />
+        Date: ${object.date_order}<br />
+        State: <strong style="text-transform:uppercase;">${object.payment_tx_id.state or '?'}</strong>
+    </p>
+    <% set signup_url = object.get_signup_url() %>
+    % if signup_url:
+    <p>
+        <br />You could access your data online if you already have an account:
+        <a href="${signup_url}" style="display:block; font-size: 16px;">
+            &gt;&nbsp;Access Account
+        </a>
+        <br />Or you could create a new one:
+        <a href="${signup_url}" style="display:block; font-size: 16px;">
+            &gt;&nbsp;Register Account
+        </a>
+    </p>
+    % endif
+    <p>If you have any questions please contact:<br />
+        <a href="mailto:${object.user_id.email or object.company_id.email or ''}?subject=Question%20regarding%20${object.name}" style="display:block; font-size: 16px;">
+            &lt;${object.user_id.name or object.company_id.name or ''}&gt; ${object.user_id.email or object.company_id.email or ''}
+        </a>
+    </p>
+    <p>&nbsp;</p>
+    <h3>
+        <strong>${object.company_id.name}</strong>
+    </h3>
+    <p>
+        % if object.company_id.street:
+            ${object.company_id.street}<br/>
+        % endif
+        % if object.company_id.street2:
+            ${object.company_id.street2}<br/>
+        % endif
+        % if object.company_id.city or object.company_id.zip:
+            ${object.company_id.zip} ${object.company_id.city}<br/>
+        % endif
+        % if object.company_id.country_id:
+            ${object.company_id.state_id and ('%s, ' % object.company_id.state_id.name) or ''} ${object.company_id.country_id.name or ''}<br/>
+        % endif
+        % if object.company_id.phone:
+            Tel.:&nbsp;${object.company_id.phone}<br />
+        % endif
+        % if object.company_id.email:
+            E-Mail.:&nbsp;<a href="mailto:${object.company_id.email}">${object.company_id.email}</a><br />
+        % endif
+        % if object.company_id.website:
+            Web.:&nbsp;<a href="${object.company_id.website}">${object.company_id.website}</a><br />
+        % endif
+        % if object.company_id.logo:
+            <div style="padding:0; margin:0;"><img src="data:image/png;base64,${object.company_id.logo}" style="width: 120px;"></div>
+        % endif
+    </p>
+
+</div>
+
+]]>
+            </field>
+        </record>
+
+    </data>
+</openerp>
