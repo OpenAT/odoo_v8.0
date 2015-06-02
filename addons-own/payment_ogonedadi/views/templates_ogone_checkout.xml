@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!--Ogone Payment Template -->
+        <template id="ogonepayment" name="Ogone Checkout">&lt;!DOCTYPE html&gt;
+            <html t-att-lang="lang and lang.replace('_', '-')"
+                  t-att-data-website-id="website.id if editable and website else None"
+                  t-att-data-editable="'1' if editable else None"
+                  t-att-data-translatable="'1' if translatable else None"
+                  t-att-data-view-xmlid="xmlid if editable else None"
+                  t-att-data-main-object="repr(main_object) if editable else None"
+                  t-att-data-oe-company-name="res_company.name">
+                <head>
+                    <meta charset="utf-8" />
+                    <t t-if="main_object and 'website_meta_title' in main_object and not title">
+                        <t t-set="title" t-value="main_object.website_meta_title"/>
+                    </t>
+                    <t t-if="main_object and 'name' in main_object and not title and not additional_title">
+                        <t t-set="additional_title" t-value="main_object.name"/>
+                    </t>
+                    <t t-if="not title">
+                        <t t-set="title"><t t-if="additional_title"><t t-raw="additional_title"/> | </t><t t-esc="(website or res_company).name"/></t>
+                    </t>
+
+                    <meta name="viewport" content="initial-scale=1"/>
+                    <meta name="description" t-att-content="main_object and 'website_meta_description' in main_object
+                        and main_object.website_meta_description or website_meta_description"/>
+                    <meta name="keywords" t-att-content="main_object and 'website_meta_keywords' in main_object
+                        and main_object.website_meta_keywords or website_meta_keywords"/>
+                    <meta name="generator" content="Odoo"/>
+                    <title><t t-esc="title"/></title>
+
+                    <!--<t t-set="languages" t-value="website.get_languages() if website else None"/>-->
+                    <!--<t t-if="request and request.website_multilang and website">-->
+                        <!--<t t-foreach="website.get_alternate_languages(request.httprequest)" t-as="lg">-->
+                            <!--<link rel="alternate" t-att-hreflang="lg['hreflang']" t-att-href="lg['href']"/>-->
+                        <!--</t>-->
+                    <!--</t>-->
+                    <!--<t t-call-assets="web.assets_common" t-js="false"/>-->
+                    <!--<t t-call-assets="website.assets_frontend" t-js="false"/>-->
+
+                    <link t-att-href="'%s/web/css/web.assets_common/%s' % (url, dbname)" rel="stylesheet" />
+                    <link t-att-href="'%s/web/css/website.assets_frontend/%s' % (url, dbname)" rel="stylesheet" />
+
+                    <t t-raw="head or ''" name='layout_head'/>
+                </head>
+
+                <body>
+                    <div id="wrapwrap">
+                        <header>
+                            <div class="navbar navbar-default navbar-static-top">
+                                <div class="container">
+                                    <div class="navbar-header">
+                                        <a t-att-href="'%s/%s' % (url, dbname)" class="navbar-brand logo">
+                                            <img t-att-src="'%s/logo.png?db=%s' % (url, dbname)" t-att-alt="'Logo of %s' % res_company.name" t-att-title="res_company.name"/>
+                                        </a>
+                                        <a class="navbar-brand" t-att-href="'%s/%s' % (url, dbname)"  t-field="res_company.name"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </header>
+                        <main>
+                            <t t-raw="0"/>
+                            <div id="wrap">
+                                <div class="container confirmation_static">
+                                    <div class="oe_structure"></div>
+                                    <div class="ogonedadi col-md-12 text-center mb32 mt32">$$$PAYMENT ZONE$$$</div>
+                                    <div class="oe_structure"></div>
+                                </div>
+                            </div>
+                        </main>
+                        <footer>
+                            <div id="footer_container">
+                            </div>
+                        </footer>
+                    </div>
+
+                </body>
+
+            </html>
+        </template>
+
+    </data>
+</openerp>

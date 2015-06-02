@@ -89,4 +89,12 @@ class OgonedadiController(http.Controller):
     # Add a route for the ogone template
     @http.route(['/shop/ogonepayment', '/shop/ogonepayment.html'], type='http', auth="public", website=True)
     def ogonepayment(self, **post):
-        return request.website.render("payment_ogonedadi.ogonepayment", {})
+        cr, uid, context = request.cr, request.uid, request.context
+
+        # get the current URL of the webpage to set the absolute links for the CSS Files in the template
+        values = {
+            "url": request.registry['ir.config_parameter'].get_param(cr, SUPERUSER_ID, 'web.base.url'),
+            "dbname": cr.dbname
+        }
+
+        return request.website.render("payment_ogonedadi.ogonepayment", values)
