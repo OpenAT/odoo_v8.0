@@ -13,6 +13,7 @@
     'data': [
         'views/ogonedadi.xml',
         'views/payment_acquirer.xml',
+        'views/templates_ogone_checkout.xml',
         'data/ogonedadi.xml',
     ],
     'installable': True,

@@ -57,25 +57,5 @@
             </form>
         </template>
 
-        <!--Ogone Payment Template -->
-        <template id="ogonepayment">
-            <t t-call="website.layout">
-                <t t-set="additional_title">Ogone - Payment</t>
-                <div id="wrap">
-
-                    <div class="container confirmation_static">
-                        <div class="oe_structure"></div>
-
-                        <div class="col-md-12 text-center mb32 mt32">
-		                    $$$PAYMENT ZONE$$$
-                        </div>
-
-                        <div class="oe_structure"></div>
-                    </div>
-
-                </div>
-            </t>
-        </template>
-
     </data>
 </openerp>
