@@ -67,9 +67,9 @@ class OgonedadiController(http.Controller):
                 composer_id = composer_obj.create(cr, SUPERUSER_ID, composer_values, context=email_ctx)
                 composer_obj.send_mail(cr, SUPERUSER_ID, [composer_id], context=email_ctx)
 
-        # Instead of calling /payment/validate we directly render the confirmation page since
+        # Redirect ot our own Confirmation page (instead of calling /payment/validate)
         # all the stuff that could be done by /payment/validate for SO was already done by website_sale_payment_fix
-        # form_feedback except sending the e-mail and so we are no longer session variable dependent!
+        # "form_feedback" so we are no longer session variable dependent!
         if tx and tx.sale_order_id:
             #return request.website.render("website_sale_payment_fix.confirmation_static", {'order': tx.sale_order_id})
             return request.redirect('/shop/confirmation_static?order_id=%s' % tx.sale_order_id.id)

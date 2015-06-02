@@ -27,13 +27,14 @@ class website_sale_payment_fix(website_sale):
         # Call the original method
         tx_id = super(website_sale_payment_fix, self).payment_transaction(acquirer_id)
 
-        # Check if we received an id (could also return a redirect)
+        # Check if we received a real id (could also return a redirect)
         if tx_id and isinstance(tx_id, numbers.Number):
             # get the payment.transaction
             tx = request.registry['payment.transaction'].browse(cr, SUPERUSER_ID,
                                                                 [tx_id], context=context)
 
             # Only reset the current shop session for valid providers like ogonedadi
+            # It is not needed for FRST PP since we never redirect externally
             if tx.acquirer_id.provider == 'ogonedadi':
                 # Confirm the sales order so no changes are allowed any more
                 request.registry['sale.order'].action_button_confirm(cr, SUPERUSER_ID,

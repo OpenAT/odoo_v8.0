@@ -51,6 +51,7 @@ ToDo:
     'depends': [
         'website_tools',
         'payment',
+        'website_sale_payment_fix',
     ],
     'installable': True,
     'data': [
