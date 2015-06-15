@@ -203,6 +203,7 @@ class product_template(osv.Model):
     _defaults = {
         'price_donate_min': 1,
         'parallax_speed': 'slow',
+        'hide_quantity': True,
     }
 
 
@@ -430,12 +431,24 @@ class product_template(osv.Model):
         result['domain'] = str(domain)
         return result
 
+    # Hack because i could not find a way to browse res.partner.name in qweb template - always error 403 access rights
+    # The positive side effect is better security since no one can browse res.partner fully!
+    def _get_name(self, cr, uid, ids, flds, args, context=None):
+        res = dict.fromkeys(ids, 0)
+        for ptemplate in self.browse(cr, SUPERUSER_ID, ids, context=context):
+            if ptemplate.funding_user:
+                res[ptemplate.id] = ptemplate.funding_user.name
+            else:
+                res[ptemplate.id] = False
+        return res
+
     _columns = {
         'sold_total': fields.function(_sold_total, string='# Sold Total', type='float'),
         'funding_goal': fields.float(string='Funding Goal'),
         'funding_desc': fields.html(string='Funding Description (HTML Field below Bar)'),
         'funding_reached': fields.function(_funding_reached, string='Funding reached in %', type='integer'),
         'funding_user': fields.many2one('res.partner', string='Funding-Campaign User'),
+        'funding_user_name': fields.function(_get_name, string="Funding-Campaign User Name", type='char'),
 
         'hide_fundingtextinlist': fields.boolean('Hide Funding-Text in Overview-Pages'),
         'hide_fundingbarinlist': fields.boolean('Hide Funding-Bar in Overview-Pages'),

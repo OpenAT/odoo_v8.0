@@ -315,7 +315,7 @@ msgstr "Crowdfunding-Balken auf der Seite ausblenden"
 #. module: website_sale_donate
 #: field:product.template,hide_fundingdesc:0
 msgid "Hide Funding-Description in Page"
-msgstr "Crowdfunding-Text auf der Seite ausblenden"
+msgstr "Crowdfunding-Beschreibung auf der Seite ausblenden"
 
 #. module: website_sale_donate
 #: field:product.template,hide_fundingtextincp:0

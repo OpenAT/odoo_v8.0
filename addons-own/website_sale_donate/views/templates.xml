@@ -35,7 +35,8 @@
         <!-- SUB-TEMPLATE: CROWDFUNDING text block -->
         <template id="funding_text" name="Funding Text">
             <span>Help</span>
-            <t t-if="product.funding_user"> <t t-esc="product.funding_user.name"/></t>
+            <!--<t t-if="product.funding_user"> <t t-esc="product.funding_user.name"/></t>-->
+            <t t-if="product.funding_user"> <span t-esc="product.funding_user_name"/> </t>
             <span> to fund </span>
             <span t-field="product.funding_goal" class="text-primary"
                 t-field-options='{
@@ -66,7 +67,7 @@
                                 <t t-call="website_sale_donate.funding_text"/>
                             </div>
                         </t>
-                        <t t-if="not product.hide_fundingbarinlist" t-call="website_sale_donate.funding_bar"/>
+                        <t t-if="not product.hide_fundingbarinlist"><t t-call="website_sale_donate.funding_bar"/></t>
                     </div>
                 </t>
             </xpath>
@@ -151,7 +152,7 @@
                                     </p>
                                 </div>
                             </t>
-                            <t t-if="not product.hide_fundingbar" t-call="website_sale_donate.funding_bar"/>
+                            <t t-if="not product.hide_fundingbar"><t t-call="website_sale_donate.funding_bar"/></t>
                             <t t-if="not product.hide_fundingdesc">
                                 <div t-field="product.funding_desc" class="oe_structure mt16" id="product_funding_description"/>
                             </t>
@@ -246,7 +247,7 @@
                                                                         <t t-call="website_sale_donate.funding_text"/>
                                                                     </p>
                                                                 </t>
-                                                                <t t-if="not product.hide_fundingbarincp" t-call="website_sale_donate.funding_bar"/>
+                                                                <t t-if="not product.hide_fundingbarincp"><t t-call="website_sale_donate.funding_bar"/></t>
                                                             </div>
                                                         </t>
 
