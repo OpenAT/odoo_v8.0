@@ -36,7 +36,7 @@ Anpassungen des Online-Shops für NPOs
 - Produktpreis kann in Produktübersichten ausgeblendet werden
 - Produktmengenselektor kann ausgeblendet werden
 - Zahlungsbox (Add to cart) kann für Produkte ausgeblendet werden
-- Zahlungsintervall ist beim Produkt festlegbar
+- Zahlungsintervalle sind beim Produkt festlegbar
 - Zahlungsintervalle können frei konfiguriert werden (Standardzahlungsintervalle werden automatisch vor-angelegt)
 - Zahlungsintervall XMLID (externalid) Zahlungsintervall Name und arbitrary price werden in der so line gespeichert
 - Direkter Checkout von Produkten ist einstellbar
@@ -47,14 +47,22 @@ Anpassungen des Online-Shops für NPOs
 - Ausblenden der Steuer und Lieferkosten über Java Script wenn kleiner gleich 0 (nur in der cart page!)
 - Lieferart ausblendbar per Checkbox
 - Lieferadresse ausblendbar per Checkbox
-- Wording für EN und DE im Shop wird auf NPOs ausgelegt! (Herausfinden und PS für Joe)
-- x
-- Ogone Bild austauschen für Website template :) Logo von Kreditkarten (payment_ogone_extended)
-- sticky menu and other main menu stuff (website_main_menu)
-- Öster Konten auto anlegen über base_config wenn ich das addon finde!
+- Wording für EN und DE im Shop auf NPOs ausgelegt!
+- CROWDFUNDING Addons
+- Eigenes Donation Product-Page Layout
+- Hintergrund Parallax-Bild für das Donation Page Layout
+- Verbesserte Spenden List Views für alle Responsive-Auflösungen
+- Automatische Thumbnail Generierung (Image Square)
+- Über Checkboxen kann fast alles ein oder Ausgeblendet werden.
+- Inline-Hilfe bei den Spenden Einstellungen
+- image feld bei products.product speichert original auflösung
+- Neue Info Buttons beim Produkt für die gesamte Spendenhöhe
 
 ## Todo
-- Checkout and Payment on a single Form - maybe also usable as snippet
+- Checkout and Payment on a single Form
+- Payment Snippet
+- User Form (contoller) to create new donation campaigns
+- store product images on disk and not in the db
 
     """,
     'author': "Datadialog - Michael Karrer",
@@ -62,9 +70,13 @@ Anpassungen des Online-Shops für NPOs
     'category': 'Uncategorized',
     'version': '0.1',
     'depends': [
+        'product',
+        'sale',
         'website_tools',
         'website_sale',
         'website_sale_delivery',
+        'website_event',
+        'website_blog'
     ],
     'installable': True,
     'data': [

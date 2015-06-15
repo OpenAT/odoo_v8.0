@@ -80,7 +80,7 @@ You still need to do some things by Hand after installing this module:
         'website_payment', 'website_project', 'website_quote', 'website_report', 'website_sale',
         'website_sale_delivery', 'website_twitter',
         'base_location', 'base_location_geonames_import', 'dbfilter_from_header', 'disable_openerp_online',
-        'mass_editing', 'web_export_view', 'base_iban',
+        'web_export_view', 'base_iban',
         'website_crm_extended',
     ],
     'data': [
