@@ -96,10 +96,18 @@
     right: 0;
     top: 0;
     bottom: 0;
+    overflow: hidden;
 }
 .oe_product .oe_product_image img {
     width: 100%;
     height:100%;
+    transition: all 2s ease 0s;
+}
+.oe_product .oe_product_image img:hover {
+    width: 112%;
+    height:112%;
+    max-width: 112%;
+    max-height: 112%;
 }
 .oe_product.oe_list .oe_product_image img {
   max-height: 160px;
@@ -169,6 +177,12 @@
 .oe_product.oe_grid {
   border: 1px solid rgb(217, 217, 217);
   box-shadow: 2px 2px 4px rgb(230, 230, 230);
+    transition: all 0.6s ease 0s;
+
+}
+.oe_product.oe_grid:hover {
+    border: 1px solid rgb(207, 207, 207);
+    box-shadow: 2px 2px 12px rgb(160, 160, 160);
 }
 
 .oe_grid h4,
