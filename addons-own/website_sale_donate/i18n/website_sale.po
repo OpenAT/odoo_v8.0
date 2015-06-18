@@ -1,0 +1,321 @@
+#. module: website_sale
+#: field:product.template,accessory_product_ids:0
+msgid "Accessory Products"
+msgstr "Zugehörige Artikel"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.product
+msgid "Add to Cart"
+msgstr "In den Spendenkorb"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "All Products"
+msgstr "Alle Artikel"
+
+#. module: website_sale
+#: field:product.template,alternative_product_ids:0
+msgid "Alternative Products"
+msgstr "Alternative Artikel"
+
+#. module: website_sale
+#: help:product.template,alternative_product_ids:0
+msgid "Appear on the product page"
+msgstr "Auf der Spendenseite anzeigen"
+
+#. module: website_sale
+#: help:product.template,accessory_product_ids:0
+msgid "Appear on the shopping cart"
+msgstr "Im Spendenkorb anzeigen"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Apply"
+msgstr "Übernehmen"
+
+#. modules: website_sale, website_sale_delivery
+#: field:product.template,website_published:0
+#: field:delivery.carrier,website_published:0
+msgid "Available in the website"
+msgstr "Im Spenden-Shop verfügbar"
+
+#. module: website_sale
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Bill To:"
+msgstr "Rechnungsadresse:"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Billing Information"
+msgstr "Ihre Informationen werden vertraulich behandelt!"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "Buy now, get in 2 days"
+msgstr "Steuerfrei Spenden"
+
+#. module: website_sale_delivery
+#: model:ir.model,name:website_sale_delivery.model_delivery_carrier
+msgid "Carrier"
+msgstr "Frachtführer"
+
+#. module: website_sale
+#: field:sale.order,cart_quantity:0
+msgid "Cart Quantity"
+msgstr "Anzahl der Artikel im Spendenkorb"
+
+#. module: website_sale
+#: view:website:website_sale.payment
+msgid "Change Address"
+msgstr "Adresse ändern"
+
+#. module: website_sale
+#. openerp-web
+#: code:addons/website_sale/static/src/js/website_sale_tour_shop.js:53
+#, python-format
+msgid "Change the price"
+msgstr "Summe ändern"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Checkout"
+msgstr "Checkout"
+
+#. module: website_sale
+#: field:product.public.category,child_id:0
+msgid "Children Categories"
+msgstr "Unterkategorien"
+
+#. module: website_sale_delivery
+#: view:website:website_sale.payment
+msgid "Choose your Delivery Method"
+msgstr "Wählen Sie Ihre Liefermethode"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "City"
+msgstr "Stadt"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Company Name"
+msgstr "Unternehmensname"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Confirm"
+msgstr "Zur Zahlung"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.checkout
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Confirmation"
+msgstr "Bestätigung"
+
+#. module: website_sale
+#: view:website:website_sale.confirmation
+msgid "Confirmed"
+msgstr "Bestätigt"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Continue Shopping"
+msgstr "Zurück zur Seite"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Country"
+msgstr "Land"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Country..."
+msgstr "Land ..."
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Coupon Code"
+msgstr "Gutscheincode"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Have a coupon code? Fill in this field and apply."
+msgstr "Haben Sie einen Gutscheincode? Bitte hier eingeben."
+
+#. module: website_sale
+#: view:website:website.layout
+msgid "My cart"
+msgstr "Spendenkorb"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Name (Shipping)"
+msgstr "Name (Versand)"
+
+#. module: website_sale
+#: view:website:website_sale.products
+msgid "No product defined."
+msgstr "Es ist kein Artikel vorhanden."
+
+#. module: website_sale
+#: code:addons/website_sale/controllers/main.py:657
+#: view:website:website_sale.payment
+#, python-format
+msgid "Pay Now"
+msgstr "Spenden"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.checkout
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Payment"
+msgstr "Zahlung"
+
+#. module: website_sale
+#: field:sale.order,payment_acquirer_id:0
+msgid "Payment Acquirer"
+msgstr "Zahlungsanbieter"
+
+#. module: website_sale
+#: view:website:website_sale.payment
+msgid "Payment Method:"
+msgstr "Zahlungsmethode:"
+
+#. module: website_sale
+#: model:ir.model,name:website_sale.model_payment_transaction
+msgid "Payment Transaction"
+msgstr "Zahlungstransaktion"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Phone"
+msgstr "Telefon"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Policies"
+msgstr "Richtlinien"
+
+#. module: website_sale
+#: view:website:website_sale.product
+msgid "Post"
+msgstr "Nachricht schreiben"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.payment
+msgid "Price"
+msgstr "Betrag"
+
+#. module: website_sale
+#: model:ir.model,name:website_sale.model_product_pricelist
+msgid "Pricelist"
+msgstr "Preisliste"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Process Checkout"
+msgstr "Ihre Daten"
+
+#. module: website_sale
+#: view:website:website_sale.product
+#: view:website:website_sale.product_price
+msgid "Product not available"
+msgstr "Der Artikel ist nicht verfügbar."
+
+#. module: website_sale
+#: view:website:website_sale.404
+msgid "Product not found!"
+msgstr "Der Artikel wurde nicht gefunden!"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.payment
+msgid "Quantity"
+msgstr "Menge"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Return to Cart"
+msgstr "Zurück zum Spendenkorb"
+
+#. module: website_sale
+#: view:website:website_sale.404
+msgid "Return to the product list."
+msgstr "Zurück zur Übersicht"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.checkout
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Review Order"
+msgstr "Spende überprüfen"
+
+#. module: website_sale
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Ship To:"
+msgstr "Lieferanschrift:"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Ship to the same address"
+msgstr "An dieselbe Adresse"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Shipping"
+msgstr "Versand"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+#: view:website:website_sale.checkout
+#: view:website:website_sale.confirmation
+#: view:website:website_sale.payment
+msgid "Shipping & Billing"
+msgstr "Ihre Daten"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Shipping Information"
+msgstr "Lieferadresse"
+
+#. module: website_sale
+#: view:website:website_sale.products
+#: model:website.menu,name:website_sale.menu_shop
+msgid "Shop"
+msgstr "Shop"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Shop - Checkout"
+msgstr "Shop - Abmelden"
+
+#. module: website_sale
+#: view:website:website_sale.confirmation
+msgid "Shop - Confirmed"
+msgstr "Shop - Bestätigung"
+
+#. module: website_sale
+#: view:website:website_sale.payment
+msgid "Shop - Select Payment Mode"
+msgstr "Shop - Selektiere Zahlungsmodus"
+
+#. module: website_sale
+#: view:website:website_sale.cart
+msgid "Shopping Cart"
+msgstr "Spendenkorb"
+
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Sign in"
+msgstr "Anmelden"
+

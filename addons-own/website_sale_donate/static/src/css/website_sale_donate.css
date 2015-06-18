@@ -2,3 +2,229 @@
 .fa-shopping-cart:before {
   content: "\f004";
 }
+
+
+
+/* PRODUCT PAGE website_sale_donate alternative page layout modifications */
+/* Bigger Checkout button */
+.btn-xl, .btn-group-xl > .btn {
+  padding: 14px 24px;
+  font-size: 18px;
+  line-height: 1.33;
+  border-radius: 6px;
+}
+
+#website_sale_donate .oe_price_h4 {
+ font-size: 28px;
+}
+#website_sale_donate .img-responsive {
+    display: inline;
+}
+#wsd-checkout-box .img-responsive {
+    width: 200px;
+    height: 200px;
+    box-shadow: 2px 1px 6px rgb(198, 198, 198);
+    border: 3px solid rgb(255, 255, 255);
+}
+#wsd-checkout-box .oe_website_spinner {
+    width: 100%;
+    padding: 0 24%
+}
+.price_donate,
+#description_sale {
+    padding: 0 12%;
+}
+.price_donate .input-group-addon {
+    background-color: transparent;
+}
+.price_donate .form-control {
+    font-size: 28px;
+    padding: 3px 3px;
+    color: rgb(66, 139, 202);
+    text-align: center;
+}
+.price_donate .input-group-addon {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .075);
+    color: rgb(119, 119, 119);
+    min-width: 70px;
+}
+/* Crowdfunding */
+.crowdfunding {
+    text-align: center;
+}
+/* Crowdfunding Product Page */
+.crowdfunding h1,
+.crowdfunding .h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 500%;
+}
+.crowdfunding p {
+    margin: 0.5em 0 0.2em 0;
+    padding: 0;
+    font-size: 200%;
+}
+.funding_progress_bar.progress {
+    height: 32px;
+    margin-bottom: 8px;
+}
+.funding_progress_bar.progress .progress-bar {
+    min-width: 2em;
+    line-height: 32px;
+    font-size: 14px;
+}
+/* Crowdfunding Checkout Panel */
+#wsd-checkout-box .crowdfunding {
+    padding: 1em 12% 0.5em 12%;
+}
+#wsd-checkout-box .crowdfunding h1,
+#wsd-checkout-box .crowdfunding .h1 {
+    font-size: 62px;
+}
+#wsd-checkout-box .crowdfunding p {
+    font-size: inherit;
+}
+#wsd-checkout-box .crowdfunding p {
+    margin: 0.25em 0;
+}
+
+
+
+/* PRODUCT LISTINGS */
+.oe_product .oe_product_image {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+.oe_product .oe_product_image img {
+    width: 100%;
+    height:100%;
+    transition: all 2s ease 0s;
+}
+.oe_product .oe_product_image img:hover {
+    width: 112%;
+    height:112%;
+    max-width: 112%;
+    max-height: 112%;
+}
+.oe_product.oe_list .oe_product_image img {
+  max-height: 160px;
+  max-width: 160px;
+}
+
+.oe_product section {
+    background: rgba(255, 255, 255, 0.9);
+}
+@media (max-width: 400px) {
+    #products_grid .oe_product section {
+        background: rgba(255, 255, 255, 0.85);
+    }
+    .oe_product .oe_product_image {
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+}
+@media (min-width: 400px){
+    .oe_product.oe_list {
+        min-height: 170px;
+    }
+    .oe_product.oe_list h5, .oe_product.oe_list .h5 {
+        font-size: 24px;
+    }
+    #products_grid_before {
+        padding-top: 1px;
+    }
+}
+.col-md-9 .oe-height-2 {
+  height: 170px;
+}
+.col-md-9 .oe-height-4 {
+  height: 340px;
+}
+.col-md-9 .oe-height-8 {
+  height: 680px;
+}
+@media (min-width: 992px) {
+    .col-md-9 .oe-height-2 {
+        height: 165px;
+    }
+    .col-md-9 .oe-height-4 {
+        height: 330px;
+    }
+    .col-md-9 .oe-height-8 {
+        height: 660px;
+    }
+}
+@media (min-width: 1200px) {
+    .col-md-9 .oe-height-2 {
+        height: 201px;
+    }
+    .col-md-9 .oe-height-4 {
+        height: 402px;
+    }
+    .col-md-9 .oe-height-8 {
+        height: 804px;
+    }
+}
+#products_grid table {
+  border-spacing: 8px;
+  border-collapse: separate;
+}
+.oe_product.oe_grid {
+  border: 1px solid rgb(217, 217, 217);
+  box-shadow: 2px 2px 4px rgb(230, 230, 230);
+    transition: all 0.6s ease 0s;
+
+}
+.oe_product.oe_grid:hover {
+    border: 1px solid rgb(207, 207, 207);
+    box-shadow: 2px 2px 12px rgb(160, 160, 160);
+}
+
+.oe_grid h4,
+.oe_grid .h4,
+.oe_grid h5,
+.oe_grid .h5,
+.oe_grid h6,
+.oe_grid .h6 {
+  margin-top: 8px;
+  margin-bottom: 2px;
+}
+.oe_product.oe_grid .oe_subdescription {
+  margin-bottom: 4px;
+}
+
+.oe_grid .funding_progress_bar.progress {
+    height: 22px;
+    border: 1px solid rgb(222, 222, 222);
+}
+.oe_grid .funding_progress_bar.progress .progress-bar {
+    min-width: 2em;
+    line-height: 22px;
+    font-size: 12px;
+}
+.oe_product.oe_list form {
+    /*display: block;*/
+    width: 100%;
+}
+
+
+@media (min-width: 400px){
+    .oe_product.oe_list section {
+        margin-right: 180px;
+    }
+}
+@media (max-width: 768px) {
+    #products_grid .oe_product {
+       margin-top: 1em;
+    }
+}
+@media (max-width: 768px) {
+    #products_grid .oe_product.oe_list {
+       height: 180px;
+    }
+}

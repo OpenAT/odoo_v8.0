@@ -1,7 +1,16 @@
 # -*- coding: utf-'8' "-*-"
 __author__ = 'mkarrer'
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
+
+from PIL import Image
+from PIL import ImageEnhance
+
 
 from openerp import SUPERUSER_ID
+from openerp import tools
 from openerp.osv import osv, orm, fields
 from openerp.tools.translate import _
 import openerp.addons.decimal_precision as dp
@@ -55,21 +64,146 @@ class payment_interval(osv.Model):
 
 payment_interval()
 
+
 # HINT: Since we set this fields on product.template it is not possible to have different values for variants
 #       of this product template (= product.product) - which is the intended use-case and ok ;)
 class product_template(osv.Model):
     _inherit = "product.template"
+
+    def _get_parallax_image(self, cr, uid, ids, name, args, context=None):
+        result = dict.fromkeys(ids, False)
+        for obj in self.browse(cr, uid, ids, context=context):
+            result[obj.id] = tools.image_get_resized_images(obj.parallax_image,
+                                                            big_name='parallax_image',
+                                                            medium_name='parallax_image_medium',
+                                                            small_name='parallax_image_small',
+                                                            avoid_resize_medium=True)
+        return result
+
+    def _set_parallax_image(self, cr, uid, id, name, value, args, context=None):
+        return self.write(cr, uid, [id], {'parallax_image': value}, context=context)
+
+    def resize_to_thumbnail(self, img, box=(440, 440), fit=1):
+        '''Downsample the image.
+        @param img: Image -  an PIL Image-object
+        @param box: tuple(x, y) - the bounding box of the result image
+        @param fix: boolean - crop the image to fill the box
+        '''
+        #preresize image with factor 2, 4, 8 and fast algorithm
+
+        # factor = 1
+        # while img.size[0]/factor > 2*box[0] and img.size[1]*2/factor > 2*box[1]:
+        #     factor *=2
+        # if factor > 1:
+        #     img.thumbnail((img.size[0]/factor, img.size[1]/factor), Image.NEAREST)
+
+        #calculate the cropping box and get the cropped part
+        if fit:
+            x1 = y1 = 0
+            x2, y2 = img.size
+            wRatio = 1.0 * x2/box[0]
+            hRatio = 1.0 * y2/box[1]
+            if hRatio > wRatio:
+                y1 = int(y2/2-box[1]*wRatio/2)
+                y2 = int(y2/2+box[1]*wRatio/2)
+            else:
+                x1 = int(x2/2-box[0]*hRatio/2)
+                x2 = int(x2/2+box[0]*hRatio/2)
+            img = img.crop((x1, y1, x2, y2))
+
+        #Resize the image with best quality algorithm ANTI-ALIAS
+        img.thumbnail(box, Image.ANTIALIAS)
+
+        #return the image
+        return img
+
+    def _get_square_image(self, cr, uid, ids, name, args, context=None):
+        result = dict.fromkeys(ids, False)
+        for obj in self.browse(cr, uid, ids, context=context):
+            # need to return also an dict for the image like result[1] = {'image_square': base_64_data}
+            result[obj.id] = {'image_square': False}
+            if obj.image:
+                # PIL Object
+                image = Image.open(StringIO.StringIO(obj.image.decode('base64')))
+                filetype = image.format.upper()
+                filetype = {'BMP': 'PNG', }.get(filetype, filetype)
+                if image.mode not in ["1", "L", "P", "RGB", "RGBA"]:
+                    image = image.convert("RGB")
+                image = self.resize_to_thumbnail(image)
+                background_stream = StringIO.StringIO()
+                image.save(background_stream, filetype)
+                result[obj.id] = {'image_square': background_stream.getvalue().encode('base64')}
+        return result
+
+    def _set_square_image(self, cr, uid, id, name, value, args, context=None):
+        return self.write(cr, uid, [id], {'image': value}, context=context)
+
+    # OVERRIDE orignal image functional fields to store full size images
+    def _set_image(self, cr, uid, id, name, value, args, context=None):
+        return self.write(cr, uid, [id], {'image': value}, context=context)
+
+    def _get_image(self, cr, uid, ids, name, args, context=None):
+        result = dict.fromkeys(ids, False)
+        for obj in self.browse(cr, uid, ids, context=context):
+            result[obj.id] = tools.image_get_resized_images(obj.image, avoid_resize_medium=True)
+        return result
+
     _columns = {
-        'hide_payment': fields.boolean('Hide Add-to-Cart-Form in Product Page'),
+        'hide_payment': fields.boolean('Hide complete Checkout Panel'),
         'hide_price': fields.boolean('Hide Price in Shop overview Pages'),
-        'hide_quantity': fields.boolean('Hide Product Quantity Selector'),
+        'hide_quantity': fields.boolean('Hide Product-Quantity-Selector in CP'),
         'simple_checkout': fields.boolean('Simple Checkout'),
         'price_donate': fields.boolean('Arbitrary Price'),
         'price_donate_min': fields.integer(string='Minimum Arbitrary Price'),
         'payment_interval_ids': fields.many2many('product.payment_interval', string='Payment Intervals'),
+
+        'hide_search': fields.boolean('Hide Search Field'),
+        'hide_categories': fields.boolean('Hide Categories Navigation'),
+        'hide_image': fields.boolean('Hide Image in Checkout Panel'),
+        'hide_salesdesc': fields.boolean('Hide Text in Checkout Panel'),
+        'hide_panelfooter': fields.boolean('Hide Checkout Panel Footer'),
+
+        'show_desctop': fields.boolean('Show additional Description above Checkout Panel'),
+        'show_descbottom': fields.boolean('Show additional Description below Checkout Panel'),
+
+        'desc_short_top': fields.html(string='Banner Product Description - Top'),
+        'desc_short': fields.html(string='Banner Product Description - Center'),
+        'desc_short_bottom': fields.html(string='Banner Product Description - Bottom'),
+        'image_square': fields.function(_get_square_image, fnct_inv=_set_square_image,
+            string="Square Image (Auto crop and zoom)", type="binary", multi="_get_square_image",
+            store={'product.template': (lambda self, cr, uid, ids, c={}: ids, ['image'], 10)}),
+        'parallax_image': fields.binary(string='Background Parallax Image'),
+        'parallax_image_medium': fields.function(_get_parallax_image, fnct_inv=_set_parallax_image,
+            string="Background Parallax Image", type="binary", multi="_get_parallax_image",
+            store={
+                'product.template': (lambda self, cr, uid, ids, c={}: ids, ['parallax_image'], 10),
+            },
+            help="Medium-sized image of the background. It is automatically "\
+                 "resized as a 128x128px image, with aspect ratio preserved, "\
+                 "only when the image exceeds one of those sizes. Use this field in form views or some kanban views."),
+        'parallax_speed': fields.selection([('static', 'Static'), ('slow', 'Slow')], string='Parallax Speed'),
+        # OVERRIDE orignal image functional fields to store full size images
+        'image_medium': fields.function(_get_image, fnct_inv=_set_image,
+            string="Medium-sized image", type="binary", multi="_get_image",
+            store={
+                'product.template': (lambda self, cr, uid, ids, c={}: ids, ['image'], 10),
+            },
+            help="Medium-sized image of the product. It is automatically "\
+                 "resized as a 128x128px image, with aspect ratio preserved, "\
+                 "only when the image exceeds one of those sizes. Use this field in form views or some kanban views."),
+        'image_small': fields.function(_get_image, fnct_inv=_set_image,
+            string="Small-sized image", type="binary", multi="_get_image",
+            store={
+                'product.template': (lambda self, cr, uid, ids, c={}: ids, ['image'], 10),
+            },
+            help="Small-sized image of the product. It is automatically "\
+                 "resized as a 64x64px image, with aspect ratio preserved. "\
+                 "Use this field anywhere a small image is required."),
     }
     _defaults = {
         'price_donate_min': 1,
+        'parallax_speed': 'slow',
+        'hide_quantity': True,
     }
 
 
@@ -89,7 +223,8 @@ class sale_order(osv.Model):
 
     def _website_product_id_change(self, cr, uid, ids, order_id, product_id, qty=0, line_id=None, context=None):
         context = context or {}
-        res = super(sale_order, self)._website_product_id_change(cr, uid, ids, order_id, product_id, qty=qty, line_id=line_id, context=context)
+        res = super(sale_order, self)._website_product_id_change(cr, uid, ids, order_id, product_id, qty=qty,
+                                                                 line_id=line_id, context=context)
         if context.get('price_donate'):
             res.update({'price_unit': context.get('price_donate')})
         return res
@@ -131,7 +266,6 @@ class sale_order(osv.Model):
         if context.get('price_donate'):
             context.pop('price_donate', None)
 
-
         payment_interval_id = kwargs.get('payment_interval_id')
         line_id = cu.get('line_id')
         quantity = cu.get('quantity')
@@ -151,13 +285,13 @@ class sale_order(osv.Model):
                     and sol.product_id.price_donate \
                     and price_donate >= sol.product_id.price_donate_min:
                 sol.price_donate = price_donate
-                #sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_donate': price_donate, }, context=context)
+                # sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_donate': price_donate, }, context=context)
 
             # no matter where we come from if so line already exists and has filled price_donate field we have to
             # update the price_unit again to not loose our custom price price_donate
             if sol.price_donate:
                 sol.price_unit = sol.price_donate
-                #sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_unit': sol.price_donate, }, context=context)
+                # sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_unit': sol.price_donate, }, context=context)
 
             # TODO: Hack: for no obvious reason functional fields do net get updated on sale.order.line writes ?!? so we do it manually!
             # Sadly not working
@@ -173,10 +307,10 @@ class sale_order(osv.Model):
                     sol.payment_interval_name = sol.payment_interval_id.name
                     sol.payment_interval_xmlid = sol.payment_interval_id.get_metadata()[0]['xmlid']
 
-            # ToDo: Try to browse and write to the sales order to update relevant fields
-            # so_obj = self.pool.get('sale.order')
-            # so = so_obj.browse(cr, SUPERUSER_ID, sol.order_id.id, context=context)
-            # so.write(cr, SUPERUSER_ID, {}, context=context)
+                    # ToDo: Try to browse and write to the sales order to update relevant fields
+                    # so_obj = self.pool.get('sale.order')
+                    # so = so_obj.browse(cr, SUPERUSER_ID, sol.order_id.id, context=context)
+                    # so.write(cr, SUPERUSER_ID, {}, context=context)
 
         return cu
 
@@ -224,4 +358,103 @@ class PaymentAcquirer(osv.Model):
 
     _defaults = {
         'recurring_transactions': False,
+    }
+
+
+# CROWD FUNDING EXTENSIONS
+# ========================
+class product_product(osv.Model):
+    _inherit = 'product.product'
+
+    def _sold_total(self, cr, uid, ids, field_name, arg, context=None):
+        r = dict.fromkeys(ids, 0)
+        domain = [
+            ('state', 'in', ['waiting_date', 'progress', 'manual', 'shipping_except', 'invoice_except', 'done']),
+            ('product_id', 'in', ids),
+        ]
+        for group in self.pool['sale.report'].read_group(cr, SUPERUSER_ID, domain, ['product_id', 'price_total'],
+                                                         ['product_id'], context=context):
+            r[group['product_id'][0]] = group['price_total']
+
+        # HINT: functional fields functions have to return a dict in form of {id: value}
+        return r
+
+    def action_view_sales_sold_total(self, cr, uid, ids, context=None):
+        result = self.pool['ir.model.data'].xmlid_to_res_id(cr, uid, 'sale.action_order_line_product_tree',
+                                                            raise_if_not_found=True)
+        result = self.pool['ir.actions.act_window'].read(cr, uid, [result], context=context)[0]
+        domain = [
+            ('state', 'in', ["confirmed", "done"]),
+            ('product_id', 'in', ids),
+        ]
+        result['domain'] = str(domain)
+        return result
+
+    _columns = {
+        'sold_total': fields.function(_sold_total, string='# Sold Total', type='float'),
+    }
+
+
+class product_template(osv.Model):
+    _inherit = 'product.template'
+
+    def _sold_total(self, cr, uid, ids, field_name, arg, context=None):
+        res = dict.fromkeys(ids, 0)
+        for template in self.browse(cr, SUPERUSER_ID, ids, context=context):
+            res[template.id] = sum([p.sold_total for p in template.product_variant_ids])
+        return res
+
+    def _funding_reached(self, cr, uid, ids, field_name, arg, context=None):
+        res = dict.fromkeys(ids, 0)
+        for ptemplate in self.browse(cr, SUPERUSER_ID, ids, context=context):
+            try:
+                res[ptemplate.id] = int(round(ptemplate.sold_total / (ptemplate.funding_goal / 100)))
+            except:
+                res[ptemplate.id] = int(0)
+        return res
+
+    def action_view_sales_sold_total(self, cr, uid, ids, context=None):
+        act_obj = self.pool.get('ir.actions.act_window')
+        mod_obj = self.pool.get('ir.model.data')
+        # find the related product.product ids
+        product_ids = []
+        for template in self.browse(cr, uid, ids, context=context):
+            product_ids += [x.id for x in template.product_variant_ids]
+        domain = [
+            ('state', 'in', ["confirmed", "done"]),
+            ('product_id', 'in', product_ids),
+        ]
+        # get the tree view
+        result = mod_obj.xmlid_to_res_id(cr, uid, 'sale.action_order_line_product_tree', raise_if_not_found=True)
+        result = act_obj.read(cr, uid, [result], context=context)[0]
+        # add the search domain
+        result['domain'] = str(domain)
+        return result
+
+    # Hack because i could not find a way to browse res.partner.name in qweb template - always error 403 access rights
+    # The positive side effect is better security since no one can browse res.partner fully!
+    def _get_name(self, cr, uid, ids, flds, args, context=None):
+        res = dict.fromkeys(ids, 0)
+        for ptemplate in self.browse(cr, SUPERUSER_ID, ids, context=context):
+            if ptemplate.funding_user:
+                res[ptemplate.id] = ptemplate.funding_user.name
+            else:
+                res[ptemplate.id] = False
+        return res
+
+    _columns = {
+        'sold_total': fields.function(_sold_total, string='# Sold Total', type='float'),
+        'funding_goal': fields.float(string='Funding Goal'),
+        'funding_desc': fields.html(string='Funding Description (HTML Field below Bar)'),
+        'funding_reached': fields.function(_funding_reached, string='Funding reached in %', type='integer'),
+        'funding_user': fields.many2one('res.partner', string='Funding-Campaign User'),
+        'funding_user_name': fields.function(_get_name, string="Funding-Campaign User Name", type='char'),
+
+        'hide_fundingtextinlist': fields.boolean('Hide Funding-Text in Overview-Pages'),
+        'hide_fundingbarinlist': fields.boolean('Hide Funding-Bar in Overview-Pages'),
+        'hide_fundingtextincp': fields.boolean('Hide Funding-Text in Checkout-Panel'),
+        'hide_fundingbarincp': fields.boolean('Hide Funding-Bar in Checkout-Panel'),
+        'hide_fundingtext': fields.boolean('Hide Funding-Text in Page'),
+        'hide_fundingbar': fields.boolean('Hide Funding-Bar in Page'),
+        'hide_fundingdesc': fields.boolean('Hide Funding-Description in Page'),
     }
