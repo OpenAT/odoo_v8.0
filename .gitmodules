@@ -38,3 +38,7 @@
 	path = addons-thirdparty/website
 	url = https://github.com/OCA/website.git
 	branch = 8.0
+[submodule "yelizariev"]
+	path = addons-thirdparty/yelizariev
+	url = https://github.com/yelizariev/addons-yelizariev.git
+	branch = 8.0

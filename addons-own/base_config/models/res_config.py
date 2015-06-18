@@ -74,6 +74,9 @@ class base_config_settings(osv.osv_memory):
         'module_web_widget_many2many_tags_multi_selection': fields.boolean('web_widget_many2many_tags_multi_selection -- select multible many2many results',
                                                  help='select multiple results in search-more of many2many fields'
                                                       '\n Installs Module: many2many_tags_multi_selection'),
+        'module_website_files': fields.boolean('website_files -- Add a Files tab to the image website dialogue',
+                                                 help='Upluad Files and insert Links for Download'
+                                                      '\n Installs Module: module_website_files'),
 
         # Addons Own
         'module_website_crm_extended': fields.boolean('website_crm_extended -- Default sales group for lead from contact formular',

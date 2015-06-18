@@ -82,6 +82,10 @@
                                     <field name="module_web_widget_many2many_tags_multi_selection" class="oe_inline" />
                                     <label for="module_web_widget_many2many_tags_multi_selection" />
                                 </div>
+                                <div>
+                                    <field name="module_website_files" class="oe_inline" />
+                                    <label for="module_website_files" />
+                                </div>
 							</div>
 						</div>
 					</group>
