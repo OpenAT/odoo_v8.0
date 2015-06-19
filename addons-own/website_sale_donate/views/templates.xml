@@ -178,7 +178,9 @@
                                  t-att-style="'background-image: url(' + website.image_url(product, 'parallax_image') + ');' if product.parallax_image else 'None'"
                                  t-att-data-scroll-background-offset="'0.6' if product.parallax_speed == 'slow' else 0"
                                  data-scroll-background-ratio="0">
-                            <section t-attf-class="container mt8 oe_website_sale #{(compute_currency(product.lst_price) - product.price) &gt; 0.1 and 'discount'}" id="product_detail">
+                            <div class="row">
+                                <div class="col-sm-16">
+                                    <section t-attf-class="container mt8 oe_website_sale #{(compute_currency(product.lst_price) - product.price) &gt; 0.1 and 'discount'}" id="product_detail">
 
                                         <!-- Kategories, Search and Publish Button -->
                                         <div class="row">
@@ -319,7 +321,9 @@
                                             </div>
                                         </t>
 
-                            </section>
+                                </section>
+                                </div>
+                            </div>
                         </section>
 
                         <!-- Product HTML Description -->
