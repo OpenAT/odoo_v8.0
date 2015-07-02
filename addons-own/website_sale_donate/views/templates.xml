@@ -13,9 +13,9 @@
             </xpath>
         </template>
 
-        <!-- SHOP PRODUCT LISTING: Hide Product Price for Grid and List View if hide_price set -->
+        <!-- SHOP PRODUCT LISTING: Hide Product Price for Grid and List View if field hide_price set -->
         <template id="wsd_products_item" inherit_id="website_sale.products_item" name="Product Item Extensions">
-            <xpath expr="//div[@class='product_price']" position="attributes">
+            <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' product_price ')]" position="attributes">
                 <attribute name="class"></attribute>
                 <attribute name="t-att-class">'product_price hidden' if product.hide_price else 'product_price text-primary'</attribute>
             </xpath>
@@ -320,8 +320,7 @@
                                                 </div>
                                             </div>
                                         </t>
-
-                                </section>
+                                    </section>
                                 </div>
                             </div>
                         </section>
@@ -534,12 +533,12 @@
 
         </template>
 
-        <!-- WEBSITE CUSTOM OPTION: PRODUCT OVERVIEW: Hide ALL! Prices -->
-        <template id="products_item_hideprice" inherit_id="website_sale.products_item" active="False" customize_show="True" name="Hide Price">
-            <xpath expr="//div[@class='product_price']" position="replace">
-                <div></div>
-            </xpath>
-        </template>
+        <!-- DEPRICATED! WEBSITE CUSTOM OPTION: PRODUCT OVERVIEW: Hide ALL! Prices -->
+        <!--<template id="products_item_hideprice" inherit_id="website_sale.products_item" active="False" customize_show="True" name="Hide Price">-->
+            <!--<xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' product_price ')]" position="attributes">-->
+                <!--<attribute name="class">product_price hidden</attribute>-->
+            <!--</xpath>-->
+        <!--</template>-->
 
     </data>
 </openerp>

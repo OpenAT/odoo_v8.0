@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="product_public_category_form_view_extras" model="ir.ui.view">
+            <field name="name">product.public.category.form.menu</field>
+            <field name="model">product.public.category</field>
+            <field name="inherit_id" ref="website_sale.product_public_category_form_view"></field>
+            <field name="arch" type="xml">
+                <field name="sequence" position="after">
+                    <field name="cat_hide"/>
+                    <field name="cat_root"/>
+                    <field name="cat_root_id" readonly="1"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

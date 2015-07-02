@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <!-- Recursive Category Navigation for Trees with a root category set -->
+    <template id="categories_recursive_extended" name="Category list">
+      <li t-att-class="'active' if c.id == int(category or 0) else ''">
+          <a t-att-href="keep('/shop/category/' + slug(c), category=0)" t-field="c.name"></a>
+          <ul t-if="c.child_id" class="nav nav-pills nav-stacked nav-hierarchy">
+              <t t-foreach="c.child_id" t-as="c">
+                  <t t-if="not c.cat_root_id.cat_root and not c.cat_hide">
+                    <t t-call="website_sale_categories.categories_recursive_extended"/>
+                  </t>
+              </t>
+          </ul>
+      </li>
+    </template>
+
+
+    <!-- Recursive Category Descriptions - TEXT BLOCK -->
+    <template id="categories_description_text" name="Category Description at Top">
+        <!-- Description for Category AND BELOW! -->
+        <t t-if="c.id == int(category) or c.cat_desc_showatchilds">
+            <!-- Show Info for logged in users-->
+            <t groups="base.group_website_publisher">
+                <section contenteditable="false">
+                    <div class="container">
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="c.name"/></b> and below! (Will show up on subcategories!):</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+            <t t-if="c.id == int(category)">
+               <div t-field="c.cat_desc_showatchilds" class="oe_structure cat_desc_showatchilds"/>
+            </t>
+            <t t-if="c.id != int(category)">
+               <div t-raw="c.cat_desc_showatchilds" class="oe_structure cat_desc_showatchilds" contenteditable="false"/>
+            </t>
+        </t>
+
+        <!-- Description for Category ONLY! -->
+        <t t-if="c.id == int(category)">
+            <t groups="base.group_website_publisher">
+                <section contenteditable="false">
+                    <div class="container">
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="c.name"/></b> only! (Only shown here!):</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+            <div t-field="c.cat_desc" class="oe_structure cat_desc"/>
+        </t>
+    </template>
+
+    <!-- Recursive Category Descriptions BOTTOM - TEXT BLOCK -->
+    <template id="categories_description_text_bottom" name="Category Description at Bottom">
+        <!-- Description for Category ONLY! -->
+        <t t-if="c.id == int(category)">
+            <t groups="base.group_website_publisher">
+                <section contenteditable="false">
+                    <div class="container">
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="c.name"/></b> only! (Only shown here!):</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+            <div t-field="c.cat_descbottom" class="oe_structure cat_descbottom"/>
+        </t>
+
+        <!-- Description for Category AND BELOW! -->
+        <t t-if="c.id == int(category) or c.cat_descbottom_showatchilds">
+            <!-- Show Info for logged in users-->
+            <t groups="base.group_website_publisher">
+                <section contenteditable="false">
+                    <div class="container">
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="c.name"/></b> and below! (Will show up on subcategories!):</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+            <t t-if="c.id == int(category)">
+               <div t-field="c.cat_descbottom_showatchilds" class="oe_structure cat_descbottom_showatchilds"/>
+            </t>
+            <t t-if="c.id != int(category)">
+               <div t-raw="c.cat_descbottom_showatchilds" class="oe_structure cat_descbottom_showatchilds" contenteditable="false"/>
+            </t>
+        </t>
+
+    </template>
+
+    <!-- Recursive Category Descriptions - Parent Descriptions -->
+    <template id="categories_recursive_description" name="Category Description at Top">
+        <t t-foreach="c.parent_id" t-as="c">
+            <t t-call="website_sale_categories.categories_recursive_description"/>
+            <t t-call="website_sale_categories.categories_description_text"/>
+        </t>
+    </template>
+    <!-- Recursive Category Descriptions - Parent Descriptions BOTTOM -->
+    <template id="categories_recursive_description_bottom" name="Category Description at Bottom">
+        <t t-call="website_sale_categories.categories_description_text_bottom"/>
+        <t t-foreach="c.parent_id" t-as="c">
+            <t t-call="website_sale_categories.categories_recursive_description_bottom"/>
+        </t>
+    </template>
+
+
+    <!-- Categories Advanced Navigation AND Category Descriptions -->
+    <template id="products_categories_menu" inherit_id="website_sale.products" active="True" customize_show="True" name="Product Categories Advanced">
+
+        <!-- Categories Advanced Navigation -->
+        <xpath expr="//div[@id='products_grid_before']" position="inside">
+
+            <t t-set="cat_hide" t-value="False" />
+            <t t-set="hasrootcat" t-value="False"/>
+            <t t-if="category">
+                <t t-set="cat_hide" t-value="category.cat_hide"/>
+                <t t-if="category.cat_root_id.cat_root">
+                    <t t-set="hasrootcat" t-value="True"/>
+                </t>
+            </t>
+
+            <t t-if="not cat_hide">
+              <ul class="nav nav-pills nav-stacked mt16">
+                  <t t-if="hasrootcat">
+                      <t t-foreach="category.cat_root_id" t-as="c">
+                          <t t-call="website_sale.categories_recursive"/>
+                      </t>
+                  </t>
+                  <t t-if="not hasrootcat">
+                      <li t-att-class=" '' if category else 'active' "><a t-att-href="keep('/shop',category=0)">All Products</a></li>
+                      <t t-foreach="categories" t-as="c">
+                          <t t-if="not c.cat_root_id.cat_root and not c.cat_hide">
+                              <t t-call="website_sale_categories.categories_recursive_extended"/>
+                          </t>
+                      </t>
+                  </t>
+              </ul>
+            </t>
+
+        </xpath>
+        <!-- Categories Advanced Navigation left column -->
+        <xpath expr="//div[@id='products_grid_before']" position="attributes">
+            <attribute name="class"></attribute>
+            <attribute name="t-att-class">'hidden' if cat_hide else 'col-md-3 hidden-xs'</attribute>
+        </xpath>
+        <!-- Categories Advanced Navigation right column -->
+        <xpath expr="//div[@id='products_grid']" position="attributes">
+            <attribute name="class"></attribute>
+            <attribute name="t-att-class">'col-md-12' if cat_hide else 'col-md-9'</attribute>
+        </xpath>
+
+        <!-- Category Descriptions at TOP -->
+        <xpath expr="//div[@id='wrap']/div[@class='oe_structure']" position="before">
+            <t groups="base.group_website_publisher">
+                <section contenteditable="False">
+                    <div class="container">
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="alert alert-info text-center" role="alert"><b>ATTENTION:</b> Content below here is shown on <b>EVERY</b> shop page:</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/div[@class='oe_structure']" position="after">
+            <!-- Render descriptions for categories above -->
+            <t t-foreach="category" t-as="c">
+                <t t-call="website_sale_categories.categories_recursive_description"/>
+            </t>
+            <!-- Render category description -->
+            <t t-foreach="category" t-as="c">
+                <t t-call="website_sale_categories.categories_description_text"/>
+            </t>
+        </xpath>
+
+        <!-- Category Descriptions at BOTTOM -->
+        <xpath expr="//div[@id='wrap']/div[@class='oe_structure mb32']" position="before">
+            <!-- Render descriptions for categories above -->
+            <t t-foreach="category" t-as="c">
+                <t t-call="website_sale_categories.categories_recursive_description_bottom"/>
+            </t>
+            <t groups="base.group_website_publisher">
+                <section contenteditable="False">
+                    <div class="container">
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="alert alert-info text-center" role="alert"><b>ATTENTION:</b> Content below here is shown on <b>EVERY</b> shop page:</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </xpath>
+
+    </template>
+
+</data>
+</openerp>

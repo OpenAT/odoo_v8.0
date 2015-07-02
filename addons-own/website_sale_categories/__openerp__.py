@@ -2,7 +2,8 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (C) 2013-Today OpenERP SA (<http://www.openerp.com>).
+#    Copyright (C) 2004-2009 Tiny SPRL (<http://tiny.be>).
+#    Copyright (C) 2010-2012 OpenERP s.a. (<http://openerp.com>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -19,16 +20,30 @@
 #
 ##############################################################################
 
-from openerp import tools
-from openerp import models, fields
+{
+    'name': "FCOM website_sale_categories",
+    'summary': """Control the display of the shop category navigation menu per category""",
+    'description': """
 
+website_sale_categories
+=======================
 
-# Extend the Product Public Category model with two new fields:
-# desc = Category Description displayed in product list views
-# productinfo = Additional information displayed on product pages for this category
-class product_public_category_desc(models.Model):
-    _inherit = 'product.public.category'
+- Add Checkbox to public Category: "Hide Category from Navigation"
+- Add Checkbox to public Category: "Start Navigation from this category"
+- Alter Form and List Views
+- Add Descriptions Fields for categories (for product list pages)
 
-    desc = fields.Html()
-    productinfo = fields.Html()
-
+    """,
+    'author': "Datadialog - Michael Karrer",
+    'website': "http://www.datadialog.net/",
+    'category': 'Uncategorized',
+    'version': '0.1',
+    'depends': [
+        'website_sale',
+    ],
+    'installable': True,
+    'data': [
+        'templates.xml',
+        'views.xml',
+    ],
+}
