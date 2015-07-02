@@ -106,6 +106,9 @@ class base_config_settings(osv.osv_memory):
         'module_mail_global_bcc': fields.boolean('mail_global_bcc -- send all outgoing emails to a email address defined in mail.outgoing.global.bcc',
                                                       help='send all outgoing emails to a email address defined in mail.outgoing.global.bcc in the ir.config_parameter settings'
                                                            '\n Installs Module: mail_global_bcc'),
+        'module_website_sale_categories': fields.boolean('website_sale_categories -- more controll for display of public shop categories',
+                                                         help='hide category, start navigation from this category, category descriptions'
+                                                         '\n Installs Module: website_sale_categories'),
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)
         'module_web_ckeditor4': fields.boolean('web_ckeditor4 -- DEPRECATED! CKeditor4 for any html/text field in the odoo backend!',

@@ -42,3 +42,7 @@
 	path = addons-thirdparty/yelizariev
 	url = https://github.com/yelizariev/addons-yelizariev.git
 	branch = 8.0
+[submodule "addons-thirdparty/yelizariev-website-addons"]
+	path = addons-thirdparty/yelizariev-website-addons
+	url = https://github.com/yelizariev/website-addons.git
+	branch = 8.0
