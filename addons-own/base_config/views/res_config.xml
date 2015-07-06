@@ -131,6 +131,14 @@
                                     <field name="module_mail_global_bcc" class="oe_inline" />
                                     <label for="module_mail_global_bcc" />
                                 </div>
+                                <div>
+                                    <field name="module_website_sale_categories" class="oe_inline" />
+                                    <label for="module_website_sale_categories" />
+                                </div>
+                                <div>
+                                    <field name="module_website_blog_layouts" class="oe_inline" />
+                                    <label for="module_website_blog_layouts" />
+                                </div>
 							</div>
 						</div>
 					</group>

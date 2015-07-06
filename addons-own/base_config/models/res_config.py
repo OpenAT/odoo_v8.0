@@ -109,6 +109,9 @@ class base_config_settings(osv.osv_memory):
         'module_website_sale_categories': fields.boolean('website_sale_categories -- more controll for display of public shop categories',
                                                          help='hide category, start navigation from this category, category descriptions'
                                                          '\n Installs Module: website_sale_categories'),
+        'module_website_blog_layouts': fields.boolean('website_blog_layouts -- show images in blog post list pages',
+                                                         help='Enable Show Image at Blog Post List Page'
+                                                         '\n Installs Module: website_blog_layouts'),
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)
         'module_web_ckeditor4': fields.boolean('web_ckeditor4 -- DEPRECATED! CKeditor4 for any html/text field in the odoo backend!',
