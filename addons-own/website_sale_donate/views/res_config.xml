@@ -40,6 +40,12 @@
                                 <field name="country_id_mandatory_bill"/>
                             </div>
                         </div>
+                        <label for="country_default_value"/>
+                        <div name="country_default_value">
+                            <div class="oe_inline">
+                                <field name="country_default_value"/>
+                            </div>
+                        </div>
                         <label for="phone_mandatory_bill"/>
                         <div name="phone_mandatory_bill">
                             <div class="oe_inline">

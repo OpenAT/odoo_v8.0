@@ -441,6 +441,13 @@
             <xpath expr="//label[@for='shipping_country_id']" position="attributes">
                 <attribute name="t-att-style">'' if website.country_id_mandatory_ship else 'font-weight: normal'</attribute>
             </xpath>
+
+            <!-- Set default Country if not already selected -->
+            <xpath expr="//option[@t-att-value='country.id']" position="replace">
+                <!--<attribute name="t-att-selected">'True' if country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == 'AT')</attribute>-->
+                <option t-att-value="country.id" t-att-selected="'True' if (country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == website.country_default_value.code)) else ''"><t t-esc="country.name"/></option>
+            </xpath>
+
             <xpath expr="//label[@for='shipping_state_id']" position="attributes">
                 <attribute name="style"></attribute>
                 <attribute name="t-att-style">'' if website.state_id_mandatory_ship else 'font-weight: normal'</attribute>

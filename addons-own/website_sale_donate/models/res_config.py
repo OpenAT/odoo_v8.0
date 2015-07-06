@@ -49,5 +49,6 @@ class website_sale_donate_config_settings(osv.osv_memory):
                                                   'state_id_mandatory_ship', type="boolean", string='state_id'),
         'zip_mandatory_ship': fields.related('website_id',
                                              'zip_mandatory_ship', type="boolean", string='zip'),
-
+        'country_default_value': fields.related('website_id', 'country_default_value', type="many2one",
+                                                relation="res.country", string="Default country for checkout page"),
     }

@@ -40,6 +40,8 @@ class website_sale_donate_settings(osv.Model):
         'country_id_mandatory_ship': fields.boolean(string='country_id'),
         'state_id_mandatory_ship': fields.boolean(string='state_id'),
         'zip_mandatory_ship': fields.boolean(string='street2'),
+        # Country
+        'country_default_value': fields.many2one('res.country', string='Default country for checkout page'),
     }
     _defaults = {
         # Mandatory for billing
