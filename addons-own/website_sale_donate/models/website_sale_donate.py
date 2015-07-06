@@ -1,19 +1,12 @@
 # -*- coding: utf-'8' "-*-"
 __author__ = 'mkarrer'
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
-
-from PIL import Image
-from PIL import ImageEnhance
-
 
 from openerp import SUPERUSER_ID
 from openerp import tools
 from openerp.osv import osv, orm, fields
 from openerp.tools.translate import _
 import openerp.addons.decimal_precision as dp
+from openerp.addons.base_tools.image import resize_to_thumbnail
 
 
 # mandatory fields setting for checkout form
@@ -85,56 +78,13 @@ class product_template(osv.Model):
     def _set_parallax_image(self, cr, uid, id, name, value, args, context=None):
         return self.write(cr, uid, [id], {'parallax_image': value}, context=context)
 
-    def resize_to_thumbnail(self, img, box=(440, 440), fit=1):
-        '''Downsample the image.
-        @param img: Image -  an PIL Image-object
-        @param box: tuple(x, y) - the bounding box of the result image
-        @param fix: boolean - crop the image to fill the box
-        '''
-        #preresize image with factor 2, 4, 8 and fast algorithm
-
-        # factor = 1
-        # while img.size[0]/factor > 2*box[0] and img.size[1]*2/factor > 2*box[1]:
-        #     factor *=2
-        # if factor > 1:
-        #     img.thumbnail((img.size[0]/factor, img.size[1]/factor), Image.NEAREST)
-
-        #calculate the cropping box and get the cropped part
-        if fit:
-            x1 = y1 = 0
-            x2, y2 = img.size
-            wRatio = 1.0 * x2/box[0]
-            hRatio = 1.0 * y2/box[1]
-            if hRatio > wRatio:
-                y1 = int(y2/2-box[1]*wRatio/2)
-                y2 = int(y2/2+box[1]*wRatio/2)
-            else:
-                x1 = int(x2/2-box[0]*hRatio/2)
-                x2 = int(x2/2+box[0]*hRatio/2)
-            img = img.crop((x1, y1, x2, y2))
-
-        #Resize the image with best quality algorithm ANTI-ALIAS
-        img.thumbnail(box, Image.ANTIALIAS)
-
-        #return the image
-        return img
-
     def _get_square_image(self, cr, uid, ids, name, args, context=None):
         result = dict.fromkeys(ids, False)
         for obj in self.browse(cr, uid, ids, context=context):
             # need to return also an dict for the image like result[1] = {'image_square': base_64_data}
             result[obj.id] = {'image_square': False}
             if obj.image:
-                # PIL Object
-                image = Image.open(StringIO.StringIO(obj.image.decode('base64')))
-                filetype = image.format.upper()
-                filetype = {'BMP': 'PNG', }.get(filetype, filetype)
-                if image.mode not in ["1", "L", "P", "RGB", "RGBA"]:
-                    image = image.convert("RGB")
-                image = self.resize_to_thumbnail(image)
-                background_stream = StringIO.StringIO()
-                image.save(background_stream, filetype)
-                result[obj.id] = {'image_square': background_stream.getvalue().encode('base64')}
+                result[obj.id] = {'image_square': resize_to_thumbnail(img=obj.image, box=(440, 440),)}
         return result
 
     def _set_square_image(self, cr, uid, id, name, value, args, context=None):
