@@ -37,7 +37,7 @@ def resize_to_thumbnail(img, box=(440, 440), fit=1):
     filetype = img.format.upper()
     filetype = {'BMP': 'PNG', }.get(filetype, filetype)
     if img.mode not in ["1", "L", "P", "RGB", "RGBA"]:
-        img = image.convert("RGB")
+        img = img.convert("RGB")
 
     # RESIZE
     #preresize image with factor 2, 4, 8 and fast algorithm
