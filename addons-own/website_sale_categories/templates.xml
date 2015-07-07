@@ -125,6 +125,7 @@
             <t t-set="hasrootcat" t-value="False"/>
             <t t-if="category">
                 <t t-set="cat_hide" t-value="category.cat_hide"/>
+                <!-- Check if the upmost (root) parent category has "is root" set or not (if not it's a normal cat) -->
                 <t t-if="category.cat_root_id.cat_root">
                     <t t-set="hasrootcat" t-value="True"/>
                 </t>
@@ -175,21 +176,25 @@
             </t>
         </xpath>
         <xpath expr="//div[@id='wrap']/div[@class='oe_structure']" position="after">
-            <!-- Render descriptions for categories above -->
-            <t t-foreach="category" t-as="c">
-                <t t-call="website_sale_categories.categories_recursive_description"/>
-            </t>
-            <!-- Render category description -->
-            <t t-foreach="category" t-as="c">
-                <t t-call="website_sale_categories.categories_description_text"/>
+            <t t-if="category">
+                <!-- Render descriptions for categories above -->
+                <t t-foreach="category" t-as="c">
+                    <t t-call="website_sale_categories.categories_recursive_description"/>
+                </t>
+                <!-- Render category description -->
+                <t t-foreach="category" t-as="c">
+                    <t t-call="website_sale_categories.categories_description_text"/>
+                </t>
             </t>
         </xpath>
 
         <!-- Category Descriptions at BOTTOM -->
         <xpath expr="//div[@id='wrap']/div[@class='oe_structure mb32']" position="before">
-            <!-- Render descriptions for categories above -->
-            <t t-foreach="category" t-as="c">
-                <t t-call="website_sale_categories.categories_recursive_description_bottom"/>
+            <t t-if="category">
+                <!-- Render descriptions for categories above -->
+                <t t-foreach="category" t-as="c">
+                    <t t-call="website_sale_categories.categories_recursive_description_bottom"/>
+                </t>
             </t>
             <t groups="base.group_website_publisher">
                 <section contenteditable="False">
