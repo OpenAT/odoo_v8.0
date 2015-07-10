@@ -14,7 +14,7 @@ from openerp.addons.payment_ogonedadi.controllers.main import OgonedadiControlle
 from openerp.addons.payment_ogonedadi.data import ogonedadi
 from openerp.osv import osv, fields
 from openerp.tools import float_round
-from openerp.tools.float_utils import float_compare
+from openerp.tools.float_utils import float_compare, float_repr
 
 _logger = logging.getLogger(__name__)
 
@@ -147,10 +147,11 @@ class PaymentAcquirerOgonedadi(osv.Model):
         acquirer = self.browse(cr, uid, id, context=context)
 
         ogonedadi_tx_values = dict(tx_values)
+        # AMOUNT calculation changed! see: https://github.com/odoo/odoo/commit/7c2521a79bc9443adab1bc63007e70661a8c22b7
         temp_ogonedadi_tx_values = {
             'PSPID': acquirer.ogonedadi_pspid,
             'ORDERID': tx_values['reference'],
-            'AMOUNT': '%d' % int(float_round(tx_values['amount'], 2) * 100),
+            'AMOUNT': float_repr(float_round(tx_values['amount'], 2) * 100, 0),
             'CURRENCY': tx_values['currency'] and tx_values['currency'].name or '',
             'LANGUAGE': partner_values['lang'],
             'CN': partner_values['name'],
