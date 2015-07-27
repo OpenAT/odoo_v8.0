@@ -381,6 +381,11 @@
             </xpath>
             -->
         </template>
+        <template id="wsd_continue_shopping" inherit_id="website_sale.continue_shopping" customize_show="True" name="Continue Home Button">
+            <xpath expr="//a[@href='/shop']" position="attribute">
+                <attribute href="/"></attribute>
+                    </xpath>>
+                </template>>
 
 
         <!-- CHECKOUT: honor the mandatory fields AND hide Tax and Total -->
