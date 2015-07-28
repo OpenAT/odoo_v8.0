@@ -381,6 +381,12 @@
             </xpath>
             -->
         </template>
+        <!-- SHOPPING CART: exchange backlink of the left button to root / instead of standard /shop to avoid to jump back to all products category 0 -->
+        <template id="wsd_continue_shopping" inherit_id="website_sale.continue_shopping" customize_show="True" name="Continue Home Button">
+            <xpath expr="//a[@href='/shop']" position="attributes">
+                <attribute name="href">/</attribute>
+            </xpath>
+        </template>
 
 
         <!-- CHECKOUT: honor the mandatory fields AND hide Tax and Total -->
