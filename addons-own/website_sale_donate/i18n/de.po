@@ -1039,4 +1039,3 @@ msgstr "Anmelden"
 #: view:website:website_sale.checkout
 msgid "Your Address"
 msgstr "Ihre Daten"
-
