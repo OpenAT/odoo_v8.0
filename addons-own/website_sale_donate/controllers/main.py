@@ -91,7 +91,12 @@ class website_sale_donate(website_sale):
                                                                                      context=context,
                                                                                      **kwargs)
 
-        return request.redirect('/shop/checkout')
+        # If all relevant Information exists we can directly jump to confirm_order and therefore to payment if
+        # if everything is correct
+        if kwargs.get('email') and kwargs.get('name') and kwargs.get('shipping_id'):
+            return request.redirect('/shop/confirm_order' + '?' + request.httprequest.query_string)
+
+        return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
 
 
     # SET CUSTOM MANDATORY BILLING AND OR SHIPPING FIELDS:

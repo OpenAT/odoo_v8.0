@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="Register">
+            <xpath expr="." position="inside">
+                <script src='https://www.google.com/recaptcha/api.js'></script>
+            </xpath>
+        </template>
+
+        <template id="auth_doubleoptin.register" name="Register Account">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container" style="margin: 4em auto;padding: 0 25%;">
+                        <h1 class="alert alert-success" t-if="message">
+                            <t t-raw="message"/>
+                        </h1>
+                        <h1 class="alert alert-danger" t-if="error">
+                            <t t-raw="error"/>
+                        </h1>
+                        <form role="form" method="post">
+                            <div class="row">
+
+                                <!-- E-Mail / Login -->
+                                <div class="form-group field-login">
+                                    <label for="login" class="control-label">
+                                        Your Email *
+                                        <br/><span class="text-muted">This field is required and will be your username.</span>
+                                    </label>
+                                    <input type="text" name="login" t-att-value="email or login" id="email" class="form-control"
+                                           autofocus="autofocus"
+                                           required="required"/>
+                                </div>
+
+                                <!-- Name -->
+                                <div class="form-group field-name">
+                                    <label for="name" class="control-label">Your Name</label>
+                                    <input type="text" name="name" t-att-value="name" id="name" class="form-control"
+                                           placeholder="given_name family_name (e.g. John Doe)"/>
+                                </div>
+
+                                <!-- Hidden Fields -->
+                                <input type="hidden" name="redirect" t-att-value="redirect"/>
+                                <input type="hidden" name="token" t-att-value="token"/>
+
+                                <!-- Submit Buttons -->
+                                <div class="clearfix">
+                                    <t t-if="not message">
+                                        <button type="submit" name="button_login" class="btn btn-default pull-left">Continue to Login</button>
+                                        <button type="submit" name="button_register" class="btn btn-primary pull-right">Create Account</button>
+                                    </t>
+                                    <t t-if="message">
+                                        <button type="submit" name="button_register" class="btn btn-default pull-left">Resend E-Mail</button>
+                                        <button type="submit" name="button_login" class="btn btn-primary pull-right">Continue to Login</button>
+                                    </t>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</openerp>
