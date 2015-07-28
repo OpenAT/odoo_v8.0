@@ -1035,3 +1035,7 @@ msgstr "Spendenkorb"
 msgid "Sign in"
 msgstr "Anmelden"
 
+#. module: website_sale
+#: view:website:website_sale.checkout
+msgid "Your Address"
+msgstr "Ihre Daten"

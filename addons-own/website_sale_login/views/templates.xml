@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- CHECKOUT: honor the mandatory fields AND hide Tax and Total -->
+        <template id="wsl_checkout" inherit_id="website_sale.checkout" name="Better Login">
+
+             <xpath expr="//small[@groups='base.group_public']" position="attributes">
+                 <attribute name="class">hidden</attribute>
+             </xpath>
+
+            <!-- Extend the login prompt on the checkout page -->
+            <!--<xpath expr="//div[@class='col-lg-offset-1 col-lg-3 col-md-3 text-muted']/div[@class='row']" position="after">-->
+            <xpath expr="//h1" position="after">
+                <t groups="base.group_public">
+                    <!-- res.user found for e-mail -->
+                    <t t-if="checkout.get('userid_by_email')">
+                        <p class="alert alert-warning mt32">
+                            <strong>Hello<t t-if="checkout.get('name')"><t t-raw="' ' + checkout.get('name')"/></t>!</strong>
+                            <br/>You already have an account. <strong>Please log in!</strong>
+                            <br/>You can of course continue without logging in: Just click the continue button again.
+                        </p>
+                        <div class="mb32">
+                            <a class='btn btn-primary btn-sm' t-attf-href="/web/login?redirect=#{ request.httprequest.url }&amp;login=#{ checkout.get('email') }" role="button">
+                                Log in!
+                            </a>
+                            <a class="btn-sm" t-attf-href="/web/signup?redirect=#{ request.httprequest.url }&amp;login=#{ checkout.get('email') }">
+                                Reset password
+                            </a>
+                        </div>
+                    </t>
+                    <!-- res.partner found for e-mail -->
+                    <t t-if="not checkout.get('userid_by_email') and checkout.get('partnerid_by_email')">
+                        <p class="alert alert-success mt32">
+                            <strong>Hello<t t-if="checkout.get('name')"><t t-raw="' ' + checkout.get('name')"/></t>!</strong>
+                            <br/>You are already a supporter! Please <strong>verify your account</strong> to simplify the checkout process!
+                            <br/>You can of course continue without an account: Just click the continue button again.
+                        </p>
+                        <div class="mb32">
+                            <a class='btn btn-primary btn-sm' t-attf-href="/web/register?redirect=#{ request.httprequest.url }&amp;login=#{ checkout.get('email') }&amp;name=#{ checkout.get('name') }" role="button">
+                                Send account verification email!
+                            </a>
+                            <a class="btn-sm" t-attf-href="/web/signup?redirect=#{ request.httprequest.url }&amp;login=#{ checkout.get('email') }">
+                                Sign in
+                            </a>
+                        </div>
+                    </t>
+                    <!-- No res.user or res.partner found -->
+                    <t t-if="not checkout.get('userid_by_email') and not checkout.get('partnerid_by_email')">
+                        <p class="text-muted mt16">
+                            Please fill in your data, <a class="text-danger" t-attf-href="/web/signup?redirect=#{ request.httprequest.url }&amp;login=#{ checkout.get('email') }&amp;name=#{ checkout.get('name') }">create a new account</a> or <a t-attf-href="/web/login?redirect=#{ request.httprequest.url }&amp;login=#{ checkout.get('email') }">sign in</a> if you already have an account!
+                        </p>
+                    </t>
+                </t>
+            </xpath>
+
+        </template>
+
+    </data>
+</openerp>
