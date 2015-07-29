@@ -1,10 +1,7 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* website_sale_donate
-<<<<<<< HEAD
+#   * website_sale_donate
 #   * website_sale
-=======
->>>>>>> [ADD] website_sale_login search for existing user or partner at checkout page, simplify the account creation or password reset process [ADD] auth_doubleoptin add new controller register, redirect signup to register (therefore web signup without validation email is DISABLED, simplify the process of account creation or password reset [IMP] website_sale_donate extend the simplecheckout controller to directly jump to the payment page if all relevant parameters are in the request
 #
 msgid ""
 msgstr ""
@@ -22,9 +19,4 @@ msgstr ""
 #. module: website_sale
 #: view:website:website_sale.cart
 msgid "Continue Shopping"
-<<<<<<< HEAD
-msgstr "Back Home
-=======
 msgstr "Back Home"
->>>>>>> [ADD] website_sale_login search for existing user or partner at checkout page, simplify the account creation or password reset process [ADD] auth_doubleoptin add new controller register, redirect signup to register (therefore web signup without validation email is DISABLED, simplify the process of account creation or password reset [IMP] website_sale_donate extend the simplecheckout controller to directly jump to the payment page if all relevant parameters are in the request
-

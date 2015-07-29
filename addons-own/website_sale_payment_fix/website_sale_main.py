@@ -33,9 +33,8 @@ class website_sale_payment_fix(website_sale):
             tx = request.registry['payment.transaction'].browse(cr, SUPERUSER_ID,
                                                                 [tx_id], context=context)
 
-            # Only reset the current shop session for valid providers like ogonedadi
-            # It is not needed for FRST PP since we never redirect externally
-            if tx.acquirer_id.provider == 'ogonedadi':
+            # Only reset the current shop session for our own providers
+            if tx.acquirer_id.provider in ('ogonedadi', 'frst'):
                 # Confirm the sales order so no changes are allowed any more
                 request.registry['sale.order'].action_button_confirm(cr, SUPERUSER_ID,
                                                                      [tx.sale_order_id.id], context=context)
