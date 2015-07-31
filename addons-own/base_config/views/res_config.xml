@@ -147,6 +147,14 @@
                                     <field name="module_website_blog_layouts" class="oe_inline" />
                                     <label for="module_website_blog_layouts" />
                                 </div>
+                                <div>
+                                    <field name="module_website_sale_login" class="oe_inline" />
+                                    <label for="module_website_sale_login" />
+                                </div>
+                                <div>
+                                    <field name="module_auth_doubleoptin" class="oe_inline" />
+                                    <label for="module_auth_doubleoptin" />
+                                </div>
 							</div>
 						</div>
 					</group>

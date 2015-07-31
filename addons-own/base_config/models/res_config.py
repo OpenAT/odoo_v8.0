@@ -114,6 +114,12 @@ class base_config_settings(osv.osv_memory):
         'module_website_blog_layouts': fields.boolean('website_blog_layouts -- show images in blog post list pages',
                                                          help='Enable Show Image at Blog Post List Page'
                                                          '\n Installs Module: website_blog_layouts'),
+        'module_website_sale_login': fields.boolean('website_sale_login -- better login pages and user detection by e-mail',
+                                                         help='This addon depends on auth_signup for signup or account creation and can be used with auth_doubleoptin also'
+                                                         '\n Installs Module: website_sale_login'),
+        'module_auth_doubleoptin': fields.boolean('auth_doubleoptin -- for account signup and newsletter subscription verification',
+                                                         help='for account signup and newsletter subscription verification'
+                                                         '\n Installs Module: auth_doubleoptin'),
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)
         'module_web_ckeditor4': fields.boolean('web_ckeditor4 -- DEPRECATED! CKeditor4 for any html/text field in the odoo backend!',
