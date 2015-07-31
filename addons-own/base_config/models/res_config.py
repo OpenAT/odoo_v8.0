@@ -77,6 +77,8 @@ class base_config_settings(osv.osv_memory):
         'module_website_files': fields.boolean('website_files -- Add a Files tab to the image website dialogue',
                                                  help='Upluad Files and insert Links for Download'
                                                       '\n Installs Module: module_website_files'),
+        'module_mail_delete_access_link': fields.boolean('mail_delete_access_link -- Delete Access-Document Link from odoo emails'),
+        'module_mail_delete_sent_by_footer': fields.boolean('mail_delete_sent_by_footer -- Remove send by odoo from odoo emails'),
 
         # Addons Own
         'module_website_crm_extended': fields.boolean('website_crm_extended -- Default sales group for lead from contact formular',

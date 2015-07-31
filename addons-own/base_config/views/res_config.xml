@@ -86,6 +86,14 @@
                                     <field name="module_website_files" class="oe_inline" />
                                     <label for="module_website_files" />
                                 </div>
+                                <div>
+                                    <field name="module_mail_delete_access_link" class="oe_inline" />
+                                    <label for="module_mail_delete_access_link" />
+                                </div>
+                                <div>
+                                    <field name="module_mail_delete_sent_by_footer" class="oe_inline" />
+                                    <label for="module_mail_delete_sent_by_footer" />
+                                </div>
 							</div>
 						</div>
 					</group>
