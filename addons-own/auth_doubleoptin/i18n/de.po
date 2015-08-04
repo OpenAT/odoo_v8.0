@@ -1,0 +1,78 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* auth_doubleoptin
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-08-04 07:07+0000\n"
+"PO-Revision-Date: 2015-08-04 07:07+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "Continue to Login"
+msgstr "Weiter zur Anmeldung"
+
+#. module: auth_doubleoptin
+#: code:addons/auth_doubleoptin/controllers/main.py:81
+#, python-format
+msgid "Could not create your account!\n"
+""
+msgstr "Das Benutzerkonto konnte nicht angelegt werden!\n"
+""
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "Create Account"
+msgstr "Benutzerkonto anlegen"
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "Resend E-Mail"
+msgstr "E-Mail erneut senden"
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "This field is required and will be your username."
+msgstr "Pflichtfeld! Die E-Mail Adresse ist gleichzeitig der Benutzername."
+
+#. module: auth_doubleoptin
+#: code:addons/auth_doubleoptin/controllers/main.py:69
+#, python-format
+msgid "To verify your account an email has been send to you!<br/>Please use the link in the e-mail to set your password!<br/><br/>After you set your password please continue by clicking the login button below."
+msgstr "Eine E-Mail zur Freischaltung des Benutzerkontos wurde versendet!<br/>Bitte verwenden sie den Link in diesem E-Mail um ein Passwort zu setzten!<br/><br/>Klicken sie bitte auf den Anmelden Button nachdem sie ihr Passwort gesetzt haben."
+
+#. module: auth_doubleoptin
+#: code:addons/auth_doubleoptin/controllers/main.py:141
+#, python-format
+msgid "Wrong e-mail address or name missing!"
+msgstr "Falsche E-Mail Adresse oder der Name fehlt!"
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "Your Email *"
+msgstr "Ihre E-Mail *"
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "Your Name"
+msgstr "Ihr Name"
+
+#. module: auth_doubleoptin
+#: code:addons/auth_doubleoptin/controllers/main.py:64
+#, python-format
+msgid "Your account was created!<br/>"
+msgstr "Ihr Benutzerkonto wurde angelegt!<br/>"
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "given_name family_name (e.g. John Doe)"
+msgstr "Vorname Nachname (z.B. Max Mustermann)"
+

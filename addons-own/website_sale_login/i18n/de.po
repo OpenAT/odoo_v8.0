@@ -1,0 +1,107 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* website_sale_login
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-08-04 07:07+0000\n"
+"PO-Revision-Date: 2015-08-04 07:07+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "Hello"
+msgstr "Hallo"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "Log in!"
+msgstr "Anmelden!"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "Please fill in your data,"
+msgstr "Geben sie bitte ihre Daten an,"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "Please log in!"
+msgstr "Bitte melden sie sich an!"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "Reset password"
+msgstr "Passwort zurücksetzen"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "Send account verification email!"
+msgstr "Bestätiguns-E-Mail versenden!"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "Sign in"
+msgstr "Anmelden"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "You already have an account."
+msgstr "Sie haben bereits ein Benutzerkonto."
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "You are already a supporter! Please"
+msgstr "Sie sind bereits ein Unterstützer! Bitte"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "You can of course continue without an account: Just click the continue button again."
+msgstr "Natürlich können sie auch ohne ein Benutzerkonto fortfahren. Drücken sie dazu einfach erneut auf weiter."
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "You can of course continue without logging in: Just click the continue button again."
+msgstr "Natürlich können sie auch ohne ein Benutzerkonto fortfahren. Drücken sie dazu einfach erneut auf weiter."
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "create a new account"
+msgstr "neues Benutzerkonto anlegen"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "hidden"
+msgstr ""
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "if you already have an account!"
+msgstr "wenn sie bereits ein Benutzerkonto haben!"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "or"
+msgstr ""
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "sign in"
+msgstr "Anmelden"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "to simplify the checkout process!"
+msgstr "um den Spenden-Vorgang zu vereinfachen"
+
+#. module: website_sale_login
+#: view:website:website_sale.checkout
+msgid "verify your account"
+msgstr "bestätigung ihres Benutzerkontos"
+

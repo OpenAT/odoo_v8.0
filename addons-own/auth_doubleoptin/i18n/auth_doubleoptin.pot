@@ -1,0 +1,77 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* auth_doubleoptin
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-08-04 07:07+0000\n"
+"PO-Revision-Date: 2015-08-04 07:07+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "Continue to Login"
+msgstr ""
+
+#. module: auth_doubleoptin
+#: code:addons/auth_doubleoptin/controllers/main.py:81
+#, python-format
+msgid "Could not create your account!\n"
+""
+msgstr ""
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "Create Account"
+msgstr ""
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "Resend E-Mail"
+msgstr ""
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "This field is required and will be your username."
+msgstr ""
+
+#. module: auth_doubleoptin
+#: code:addons/auth_doubleoptin/controllers/main.py:69
+#, python-format
+msgid "To verify your account an email has been send to you!<br/>Please use the link in the e-mail to set your password!<br/><br/>After you set your password please continue by clicking the login button below."
+msgstr ""
+
+#. module: auth_doubleoptin
+#: code:addons/auth_doubleoptin/controllers/main.py:141
+#, python-format
+msgid "Wrong e-mail address or name missing!"
+msgstr ""
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "Your Email *"
+msgstr ""
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "Your Name"
+msgstr ""
+
+#. module: auth_doubleoptin
+#: code:addons/auth_doubleoptin/controllers/main.py:64
+#, python-format
+msgid "Your account was created!<br/>"
+msgstr ""
+
+#. module: auth_doubleoptin
+#: view:website:auth_doubleoptin.register
+msgid "given_name family_name (e.g. John Doe)"
+msgstr ""
+

@@ -12,7 +12,7 @@
         <template id="auth_doubleoptin.register" name="Register Account">
             <t t-call="website.layout">
                 <div id="wrap">
-                    <div class="container" style="margin: 4em auto;padding: 0 25%;">
+                    <div class="container" style="margin: 4em auto;">
                         <h1 class="alert alert-success" t-if="message">
                             <t t-raw="message"/>
                         </h1>
