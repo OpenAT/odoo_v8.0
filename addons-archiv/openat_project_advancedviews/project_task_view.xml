@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+	<record id="openat_project_advancedviews_act_project_task_2_project_issue" model="ir.actions.act_window">
+            <field name="res_model">project.issue</field>
+            <field name="view_type">form</field>
+            <field name="name">Issues</field>
+            <field name="view_mode">kanban,tree,form,calendar,graph</field>
+            <field name="context">{'search_default_task_id': [active_id], 'default_task_id': active_id}</field>
+        </record>
+    
+        <record id="openat_project_advancedviews_project_issue_kanban_inherited" model="ir.ui.view">
+            <field name="name">project.issue.kanban.openat_project_advancedviews_project_issue_kanban_inherited</field>
+            <field name="model">project.issue</field>
+            <field name="inherit_id" ref="project_issue.project_issue_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="partner_id"]' position="after">
+                    <br/> <b> <field name="task_id"/> </b>
+                </xpath>
+            </field>
+        </record>
+    
+    	<record id="openat_project_advancedviews_project_issue_filter_inherited" model="ir.ui.view">
+            <field name="name">project.issue.filter.openat_project_advancedviews_project_issue_filter_inherited</field>
+            <field name="model">project.issue</field>
+            <field name="inherit_id" ref="project_issue.view_project_issue_filter"/>            
+            <field name="arch" type="xml">
+                <xpath expr='//group[@string="Group By..."]/filter[@string="Project"]' position="after">
+	                <filter string="Aufgaben" icon="terp-folder-violet" domain="[]" context="{'group_by':'task_id'}"/>
+                </xpath>
+                <xpath expr='//search/field[@name="project_id"]' position="after">
+                    <field name="task_id"/>
+                </xpath>
+            </field>
+        </record>
+        
+    	<record id="openat_project_advancedviews_project_task_form_inherited" model="ir.ui.view">
+            <field name="name">project.task.form.openat_project_advancedviews_project_task_form_inherited</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">                
+                <xpath expr='//page[@string="Extra Info"]' position="after">
+	                <page string="Fälle" name="issues">
+	                	<field name="openat_issues"/>
+	                </page>
+                </xpath>
+                <xpath expr='//h1' position="replace">
+	                <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Task summary..."/>
+                        </h1>
+                    </div>
+                    <div class="oe_right oe_button_box" name="buttons" groups="base.group_user">
+                        <button name="%(openat_project_advancedviews_act_project_task_2_project_issue)d" string="Fälle" type="action"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    	
+		<!-- Project Task Kanban View -->
+        <record id="openat_project_advancedviews_project_task_kanban_inherited" model="ir.ui.view">
+            <field name="name">project.project.kanban.openat_project_advancedviews_project_task_kanban_inherited</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[contains(@class, 'oe_kanban_content')]" position="inside">
+                    <a t-if="record.openat_issue_count.raw_value gt 0" style="margin-right: 10px"
+                        name="%(openat_project_advancedviews_act_project_task_2_project_issue)d" type="action">
+                        <span t-if="record.openat_issue_count.raw_value gt 1"><field name="openat_issue_count"/> Fälle</span>
+                        <span t-if="record.openat_issue_count.raw_value lt 2"><field name="openat_issue_count"/> Problem</span>
+                    </a>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

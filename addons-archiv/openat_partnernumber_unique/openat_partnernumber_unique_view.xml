@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+  <data>
+  
+    <record id="openat_partnernumber_unique_field" model="ir.ui.view">
+    	<field name="name">base_view_partner_form_openat_partnernumber_unique</field>
+		<field name="model">res.partner</field>
+		<field name="inherit_id" ref="base.view_partner_form"/>
+		<field name="arch" type="xml">
+			<field name="ref" position="replace">
+				<field name="openat_ref_unique"/>
+			</field>
+		</field>    
+    </record> 
+	
+  </data>
+</openerp>

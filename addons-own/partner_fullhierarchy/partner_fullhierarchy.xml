@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- PARTNER FORM VIEW: Show Parents for non company partners also, -->
+        <record id="openat_partner_fullhierarchy_res_partner_form_inherit" model="ir.ui.view">
+            <field name="name">res.partner.form.openat_partner_fullhierarchy_res_partner_form_inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="attributes">
+                    <attribute name="attrs"></attribute>
+                    <attribute name="domain"></attribute>
+                </xpath>
+                <xpath expr="//page[@string='Contacts']" position="attributes">
+                    <attribute name="attrs"></attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PARTNER TREE VIEW: Show more information -->
+        <record id="openat_partner_fullhierarchy_res_partner_tree_inherit" model="ir.ui.view">
+            <field name="name">res.partner.tree.openat_partner_fullhierarchy_res_partner_tree_inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='display_name']" position="after">
+                    <field name="name"/>
+                </xpath>
+                <xpath expr="//field[@name='function']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='country_id']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='parent_id']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- PARNTER KANBAN VIEW: Add hidden name field for searches, better layout -->
+        <record id="openat_partner_fullhierarchy_res_partner_kanban_inherit" model="ir.ui.view">
+            <field name="name">res.partner.form.openat_partner_fullhierarchy_res_partner_kanban_inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="attributes">
+                     <attribute name="class">oe_background_grey</attribute>
+                </xpath>
+                <xpath expr="//field[@name='display_name']" position="after">
+                    <field name="name"/>
+                </xpath>
+                <xpath expr="//h4[@class='oe_partner_heading']" position="replace">
+                    <!--<div style="display: none"><field name="display_name"/></div>-->
+                    <h4 class="oe_partner_heading"><a type="open"><field name="name"/></a></h4>
+                    <div t-if="record.function.raw_value"><field name="function"/></div>
+                </xpath>
+                <xpath expr="//li[@t-if='record.parent_id.raw_value and record.function.raw_value']" position="replace">
+                    <li t-if="record.parent_id.raw_value and record.function.raw_value">
+                        <span style="display:block; border:1px solid #F5F5F5; border-radius: 3px; background: #F5F5F5; padding:3px; margin: 3px 0px;">
+                            <field name="parent_id"/>
+                        </span>
+                    </li>
+                </xpath>
+                <xpath expr="//li[@t-if='record.parent_id.raw_value and !record.function.raw_value']" position="replace">
+                    <li t-if="record.parent_id.raw_value and !record.function.raw_value">
+                        <span style="display:block; border:1px solid #F5F5F5; border-radius: 3px; background: #F5F5F5; padding:3px; margin: 3px 0px;">
+                            <field name="parent_id"/>
+                        </span>
+                    </li>
+                </xpath>
+
+                <xpath expr="//div[@class='oe_kanban_partner_categories']" position="replace">
+                    <div class="display: none;"></div>
+                </xpath>
+                <xpath expr="//ul" position="after">
+                    <div class="oe_kanban_partner_categories" style="margin-top: 6px;"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

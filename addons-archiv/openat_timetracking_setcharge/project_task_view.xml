@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>    
+    <!-- project_task View -->
+        <record id="openat_timetracking_setcharge_project_task_form_inherited" model="ir.ui.view">
+            <field name="name">project.task.form.openat_timetracking_setcharge_project_task_form_inherited</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">                
+                <xpath expr='//page[@string="Description"]/field[@name="work_ids"]/tree/field[@name="date"]' position="after">
+                    <field name="openat_invoiceable"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
