@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+	
+        <record id="view_res_partner_reference_filter" model="ir.ui.view">
+            <field name="name">res.partner.reference.select</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <field name="name" position="replace">
+                    <field name="name"
+                       filter_domain="['|','|',('name','ilike',self),('openat_ref_unique','ilike',self),('email','ilike',self)]"/>
+                </field>
+            </field>
+        </record>
+		
+    </data>
+</openerp>

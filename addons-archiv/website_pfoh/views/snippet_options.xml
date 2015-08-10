@@ -1,0 +1,168 @@
+<openerp>
+<data>
+
+<template id="website_pfoh_snippet_options" inherit_id="website.snippet_options">
+
+
+
+    <!-- Replace Background Colors and Images -->
+    <xpath expr="//div[@data-snippet-option-id='background']/li" position="replace">
+        <li class="dropdown-submenu" data-required="true">
+            <a tabindex="-1" href="#">Background</a>
+            <ul class="dropdown-menu">
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Uniform Color</a>
+                    <ul class="dropdown-menu">
+                        <li data-value='oe_dark'><a>Darken</a></li>
+                        <li data-value='pfot_background_white'><a>Weiss</a></li>
+<!--                        <li data-value='pfot_red_light'><a>HG rot ÜS gelb TXT weiss</a></li>
+                        <li data-value='pfot_white_light'><a>HG weiss ÜS rot</a></li> -->
+                    </ul>
+                </li>
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Backgrounds</a>
+                    <ul class="dropdown-menu">
+                        <li data-value="pfotenhilfe_bg_grau"><a>Pfote grau</a></li>
+                        <li data-value="pfotenhilfe_bg_sw"><a>Pfote Schwarz</a></li>
+                    </ul>
+                </li>
+               <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Gradients</a>
+                    <ul class="dropdown-menu">
+                        <li data-value='pfot_radgradient_yellow_light'><a>Yellow Light</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Various</a>
+                    <ul class="dropdown-menu">
+                        <li data-value="oe_img_bg" data-src="/website/static/src/img/banner/aqua.jpg"><a>Aqua</a></li>
+                        <li data-value="oe_img_bg" data-src="/website/static/src/img/banner/baby_blue.jpg"><a>Baby Blue</a></li>
+                        <li data-value="oe_img_bg" data-src="/website/static/src/img/banner/black.jpg"><a>Black</a></li>
+                    </ul>
+                </li>
+<!--
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Umrandung</a>
+                        <ul class="dropdown-menu">
+                            <li data-value='pfot_imgrad_red'><a>Bildbox HG rot BORDER abgerundet</a></li>
+                            <li data-value='pfot_imgrad_yellow'><a>Bildbox HG gelb BORDER abgerundet</a></li>
+                            <li data-value='pfot_imgrad_white'><a>Bildbox HG weiss BORDER abgerundet</a></li>
+                        </ul>
+                </li>
+-->
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Headings</a>
+                        <ul class="dropdown-menu">
+                            <li data-value='pfot_heading_red'><a>Überschrift rot</a></li>
+                            <li data-value='pfot_heading_yellow'><a>Überschrift gelb</a></li>
+                            <li data-value='pfot_heading_white'><a>Überschrift weiss</a></li>
+                            <li data-value='pfot_heading_red_bg'><a>ÜBERSCHRIFT rot HG gelb RAHMEN rund</a></li>
+                        </ul>
+                </li>
+
+                <li data-value=""><a>None</a></li>
+                <li><a style="background: none; padding: 5px; border-top: 1px solid #ddd;"></a></li>
+                <li class="oe_custom_bg" data-value="oe_img_bg"><a><b>Choose an image...</b></a></li>
+            </ul>
+        </li>
+
+    </xpath>
+<!--
+    <xpath expr="//div[@data-snippet-option-id='blog-style']//li" position="after">
+        <li class="dropdown-submenu" data-required="true">
+            <a tabindex="-1" href="#">Box-Styles</a>
+            <ul class="dropdown-menu">
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Umrandung</a>
+                        <ul class="dropdown-menu">
+                            <li data-value='pfot_imgrad_red'><a>Bildbox HG rot BORDER abgerundet</a></li>
+                            <li data-value='pfot_imgrad_yellow'><a>Bildbox HG gelb BORDER abgerundet</a></li>
+                            <li data-value='pfot_imgrad_white'><a>Bildbox HG weiss BORDER abgerundet</a></li>
+                        </ul>
+                </li>
+
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Headings</a>
+                        <ul class="dropdown-menu">
+                            <li data-value='pfot_heading_red'><a>Überschrift rot</a></li>
+                            <li data-value='pfot_heading_yellow'><a>Überschrift gelb</a></li>
+                            <li data-value='pfot_heading_white'><a>Überschrift weiss</a></li>
+                        </ul>
+                </li>
+
+            </ul>
+        </li>
+    </xpath>
+-->
+<!-- TEST 1
+
+    <xpath expr="//div[@data-snippet-option-id='transform']" position="after">
+          <li data-value='pfot_yellow_light_imgrad'><a>Nur Bildbox HG rot BORDER abgerundet</a></li>
+    </xpath>
+-->
+
+    <!-- BEISPIEL für ein BADGE hinzufügen bei einem ICON oder BILD -->
+    <!-- in HTML <i class="fa fa-envelope fa-5x fa-border icon-grey badge"></i> -->
+    <!-- <li data-value="fa fa-envelope fa-5x fa-border icon-grey badge"></i> -->
+
+<!-- TEST 2
+    <xpath expr="//ul[@name='parallax-scroll']" position="after">
+        <ul class="dropdown-menu" name="pfotenhilfe_img">
+            <li data-value='pfot_imgrad_red'><a>Bildbox HG rot BORDER abgerundet</a></li>
+            <li data-value='pfot_imgrad_yellow'><a>Bildbox HG gelb BORDER abgerundet</a></li>
+            <li data-value='pfot_imgrad_white'><a>Bildbox HG weiss BORDER abgerundet</a></li>
+        </ul>
+    </xpath>
+-->
+<!-- TEST 3
+-->
+    <xpath expr="//div[@data-snippet-option-id='transform']//li" position="after">
+        <li class="dropdown-submenu" data-required="true">
+            <a tabindex="-1" href="#">Box-Styles</a>
+            <ul class="dropdown-menu">
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Umrandung</a>
+                        <ul class="dropdown-menu">
+                            <li data-value='pfot_imgrad_red'><a>Bildbox HG rot BORDER abgerundet</a></li>
+                            <li data-value='pfot_imgrad_yellow'><a>Bildbox HG gelb BORDER abgerundet</a></li>
+                            <li data-value='pfot_imgrad_white'><a>Bildbox HG weiss BORDER abgerundet</a></li>
+                           <li data-value='pfot_imgrad_none'><a>Bildbox alles weg</a></li>
+                        </ul>
+                </li>
+            </ul>
+        </li>
+
+        <li class="dropdown-submenu" data-required="true">
+            <a tabindex="-1" href="#">Badges</a>
+            <ul class="dropdown-menu">
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Positionierung</a>
+                        <ul class="dropdown-menu">
+<!--                            <li data-value='pfot_img_badge-header'><a>Header-Badge</a></li>-->
+                            <li data-value='pfot_img_badge-header-news'><a>Header-Badge-news</a></li>
+                            <li data-value='pfot_img_badge-header-schleife'><a>Header-Badge-Schleife</a></li>
+                            <li data-value='pfot_img_badge-header-siegel'><a>Header-Badge-Siegel</a></li>
+                            <li data-value='pfot_img_badge-header-pate'><a>Header-Badge-Pate</a></li>
+                            <li data-value=''><a>remove</a></li>
+<!--                            <li data-value='dd_ribbon'><a>Badge-text</a></li>-->
+                        </ul>
+                </li>
+            </ul>
+        </li>
+    </xpath>
+
+    <!-- Replace Button / Links Colors -->
+        <xpath expr="." position="inside">
+            <script src="/website/static/src/js/pfoh.js"></script>
+        </xpath>
+
+</template>
+
+<!--    <template id="assets_frontend" inherit_id="website.assets_frontend" name="pfoh theme">
+        <xpath expr="." position="inside">
+            <script src="/website/static/src/js/pfoh.js"></script>
+        </xpath>
+    </template>
+-->
+</data>
+</openerp>

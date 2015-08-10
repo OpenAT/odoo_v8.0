@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- NEW: Calendar Events Category Tree View -->
+        <record id="view_calendar_event_category_tree" model="ir.ui.view">
+            <field name="name">Meeting Categories Tree</field>
+            <field name="model">calendar.event.category</field>
+            <field name="arch" type="xml">
+                <tree string="Meeting Categories" editable="bottom">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_calendar_category_type" model="ir.actions.act_window">
+            <field name="name">Meeting Categories</field>
+            <field name="res_model">calendar.event.category</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_calendar_event_category_tree"/>
+        </record>
+
+        <menuitem id="menu_calendar_event_category" parent="calendar.menu_calendar_configuration" action="action_calendar_category_type" groups="base.group_no_one"/>
+
+
+        <!-- INHERIT: CALENDAR FORM VIEW: Add Fields -->
+        <record id="view_calendar_event_form_calendar_log" model="ir.ui.view">
+            <field name="name">view_calendar_event_form_calendar_log</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_title']/h2" position="after">
+                    <div style="vertical-align: inherit;">
+                        <label for="no_invitations" string="Do not send invitation e-mails "/>
+                        <field name="no_invitations" class="oe_inline" style="vertical-align: inherit;" />
+                    </div>
+                </xpath>
+                <xpath expr="//label[@for='partner_ids']" position="before">
+                    <label for="category_id" string="Category" class="oe_edit_only"/>
+                    <h2 style="padding-bottom: 1em;">
+                        <field name="category_id"/>
+                    </h2>
+                </xpath>
+                <xpath expr="//field[@name='duration']" position="after">
+                    <field name="phonecall_id"/>
+                    <field name="opportunity_id"/>
+                </xpath>
+                <xpath expr="//field[@name='location']" position="after">
+                    <field name="expense_allowance"/>
+                    <field name="odometer_start"/>
+                    <field name="odometer_finish"/>
+                </xpath>
+                <xpath expr="//field[@name='description']" position="attributes">
+                    <attribute name="string">Public Description</attribute>
+                </xpath>
+                <xpath expr="//field[@name='description']" position="after">
+                        <label for="meeting_minutes"/>
+                        <field name="meeting_minutes"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!-- INHERIT: CALENDAR FORM POPUP VIEW: Add Fields -->
+        <record id="view_calendar_event_form_popup" model="ir.ui.view">
+            <field name="name">Meetings Popup</field>
+            <field name="model">calendar.event</field>
+            <field name="priority" eval="2"/>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form_popup"/>
+            <field name="arch" type="xml">
+                <xpath expr="//label[@for='name']" position="before">
+                    <label for="category_id" string="Category" class="oe_edit_only"/>
+                    <h1 style="padding-bottom: 1em;">
+                        <field name="category_id"/>
+                    </h1>
+                </xpath>
+                <xpath expr="//field[@name='location']" position="after">
+                    <field name="expense_allowance"/>
+                </xpath>
+                <xpath expr="//form[@string='Meetings']/group" position="after">
+                        <label for="description"/>
+                        <field name="description"/>
+                        <label for="meeting_minutes"/>
+                        <field name="meeting_minutes"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- INHERIT: CALENDAR SEARCH VIEW -->
+        <record id="view_calendar_log_search" model="ir.ui.view">
+            <field name="name">Calendar Search View</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="category_id"/>
+                    <field name="phonecall_id"/>
+                    <field name="expense_allowance"/>
+                    <field name="meeting_minutes"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- INHERIT: CALENDAR TREE VIEW -->
+        <record model="ir.ui.view" id="view_calendar_event_tree_calendar_log">
+            <field name="name">CRM - Meetings Tree</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="expense_allowance" string="Expense"/>
+                    <field name="category_id"/>
+                </xpath>
+                <xpath expr="//field[@name='start_date']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='show_as']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='class']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="meeting_minutes"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- INHERIT: CALENDAR CALENDAR VIEW -->
+        <record id="view_calendar_event_calendar_calendar_log" model="ir.ui.view">
+            <field name="name">view_calendar_event_calendar_calendar_log</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_calendar"/>
+            <field name="arch" type="xml">
+                <xpath expr="//calendar" position="attributes">
+                    <attribute name="display">[category_id]: [name]</attribute>
+                    <!-- Not documented but found in java script at
+                         addons/web_calendar/static/src/js/web_calendar.js line 257
+                         Start calendar in week View: -->
+                    <attribute name="mode">week</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="category_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

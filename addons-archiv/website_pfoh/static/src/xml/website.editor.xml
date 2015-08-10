@@ -1,0 +1,19 @@
+<openerp>
+<data>
+
+<!--
+<template id="website_pfoh_editor_options" inherit_id="website.template">
+
+
+    <xpath expr="//t[@t-name='website.editor.dialog.link'//div[@class='form-horizontal link-style']//ul[1]/li[last()]" position="after">
+        <li>
+            <label class="btn btn-pfotenhilfe">Pfotenhilfe<input value="btn-pfotenhilfe" class="link-style" type="radio" name="link-style-type"/></label>
+        </li>
+    </xpath>
+
+
+</template>
+-->
+
+</data>
+</openerp>

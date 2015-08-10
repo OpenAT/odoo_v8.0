@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//DE">
+<HTML>
+<!-- This is example of Dynamic Template Page you can start from to personnalize the look
+of your payment pages.
+This page must be hosted on your own website. We retrieve it every time an authorization
+is requested. The URL of the Template Page hosted on your site is given by you in
+the hidden fields of the ordering form for each authorization request.
+You can change anything in this page but you must keep the "PAYMENT ZONE" and
+the $$$ strings exactly as they are.
+
+The styles and classes defined hereafter allow you to modify the lay out of
+the elements added by us during the authorization process. Just change the
+properties of those styles to fit to the look of your site.
+-->
+<HEAD>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=UTF-8">
+	<TITLE>Verein Pfotenhilfe &quot;standard mode&quot; Verein Pfotenhilfe Zahlungsseite</TITLE>
+    <style type="text/css">
+	<!--
+	td.ncolh1 {background-color : #ffde5e; color : rgb(247, 247, 247); font-face : verdana}
+	td.ncoltxtl {background-color : rgb(247, 247, 247); color : black; text-align : right; font-weight : bold}
+	td.ncoltxtl2 {background-color : rgb(247, 247, 247); color : black; text-align : right; font-weight : bold}
+	td.ncoltxtr {background-color : rgb(247, 247, 247); color : black; text-align : left; font-weight : bold}
+	td.ncoltxtc {background-color : rgb(247, 247, 247); color : black; text-align : center; font-weight : bold}
+	td.ncollogol {background-color : rgb(247, 247, 247); color : black; text-align : right; font-weight : bold}
+	td.ncollogor {background-color : rgb(247, 247, 247); color : black; text-align : left; font-weight : bold}
+	td.ncollogoc {background-color : rgb(247, 247, 247); color : black; text-align : center; font-weight : bold}
+	td.ncoltxtmessage {background-color : rgb(247, 247, 247); color : rgb(247, 247, 247); text-align : left; font-weight : bold}
+	td.ncolinput {background-color : rgb(247, 247, 247); color : black}
+	td.ncolline1 {background-color : #ffde5e; color : black}
+	td.ncolline2 {background-color : rgb(247, 247, 247); color : black}
+	input.ncol {background-color : #7CB61C; color : white}
+    input#submit3 {
+        background: transparent url("http://portal.pfotenhilfe.at/website_pfoh/static/src/img/viveum-spenden-button.png") no-repeat 0 0;
+        border: 0;
+        cursor: pointer;
+        display: block;
+        height:24px;
+        width: 60px;
+        text-indent: -9999px;
+    }
+	table.ncoltable1 { background-color: rgb(247, 247, 247); border: 2 solid #ffde5e;  }
+	table.ncoltable2 { background-color: rgb(247, 247, 247);  border: 2 solid #ffde5e; }
+	table.ncoltable3 { background-color: rgb(247, 247, 247); border: 2 solid #ffde5e;  }
+	// for Direct Debit payments
+	.DDtxt {text-align: left;margin-left:2em;font-weight: normal;margin-top:0;}
+	.DDlabel {text-align: left; margin-left:4em;font-weight: normal;margin-top:0;}
+	.DDdata {font-weight: normal;margin-top:0;}
+	.MKtxt {text-align: left;font-weight: bold; margin-left:2em;margin-top:0;}
+	.MKlabel {text-align: left; margin-left:4em;font-weight: normal;font-style:italic;margin-top:0;}
+	td.ncoltxtr p.MKlabel {margin-left:0;}
+	.MKdata {font-weight: normal;margin-top:0;}
+	.DDimp {font-weight: bold;margin-left:2em;text-align: left;margin-top:0;}
+	.DDsection {font-weight: bold;margin-left:0em;text-align: left; margin-top:1em; margin-bottom: 0em;}
+	-->
+	</style>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#ffffff">
+
+<TABLE BORDER="0" WIDTH="100%">
+	<TR>
+		<TD colspan="3" align="center">
+      <h1 style="background-color:#d90000; color:white">Spenden Portal Verein PFOTENHILFE</h1>
+        </TD>
+	</TR>
+	<TR>
+		<TD WIDTH="10%" ><!-- here is the left side of the page -->
+		<font size="4">Sie koennen auf uns vertrauen</font>
+		</TD>
+		<TD WIDTH="80%" align="center"><!-- here is the payment form-->
+
+
+		$$$PAYMENT ZONE$$$
+
+
+		</TD>
+		<TD WIDTH="10%"><!--here is the right side of the page-->
+			<font size="4">DANKE fuer Ihre Spende</font>
+<!--            <img src="http://portal.pfotenhilfe.at/website_pfoh/static/src/img/badge/Siegel.png" style="width:180px;height:180px;position:absolute;"> -->
+		</TD>
+
+	</TR>
+	<TR>
+		<TD colspan="3" align="middle"><!-- here is the bottom of the page--><font size="6">Zahlungsseite der PFOTENHILFE</font><br>
+        <img src="http://pfotenhilfe.intdadirl1.datadialog.net/logo.png">
+	</TD>
+
+	</TR>
+</TABLE>
+
+</BODY>
+
+</HTML>

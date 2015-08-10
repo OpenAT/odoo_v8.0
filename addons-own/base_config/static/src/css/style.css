@@ -5,3 +5,18 @@
 .openerp .oe_form_sheet_width {
     max-width: 97%;
 }
+
+.openerp .oe_kanban_view .oe_kanban_vignette {
+    border: 1px solid white;
+    border-radius: 3px;
+    box-shadow: rgba(0, 0, 0, 0.28) 1px 1px 2px;
+    background-color: white;
+    margin: 3px;
+}
+
+.openerp .oe_title {
+    width: 100%;
+}
+.openerp .oe_tags.oe_inline {
+    min-width: 100%;
+}
