@@ -120,6 +120,10 @@ class base_config_settings(osv.osv_memory):
         'module_auth_doubleoptin': fields.boolean('auth_doubleoptin -- for account signup and newsletter subscription verification',
                                                          help='for account signup and newsletter subscription verification'
                                                          '\n Installs Module: auth_doubleoptin'),
+        'module_partner_fullhierarchy': fields.boolean('partner_fullhierarchy -- allow parents and children for all partners',
+                                                         help='allow parents and children for all partners and not just companies!'),
+        'module_calendar_log': fields.boolean('calendar_log -- extend the calendar to use it as a log for meeting minutes',
+                                                         help='calendar as log for meeting minutes or as a work log'),
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)
         'module_web_ckeditor4': fields.boolean('web_ckeditor4 -- DEPRECATED! CKeditor4 for any html/text field in the odoo backend!',
