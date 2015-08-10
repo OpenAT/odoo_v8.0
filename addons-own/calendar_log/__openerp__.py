@@ -2,18 +2,12 @@
 
 {
     'name': "FCOM calendar_log",
-    'summary': """Use the calender as a simple log""",
+    'summary': """Use the calender as a simple log. E.g. for meetings minutes or as a work log.""",
     'description': """
-
-This is the Header
+FCOM calendar_log
 ==================
 
-Some description text what this addon is all about.
-
-Maybe a subheader
------------------
-
-And some more information
+Use the calender as a simple log. E.g. for meetings minutes or as a work log.
 
     """,
     'author': "Data Dialog",
@@ -26,28 +20,7 @@ And some more information
         'crm',
     ],
     'installable': True,
-    'css': [
-        #'static/src/css/chatter.css',
-        #'static/src/css/backend.css',
-        ],
     'data': [
-        # DATA
-        #'data/data.xml',
-        # SECURITY FILES
-        #'security/ir.model.access.csv',
-        #'security/ir_ui_view.xml',
-        # VIEWS AND TEMPLATES
-        #'views/res_config.xml',
-        #'views/ir_actions.xml',
-        #'views/templates.xml',
-        #'views/snippets.xml',
         'views/views.xml',
-    ],
-    'js': [
-        #'static/src/js/default.js',
-    ],
-    # only loaded in demonstration mode
-    'demo': [
-        #'data/demo.xml',
     ],
 }

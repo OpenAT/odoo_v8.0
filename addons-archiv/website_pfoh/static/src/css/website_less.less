@@ -1,0 +1,652 @@
+// Adobe Kuler; Komplementaer, Basis=B25600
+/* DEFAULTS available in all webpages */
+//
+@pfot_path_patterns: "/website_pfoh/static/src/img/patterns";
+@pfot_path_images: "/website_pfoh/static/src/img";
+@pfot_path_badges: "/website_pfoh/static/src/img/badge";
+@pfot_grey_light: #E5E4E2;
+@pfot_grey_medium: #E1E1E1;
+@pfot_grey_dark: #413839;
+@pfot_grey_darkdesat: #414141;
+@pfot_grey_black: #2B1B17;
+
+
+/* CUSTOMMER COLOURS */
+@pfot_yellow_light: #F5E486;
+@pfot_yellow_medium: #f5d246;
+@pfot_yellow_dark: #f5ce1f;
+@pfot_yellow_black: #816919;
+@pfot_lightblue: #C9E0F7;
+@pfot_lightblue_medium: #7697B8;
+@pfot_lightblue_dark: #6687A8;
+@pfot_brown: #B8AA8C;
+@pfot_brown_dark: #656357;
+@pfot_green: #7CB61C;
+
+//Button_hover
+@pfot_green_dark_hover: darken(@pfot_green, 16%);
+@pfot_red_dark_hover: darken(@pfot_bg_red, 16%);
+//TEXT Hintergrund
+//@pfot_bg_red: #fd1619;
+// farbe von der pathenschaftsseite #CD1719
+//@pfot_bg_red: #871717;
+//@pfot_bg_yellow: #ffdd75;
+@pfot_bg_red: #d90000;
+@pfot_bg_yellow: #ffde5e;
+@pfot_bg_dark: #302010;
+
+// Text
+@pfot_text_dark: black;
+@pfot_text_light: white;
+//@pfot_text_red: #cd1619;
+@pfot_text_red: #d90000;
+//@pfot_text_yellow: #ffdd75;
+@pfot_text_yellow: #ffde5e;
+// Hyperlinks
+@pfot_link_dark: @pfot_text_red;
+@pfot_link_dark_hover: lighten(@pfot_link_dark, 16%);
+@pfot_link_medium: @pfot_lightblue_medium;
+@pfot_link_medium_hover: darken(@pfot_link_medium, 16%);
+
+@pfot_link_dark_footer: @pfot_lightblue_dark;
+@pfot_link_dark_hover_footer: darken(@pfot_link_dark_footer, 16%);
+// Transparent
+@pfot_transparent: 85%;
+//@headings: h1,h2,h3,h4,h5;
+@iterations: 5;
+
+div.js_product .label { font-size: 58%; }
+
+header .navbar-brand {
+    height: 50px;
+//    margin-top: -20px;
+    background-color: transparent;
+}
+
+header a:hover.navbar-brand.logo {
+    background-color: transparent;
+}
+header a.navbar-brand.logo {
+
+}
+
+@media (min-width: 769px) {
+//  .navbar-static-top {
+//    height: 75px;
+//  }
+//  .top-nav-collapse {
+//    height: 50px;
+//  }
+}
+
+@media (max-width: 768px) {
+//    .navbar-static-top {
+//    height: 75px;
+//  }
+//    .top-nav-collapse {
+//    height: 50px;
+//  }
+}
+
+#wrapwrap .navbar-default {
+background-color: @pfot_bg_red;
+border: 0px;
+box-shadow: none;
+}
+
+//.top-fixed-top{
+//  position: fixed !important;
+//  top: 0;
+//  width: 100%;
+//}
+.top-nav-collapse{
+  position: fixed !important;
+  top: 0;
+  width: 100%;
+}
+#wrapwrap .navbar-static-top, #wrapwrap .navbar-static-bottom {
+z-index: 999 !important;
+//  transition: height .5s ease-in-out;
+background-color: @pfot_bg_red;
+opacity: 0.9;
+transition: height .5s ease-in-out;
+transition-property: background, opacity;
+}
+.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+  margin-left: -15px;
+  margin-bottom: -60px;
+
+}
+header a.navbar-brand img {
+    max-height: 70px;
+//    padding-top: 9px;
+//    padding-right: 20px;
+}
+@media (max-width: 1200px) {
+  .navbar-brand img {display: none;}
+}
+@media (max-width: 768px) {
+    header .navbar-brand {
+        height: 60px;
+//        margin-top: -5px;
+//        background-color: white;
+    }
+
+    header a.navbar-brand img {
+        max-height: 60px;
+        padding-top: 1px;
+        padding-right: 20px;
+    }
+    header .navbar-default .navbar-nav .open .dropdown-menu>li>a {
+      color: white;
+    }
+    header .navbar-default .navbar-nav .open .dropdown-menu>li>a:hover,
+    header .navbar-default .navbar-nav .open .dropdown-menu>li>a:focus {
+      color: @pfot_yellow_dark;
+    }
+}
+
+
+/* MIXINS AND GUARDS */
+
+// .pfot_link: Set Link Color
+//.pfot_link(@linkcolor; @linkcolorhover; @bgcolor; @lightness) when (default()) {
+//  a {
+//    color: @linkcolor;
+//    &:hover {
+//      color: @linkcolorhover;
+//    }
+//  }
+//}
+//// Change Link Color if link and background colors have similar hue and saturation
+//.pfot_link(@linkcolor; @linkcolorhover; @bgcolor; @lightness)
+//          when (abs(hue(@bgcolor) - hue(@linkcolor)) < 36) and (abs(luma(@bgcolor) - luma(@linkcolor)) < 20%) {
+//  a {
+//    color: hsl(hue(@linkcolor), saturation(@linkcolor), lightness(@linkcolor) + @lightness);
+//    &:hover {
+//      color: hsl(hue(@linkcolorhover), saturation(@linkcolorhover), lightness(@linkcolorhover) + @lightness);
+//    }
+//  }
+//}
+//
+//// pfot_text: set text color and call .pfot_link (see treshold of 37% in second statement)
+//// Light Background = dark text, dark links
+//.pfot_text (@bgcolor; @transparent: 100%) when (default()) {
+//  color: @pfot_text_dark;
+//  .pfot_link (@pfot_link_dark, @pfot_link_dark_hover, fade(@bgcolor, @transparent), -26%);
+//}
+//// Dark background = light text, light links
+//.pfot_text (@bgcolor; @transparent: 100%) when (luma(fade(@bgcolor, @transparent)) < 37%) {
+//  color: @pfot_text_light;
+//  .pfot_link (@pfot_link_light, @pfot_link_light_hover, fade(@bgcolor, @transparent), 26%);
+//}
+
+// .pfot_background: Set Background Color für ältere browser 2 mal
+.pfot_background(@bgcolor; @transparent: 100%) {
+  background-color: @bgcolor;
+  background-color: fade(@bgcolor, @transparent);
+//  .pfot_text(@bgcolor, @transparent);
+}
+
+// .pfot_radgradient: Set Background as Radial Gradient
+.pfot_radgradient(@bgcolor: #000000; @transparent: 100%; @start: 14%; @end: 100%; @startcolor: #FFFFFF) {
+  /* Fallback if gradient is not supported at all */
+  background-color: @bgcolor;
+  /* Older Browsers */
+  background: -moz-radial-gradient(center, ellipse cover, fade(@startcolor, @transparent) @start, fade(@bgcolor, @transparent));
+  background: -webkit-gradient(radial, center center, 0px, center center, @end, color-stop(@start,fade(@startcolor, @transparent)), color-stop( @end,fade(@bgcolor, @transparent)));
+  background: -webkit-radial-gradient(center, ellipse cover,  fade(@startcolor, @transparent) @start,fade(@bgcolor, @transparent)  @end);
+  background: -o-radial-gradient(center, ellipse cover,  fade(@startcolor, @transparent) @start,fade(@bgcolor, @transparent)  @end);
+  background: -ms-radial-gradient(center, ellipse cover,  fade(@startcolor, @transparent) @start,fade(@bgcolor, @transparent)  @end);
+  /* W3C CSS3 */
+  background: radial-gradient(ellipse at center,  fade(@startcolor, @transparent) @start,fade(@bgcolor, @transparent)  @end);
+//  .pfot_text(@startcolor, @transparent);
+}
+
+
+// NAVBAR
+.goToTop {
+  position: fixed;
+  top: 0;
+  height: 70px;
+  z-index: 1;
+}
+
+/* ---- BASIC ELEMENTS ---- */
+/* Links */
+a {
+  color: @pfot_link_medium;
+  &:hover {color: @pfot_link_medium_hover;}
+}
+main a.btn {
+    color: white;
+    &:hover {color: white;}
+}
+
+hr {
+  border: none;
+  height: 1px;
+  .pfot_radgradient(@pfot_grey_light, @pfot_transparent)
+}
+
+.blog_title h1, .blog_title .h1 {
+    background-color: #000000;
+    background: rgba(0,0,0,0.3);
+}
+.blog_title h2, .blog_title .h2 {
+    background-color: #000000;
+    background: rgba(0,0,0,0.3);
+}
+
+.website_blog {
+  h2.mb4 {
+    font-size: 34px;
+  }
+}
+//Font Sizing
+.h(@index) when (@index > 0) {
+h@{index} {
+        font-size: 64px - @index*10;
+}
+.h(@index - 1);
+}
+.h(0) {}
+.h(@iterations);
+
+//@{headings}
+h1,h2,h3,h4,h5 {
+  margin-top: 0;
+}
+//beispiel: http://jsfiddle.net/zxVhL/16/
+.pfot_img_badge-header-after1 {
+  //background-color: @pfot_bg_yellow; NEWS
+  width: 150px;
+  height: 184px;
+  position: absolute;
+  top: 70%;
+  right: 10%;
+}
+.pfot_img_badge-header-after2 {
+  //background-color: @pfot_bg_yellow; SIEGEL
+  width: 180px;
+  height: 180px;
+  position: absolute;
+  top: 70%;
+  right: 10%;
+}
+.pfot_img_badge-header-after3 {
+  //background-color: @pfot_bg_yellow; OHNE SCHLEIFE
+  width: 150px;
+  height: 184px;
+  position: absolute;
+  top: 70%;
+  right: 10%;
+}
+.pfot_img_badge-header-after4 {
+  //background-color: @pfot_bg_yellow; PATE_werden
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  top: 60%;
+  right: 10%;
+}
+
+.btn-default {
+  background-color: @pfot_lightblue_medium;
+  border-color: @pfot_lightblue_medium;
+  &:hover {
+    background-color: @pfot_lightblue_dark;
+  }
+}
+.btn-success {
+  background-color: @pfot_green;
+  border-color: @pfot_green;
+  &:hover {
+    background-color: @pfot_green_dark_hover;
+  }
+}
+.btn-primary {
+  background-color: @pfot_lightblue_medium;
+    border-color: @pfot_lightblue_medium;
+  &:hover {
+    background-color: @pfot_lightblue_dark;
+  }
+}
+.btn-info {
+  background-color: @pfot_bg_yellow;
+    border-color: @pfot_bg_yellow;
+  &:hover {
+    background-color: @pfot_yellow_dark;
+  }
+}
+.btn-warning {
+  background-color: @pfot_brown;
+    border-color: @pfot_brown;
+  &:hover {
+    background-color: @pfot_brown_dark;
+  }
+}
+.btn-danger {
+  background-color: @pfot_bg_red;
+    border-color: @pfot_bg_red;
+  &:hover {
+    background-color: @pfot_red_dark_hover;
+  }
+}
+
+
+//TEXT in Bildern
+/* Ribbon for promotionso on products */
+img.dd_ribbon_text .dd_ribbon-wrapper {
+  display: block;
+}
+img .dd_ribbon-wrapper {
+  display: none;
+  width: 85px;
+  height: 88px;
+  z-index: 5;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+img .dd_ribbon {
+  font: bold 15px Sans-Serif;
+  color: white;
+  text-align: center;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  position: relative;
+  padding: 7px 0;
+  left: -5px;
+  top: 15px;
+  width: 120px;
+  cursor: default;
+}
+
+//$(document).ready( function() {$('.pfot_img_badge-header').after('<img src="/website_pfoh/static/src/img/badge/pfotimg_badge-test.png" class="pfot_img_badge-header-after"');});
+
+//    pfotimg_badge-test.png
+
+//*.icon-blue {color: #0088cc}
+//*.icon-grey {color: grey}
+//i {
+//    width:100px;
+//    text-align:center;
+//    vertical-align:middle;
+//    position: relative;
+//}
+//.badge:after{
+//    content:"test";
+//    position: absolute;
+//    background: rgba(0,0,255,1);
+//    height:2rem;
+//    top:1rem;
+//    right:1.5rem;
+//    width:2rem;
+//    text-align: center;
+//    line-height: 2rem;;
+//    font-size: 1rem;
+//    border-radius: 50%;
+//    color:white;
+//    border:1px solid blue;
+//}
+
+/* ---- CONTENT HEADER ---- */
+
+header .navbar-default {
+  background-color: @pfot_bg_red;
+//  color: @pfot_text_yellow;
+//  border-color: @pfot_grey_darkdesat;
+}
+header .navbar-default .navbar-nav>.active>a {
+//  background-color: white;
+  color: @pfot_yellow_dark;
+//  border-color: @pfot_grey_darkdesat;
+}
+
+//header a.navbar-brand.logo {
+//  padding: 0 15px;
+//  margin-top: 6px;
+//  margin-bottom: 4px;
+//}
+//header .nav {
+//  margin-top: 10px;
+//}
+header .navbar-default .navbar-nav>li>a {
+  color: white;
+}
+header .navbar-nav>li>a:visited {
+  color: white;
+  background-color: transparent;
+  border-color: @pfot_bg_red;
+}
+header .navbar-default .navbar-nav>li>a:hover,
+.navbar-default .navbar-nav>li>a:hover:visited,
+.navbar-default .navbar-nav>li>a:focus .navbar-default {
+  color: @pfot_yellow_dark;
+  background-color: transparent;
+  border-color: @pfot_bg_red;
+}
+header .navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
+  color: white;
+  background-color: transparent;
+  border-color: @pfot_bg_red;
+}
+header .dropdown-menu .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus{
+  color: @pfot_yellow_dark;
+  background-color: transparent;
+ }
+
+header .dropdown-menu {
+  background-color: @pfot_bg_red;
+  background-color: fade(@pfot_bg_red,85%);
+  border-radius: 6px;
+}
+header .dropdown-menu>li>a{
+  color: white;
+
+}
+header .dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus{
+  color: @pfot_yellow_dark;
+  background-color: transparent;
+}
+header .dropdown-menu>li>a:hover,
+header .dropdown-menu>li>a:focus {
+  color: @pfot_yellow_dark;
+  background-color: transparent;
+}
+
+.pfotenhilfe_bg_grau {
+  background-image: url(/website_pfoh/static/src/img/pfote.png);
+  background-repeat: repeat;
+}
+.pfotenhilfe_bg_sw {
+  background-image: url(/website_pfoh/static/src/img/pfote.gif);
+  background-repeat: repeat;
+}
+/* ---- CONTENT BODY ---- */
+body {
+  font-family: Arial, 'Trebuchet MS';
+}
+/* ---- CONTENT FOOTER ---- */
+footer {
+  display: block;
+  height: 100%;
+  margin-top: 3em;
+  padding-top: 3em;
+  color: @pfot_brown;
+  background: @pfot_grey_dark;
+  a {
+    color: @pfot_link_dark_footer;
+    &:hover {
+      color: @pfot_link_dark_hover_footer;
+    }
+  }
+}
+
+
+/* -------------------- SNIPPET OPTIONS ------------------------ */
+
+// Bild Umrandungen
+
+  //.pfot_background(@pfot_yellow_light);//
+  img:not(.cke_iframe), .media_iframe_video, span.fa, i.fa {
+  &.pfot_imgrad_red {
+      border: solid 8px @pfot_bg_red;
+      border-radius: 12px;
+  }
+}
+  //.pfot_background(@pfot_yellow_light);//
+  img:not(.cke_iframe), .media_iframe_video, span.fa, i.fa {
+  &.pfot_imgrad_yellow {
+      border: solid 8px @pfot_bg_yellow;
+      border-radius: 12px;
+  }
+}
+
+  //.pfot_background(@pfot_yellow_light);//
+  img:not(.cke_iframe), .media_iframe_video, span.fa, i.fa {
+    &.pfot_imgrad_white {
+      border: solid 8px white;
+      border-radius: 12px;
+    }
+  }
+
+   //.pfot_background(@pfot_yellow_light);//
+  img:not(.cke_iframe), .media_iframe_video, span.fa, i.fa {
+  &.pfot_imgrad_none {
+      border: 0;
+      border-radius: 0;
+  }
+}
+// Überschriften
+  .pfot_heading_red{
+    h1,h2,h3,h4,h5{
+    color: @pfot_text_red;
+  }
+}
+  .pfot_heading_red_bg{
+    h1,h2,h3,h4,h5{
+    background-color: @pfot_yellow_medium;
+    border-radius: 8px;
+    border: 5px solid;
+    border-color: @pfot_yellow_medium;
+    color: @pfot_text_red;
+  }
+}
+  .pfot_heading_yellow {
+//     @{headings} {
+    h1,h2,h3,h4,h5{
+    color: @pfot_text_yellow;
+      }
+  }
+  //@{headings}{
+  .pfot_heading_white {
+//     @{headings} {
+    h1,h2,h3,h4,h5{
+    color: white;
+      }
+  }
+  //.pfot_yellow_light {
+  //  .pfot_background(@pfot_bg_yellow);
+  //  @{headings} {
+  //      color: @pfot_text_red;
+  //  }
+  //}
+  //.pfot_white_light {
+  //  @{headings} {
+  //      color: @pfot_text_red;
+  //  }
+  //}
+  //.pfot_red_light {
+  //  .pfot_background(@pfot_bg_red);
+  //  @{headings} {
+  //      color: @pfot_text_yellow;
+  //  }
+  //}
+
+  //.pfot_yellow_light_tr {
+  //  .pfot_background(@pfot_yellow_light, @pfot_transparent);
+  //}
+
+//// HINTERGRÜNDE
+.pfot_background_white {
+  background-color: white;
+}
+.jumbotron {
+  background-color: white;
+}
+
+  //// Gradients
+  .pfot_radgradient_yellow_light {
+    .pfot_radgradient(@pfot_yellow_light, @pfot_transparent);
+  }
+
+  // ----- SHOP area -----
+  #product_detail {
+    text-align: center;
+    .input-group {
+
+    }
+    .col-sm-5, .col-md-5, .col-lg-4, .col-lg-offset-1 {
+//      padding: 5%;
+      //margin-top: 2%;
+      border: solid 1px @pfot_lightblue_medium;
+      border-radius: 6px;
+    }
+  }
+//  .css_quantity {
+//    display: none;
+//  }
+.radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {
+  float: none;
+}
+  #order_delivery  {
+    display: none;
+  }
+  //ausblenden Spendenkorb Button
+//.js_check_product {
+//  display: none;
+//}
+label[for=vat]{
+    display: none;
+}
+input[name=vat]{
+  display: none;
+}
+  .shop_menu_oa>ul {
+    font-weight:bold;
+  }
+
+  #products_grid_before {
+    ul{
+      li{
+        font-weight:bold;
+        &:first-child{
+           text-align:center;
+        }
+      ul{
+        li{
+          font-weight:normal;
+          &:first-child{
+          text-align:left;
+          }
+        }
+      }
+ }
+}
+  }
+// Patterns
+// HINT: carefully find out the average background color of the pattern and set it in background as fallback and
+//       call .pfot_text with this color also!
+//.pfot_pattern_cartographer {
+//  background: black url("@{pfot_path}/cartographer.png") repeat;
+//  .pfot_text(black);
+//}
+//.pfot_pattern_concrete_wall {
+//  background: black url("@{pfot_path}/concrete_wall.png") repeat;
+//  .pfot_text(black);
+//}

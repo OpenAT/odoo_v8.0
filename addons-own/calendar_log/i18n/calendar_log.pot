@@ -1,0 +1,141 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* calendar_log
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-08-10 06:41+0000\n"
+"PO-Revision-Date: 2015-08-10 06:41+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: calendar_log
+#: model:ir.model,name:calendar_log.model_calendar_attendee
+msgid "Attendee information"
+msgstr ""
+
+#. module: calendar_log
+#: model:ir.model,name:calendar_log.model_calendar_event
+msgid "Calendar Event"
+msgstr ""
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_event_form_calendar_log
+#: view:calendar.event:calendar_log.view_calendar_event_form_popup
+#: field:calendar.event,category_id:0
+msgid "Category"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event.category,create_uid:0
+msgid "Created by"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event.category,create_date:0
+msgid "Created on"
+msgstr ""
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_event_form_calendar_log
+msgid "Do not send invitation e-mails"
+msgstr ""
+
+#. module: calendar_log
+#: help:calendar.event,no_invitations:0
+msgid "Do not send invitation e-mails!"
+msgstr ""
+
+#. module: calendar_log
+#: help:calendar.event,expense_allowance:0
+msgid "Eligible for expense refund!"
+msgstr ""
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_event_tree_calendar_log
+msgid "Expense"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event,expense_allowance:0
+msgid "Expense Allowance"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event.category,id:0
+msgid "ID"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event,meeting_minutes:0
+msgid "Internal Meeting Minutes"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event.category,write_uid:0
+msgid "Last Updated by"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event.category,write_date:0
+msgid "Last Updated on"
+msgstr ""
+
+#. module: calendar_log
+#: view:calendar.event.category:calendar_log.view_calendar_event_category_tree
+#: model:ir.actions.act_window,name:calendar_log.action_calendar_category_type
+#: model:ir.ui.menu,name:calendar_log.menu_calendar_event_category
+msgid "Meeting Categories"
+msgstr ""
+
+#. module: calendar_log
+#: model:ir.model,name:calendar_log.model_calendar_event_category
+msgid "Meeting Category"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event.category,name:0
+msgid "Name"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event,no_invitations:0
+msgid "No invitation e-mails!"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event,odometer_finish:0
+msgid "Odometer at finish"
+msgstr ""
+
+#. module: calendar_log
+#: field:calendar.event,odometer_start:0
+msgid "Odometer at start"
+msgstr ""
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_event_form_calendar_log
+msgid "Public Description"
+msgstr ""
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_event_tree_calendar_log
+msgid "True"
+msgstr ""
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_event_calendar_calendar_log
+msgid "[category_id]: [name]"
+msgstr ""
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_event_calendar_calendar_log
+msgid "week"
+msgstr ""
+
