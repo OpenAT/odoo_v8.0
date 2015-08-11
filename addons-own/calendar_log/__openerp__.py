@@ -18,10 +18,10 @@ Use the calender as a simple log. E.g. for meetings minutes or as a work log.
         'base',
         'calendar',
         'crm',
+        'calendar_category',
     ],
     'installable': True,
     'data': [
-        'security/ir.model.access.csv',
         'views/views.xml',
     ],
 }

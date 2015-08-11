@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+                
+        <record model="calendar.event.category" id="category_customermeeting">
+            <field name="name">Customer Meeting</field>
+        </record>
+
+        <record model="calendar.event.category" id="category_internalmeeting">
+            <field name="name">Internal Meeting</field>
+        </record>
+
+        <record model="calendar.event.category" id="category_trip">
+            <field name="name">Trip</field>
+        </record>
+
+        <record model="calendar.event.category" id="category_worklog">
+            <field name="name">Work Log</field>
+        </record>
+
+        <record model="calendar.event.category" id="category_private">
+            <field name="name">Private Appointment</field>
+        </record>
+
+    </data>
+</openerp>

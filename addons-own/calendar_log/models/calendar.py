@@ -1,30 +1,38 @@
 # -*- coding: utf-8 -*-
 
+from openerp import tools, api
+from openerp.fields import Many2one, Boolean, Integer, Text
 from openerp.osv import fields, osv
-from openerp import tools
 
 
-class calendar_event_category(osv.Model):
+class calendar_event(osv.osv):
+    _inherit = 'calendar.event'
+    # If we do not want to set a default value for category_id but still be able to install this addon in an existing
+    # Database we could use the def _auto_init method to execute an SQL query and prepopulate the table
+    # https://www.odoo.com/es_ES/forum/help-1/question/is-there-a-way-to-set-a-value-for-a-field-for-all-existing-records-in-the-database-at-addon-installation-only-89400
+    # https://gist.github.com/lepistone/3ca65107fc7344440777
+
+    @api.model
+    def _get_category(self):
+        category = self.env.ref("calendar_category.category_internalmeeting", raise_if_not_found=False)
+        if not category:
+            category = self.env['calendar.event.category'].search([], limit=1, order='id')
+        return category
+
+    no_invitations = Boolean(string='No invitation e-mails!', help='Do not send invitation e-mails!', default=True)
+    expense_allowance = Boolean(string='Expense Allowance', help='Eligible for expense refund!')
+    odometer_start = Integer(string='Odometer at start')
+    odometer_finish = Integer(string='Odometer at finish')
+    category_id = Many2one('calendar.event.category', string='Category', required=True,
+                           default=lambda self: self._get_category())
+    meeting_minutes = Text('Internal Meeting Minutes')
+
+
+class calendar_event_category(osv.osv):
     _name = 'calendar.event.category'
     _description = 'Meeting Category'
     _columns = {
         'name': fields.char('Name', required=True, translate=True),
-    }
-
-
-class calendar_event(osv.Model):
-    _inherit = ["calendar.event"]
-
-    _columns = {
-        'no_invitations': fields.boolean('No invitation e-mails!', help='Do not send invitation e-mails!'),
-        'expense_allowance': fields.boolean('Expense Allowance', help='Eligible for expense refund!'),
-        'odometer_start': fields.integer('Odometer at start'),
-        'odometer_finish': fields.integer('Odometer at finish'),
-        'category_id': fields.many2one('calendar.event.category', 'Category', required=True),
-        'meeting_minutes': fields.text('Internal Meeting Minutes'),
-    }
-    _defaults = {
-        'no_invitations': True,
     }
 
 

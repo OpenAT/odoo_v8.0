@@ -2,27 +2,6 @@
 <openerp>
     <data>
 
-        <!-- NEW: Calendar Events Category Tree View -->
-        <record id="view_calendar_event_category_tree" model="ir.ui.view">
-            <field name="name">Meeting Categories Tree</field>
-            <field name="model">calendar.event.category</field>
-            <field name="arch" type="xml">
-                <tree string="Meeting Categories" editable="bottom">
-                    <field name="name"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="action_calendar_category_type" model="ir.actions.act_window">
-            <field name="name">Meeting Categories</field>
-            <field name="res_model">calendar.event.category</field>
-            <field name="view_type">form</field>
-            <field name="view_id" ref="view_calendar_event_category_tree"/>
-        </record>
-
-        <menuitem id="menu_calendar_event_category" parent="calendar.menu_calendar_configuration" action="action_calendar_category_type" groups="base.group_no_one"/>
-
-
         <!-- INHERIT: CALENDAR FORM VIEW: Add Fields -->
         <record id="view_calendar_event_form_calendar_log" model="ir.ui.view">
             <field name="name">view_calendar_event_form_calendar_log</field>
