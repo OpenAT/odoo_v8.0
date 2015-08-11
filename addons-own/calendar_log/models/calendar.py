@@ -7,6 +7,10 @@ from openerp.osv import fields, osv
 
 class calendar_event(osv.osv):
     _inherit = 'calendar.event'
+    # If we do not want to set a default value for category_id but still be able to install this addon in an existing
+    # Database we could use the def _auto_init method to execute an SQL query and prepopulate the table
+    # https://www.odoo.com/es_ES/forum/help-1/question/is-there-a-way-to-set-a-value-for-a-field-for-all-existing-records-in-the-database-at-addon-installation-only-89400
+    # https://gist.github.com/lepistone/3ca65107fc7344440777
 
     @api.model
     def _get_category(self):
