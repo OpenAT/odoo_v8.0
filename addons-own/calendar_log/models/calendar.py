@@ -26,7 +26,18 @@ class calendar_event(osv.osv):
     category_id = Many2one('calendar.event.category', string='Category', required=True,
                            default=lambda self: self._get_category())
     meeting_minutes = Text('Internal Meeting Minutes')
+    mainpartner_id = Many2one('res.partner', string='Main Partner')
 
+    @api.onchange('mainpartner_id')
+    def _add_attendee(self):
+        if self.mainpartner_id:
+            # http://odoo-new-api-guide-line.readthedocs.org/en/latest/environment.html#the-ids-attribute
+            # http://www.mindissoftware.com/2014/11/07/Understand-Odoo-Model-Part1
+            # https://github.com/odoo/odoo/issues/2693
+            # https://www.odoo.com/fr_FR/forum/help-1/question/how-to-add-records-in-many2many-field-82878
+            # https://www.odoo.com/fr_FR/forum/help-1/question/how-to-insert-value-to-a-one2many-field-in-table-with-create-method-28714
+            # https://www.odoo.com/fr_FR/forum/help-1/question/insert-new-record-into-one2many-field-20931
+            self.partner_ids = [(4, self.mainpartner_id.id)]
 
 class calendar_event_category(osv.osv):
     _name = 'calendar.event.category'

@@ -8,16 +8,22 @@
             <field name="model">calendar.event</field>
             <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
             <field name="arch" type="xml">
+                <!-- INFO: has to be the first entry cause we only search for h2 which will be altered later on -->
                 <xpath expr="//div[@class='oe_title']/h2" position="after">
-                    <div style="vertical-align: inherit;">
+                    <div style="vertical-align: inherit; padding-bottom: 1em;">
                         <label for="no_invitations" string="Do not send invitation e-mails "/>
                         <field name="no_invitations" class="oe_inline" style="vertical-align: inherit;" />
                     </div>
                 </xpath>
+
                 <xpath expr="//label[@for='partner_ids']" position="before">
                     <label for="category_id" string="Category" class="oe_edit_only"/>
                     <h2 style="padding-bottom: 1em;">
                         <field name="category_id"/>
+                    </h2>
+                    <label for="mainpartner_id" string="Main Partner"/>
+                    <h2>
+                        <field name="mainpartner_id"/>
                     </h2>
                 </xpath>
                 <xpath expr="//field[@name='duration']" position="after">
@@ -74,8 +80,24 @@
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="category_id"/>
                     <field name="phonecall_id"/>
+                    <field name="opportunity_id"/>
                     <field name="expense_allowance"/>
                     <field name="meeting_minutes"/>
+                    <field name="allday"/>
+                    <field name="mainpartner_id"/>
+                    <separator/>
+                    <filter string="No All-Day Events" domain="[('allday','=',False)]" help="No All-Day Events"/>
+                    <separator/>
+                    <filter string="No private Events" domain="[('class','!=','private')]" help="No private Events"/>
+                    <separator/>
+                </xpath>
+                <xpath expr="//filter[@string='Privacy']" position="after">
+                    <filter string="Category"  domain="[]" context="{'group_by':'category_id'}"/>
+                    <filter string="Month"  domain="[]" context="{'group_by':'start:month'}"/>
+                    <filter string="Year"  domain="[]" context="{'group_by':'start:year'}"/>
+                    <filter string="Main Partner"  domain="[]" context="{'group_by':'mainpartner_id'}"/>
+                    <filter string="Opportunity"  domain="[]" context="{'group_by':'opportunity_id'}"/>
+                    <filter string="Phone Call"  domain="[]" context="{'group_by':'phonecall_id'}"/>
                 </xpath>
             </field>
         </record>
@@ -122,6 +144,28 @@
                     <field name="category_id"/>
                 </xpath>
             </field>
+        </record>
+
+        <!-- NEW: CALENDAR GRAPH VIEW -->
+        <record id="view_calendar_event_graph" model="ir.ui.view">
+            <field name="name">calendar.event.graph</field>
+            <field name="model">calendar.event</field>
+            <field name="arch" type="xml">
+                <graph string="Events" type="bar">
+                    <field name="user_id" type="row"/>
+                    <field name="duration" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="calendar.action_calendar_event" model="ir.actions.act_window">
+            <field name="view_mode">calendar,tree,form,gantt,graph</field>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_view_calendar_event_graph">
+            <field name="act_window_id" ref="calendar.action_calendar_event"/>
+            <field name="sequence" eval="5"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="view_calendar_event_graph"/>
         </record>
 
     </data>
