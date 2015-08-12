@@ -79,6 +79,15 @@ class base_config_settings(osv.osv_memory):
                                                       '\n Installs Module: module_website_files'),
         'module_mail_delete_access_link': fields.boolean('mail_delete_access_link -- Delete Access-Document Link from odoo emails'),
         'module_mail_delete_sent_by_footer': fields.boolean('mail_delete_sent_by_footer -- Remove send by odoo from odoo emails'),
+        'module_web_advanced_search_x2x': fields.boolean('web_advanced_search_x2x -- Better search for x2many fields'),
+        'module_web_translate_dialog': fields.boolean('web_translate_dialog -- Easier Translation Dialog for odoo modules'),
+        'module_website_cookie_notice': fields.boolean('website_cookie_notice -- Cooky-Notice Banner'),
+        'module_website_no_crawler': fields.boolean('website_no_crawler -- Write new Robots.txt to disallow site indexing while developping'),
+        'module_website_redirect': fields.boolean('website_redirect -- Create redirects in the odoo backend'),
+        'module_mail_sent': fields.boolean('mail_sent -- Add a SENT Menu to odoo'),
+        'module_mail_outgoing': fields.boolean('mail_outgoing -- Outgoing E-Mail overview for admins'),
+        'module_mail_fix_553': fields.boolean('mail_fix_553 -- change Domain of FROM field for outgoing mails'),
+        'module_inactive_session_timeout': fields.boolean('inactive_session_timeout -- Remove all inactive session after a given time'),
 
         # Addons Own
         'module_website_crm_extended': fields.boolean('website_crm_extended -- Default sales group for lead from contact formular',

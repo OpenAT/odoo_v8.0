@@ -94,6 +94,42 @@
                                     <field name="module_mail_delete_sent_by_footer" class="oe_inline" />
                                     <label for="module_mail_delete_sent_by_footer" />
                                 </div>
+                                <div>
+                                    <field name="module_web_advanced_search_x2x" class="oe_inline" />
+                                    <label for="module_web_advanced_search_x2x" />
+                                </div>
+                                <div>
+                                    <field name="module_web_translate_dialog" class="oe_inline" />
+                                    <label for="module_web_translate_dialog" />
+                                </div>
+                                <div>
+                                    <field name="module_website_cookie_notice" class="oe_inline" />
+                                    <label for="module_website_cookie_notice" />
+                                </div>
+                                <div>
+                                    <field name="module_website_no_crawler" class="oe_inline" />
+                                    <label for="module_website_no_crawler" />
+                                </div>
+                                <div>
+                                    <field name="module_website_redirect" class="oe_inline" />
+                                    <label for="module_website_redirect" />
+                                </div>
+                                <div>
+                                    <field name="module_mail_sent" class="oe_inline" />
+                                    <label for="module_mail_sent" />
+                                </div>
+                                <div>
+                                    <field name="module_mail_outgoing" class="oe_inline" />
+                                    <label for="module_mail_outgoing" />
+                                </div>
+                                <div>
+                                    <field name="module_mail_fix_553" class="oe_inline" />
+                                    <label for="module_mail_fix_553" />
+                                </div>
+                                <div>
+                                    <field name="module_inactive_session_timeout" class="oe_inline" />
+                                    <label for="module_inactive_session_timeout" />
+                                </div>
 							</div>
 						</div>
 					</group>
