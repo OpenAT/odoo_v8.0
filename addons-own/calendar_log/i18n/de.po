@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-10 06:41+0000\n"
-"PO-Revision-Date: 2015-08-10 06:41+0000\n"
+"POT-Creation-Date: 2015-08-12 10:35+0000\n"
+"PO-Revision-Date: 2015-08-12 10:35+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,41 +21,37 @@ msgid "Attendee information"
 msgstr "Teilnehmer Information"
 
 #. module: calendar_log
-#: model:ir.model,name:calendar_log.model_calendar_event
-msgid "Calendar Event"
-msgstr ""
-
-#. module: calendar_log
 #: view:calendar.event:calendar_log.view_calendar_event_form_calendar_log
 #: view:calendar.event:calendar_log.view_calendar_event_form_popup
+#: view:calendar.event:calendar_log.view_calendar_log_search
 #: field:calendar.event,category_id:0
 msgid "Category"
 msgstr "Kategorie"
 
 #. module: calendar_log
-#: field:calendar.event.category,create_uid:0
-msgid "Created by"
-msgstr "Erstellt von"
-
-#. module: calendar_log
-#: field:calendar.event.category,create_date:0
-msgid "Created on"
-msgstr "Erstellt am"
-
-#. module: calendar_log
 #: view:calendar.event:calendar_log.view_calendar_event_form_calendar_log
 msgid "Do not send invitation e-mails"
-msgstr "Keine Einladungs-E-Mails versenden!"
+msgstr "Keine Einladungs-E-Mails versenden"
 
 #. module: calendar_log
 #: help:calendar.event,no_invitations:0
 msgid "Do not send invitation e-mails!"
-msgstr "Keine Einladungs-E-Mails versenden!"
+msgstr "Keine Einladungs-E-Mails versenden"
 
 #. module: calendar_log
 #: help:calendar.event,expense_allowance:0
 msgid "Eligible for expense refund!"
-msgstr "Wird in der Diätenabrechung breücksichtigt!"
+msgstr "Wird in der Diätenabrechung berücksichtigt!"
+
+#. module: calendar_log
+#: model:ir.model,name:calendar_log.model_calendar_event
+msgid "Event"
+msgstr "Ereignis"
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_event_graph
+msgid "Events"
+msgstr "Events"
 
 #. module: calendar_log
 #: view:calendar.event:calendar_log.view_calendar_event_tree_calendar_log
@@ -68,31 +64,15 @@ msgid "Expense Allowance"
 msgstr "Diäten berechtigt"
 
 #. module: calendar_log
-#: field:calendar.event.category,id:0
-msgid "ID"
-msgstr ""
-
-#. module: calendar_log
 #: field:calendar.event,meeting_minutes:0
 msgid "Internal Meeting Minutes"
-msgstr "Interne (Gesprächs) Notizen"
+msgstr "Internes Protokoll"
 
 #. module: calendar_log
-#: field:calendar.event.category,write_uid:0
-msgid "Last Updated by"
-msgstr "Zuletzt aktualisiert von"
-
-#. module: calendar_log
-#: field:calendar.event.category,write_date:0
-msgid "Last Updated on"
-msgstr "Letzte Aktualisiserung am"
-
-#. module: calendar_log
-#: view:calendar.event.category:calendar_log.view_calendar_event_category_tree
-#: model:ir.actions.act_window,name:calendar_log.action_calendar_category_type
-#: model:ir.ui.menu,name:calendar_log.menu_calendar_event_category
-msgid "Meeting Categories"
-msgstr "Meeting Kategorien"
+#: view:calendar.event:calendar_log.view_calendar_event_form_calendar_log
+#: field:calendar.event,mainpartner_id:0
+msgid "Main Partner"
+msgstr "Hauptkontakt"
 
 #. module: calendar_log
 #: model:ir.model,name:calendar_log.model_calendar_event_category
@@ -100,9 +80,14 @@ msgid "Meeting Category"
 msgstr "Meeting Kategorie"
 
 #. module: calendar_log
-#: field:calendar.event.category,name:0
-msgid "Name"
-msgstr ""
+#: view:calendar.event:calendar_log.view_calendar_log_search
+msgid "Month"
+msgstr "Monat"
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_log_search
+msgid "No All-Day Events"
+msgstr "Keine Ganz-Tages Einträge"
 
 #. module: calendar_log
 #: field:calendar.event,no_invitations:0
@@ -110,14 +95,29 @@ msgid "No invitation e-mails!"
 msgstr "Keine Einladungs-E-Mails!"
 
 #. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_log_search
+msgid "No private Events"
+msgstr "Keine privaten Einträge"
+
+#. module: calendar_log
 #: field:calendar.event,odometer_finish:0
 msgid "Odometer at finish"
-msgstr "Kilometerstand vor der Reise"
+msgstr "Kilometerstand Beginn"
 
 #. module: calendar_log
 #: field:calendar.event,odometer_start:0
 msgid "Odometer at start"
-msgstr "Kilometerstand nach der Reise"
+msgstr "Kilometerstand Ende"
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_log_search
+msgid "Opportunity"
+msgstr "Chance"
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_log_search
+msgid "Phone Call"
+msgstr "Telefonanruf"
 
 #. module: calendar_log
 #: view:calendar.event:calendar_log.view_calendar_event_form_calendar_log
@@ -127,15 +127,20 @@ msgstr "Öffentliche Meeting-Beschreibung"
 #. module: calendar_log
 #: view:calendar.event:calendar_log.view_calendar_event_tree_calendar_log
 msgid "True"
-msgstr ""
+msgstr "True"
+
+#. module: calendar_log
+#: view:calendar.event:calendar_log.view_calendar_log_search
+msgid "Year"
+msgstr "Jahr"
 
 #. module: calendar_log
 #: view:calendar.event:calendar_log.view_calendar_event_calendar_calendar_log
 msgid "[category_id]: [name]"
-msgstr ""
+msgstr "[category_id]: [name]"
 
 #. module: calendar_log
 #: view:calendar.event:calendar_log.view_calendar_event_calendar_calendar_log
 msgid "week"
-msgstr ""
+msgstr "week"
 
