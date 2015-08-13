@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- INHERIT: CALENDAR FORM VIEW: Add Fields -->
+        <record id="view_calendar_event_form_calendar_log_project" model="ir.ui.view">
+            <field name="name">view_calendar_event_form_calendar_log</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='duration']" position="after">
+                    <div style=" margin-top: 1em; color: grey; font-size: 10px"></div>
+                    <div style=" margin-top: 1em; color: grey; font-size: 10px">
+                        The tasks depends on the project!
+                        Clear the project first if you want to search for all tasks!
+                    </div>
+                    <field name="project_id"/>
+                    <field name="task_id"/>
+                    <field name="is_worklog" attrs="{'invisible': ['&amp;', ('project_id','=',False), ('task_id','=',False)]}"/>
+                </xpath>
+                <xpath expr="//label[@for='description']" position="before">
+                        <label for="worklog_text" attrs="{'invisible': ['|', ('is_worklog','=',False), '&amp;', ('project_id','=',False), ('task_id','=',False)]}"/>
+                        <field name="worklog_text" style=" margin-bottom: 1em;" attrs="{'invisible': ['|', ('is_worklog','=',False), '&amp;', ('project_id','=',False), ('task_id','=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!-- INHERIT: CALENDAR FORM POPUP VIEW: Add Fields -->
+        <record id="view_calendar_event_form_popup" model="ir.ui.view">
+            <field name="name">Meetings Popup</field>
+            <field name="model">calendar.event</field>
+            <field name="priority" eval="2"/>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form_popup"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='location']" position="after">
+                    <field name="is_worklog"/>
+                    <field name="project_id"/>
+                    <field name="task_id"/>
+                </xpath>
+                <xpath expr="//form[@string='Meetings']/group" position="after">
+                        <label for="worklog_text" attrs="{'invisible': ['|', ('is_worklog','=',False), '&amp;', ('project_id','=',False), ('task_id','=',False)]}"/>
+                        <field name="worklog_text" style=" margin-bottom: 1em;" attrs="{'invisible': ['|', ('is_worklog','=',False), '&amp;', ('project_id','=',False), ('task_id','=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- INHERIT: CALENDAR SEARCH VIEW -->
+        <record id="view_calendar_log_project_search" model="ir.ui.view">
+            <field name="name">Calendar Search View</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="is_worklog"/>
+                    <field name="project_id"/>
+                    <field name="task_id"/>
+                    <field name="worklog_text"/>
+                </xpath>
+                <xpath expr="//filter[@string='Privacy']" position="after">
+                    <filter string="Project"  domain="[]" context="{'group_by':'project_id'}"/>
+                    <filter string="Task"  domain="[]" context="{'group_by':'task_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- INHERIT: CALENDAR TREE VIEW -->
+        <record model="ir.ui.view" id="view_calendar_event_tree_calendar_log">
+            <field name="name">CRM - Meetings Tree</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="project_id"/>
+                    <field name="task_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

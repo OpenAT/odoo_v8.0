@@ -39,13 +39,6 @@ class calendar_event(osv.osv):
             # https://www.odoo.com/fr_FR/forum/help-1/question/insert-new-record-into-one2many-field-20931
             self.partner_ids = [(4, self.mainpartner_id.id)]
 
-class calendar_event_category(osv.osv):
-    _name = 'calendar.event.category'
-    _description = 'Meeting Category'
-    _columns = {
-        'name': fields.char('Name', required=True, translate=True),
-    }
-
 
 class calendar_attendee(osv.Model):
     _inherit = ["calendar.attendee"]
