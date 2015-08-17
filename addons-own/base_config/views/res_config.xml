@@ -199,6 +199,10 @@
                                     <field name="module_calendar_log" class="oe_inline" />
                                     <label for="module_calendar_log" />
                                 </div>
+                                <div>
+                                    <field name="module_calendar_log_project" class="oe_inline" />
+                                    <label for="module_calendar_log_project" />
+                                </div>
 							</div>
 						</div>
 					</group>

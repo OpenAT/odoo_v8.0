@@ -132,7 +132,9 @@ class base_config_settings(osv.osv_memory):
         'module_partner_fullhierarchy': fields.boolean('partner_fullhierarchy -- allow parents and children for all partners',
                                                          help='allow parents and children for all partners and not just companies!'),
         'module_calendar_log': fields.boolean('calendar_log -- extend the calendar to use it as a log for meeting minutes',
-                                                         help='calendar as log for meeting minutes or as a work log'),
+                                                         help='calendar as log for meeting minutes'),
+        'module_calendar_log_project': fields.boolean('calendar_log_project -- extend the calendar to use it as a log for work logs',
+                                                         help='use the calendar as a simple work log. log work hours to projects or tasks'),
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)
         'module_web_ckeditor4': fields.boolean('web_ckeditor4 -- DEPRECATED! CKeditor4 for any html/text field in the odoo backend!',
