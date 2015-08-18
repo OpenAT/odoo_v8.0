@@ -9,11 +9,19 @@ from openerp.http import request
 
 # import the base controller class to inherit from
 from openerp.addons.website_sale.controllers.main import website_sale
+from openerp.addons.website_sale.controllers.main import QueryURL
 
 _logger = logging.getLogger(__name__)
 
 
 class website_sale_donate(website_sale):
+
+    # SHOP PAGE: Add last_shop_page to the session
+    @http.route()
+    def shop(self, page=0, category=None, search='', **post):
+        request.session['last_shop_page'] = request.httprequest.base_url + '?' + request.httprequest.query_string
+        return super(website_sale_donate, self).shop(page=page, category=category, search=search, **post)
+
     # PRODUCT PAGE: Extend the product page render request to include price_donate and payment_interval
     # so we have the same settings for arbitrary price and payment interval as already set by the user in the so line
     # Todo: Would need to update the Java Script of Website_sale to select the correct product variante if it
@@ -21,6 +29,9 @@ class website_sale_donate(website_sale):
     # /shop/product/<model("product.template"):product>
     @http.route()
     def product(self, product, category='', search='', **kwargs):
+
+        # Store the current request url in the session for possible returns
+        request.session['last_shop_page'] = request.httprequest.base_url + '?' + request.httprequest.query_string
 
         # this will basically pre-render the product page and store it in productpage
         productpage = super(website_sale_donate, self).product(product, category, search, **kwargs)
@@ -55,7 +66,15 @@ class website_sale_donate(website_sale):
 
         return productpage
 
-    # SHOPPING CART: replace the original cart update request to include **kw = all input values of the form
+    # SHOPPING CART: add keep to the values of qcontext
+    # /shop/cart
+    @http.route()
+    def cart(self, **post):
+        cartpage = super(website_sale_donate, self).cart(**post)
+        cartpage.qcontext['keep'] = QueryURL(attrib=request.httprequest.args.getlist('attrib'))
+        return cartpage
+
+    # SHOPPING CART UPDATE: replace the original cart update request to include **kw = all input values of the form
     # /shop/cart/update
     @http.route()
     def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
@@ -74,6 +93,13 @@ class website_sale_donate(website_sale):
                                                       int(product_id), context=context).simple_checkout:
             return request.redirect('/shop/checkout')
 
+        # Return to the last Shop Page (with fully former query string so category or searches are respected)
+        if request.session.get('last_shop_page', False):
+            path = request.session.get('last_shop_page')
+            request.session['last_shop_page'] = False
+            return request.redirect(path)
+
+        # Redirect to the shopping cart
         return request.redirect("/shop/cart")
 
 

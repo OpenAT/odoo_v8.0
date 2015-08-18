@@ -31,6 +31,90 @@
             </xpath>
         </template>
 
+        <!-- SUB-TEMPLATE: Small Cart -->
+        <template id="small_cart" name="Shopping Cart Small">
+
+            <div class="small_cart">
+              <table class='table table-striped table-condensed' id="cart_products" t-if="website_sale_order and website_sale_order.website_order_line">
+                  <thead>
+                      <tr>
+                          <th colspan="2">Item</th>
+                          <th>Price</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    <t t-foreach="website_sale_order.website_order_line" t-as="line">
+                      <tr>
+                          <td colspan="2" t-if="not line.product_id.product_tmpl_id"></td>
+                          <td align="center" t-if="line.product_id.product_tmpl_id">
+                              <span t-field="line.product_id.image_square"
+                                    t-field-options='{"widget": "image", "class": "img-rounded"}'/>
+                          </td>
+                          <td class="text-left" t-if="line.product_id.product_tmpl_id">
+                              <div>
+                                  <small class="text-muted" t-raw="'{0:,.0f}'.format(int(line.product_uos_qty))"/>
+                                  <small class="text-muted"> x </small>
+                                  <t t-if="line.payment_interval_id"><small class="text-muted">(<t t-esc="line.payment_interval_id.name"/>)</small></t>
+                                  <!--<span t-raw="formatLang(line.product_uos_qty, digit=0)"/> x-->
+                                  <a t-attf-href="/shop/product/#{ slug(line.product_id.product_tmpl_id) }">
+                                      <strong t-esc="line.product_id.with_context(display_default_code=False).display_name"/>
+                                  </a>
+
+                              </div>
+                              <div class="text-muted" t-esc="'\n'.join(line.name.splitlines()[1:])"/>
+                          </td>
+                          <td class="text-right" name="price">
+                            <span t-field="line.price_unit" style="white-space: nowrap;" t-field-options='{
+                                 "widget": "monetary",
+                                 "from_currency": "website_sale_order.pricelist_id.currency_id",
+                                 "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+                             }'/>
+                          </td>
+                      </tr>
+                    </t>
+                  </tbody>
+              </table>
+              <t t-call="website_sale.total"/>
+              <div class="clearfix"/>
+                <div class="text-left">
+                    <a href="/" onclick="history.go(-1); return false;" class="btn btn-default mb32">Back</a>
+                    <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line" class="btn btn-primary pull-right mb32" href="/shop/cart">Checkout</a>
+                </div>
+              <div class="clearfix"/>
+            </div>
+        </template>
+
+        <!-- SHOP PRODUCT LISTING: small cart on left side -->
+        <template id="products_cart" inherit_id="website_sale.products" active="False" customize_show="True" name="Product Cart">
+          <xpath expr="//div[@id='products_grid_before']" position="inside">
+              <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+
+              <!-- Cart Button -->
+              <ul class="nav nav-pills nav-stacked mb8">
+                  <li t-att-class="'' if website_sale_order and website_sale_order.cart_quantity else 'hidden'">
+                      <h3>
+                          <a href="/shop/cart">
+                              <i class="fa fa-shopping-cart"></i>
+                              My Items <small class="text-danger">(change)</small>
+                              <!--<span t-attf-class="my_cart_quantity label label-primary" t-esc="website_sale_order and website_sale_order.cart_quantity or ''"/>-->
+                          </a>
+                      </h3>
+                  </li>
+              </ul>
+
+              <!-- Small Cart -->
+              <t t-call="website_sale_donate.small_cart"/>
+
+          </xpath>
+            <!-- ATTENTION this will also be done by the product categories: Test what happens if we use both -->
+          <xpath expr="//div[@id='products_grid_before']" position="attributes">
+              <attribute name="class">col-md-3</attribute>
+          </xpath>
+          <xpath expr="//div[@id='products_grid']" position="attributes">
+              <attribute name="class">col-md-9</attribute>
+          </xpath>
+        </template>
+
 
         <!-- SUB-TEMPLATE: CROWDFUNDING text block -->
         <template id="funding_text" name="Funding Text">
@@ -338,6 +422,25 @@
 
         </template>
 
+        <!-- DONATION PRODUCT PAGE: show shopping cart -->
+        <template id="wsd_product_small_cart" inherit_id="website_sale_donate.wsd_alternate_product_page" name="Show Cart" customize_show="True" active="False">
+            <xpath expr="//t[@t-if='product.payment_interval_ids']" position="after">
+                <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+                <t t-if="website_sale_order and website_sale_order.website_order_line">
+                      <h3 class="small_cart_header">
+                          <a href="/shop/cart">
+                              <i class="fa fa-shopping-cart"></i>
+                              My Items <small class="text-danger">(change)</small>
+                              <!--<span t-attf-class="my_cart_quantity label label-primary" t-esc="website_sale_order and website_sale_order.cart_quantity or ''"/>-->
+                          </a>
+                      </h3>
+
+                      <t t-call="website_sale_donate.small_cart"/>
+                </t>
+            </xpath>
+        </template>
+
+
         <!-- SHOPPING CART: payment interval, quantity controls, correct odoo bug - dont write false if no sales text -->
         <template id="wsd_cart_extended" inherit_id="website_sale.cart" name="Product-Cart Extensions">
             <!-- Add payment interval as text under the product price -->
@@ -385,6 +488,7 @@
         <template id="wsd_continue_shopping" inherit_id="website_sale.continue_shopping" customize_show="True" name="Continue Home Button">
             <xpath expr="//a[@href='/shop']" position="attributes">
                 <attribute name="href">/</attribute>
+                <attribute name="onclick">history.go(-1); return false;</attribute>
             </xpath>
         </template>
 
