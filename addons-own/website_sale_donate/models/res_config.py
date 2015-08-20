@@ -49,6 +49,11 @@ class website_sale_donate_config_settings(osv.osv_memory):
                                                   'state_id_mandatory_ship', type="boolean", string='state_id'),
         'zip_mandatory_ship': fields.related('website_id',
                                              'zip_mandatory_ship', type="boolean", string='zip'),
+        # Force Default Country  (If GeoIP is NOT working and user did not select any country)
         'country_default_value': fields.related('website_id', 'country_default_value', type="many2one",
-                                                relation="res.country", string="Default country for checkout page"),
+                                                relation="res.country", string="Default country for checkout page",
+                                                help="Only used if GEO IP is NOT working and user did not select any country"),
+        # Behaviour
+        'add_to_cart_stay_on_page': fields.related('website_id', 'add_to_cart_stay_on_page', type="boolean",
+                                                   string='Add to Cart and stay on the Page'),
     }

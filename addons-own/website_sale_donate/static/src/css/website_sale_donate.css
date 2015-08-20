@@ -1,6 +1,8 @@
 /* Heart for the shopping cart in top menu */
 .fa-shopping-cart:before {
-  content: "\f004";
+    content: "\f004";
+    /*content: "\f16b";*/
+    /*content: "\f067";*/
 }
 
 
@@ -8,14 +10,14 @@
 /* PRODUCT PAGE website_sale_donate alternative page layout modifications */
 /* Bigger Checkout button */
 .btn-xl, .btn-group-xl > .btn {
-  padding: 14px 24px;
-  font-size: 18px;
-  line-height: 1.33;
-  border-radius: 6px;
+    padding: 14px 24px;
+    font-size: 18px;
+    line-height: 1.33;
+    border-radius: 6px;
 }
 
 #website_sale_donate .oe_price_h4 {
- font-size: 28px;
+    font-size: 28px;
 }
 #website_sale_donate .img-responsive {
     display: inline;
@@ -91,6 +93,10 @@
 
 
 /* PRODUCT LISTINGS */
+.oe_product .product_price a.a-submit {
+    margin-left: 1em;
+}
+
 .oe_product .oe_product_image {
     left: 0;
     right: 0;
@@ -250,6 +256,10 @@
     }
 }
 
+/* Product cart */
+.oe_cart table {
+    margin-bottom: 0;
+}
 
 /* Small Product Cart */
 .small_cart #cart_total h3 {
@@ -271,10 +281,9 @@
      height: auto;
      border: none;
 }
-.small_cart_header {
-    text-align: left;
-    margin-top: 2em;
-    padding-top: 0.5em;
-    border-top: 1px dashed #ccc;
+#wsd-checkout-box .small_cart_header {
+    /*text-align: left;*/
+    margin-top: 2.5em;
+    /*padding-top: 0.5em;*/
+    /*border-top: 1px dashed #ccc;*/
 }
-

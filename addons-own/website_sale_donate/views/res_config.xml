@@ -8,6 +8,14 @@
             <field name="inherit_id" ref="website.view_website_config_settings"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[@string='Domain']" position="after">
+                    <group string="Behaviour">
+                        <label for="add_to_cart_stay_on_page"/>
+                        <div name="add_to_cart_stay_on_page">
+                            <div class="oe_inline">
+                                <field name="add_to_cart_stay_on_page"/>
+                            </div>
+                        </div>
+                    </group>
                     <group string="Mandatory Billing Fields">
                         <!-- NAME IS MANDATORY BY ODOO! -->
                         <!--<label for="name_mandatory_bill"/>-->

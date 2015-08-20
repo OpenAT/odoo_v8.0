@@ -22,7 +22,7 @@
                             </p>
                             <field name="hide_price"/>
                             <field name="price_donate"/>
-                            <field name="price_donate_min" attrs="{'invisible': [('price_donate','=', False)]}"/>
+                            <field name="price_donate_min"/>
                             <field name="payment_interval_ids" widget="many2many_tags" placeholder="Payment Intervals..."/>
                         </group>
                         <separator colspan="2"/>

@@ -2,6 +2,7 @@
 import logging
 from openerp import SUPERUSER_ID
 from openerp import http
+from openerp.tools.translate import _
 from openerp.http import request
 
 # To get a new db connection:
@@ -20,6 +21,7 @@ class website_sale_donate(website_sale):
     @http.route()
     def shop(self, page=0, category=None, search='', **post):
         request.session['last_shop_page'] = request.httprequest.base_url + '?' + request.httprequest.query_string
+        request.session['last_page'] = request.session['last_shop_page']
         return super(website_sale_donate, self).shop(page=page, category=category, search=search, **post)
 
     # PRODUCT PAGE: Extend the product page render request to include price_donate and payment_interval
@@ -31,21 +33,29 @@ class website_sale_donate(website_sale):
     def product(self, product, category='', search='', **kwargs):
 
         # Store the current request url in the session for possible returns
-        request.session['last_shop_page'] = request.httprequest.base_url + '?' + request.httprequest.query_string
+        # INFO: html escaping is done by request.redirect so not needed here!
+        query = {'category': category, 'search': search}
+        query = '&'.join("%s=%s" % (key, val) for (key, val) in query.iteritems() if val)
+        request.session['last_page'] = request.httprequest.base_url + '?' + query
+
+        cr, uid, context = request.cr, request.uid, request.context
 
         # this will basically pre-render the product page and store it in productpage
         productpage = super(website_sale_donate, self).product(product, category, search, **kwargs)
 
-        cr, uid, context, pool = request.cr, request.uid, request.context, request.registry
-        sale_order_id = request.session.sale_order_id
+        # Add Warnings (e.g. by cart_update)
+        productpage.qcontext['warnings'] = kwargs.get('warnings')
+        kwargs['warnings'] = None
 
         # Set a default payment_interval_id: will be rendered as checked in the product page
         if product.payment_interval_ids:
             productpage.qcontext['payment_interval_id'] = product.payment_interval_ids[0].id
 
+        # Get values from sales order line
+        sale_order_id = request.session.sale_order_id
         if sale_order_id:
             # search for a sales order line for the current product in the sales order of the current session
-            sol_obj = pool['sale.order.line']
+            sol_obj = request.registry['sale.order.line']
             # get sale order line id if product or variant of product is in active sale order
             sol = sol_obj.search(cr, SUPERUSER_ID,
                                  [['order_id', '=', sale_order_id],
@@ -74,55 +84,50 @@ class website_sale_donate(website_sale):
         cartpage.qcontext['keep'] = QueryURL(attrib=request.httprequest.args.getlist('attrib'))
         return cartpage
 
-    # SHOPPING CART UPDATE: replace the original cart update request to include **kw = all input values of the form
+    # SIMPLE CHECKOUT
+    # SHOPPING CART UPDATE
     # /shop/cart/update
-    @http.route()
+    @http.route(['/shop/cart/update',
+                 '/shop/simplecheckout/<model("product.product"):product>'
+                 ])
     def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
         cr, uid, context = request.cr, request.uid, request.context
 
-        # Pass kw to _cart_update to transfer all post variables to _cart_update
-        # (This was the only problem with the original method call)
+        product = request.registry['product.product'].browse(cr, SUPERUSER_ID, int(product_id), context=context)
+
+        # Check price_donate_min (in case java script fails)
+        price = kw.get('price_donate') or product.list_price or product.price
+        if product.price_donate_min and float(product.price_donate_min) > float(price):
+            warnings = _('Value must be higher or equal to %s.' % float(product.price_donate_min))
+            return request.redirect('/shop/product/%s?&warnings=%s' % (product_id, warnings))
+
+        # Check Payment Interval
+        # INFO: This is only needed if product are directly added to cart on shop pages (product listings)
+        if 'payment_interval_id' not in kw:
+            if product.payment_interval_ids:
+                kw['payment_interval_id'] = product.payment_interval_ids[0].id
+
+        # Call Super
+        # INFO: Pass kw to _cart_update to transfer all post variables to _cart_update
         # This is needed to get the Value of the arbitrary price from the input field
-        request.website.sale_get_order(force_create=1)._cart_update(product_id=int(product_id),
-                                                                    add_qty=float(add_qty),
-                                                                    set_qty=float(set_qty),
-                                                                    **kw)
+        request.website.sale_get_order(force_create=1, context=context)._cart_update(product_id=int(product_id),
+                                                                                     add_qty=float(add_qty),
+                                                                                     set_qty=float(set_qty),
+                                                                                     context=context,
+                                                                                     **kw)
 
-        # If simple_checkout is set for the product redirect directly to checkout instead of cart
-        if request.registry['product.product'].browse(cr, SUPERUSER_ID,
-                                                      int(product_id), context=context).simple_checkout:
-            return request.redirect('/shop/checkout')
+        # If simple_checkout is set for the product redirect directly to checkout or confirm_order
+        if product.simple_checkout:
+            if kw.get('email') and kw.get('name') and kw.get('shipping_id'):
+                return request.redirect('/shop/confirm_order' + '?' + request.httprequest.query_string)
+            return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
 
-        # Return to the last Shop Page (with fully former query string so category or searches are respected)
-        if request.session.get('last_shop_page', False):
-            path = request.session.get('last_shop_page')
-            request.session['last_shop_page'] = False
-            return request.redirect(path)
+        # Stay on the current page if "Add to cart and stay on current page" is set
+        if request.session.get('last_page') and request.website['add_to_cart_stay_on_page']:
+            return request.redirect(request.session['last_page'])
 
         # Redirect to the shopping cart
         return request.redirect("/shop/cart")
-
-
-    # SIMPLE CHECKOUT:
-    # Add an alternative route for products to directly add them to the shopping cart and DIRECTLY go to the checkout
-    # This is usefull if you want to create buttons to directly pay / donate for a product
-    # HINT: We have to use product.product because otherwise we could not directly check out product variants AND
-    # _cart_update expects an product.product id anyway
-    @http.route(['/shop/simplecheckout/<model("product.product"):product>'], type='http', auth="public", website=True)
-    def simplecheckout(self, product, **kwargs):
-        cr, uid, context, pool = request.cr, request.uid, request.context, request.registry
-
-        request.website.sale_get_order(force_create=1, context=context)._cart_update(product_id=product.id,
-                                                                                     add_qty=1,
-                                                                                     context=context,
-                                                                                     **kwargs)
-
-        # If all relevant Information exists we can directly jump to confirm_order and therefore to payment if
-        # if everything is correct
-        if kwargs.get('email') and kwargs.get('name') and kwargs.get('shipping_id'):
-            return request.redirect('/shop/confirm_order' + '?' + request.httprequest.query_string)
-
-        return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
 
 
     # SET CUSTOM MANDATORY BILLING AND OR SHIPPING FIELDS:

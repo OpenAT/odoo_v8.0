@@ -102,7 +102,8 @@ class AuthDoubleOptIn(openerp.addons.auth_signup.controllers.main.AuthSignupHome
         cr, uid, context = request.cr, request.uid, request.context
 
         if 'button_login' in post:
-            query = '&amp;'.join("%s=%s" % (key, val) for (key, val) in post.iteritems() if val)
+            # INFO: html escaping is done by request.redirect so not needed here!
+            query = '&'.join("%s=%s" % (key, val) for (key, val) in post.iteritems() if val)
             return request.redirect('/web/login?' + query)
 
         # INFO: Adds the auth_signup_config to qcontext
