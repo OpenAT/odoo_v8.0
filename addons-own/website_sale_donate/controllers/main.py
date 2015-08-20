@@ -99,7 +99,7 @@ class website_sale_donate(website_sale):
         price = kw.get('price_donate') or product.list_price or product.price
         if product.price_donate_min and float(product.price_donate_min) > float(price):
             warnings = _('Value must be higher or equal to %s.' % float(product.price_donate_min))
-            return request.redirect('/shop/product/%s?&warnings=%s' % (product_id, warnings))
+            return request.redirect('/shop/product/%s?&warnings=%s' % (product.product_tmpl_id.id, warnings))
 
         # Check Payment Interval
         # INFO: This is only needed if product are directly added to cart on shop pages (product listings)
