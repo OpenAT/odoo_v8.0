@@ -2,14 +2,15 @@
 <openerp>
     <data>
 
+        <!-- TODO: Hide Tax and Delivery from all relevant pages if 0 -->
+
         <!-- Load custom js -->
         <template id="assets_frontend" inherit_id="website.assets_frontend" name="Shop Donate">
             <xpath expr="." position="inside">
                 <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_donate.css' t-ignore="true"/>
-                <!-- HINT: jquery validate is loaded in website_tools -->
+                <!-- INFO: jquery validate is loaded in website_tools -->
                 <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_product_price_form_validate.js"></script>
-                <!-- Disabled just prepared: <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_contact_form_validate.js"></script> -->
-                <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_hide_tax.js"></script>
+                <!-- DISABLED just prepared: <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_contact_form_validate.js"></script> -->
             </xpath>
         </template>
 
@@ -29,6 +30,113 @@
             <xpath expr="//div[@class='oe_product_image']/a/img[@itemprop='image']" position="replace">
                 <img itemprop="image" class="img img-responsive" t-att-src="website.image_url(product, 'image_square')"/>
             </xpath>
+        </template>
+
+        <!-- INHERIT SUB-TEMPLATE total: Hide Tax if 0 -->
+        <template id="wsd_total" inherit_id="website_sale.total">
+            <xpath expr="//tr[@id='order_total_taxes']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'text-muted' if website_sale_order.amount_tax else 'text-muted hidden'</attribute>
+            </xpath>
+        </template>
+
+        <!-- INHERIT SUB-TEMPLATE total: Hide Delivery if 0 -->
+        <template id="wsd_total_delivery" inherit_id="website_sale_delivery.cart_delivery">
+            <xpath expr="//tr[@id='order_delivery']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'text-muted' if website_sale_order.amount_delivery else 'text-muted hidden'</attribute>
+            </xpath>
+        </template>
+
+        <!-- SUB-TEMPLATE: Small Cart Header -->
+        <template id="small_cart_header" name="Small Cart Header">
+          <h3 class="small_cart_header">
+              <a href="/shop/cart">
+                  <i class="fa fa-shopping-cart"></i>My Items <small class="text-danger">(change)</small>
+
+              </a>
+          </h3>
+        </template>
+
+        <!-- SUB-TEMPLATE: Small Cart -->
+        <template id="small_cart" name="Shopping Cart Small">
+
+            <div class="small_cart">
+              <table class='table table-striped table-condensed' id="cart_products" t-if="website_sale_order and website_sale_order.website_order_line">
+                  <thead>
+                      <tr>
+                          <th colspan="2">Item</th>
+                          <th>Price</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    <t t-foreach="website_sale_order.website_order_line" t-as="line">
+                      <tr>
+                          <td colspan="2" t-if="not line.product_id.product_tmpl_id"></td>
+                          <td align="center" t-if="line.product_id.product_tmpl_id">
+                              <span t-field="line.product_id.image_square"
+                                    t-field-options='{"widget": "image", "class": "img-rounded"}'/>
+                          </td>
+                          <td class="text-left" t-if="line.product_id.product_tmpl_id">
+                              <div>
+                                  <small class="text-muted" t-raw="'{0:,.0f}'.format(int(line.product_uos_qty))"/>
+                                  <small class="text-muted"> x </small>
+                                  <t t-if="line.payment_interval_id"><small class="text-muted">(<t t-esc="line.payment_interval_id.name"/>)</small></t>
+                                  <!--<span t-raw="formatLang(line.product_uos_qty, digit=0)"/> x-->
+                                  <a t-attf-href="/shop/product/#{ slug(line.product_id.product_tmpl_id) }">
+                                      <strong t-esc="line.product_id.with_context(display_default_code=False).display_name"/>
+                                  </a>
+                              </div>
+                          </td>
+                          <td class="text-right" name="price">
+                            <span t-field="line.price_unit" style="white-space: nowrap;" t-field-options='{
+                                 "widget": "monetary",
+                                 "from_currency": "website_sale_order.pricelist_id.currency_id",
+                                 "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+                             }'/>
+                          </td>
+                      </tr>
+                    </t>
+                  </tbody>
+              </table>
+              <t t-call="website_sale.total"/>
+              <div class="clearfix"/>
+            </div>
+        </template>
+
+        <!-- SHOP PRODUCT LISTING: small cart on left side -->
+        <template id="products_cart" inherit_id="website_sale.products" active="False" customize_show="True" name="Product Cart">
+          <xpath expr="//div[@id='products_grid_before']" position="inside">
+              <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+
+              <!-- Small Cart Header -->
+              <ul class="nav nav-pills nav-stacked mb8">
+                  <li t-att-class="'' if website_sale_order and website_sale_order.cart_quantity else 'hidden'">
+                      <t t-call="website_sale_donate.small_cart_header"/>
+                  </li>
+              </ul>
+
+              <!-- Small Cart -->
+              <t t-call="website_sale_donate.small_cart"/>
+
+              <!-- Checkout Button -->
+              <div class="text-left">
+                  <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line" class="btn btn-primary pull-right mb32" href="/shop/cart">Checkout</a>
+              </div>
+              <div class="clearfix"/>
+
+          </xpath>
+            <!-- ATTENTION this will also be done by the product categories: Test what happens if we use both -->
+          <xpath expr="//div[@id='products_grid_before']" position="attributes">
+              <attribute name="class">col-md-3</attribute>
+          </xpath>
+          <xpath expr="//div[@id='products_grid']" position="attributes">
+              <attribute name="class">col-md-9</attribute>
+          </xpath>
+            <!-- ToDo: Add a Warenkorb Button to the top of the product grid only visible for in extra small mode
+                       This is needed because the left column may disaper in extra small depending on the load order
+                       of the templates :(
+            -->
         </template>
 
 
@@ -186,7 +294,14 @@
                                         <div class="row">
                                             <div class="col-sm-4" t-if="not product.hide_categories">
                                                 <ol class="breadcrumb">
-                                                    <li><a t-att-href="keep(category=0)" onclick="history.go(-1); return false;">Products</a></li>
+                                                    <li>
+                                                      <t t-if="request.session['last_shop_page']">
+                                                          <a t-att-href="request.session['last_shop_page']">Back</a>
+                                                      </t>
+                                                      <t t-if="not request.session['last_shop_page']">
+                                                          <a href="/" onclick="history.go(-1); return false;">Back</a>
+                                                      </t>
+                                                    </li>
                                                     <li t-if="category"><a t-att-href="keep('/shop/category/%s' % slug(category), category=0)" t-field="category.name"/></li>
                                                     <li class="active"><span t-field="product.name"/></li>
                                                 </ol>
@@ -202,6 +317,15 @@
                                                 </t>
                                             </div>
                                         </div>
+
+                                       <!-- Show Warnings -->
+                                        <t t-if="warnings">
+                                            <div class="row">
+                                                <div class="col-sm-16">
+                                                    <div t-esc="warnings" class="alert alert-danger" role="alert"/>
+                                                </div>
+                                            </div>
+                                        </t>
 
                                         <!-- Top HTML Description -->
                                         <t t-if="product.show_desctop">
@@ -272,6 +396,11 @@
                                                                    style="padding: 15px;">Product not available
                                                                 </p>
 
+                                                                <!-- Show Warnings -->
+                                                                <t t-if="warnings">
+                                                                    <div t-esc="warnings" class="alert alert-danger" role="alert"/>
+                                                                </t>
+
                                                                 <!-- Add to Cart Button -->
                                                                 <a id="add_to_cart" class="btn btn-primary btn-xl mt16 js_check_product a-submit" href="#">
                                                                     <t t-if="product.simple_checkout">Donate Now!</t>
@@ -338,7 +467,34 @@
 
         </template>
 
-        <!-- SHOPPING CART: payment interval, quantity controls, correct odoo bug - dont write false if no sales text -->
+        <!-- DONATION PRODUCT PAGE: show shopping cart -->
+        <template id="wsd_product_small_cart" inherit_id="website_sale_donate.wsd_alternate_product_page" name="Show Cart" customize_show="True" active="False">
+            <xpath expr="//t[@t-if='product.payment_interval_ids']" position="after">
+                <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+                <t t-if="website_sale_order and website_sale_order.website_order_line">
+                    <!-- Small Cart Header -->
+                    <t t-call="website_sale_donate.small_cart_header"/>
+
+                    <!-- Small Cart -->
+                    <t t-call="website_sale_donate.small_cart"/>
+
+                    <!-- Back and Forward Buttons -->
+                    <div class="text-left">
+                          <t t-if="request.session['last_shop_page']">
+                              <a t-att-href="request.session['last_shop_page']" class="btn btn-default">Back</a>
+                          </t>
+                          <t t-if="not request.session['last_shop_page']">
+                              <a href="/" onclick="history.go(-1); return false;" class="btn btn-default">Back</a>
+                          </t>
+                          <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line" class="btn btn-primary pull-right mb32" href="/shop/cart">Checkout</a>
+                    </div>
+                    <div class="clearfix"/>
+                </t>
+            </xpath>
+        </template>
+
+
+        <!-- SHOPPING CART: payment interval, quantity controls -->
         <template id="wsd_cart_extended" inherit_id="website_sale.cart" name="Product-Cart Extensions">
             <!-- Add payment interval as text under the product price -->
             <xpath expr="//table[@id='cart_products']//td[@name='price']" position="inside">
@@ -346,11 +502,12 @@
                     <div class="small">(<t t-esc="line.payment_interval_id.name"/>)</div>
                 </t>
             </xpath>
-            <!-- Correct a small odoo bug where False is written for so line description if no sales description text -->
+            <!-- Do not show Sales order line text in shopping cart! (Because of two bugs: Bug 1: False if none Bug2: english language) -->
             <xpath expr="//table[@id='cart_products']//div[@class='text-muted']" position="replace">
-                    <t t-if="'\n'.join(line.name.splitlines()[1:]) != 'False'">
-                        <div class="text-muted" t-esc="'\n'.join(line.name.splitlines()[1:])"/>
-                    </t>
+                    <div class="hidden"></div>
+                    <!--<t t-if="'\n'.join(line.name.splitlines()[1:]) != 'False'">-->
+                        <!--<div class="text-muted" t-esc="'\n'.join(line.name.splitlines()[1:])"/>-->
+                    <!--</t>-->
             </xpath>
             <!-- Change the product quantity controls (oe_website_spinner) to only show "-" if hide_quantity set -->
             <xpath expr="//table[@id='cart_products']//div[@class='input-group oe_website_spinner']" position="replace">
@@ -381,10 +538,17 @@
             </xpath>
             -->
         </template>
-        <!-- SHOPPING CART: exchange backlink of the left button to root / instead of standard /shop to avoid to jump back to all products category 0 -->
-        <template id="wsd_continue_shopping" inherit_id="website_sale.continue_shopping" customize_show="True" name="Continue Home Button">
-            <xpath expr="//a[@href='/shop']" position="attributes">
-                <attribute name="href">/</attribute>
+
+        <!-- SHOPPING CART: Better Back Button -->
+        <template id="wsd_continue_shopping" inherit_id="website_sale.continue_shopping" customize_show="True" active="True" name="Back_to_Shop Button">
+            <xpath expr="//a[@href='/shop']" position="replace">
+                <!-- Back Button -->
+                <t t-if="request.session['last_page']">
+                    <a id="back_to_shop" t-att-href="request.session['last_page']" class="btn btn-default">Back</a>
+                </t>
+                <t t-if="not request.session['last_page']">
+                    <a id="back_to_page" href="/" class="btn btn-default">Back</a>
+                </t>
             </xpath>
         </template>
 
@@ -459,34 +623,18 @@
                 <attribute name="t-att-style">'' if website.state_id_mandatory_ship else 'font-weight: normal'</attribute>
             </xpath>
 
-
-            <!-- Hide Tax and amount_untaxed if Tax <= 0 -->
-            <xpath expr="//div[@class='col-lg-offset-1 col-lg-3 col-md-3 text-muted']/div[@class='row']" position="replace">
-              <div class="row">
-                  <t t-if="website_sale_order.amount_tax > 0">
-                      <div class="col-sm-6 text-right">Subtotal: </div>
-                      <div class="col-sm-6"><span style="white-space: nowrap;" t-field="website_sale_order.amount_untaxed" t-field-options='{
-                          "widget": "monetary",
-                          "from_currency": "website_sale_order.pricelist_id.currency_id",
-                          "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
-                      }'/></div>
-                      <div class="col-sm-6 text-right">Taxes: </div>
-                      <div class="col-sm-6"><span style="white-space: nowrap;" t-field="website_sale_order.amount_tax" t-field-options='{
-                          "widget": "monetary",
-                          "from_currency": "website_sale_order.pricelist_id.currency_id",
-                          "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
-                      }'/></div>
-                  </t>
-                  <div class="col-sm-6 text-right"><h4>Total To Pay: </h4></div>
-                  <div class="col-sm-6"><h4><span style="white-space: nowrap;" t-field="website_sale_order.amount_total" t-field-options='{
-                      "widget": "monetary",
-                      "from_currency": "website_sale_order.pricelist_id.currency_id",
-                      "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
-                  }'/></h4></div>
-              </div>
+             <!-- Show Small cart on right side -->
+            <xpath expr="//div[@class='col-lg-offset-1 col-lg-3 col-md-3 text-muted']" position="replace">
+                <div class="col-lg-offset-1 col-lg-3 col-md-3 text-muted">
+                    <div class="row">
+                        <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+                        <t t-call="website_sale_donate.small_cart_header"/>
+                        <t t-call="website_sale_donate.small_cart" />
+                    </div>
+                </div>
             </xpath>
-
         </template>
+
 
         <!-- CONFIRMATION: Headline appears on separate line -->
         <template id="wsd_product_item" inherit_id="website_sale.confirmation" name="Confirmation Free Heading">
@@ -546,12 +694,6 @@
 
         </template>
 
-        <!-- DEPRICATED! WEBSITE CUSTOM OPTION: PRODUCT OVERVIEW: Hide ALL! Prices -->
-        <!--<template id="products_item_hideprice" inherit_id="website_sale.products_item" active="False" customize_show="True" name="Hide Price">-->
-            <!--<xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' product_price ')]" position="attributes">-->
-                <!--<attribute name="class">product_price hidden</attribute>-->
-            <!--</xpath>-->
-        <!--</template>-->
 
     </data>
 </openerp>

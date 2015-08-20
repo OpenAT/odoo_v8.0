@@ -23,106 +23,6 @@ msgid "# Sold Total"
 msgstr "# Spendensumme"
 
 #. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.city_mandatory_bill else 'font-weight: normal'"
-msgstr "'' if website.city_mandatory_bill else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.city_mandatory_ship else 'font-weight: normal'"
-msgstr "'' if website.city_mandatory_ship else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.country_id_mandatory_bill else 'font-weight: normal'"
-msgstr "'' if website.country_id_mandatory_bill else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.country_id_mandatory_ship else 'font-weight: normal'"
-msgstr "'' if website.country_id_mandatory_ship else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.email_mandatory_bill else 'font-weight: normal'"
-msgstr "'' if website.email_mandatory_bill else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.phone_mandatory_bill else 'font-weight: normal'"
-msgstr "'' if website.phone_mandatory_bill else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.phone_mandatory_ship else 'font-weight: normal'"
-msgstr "'' if website.phone_mandatory_ship else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.state_id_mandatory_bill else 'font-weight: normal'"
-msgstr "'' if website.state_id_mandatory_bill else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.state_id_mandatory_ship else 'font-weight: normal'"
-msgstr "'' if website.state_id_mandatory_ship else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.street2_mandatory_bill else 'font-weight: normal'"
-msgstr "'' if website.street2_mandatory_bill else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.street_mandatory_bill else 'font-weight: normal'"
-msgstr "'' if website.street_mandatory_bill else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.street_mandatory_ship else 'font-weight: normal'"
-msgstr "'' if website.street_mandatory_ship else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.vat_mandatory_bill else 'font-weight: normal'"
-msgstr "'' if website.vat_mandatory_bill else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.zip_mandatory_bill else 'font-weight: normal'"
-msgstr "'' if website.zip_mandatory_bill else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "'' if website.zip_mandatory_ship else 'font-weight: normal'"
-msgstr "'' if website.zip_mandatory_ship else 'font-weight: normal'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.product
-msgid "'js_add_cart_variants hidden' if product.hide_payment else 'js_add_cart_variants'"
-msgstr "'js_add_cart_variants hidden' if product.hide_payment else 'js_add_cart_variants'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.product_price
-msgid "'oe_price text-primary hidden' if product.price_donate else 'oe_price text-primary'"
-msgstr "'oe_price text-primary hidden' if product.price_donate else 'oe_price text-primary'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.products_item
-msgid "'padding: 0 10px 0 10px' if product.hide_price else ''"
-msgstr "'padding: 0 10px 0 10px' if product.hide_price else ''"
-
-#. module: website_sale_donate
-#: view:website:website_sale.products_item
-msgid "'product_price hidden' if product.hide_price else 'product_price text-primary'"
-msgstr "'product_price hidden' if product.hide_price else 'product_price text-primary'"
-
-#. module: website_sale_donate
-#: view:website:website_sale.product_price
-msgid "'text-danger oe_default_price hidden' if product.price_donate else 'text-danger oe_default_price'"
-msgstr "'text-danger oe_default_price hidden' if product.price_donate else 'text-danger oe_default_price'"
-
-#. module: website_sale_donate
 #: view:website:website_sale.product
 msgid "30-day money-back guarantee"
 msgstr "Sicheres Spenden"
@@ -291,7 +191,7 @@ msgstr "Hilf"
 #. module: website_sale_donate
 #: field:product.template,hide_categories:0
 msgid "Hide Categories Navigation"
-msgstr "Categories Navigation ausblenden"
+msgstr "Kategorie-Navigation ausblenden"
 
 #. module: website_sale_donate
 #: field:product.template,hide_panelfooter:0
@@ -306,17 +206,17 @@ msgstr "Crowdfunding-Balken im Checkout-Panel ausblenden"
 #. module: website_sale_donate
 #: field:product.template,hide_fundingbarinlist:0
 msgid "Hide Funding-Bar in Overview-Pages"
-msgstr "Crowdfunding-Balken in Overview-Pages ausblenden"
+msgstr "Crowdfunding-Balken in Artikel-Übersichten ausblenden"
 
 #. module: website_sale_donate
 #: field:product.template,hide_fundingbar:0
 msgid "Hide Funding-Bar in Page"
-msgstr "Crowdfunding-Balken auf der Seite ausblenden"
+msgstr "Crowdfunding-Balken auf der Artikel-Seite ausblenden"
 
 #. module: website_sale_donate
 #: field:product.template,hide_fundingdesc:0
 msgid "Hide Funding-Description in Page"
-msgstr "Crowdfunding-Beschreibung auf der Seite ausblenden"
+msgstr "Crowdfunding-Beschreibung auf der Artikel-Seite ausblenden"
 
 #. module: website_sale_donate
 #: field:product.template,hide_fundingtextincp:0
@@ -326,12 +226,12 @@ msgstr "Crowdfunding-Text im Checkout-Panel ausblenden"
 #. module: website_sale_donate
 #: field:product.template,hide_fundingtextinlist:0
 msgid "Hide Funding-Text in Overview-Pages"
-msgstr "Crowdfunding-Text in Übersichtsseiten ausblenden"
+msgstr "Crowdfunding-Text in Artikel-Übersichten ausblenden"
 
 #. module: website_sale_donate
 #: field:product.template,hide_fundingtext:0
 msgid "Hide Funding-Text in Page"
-msgstr "Crowdfunding-Text in der Seite ausblenden"
+msgstr "Crowdfunding-Text in der Artikel-Seite ausblenden"
 
 #. module: website_sale_donate
 #: field:product.template,hide_image:0
@@ -341,7 +241,7 @@ msgstr "Bild im Checkout-Panel ausblenden"
 #. module: website_sale_donate
 #: field:product.template,hide_price:0
 msgid "Hide Price in Shop overview Pages"
-msgstr "Zeige keinen Preis in Übersichten"
+msgstr "Zeige keinen Preis in Artikel-Übersichten"
 
 #. module: website_sale_donate
 #: field:product.template,hide_quantity:0
@@ -369,11 +269,6 @@ msgid "How frequent would you like to donate this amount:"
 msgstr "Wie häufig möchten Sie diesen Betrag spenden?"
 
 #. module: website_sale_donate
-#: field:product.payment_interval,id:0
-msgid "ID"
-msgstr "ID"
-
-#. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "If \"Simple Checkout\" is Enabled the \"Donate\" button(s) will directly jump to\n"
 "                                the User-Information-Form instead of the Donation-Cart-Overview-Page.\n"
@@ -385,12 +280,12 @@ msgstr "Wenn \"Simple Checkout\" aktiviert leiten der \"Jetzt Spenden\" Knopf di
 #. module: website_sale_donate
 #: field:product.payment_interval,write_uid:0
 msgid "Last Updated by"
-msgstr "Zuletzt aktualisiert von"
+msgstr "Aktualisiert von"
 
 #. module: website_sale_donate
 #: field:product.payment_interval,write_date:0
 msgid "Last Updated on"
-msgstr "Zuletzt aktualisiert am"
+msgstr "Aktualisiert am"
 
 #. module: website_sale_donate
 #: view:website.config.settings:website_sale_donate.view_website_sale_donate_config_settings
@@ -456,7 +351,7 @@ msgstr "Spendenintervalle..."
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_product_product
 msgid "Product"
-msgstr "Spende"
+msgstr "Artikel"
 
 #. module: website_sale_donate
 #: view:website:website_sale.product
@@ -466,12 +361,12 @@ msgstr "Artikel Bezeichnung"
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_product_template
 msgid "Product Template"
-msgstr "Produktvorlage"
+msgstr "Artikelvorlage"
 
 #. module: website_sale_donate
 #: view:website:website_sale.product
 msgid "Product not available"
-msgstr "Das Produkt ist nicht verfügbar."
+msgstr "Der Artikel ist nicht verfügbar."
 
 #. module: website_sale_donate
 #: field:product.payment_interval,product_template_ids:0
@@ -487,7 +382,7 @@ msgstr "Wiederkehrende Spenden"
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_sale_order
 msgid "Sales Order"
-msgstr "Verkaufsauftrag"
+msgstr "Auftrag"
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_sale_order_line
@@ -505,11 +400,6 @@ msgid "Show additional Description below Checkout Panel"
 msgstr "Zusätzliches Beschreibungsfeld unter dem Checkout-Panel"
 
 #. module: website_sale_donate
-#: field:product.template,simple_checkout:0
-msgid "Simple Checkout"
-msgstr "Simple Checkout"
-
-#. module: website_sale_donate
 #: selection:product.template,parallax_speed:0
 msgid "Slow"
 msgstr "Langsam"
@@ -518,12 +408,12 @@ msgstr "Langsam"
 #: view:product.product:website_sale_donate.product_form_view_sold_total_button
 #: view:product.template:website_sale_donate.product_template_form_view_sold_total_button
 msgid "Sold Total"
-msgstr "Gesamte Spenden"
+msgstr "Spenden"
 
 #. module: website_sale_donate
 #: field:product.template,image_square:0
 msgid "Square Image (Auto crop and zoom)"
-msgstr "Quadratisches Bild (Wird autom. zugeschnitten)"
+msgstr "Quadratisches Bild (autom. zugeschnitten)"
 
 #. module: website_sale_donate
 #: selection:product.template,parallax_speed:0
@@ -538,7 +428,7 @@ msgstr "Zwischensumme:"
 #. module: website_sale_donate
 #: view:website:website_sale.checkout
 msgid "Taxes:"
-msgstr "Umsatzsteuer :"
+msgstr "Steuer :"
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
@@ -556,46 +446,9 @@ msgid "We have reached"
 msgstr "Bisher erreicht"
 
 #. module: website_sale_donate
-#: model:ir.model,name:website_sale_donate.model_website
-msgid "Website"
-msgstr "Webseite"
-
-#. module: website_sale_donate
-#: field:website.config.settings,website_name:0
-msgid "Website Name"
-msgstr "Websiten-Name"
-
-#. module: website_sale_donate
-#: view:website:website_sale.payment
-msgid "acquirer.button and ((website_sale_order.has_recurring and acquirer.recurring_transactions) or (not website_sale_order.has_recurring))"
-msgstr "acquirer.button and ((website_sale_order.has_recurring and acquirer.recurring_transactions) or (not website_sale_order.has_recurring))"
-
-#. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.annually
 msgid "annually"
 msgstr "jährlich"
-
-#. module: website_sale_donate
-#: field:website,city_mandatory_bill:0
-#: field:website,city_mandatory_ship:0
-#: field:website.config.settings,city_mandatory_bill:0
-#: field:website.config.settings,city_mandatory_ship:0
-msgid "city"
-msgstr "Stadt"
-
-#. module: website_sale_donate
-#: field:website,country_id_mandatory_bill:0
-#: field:website,country_id_mandatory_ship:0
-#: field:website.config.settings,country_id_mandatory_bill:0
-#: field:website.config.settings,country_id_mandatory_ship:0
-msgid "country_id"
-msgstr "country_id"
-
-#. module: website_sale_donate
-#: field:website,email_mandatory_bill:0
-#: field:website.config.settings,email_mandatory_bill:0
-msgid "email"
-msgstr "email"
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.funding_text
@@ -603,37 +456,9 @@ msgid "for this project!"
 msgstr "zu spenden!"
 
 #. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "form-group col-lg-12 hidden"
-msgstr "form-group col-lg-12 hidden"
-
-#. module: website_sale_donate
-#: view:website:website_sale.payment
-msgid "hidden"
-msgstr "hidden"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "js_shipping row mb16 hidden"
-msgstr "js_shipping row mb16 hidden"
-
-#. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.monthly
 msgid "monthly"
 msgstr "monatlich"
-
-#. module: website_sale_donate
-#: field:website,name_mandatory_bill:0
-#: field:website,name_mandatory_ship:0
-#: field:website.config.settings,name_mandatory_bill:0
-#: field:website.config.settings,name_mandatory_ship:0
-msgid "name"
-msgstr "name"
-
-#. module: website_sale_donate
-#: view:website:website_sale.payment
-msgid "not acquirer.acquirer_icon"
-msgstr "not acquirer.acquirer_icon"
 
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.once_only
@@ -641,75 +466,9 @@ msgid "once-only"
 msgstr "einmalig"
 
 #. module: website_sale_donate
-#: field:website,phone_mandatory_bill:0
-#: field:website,phone_mandatory_ship:0
-#: field:website.config.settings,phone_mandatory_bill:0
-#: field:website.config.settings,phone_mandatory_ship:0
-msgid "phone"
-msgstr "phone"
-
-#. module: website_sale_donate
-#: view:website:website_sale.product
-msgid "pull-right"
-msgstr "pull-right"
-
-#. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.quarterly
 msgid "quarterly"
 msgstr "vierteljährlich"
-
-#. module: website_sale_donate
-#: field:website.config.settings,state_id_mandatory_bill:0
-msgid "state"
-msgstr "state"
-
-#. module: website_sale_donate
-#: field:website,state_id_mandatory_bill:0
-#: field:website,state_id_mandatory_ship:0
-#: field:website,vat_mandatory_bill:0
-#: field:website,vat_subjected_mandatory_bill:0
-#: field:website,zip_mandatory_bill:0
-#: field:website.config.settings,state_id_mandatory_ship:0
-msgid "state_id"
-msgstr "state_id"
-
-#. module: website_sale_donate
-#: field:website,street_mandatory_bill:0
-#: field:website,street_mandatory_ship:0
-#: field:website.config.settings,street_mandatory_bill:0
-#: field:website.config.settings,street_mandatory_ship:0
-msgid "street"
-msgstr "street"
-
-#. module: website_sale_donate
-#: field:website,street2_mandatory_bill:0
-#: field:website,zip_mandatory_ship:0
-#: field:website.config.settings,street2_mandatory_bill:0
-msgid "street2"
-msgstr "street2"
-
-#. module: website_sale_donate
-#: view:website:website_sale_donate.funding_text
-msgid "to fund"
-msgstr " "
-
-#. module: website_sale_donate
-#: field:website.config.settings,vat_mandatory_bill:0
-msgid "vat"
-msgstr "vat"
-
-#. module: website_sale_donate
-#: field:website.config.settings,vat_subjected_mandatory_bill:0
-msgid "vat_subjected"
-msgstr "vat_subjected"
-
-#. module: website_sale_donate
-#: field:website.config.settings,zip_mandatory_bill:0
-#: field:website.config.settings,zip_mandatory_ship:0
-msgid "zip"
-msgstr "zip"
-
-
 
 
 
@@ -772,11 +531,6 @@ msgstr "Ihre Informationen werden vertraulich behandelt!"
 msgid "Buy now, get in 2 days"
 msgstr "Steuerfrei Spenden"
 
-#. module: website_sale_delivery
-#: model:ir.model,name:website_sale_delivery.model_delivery_carrier
-msgid "Carrier"
-msgstr "Frachtführer"
-
 #. module: website_sale
 #: field:sale.order,cart_quantity:0
 msgid "Cart Quantity"
@@ -803,11 +557,6 @@ msgstr "Checkout"
 #: field:product.public.category,child_id:0
 msgid "Children Categories"
 msgstr "Unterkategorien"
-
-#. module: website_sale_delivery
-#: view:website:website_sale.payment
-msgid "Choose your Delivery Method"
-msgstr "Wählen Sie Ihre Liefermethode"
 
 #. module: website_sale
 #: view:website:website_sale.checkout
@@ -1039,3 +788,26 @@ msgstr "Anmelden"
 #: view:website:website_sale.checkout
 msgid "Your Address"
 msgstr "Ihre Daten"
+
+#. module: website_sale
+#: view:website:website_sale.checkout view:website:website_sale.total
+msgid "Taxes:"
+msgstr "Steueranteil:"
+
+
+
+
+#. module: website_sale_delivery
+#: view:website:website_sale.total
+msgid "Delivery:"
+msgstr "Lieferkosten:"
+
+#. module: website_sale_delivery
+#: model:ir.model,name:website_sale_delivery.model_delivery_carrier
+msgid "Carrier"
+msgstr "Transportunternehmen"
+
+#. module: website_sale_delivery
+#: view:website:website_sale.payment
+msgid "Choose your Delivery Method"
+msgstr "Wählen Sie Ihre Liefermethode"

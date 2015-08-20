@@ -35,6 +35,8 @@ class website_sale_donate_settings(osv.Model):
         'zip_mandatory_ship': fields.boolean(string='street2'),
         # Country
         'country_default_value': fields.many2one('res.country', string='Default country for checkout page'),
+        # Behaviour
+        'add_to_cart_stay_on_page': fields.boolean(string='Add to Cart and stay on Page'),
     }
     _defaults = {
         # Mandatory for billing
@@ -153,7 +155,7 @@ class product_template(osv.Model):
                  "Use this field anywhere a small image is required."),
     }
     _defaults = {
-        'price_donate_min': 1,
+        'price_donate_min': 0,
         'parallax_speed': 'slow',
         'hide_quantity': True,
     }
