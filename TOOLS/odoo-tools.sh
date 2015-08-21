@@ -830,10 +830,96 @@ fi
 
 
 # ---------------------------------------------------------------------------------------
-# $ odoo-tools.sh updateinst  {TARGET_BRANCH}
+# $ odoo-tools.sh updateinst  {TARGET_BRANCH} {DATABASE_NAME}
+# in diesem teil sollten die Updates am Kundenserver durchgeführt werden und alle kundendb's upgedated werden
 # ---------------------------------------------------------------------------------------
-MODEUPDATEINST="$ odoo-tools.sh updateinst  {TARGET_BRANCH}"
+MODEUPDATEINST="$ odoo-tools.sh updateinst {TARGET_BRANCH} {DATABASE_NAME}"
 if [ "$SCRIPT_MODE" = "updateinst" ]; then
+
+    UPDATELOGFILE="${DBPATH}/${SCRIPT_MODE}--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
+    DATABASE_NAME=%3
+    TARGET_BRANCH=%2
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    REVERTUPDATELOGFILE="${DBPATH}/${SCRIPT_MODE}--${TARGET_BRANCH}--UPDATELOGFILE--`date +%Y-%m-%d__%H-%M`.log"
+
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MODEUPDATEINST"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    if [ $# -ne 3 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly three arguments!"
+        exit 2
+    fi
+    #safe status infos for revert and log
+    git log -1 --pretty="%H" | while read line; do echo "[local CommitID = ] $line" | tee -a $UPDATELOGFILE $REVERTUPDATELOGFILE done;
+    if [ "$DATABASE_NAME" = "all" ]; then
+        #get all running Databases DATABASES_RUNNING = ($(ps -ef |grep "o8_$TARGET_BRANCH_*" -v grep "o8_$TARGET_BRANCH_*" )
+        #DATABASE_RUNNING=( `ps -ef|grep "o8_${TARGET_BRANCH}" |grep grep --invert-match|awk '{printf $2;printf "\n"; }'` )
+        # CHECK WHICH INSTACES ARE RUNNING
+        DATABASE_RUNNING=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
+        for i in "${DATABASE_RUNNING[@]}" #store running databases and log
+            do
+                :
+             echo "Running DB: " $i >> $UPDATELOGFILE $REVERTUPDATELOGFILE
+            done
+        echo "get latest status of remote github...." >> $UPDATELOGFILE
+        git fetch | tee -a $UPDATELOGFILE $REVERTUPDATELOGFILE
+        if [ -n "$(git status --porcelain)" ]; then
+            echo "do parsing and git checks whats up..." >> $UPDATELOGFILES
+            git status | grep
+            exit 2 #TODO: noch zu überlegen was hier alles zu tun ist
+            #TODO: git diff --exit-code --> 0 oder 1 --> CHANGESMADE=1 check lokale unstaged changes
+            #TODO: git diff --cached --exit-code --> CHANGESMADE=2 check lokale staged aber nicht commited
+            #TODO: git ls-files --other --exclude-standard --directory --> finde eventuelle PYC files oder sonst was .... weitere überprüfung notwendig
+
+        else
+            echo "no local changes found this branch will be updated, git pull..." >> $UPDATELOGFILE
+            #TODO: rewrite rule im nginx für temp update
+            init 4 # stop all running processes postgres, openerp, pads, clouds
+            sleep 10 #wait for processes to be shut down
+            INIT4REACHED=0 #init 4 ist solange nicht erreicht solange ein process lauft
+            WAITINGCOUNTER=0
+            while [ $INIT4REACHED != 1 ];
+            do
+                DATABASE_RUNNING=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }'))
+                inarray=$(echo ${DATABASE_RUNNING[@]} | grep -o "" | wc -w)
+                if [ $inarray != 0 ]; then
+                    sleep 1
+                    WAITINGCOUNTER+=1
+                    echo "waiting...."
+                    if [ $WAITINGCOUTNER == 20 ]; then #warte max 20 sec
+                        echo "check running process and kill process"
+                        break
+                    fi
+                else
+                    INIT4REACHED=1
+                fi
+            done
+            #get update todos from updatedevfile.
+        fi
+
+
+
+        #update ALL DATABASES on this server
+    elif [ "$DATABASE_NAME" = "" ]; then
+
+
+    # TODO: Stop all o8_INSTANCENAME_* Services (remember all that where running!!!)
+    # TODO: Stop all o8_INSTANCENAME PAD SERVICES (because etherpad-lite is maybe updated as well)
+    # ATTENTION: Do not stop aeroo service (important if more than one instance is on the server)
+    # Todo: git fetch, git checkout master, git pull, git checkout INSTANCENAME, git rebase
+    # todo: start all pad services
+    # todo: start the odoo services (only those who where running before)
+
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MODEUPDATEINST DONE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+fi
+
+# ---------------------------------------------------------------------------------------
+# $ odoo-tools.sh updatecorebranch  {TARGET_BRANCH}
+# ---------------------------------------------------------------------------------------
+MODEUPDATECORE="$ odoo-tools.sh updatecorebranch  {TARGET_BRANCH}"
+if [ "$SCRIPT_MODE" = "updatecorebranch" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEUPDATEINST"
     echo -e "--------------------------------------------------------------------------------------------------------"
@@ -842,12 +928,7 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
         exit 2
     fi
 
-    # TODO: Stop all o8_INSTANCENAME_* Services (remember all that where running!!!)
-    # TODO: Stop all o8_INSTANCENAME PAD SERVICES (because etherpad-lite is maybe updated as well)
-    # ATTENTION: Do not stop aeroo service (important if more than one instance is on the server)
-    # Todo: git fetch, git checkout master, git pull, git checkout INSTANCENAME, git rebase
-    # todo: start all pad services
-    # todo: start the odoo services (only those who where running before)
+    #mit diesem teil soll
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEUPDATEINST DONE"
