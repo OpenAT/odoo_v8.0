@@ -5,7 +5,27 @@
     /*content: "\f067";*/
 }
 
-
+/* Checkout Page -> Mandatory Fields */
+#wsd_checkout label {
+    font-weight: inherit;
+    margin-bottom: 0;
+    height: 26px;
+}
+#wsd_checkout .form-group label.mandatory {
+    font-weight: bold;
+    font-size: 120%;
+}
+#wsd_checkout .form-group label.mandatory:after {
+    /*content:" *";*/
+    /*color:red;*/
+}
+#wsd_checkout label.f-phone,
+#wsd_checkout label.f-street2,
+#wsd_checkout label.f-city,
+#wsd_checkout label.f-zip,
+#wsd_checkout label.f-country_id {
+    font-weight: bold;
+}
 
 /* PRODUCT PAGE website_sale_donate alternative page layout modifications */
 /* Bigger Checkout button */

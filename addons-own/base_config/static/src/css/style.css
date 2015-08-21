@@ -20,3 +20,8 @@
 .openerp .oe_tags.oe_inline {
     min-width: 100%;
 }
+
+/* Min height for modal boxes */
+.modal-body {
+    min-height: 600px;
+}

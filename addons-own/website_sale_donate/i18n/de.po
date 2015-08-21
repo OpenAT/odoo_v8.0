@@ -1,14 +1,15 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#   * website_sale_donate
+#	* website_sale_donate
 #   * website_sale
+#   * website_sale_delivery
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-15 13:22+0000\n"
-"PO-Revision-Date: 2015-06-15 13:22+0000\n"
+"POT-Creation-Date: 2015-08-21 07:04+0000\n"
+"PO-Revision-Date: 2015-08-21 07:04+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,6 +22,11 @@ msgstr ""
 #: field:product.template,sold_total:0
 msgid "# Sold Total"
 msgstr "# Spendensumme"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.small_cart_header
+msgid "(change)"
+msgstr "(ändern)"
 
 #. module: website_sale_donate
 #: view:website:website_sale.product
@@ -53,14 +59,30 @@ msgid "Add to Cart"
 msgstr "In den Spendenkorb"
 
 #. module: website_sale_donate
+#: field:website,add_to_cart_stay_on_page:0
+msgid "Add to Cart and stay on Page"
+msgstr "Auf der Seite bleiben beim Produkte hinzufügen"
+
+#. module: website_sale_donate
+#: field:website.config.settings,add_to_cart_stay_on_page:0
+msgid "Add to Cart and stay on the Page"
+msgstr "Auf der Seite bleiben beim Produkte hinzufügen"
+
+#. module: website_sale_donate
 #: view:website:website_sale.product_price
 msgid "Arbitrary Donation"
-msgstr "Freier Spenden-Betrag"
+msgstr "Freie Spendenhöhe"
 
 #. module: website_sale_donate
 #: field:product.template,price_donate:0
 msgid "Arbitrary Price"
 msgstr "Freier Spenden-Betrag"
+
+#. module: website_sale_donate
+#: view:website:website_sale.cart
+#: view:website:website_sale.product
+msgid "Back"
+msgstr "Zurück"
 
 #. module: website_sale_donate
 #: field:product.template,parallax_image:0
@@ -71,17 +93,22 @@ msgstr "Hintergrund Parallax-Bild"
 #. module: website_sale_donate
 #: field:product.template,desc_short_bottom:0
 msgid "Banner Product Description - Bottom"
-msgstr "Banner Product Description - Bottom"
+msgstr "Banner Artikel-Beschreibung - Unten"
 
 #. module: website_sale_donate
 #: field:product.template,desc_short:0
 msgid "Banner Product Description - Center"
-msgstr "Banner Product Description - Center"
+msgstr "Banner Artikel-Beschreibung - Mitte"
 
 #. module: website_sale_donate
 #: field:product.template,desc_short_top:0
 msgid "Banner Product Description - Top"
-msgstr "Banner Product Description - Top"
+msgstr "Banner Artikel-Beschreibung - Oben"
+
+#. module: website_sale_donate
+#: view:website.config.settings:website_sale_donate.view_website_sale_donate_config_settings
+msgid "Behaviour"
+msgstr "Webshop Verhalten"
 
 #. module: website_sale_donate
 #: view:website:website_sale.product
@@ -92,6 +119,12 @@ msgstr "Steuerfrei Spenden"
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "CROWDFUNDING SETTINGS"
 msgstr "CROWDFUNDING EINSTELLUNGEN"
+
+#. module: website_sale_donate
+#: view:website:website_sale.product
+#: view:website:website_sale.products
+msgid "Checkout"
+msgstr "Spenden"
 
 #. module: website_sale_donate
 #: field:product.payment_interval,create_uid:0
@@ -112,6 +145,17 @@ msgstr "Crowdfunding Optionen"
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "DONATION SETTINGS"
 msgstr "SPENDEN EINSTELLUNGEN"
+
+#. module: website_sale_donate
+#: model:product.template,description_sale:website_sale_donate.default_donation_product_template
+msgid "Das ist eine kurze Beschreibung der Spendenkampagne oder des Spendenaufrufes."
+msgstr "Das ist eine kurze Beschreibung der Spendenkampagne oder des Spendenaufrufes."
+
+#. module: website_sale_donate
+#: field:website,country_default_value:0
+#: field:website.config.settings,country_default_value:0
+msgid "Default country for checkout page"
+msgstr "Voreingestelltes Land für die Checkout-Seite"
 
 #. module: website_sale_donate
 #: view:website:website_sale.product
@@ -179,6 +223,11 @@ msgid "Funding-Campaign User"
 msgstr "Kampagnen Initiatior"
 
 #. module: website_sale_donate
+#: field:product.template,funding_user_name:0
+msgid "Funding-Campaign User Name"
+msgstr "Initiatior der Crowd-Funding Kampagne"
+
+#. module: website_sale_donate
 #: field:sale.order,has_recurring:0
 msgid "Has order lines with recurring transactions"
 msgstr "Hat Artikel mit wiederkehrenden Zahlungen"
@@ -186,7 +235,7 @@ msgstr "Hat Artikel mit wiederkehrenden Zahlungen"
 #. module: website_sale_donate
 #: view:website:website_sale_donate.funding_text
 msgid "Help"
-msgstr "Hilf"
+msgstr "Hilfe"
 
 #. module: website_sale_donate
 #: field:product.template,hide_categories:0
@@ -278,6 +327,11 @@ msgstr "Wenn \"Simple Checkout\" aktiviert leiten der \"Jetzt Spenden\" Knopf di
 "                                (Fügt \"simplecheckout\" zur URL des Knopfes hinzu: http://shop/simplecheckout/... )"
 
 #. module: website_sale_donate
+#: view:website:website_sale_donate.small_cart
+msgid "Item"
+msgstr "Artikel"
+
+#. module: website_sale_donate
 #: field:product.payment_interval,write_uid:0
 msgid "Last Updated by"
 msgstr "Aktualisiert von"
@@ -306,6 +360,16 @@ msgstr "Medium-sized image of the background. It is automatically resized as a 1
 #: field:product.template,price_donate_min:0
 msgid "Minimum Arbitrary Price"
 msgstr "Minimale Spendenhöhe"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.small_cart_header
+msgid "My Items"
+msgstr "Meine Artikel"
+
+#. module: website_sale_donate
+#: help:website.config.settings,country_default_value:0
+msgid "Only used if GEO IP is NOT working and user did not select any country"
+msgstr "Only used if GEO IP is NOT working and user did not select any country"
 
 #. module: website_sale_donate
 #: field:product.template,parallax_speed:0
@@ -349,6 +413,11 @@ msgid "Payment Intervals..."
 msgstr "Spendenintervalle..."
 
 #. module: website_sale_donate
+#: view:website:website_sale_donate.small_cart
+msgid "Price"
+msgstr "Betrag"
+
+#. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_product_product
 msgid "Product"
 msgstr "Artikel"
@@ -370,7 +439,6 @@ msgstr "Der Artikel ist nicht verfügbar."
 
 #. module: website_sale_donate
 #: field:product.payment_interval,product_template_ids:0
-#: view:website:website_sale.product
 msgid "Products"
 msgstr "Artikel"
 
@@ -382,7 +450,7 @@ msgstr "Wiederkehrende Spenden"
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_sale_order
 msgid "Sales Order"
-msgstr "Auftrag"
+msgstr "Verkaufsauftrag"
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_sale_order_line
@@ -398,6 +466,11 @@ msgstr "Zusätzliches Beschreibungsfeld über dem Checkout-Panel"
 #: field:product.template,show_descbottom:0
 msgid "Show additional Description below Checkout Panel"
 msgstr "Zusätzliches Beschreibungsfeld unter dem Checkout-Panel"
+
+#. module: website_sale_donate
+#: field:product.template,simple_checkout:0
+msgid "Simple Checkout"
+msgstr "Simple Checkout"
 
 #. module: website_sale_donate
 #: selection:product.template,parallax_speed:0
@@ -421,24 +494,15 @@ msgid "Static"
 msgstr "Statisch"
 
 #. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "Subtotal:"
-msgstr "Zwischensumme:"
-
-#. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "Taxes:"
-msgstr "Steuer :"
-
-#. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "This is a calculated field and therefore read-only. (Sums up all Sales-Order-Lines not in State Done or Cancelled)"
 msgstr "Dieses Feld wird berechnet und ist daher schreibgeschützt. (Summiert alle Sales-Order-Lines die nicht in der Stufe Done oder Cancelled sind)"
 
 #. module: website_sale_donate
-#: view:website:website_sale.checkout
-msgid "Total To Pay:"
-msgstr "Summe: "
+#: code:addons/website_sale_donate/controllers/main.py:101
+#, python-format
+msgid "Value must be higher or equal to %s."
+msgstr "Value must be higher or equal to %s."
 
 #. module: website_sale_donate
 #: view:website:website_sale.product
@@ -446,9 +510,41 @@ msgid "We have reached"
 msgstr "Bisher erreicht"
 
 #. module: website_sale_donate
+#: model:ir.model,name:website_sale_donate.model_website
+msgid "Website"
+msgstr "Webseite"
+
+#. module: website_sale_donate
+#: field:website.config.settings,website_name:0
+msgid "Website Name"
+msgstr "Website-Name"
+
+#. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.annually
 msgid "annually"
 msgstr "jährlich"
+
+#. module: website_sale_donate
+#: field:website,city_mandatory_bill:0
+#: field:website,city_mandatory_ship:0
+#: field:website.config.settings,city_mandatory_bill:0
+#: field:website.config.settings,city_mandatory_ship:0
+msgid "city"
+msgstr "city"
+
+#. module: website_sale_donate
+#: field:website,country_id_mandatory_bill:0
+#: field:website,country_id_mandatory_ship:0
+#: field:website.config.settings,country_id_mandatory_bill:0
+#: field:website.config.settings,country_id_mandatory_ship:0
+msgid "country_id"
+msgstr "country_id"
+
+#. module: website_sale_donate
+#: field:website,email_mandatory_bill:0
+#: field:website.config.settings,email_mandatory_bill:0
+msgid "email"
+msgstr "email"
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.funding_text
@@ -461,14 +557,81 @@ msgid "monthly"
 msgstr "monatlich"
 
 #. module: website_sale_donate
+#: field:website,name_mandatory_bill:0
+#: field:website,name_mandatory_ship:0
+#: field:website.config.settings,name_mandatory_bill:0
+#: field:website.config.settings,name_mandatory_ship:0
+msgid "name"
+msgstr "name"
+
+#. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.once_only
 msgid "once-only"
 msgstr "einmalig"
 
 #. module: website_sale_donate
+#: field:website,phone_mandatory_bill:0
+#: field:website,phone_mandatory_ship:0
+#: field:website.config.settings,phone_mandatory_bill:0
+#: field:website.config.settings,phone_mandatory_ship:0
+msgid "phone"
+msgstr "phone"
+
+#. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.quarterly
 msgid "quarterly"
 msgstr "vierteljährlich"
+
+#. module: website_sale_donate
+#: field:website.config.settings,state_id_mandatory_bill:0
+msgid "state"
+msgstr "state"
+
+#. module: website_sale_donate
+#: field:website,state_id_mandatory_bill:0
+#: field:website,state_id_mandatory_ship:0
+#: field:website,vat_mandatory_bill:0
+#: field:website,vat_subjected_mandatory_bill:0
+#: field:website,zip_mandatory_bill:0
+#: field:website.config.settings,state_id_mandatory_ship:0
+msgid "state_id"
+msgstr "state_id"
+
+#. module: website_sale_donate
+#: field:website,street_mandatory_bill:0
+#: field:website,street_mandatory_ship:0
+#: field:website.config.settings,street_mandatory_bill:0
+#: field:website.config.settings,street_mandatory_ship:0
+msgid "street"
+msgstr "street"
+
+#. module: website_sale_donate
+#: field:website,street2_mandatory_bill:0
+#: field:website,zip_mandatory_ship:0
+#: field:website.config.settings,street2_mandatory_bill:0
+msgid "street2"
+msgstr "street2"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.funding_text
+msgid "to fund"
+msgstr " "
+
+#. module: website_sale_donate
+#: field:website.config.settings,vat_mandatory_bill:0
+msgid "vat"
+msgstr "vat"
+
+#. module: website_sale_donate
+#: field:website.config.settings,vat_subjected_mandatory_bill:0
+msgid "vat_subjected"
+msgstr "vat_subjected"
+
+#. module: website_sale_donate
+#: field:website.config.settings,zip_mandatory_bill:0
+#: field:website.config.settings,zip_mandatory_ship:0
+msgid "zip"
+msgstr "zip"
 
 
 
@@ -678,6 +841,17 @@ msgid "Price"
 msgstr "Betrag"
 
 #. module: website_sale
+#: view:website:website_sale.cart view:website:website_sale.payment
+msgid "Price"
+msgstr "Betrag"
+
+#. module: website_sale
+#: model:ir.model,name:website_sale.model_product_product
+#: view:website:website_sale.cart view:website:website_sale.payment
+msgid "Product"
+msgstr "Artikel"
+
+#. module: website_sale
 #: model:ir.model,name:website_sale.model_product_pricelist
 msgid "Pricelist"
 msgstr "Preisliste"
@@ -762,7 +936,7 @@ msgstr "Shop"
 #. module: website_sale
 #: view:website:website_sale.checkout
 msgid "Shop - Checkout"
-msgstr "Shop - Abmelden"
+msgstr "Shop - Checkout"
 
 #. module: website_sale
 #: view:website:website_sale.confirmation
@@ -793,6 +967,13 @@ msgstr "Ihre Daten"
 #: view:website:website_sale.checkout view:website:website_sale.total
 msgid "Taxes:"
 msgstr "Steueranteil:"
+
+#. module: website_sale
+#: model:ir.model,name:website_sale.model_product_product
+#: view:website:website_sale.cart view:website:website_sale.payment
+msgid "Product"
+msgstr "Artikel"
+
 
 
 
