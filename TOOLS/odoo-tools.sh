@@ -137,6 +137,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     update-rc.d -f nginx remove
     update-rc.d nginx start 20 2 3 5 . stop 80 0 1 4 6 . >> $SETUP_LOG
     service nginx restart | tee -a $SETUP_LOG
+    touch /usr/share/nginx/html/maintenance_aus.html
     echo -e "----- Install nginx Done"
 
     # ----- Install Python Packages
@@ -361,6 +362,10 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ----- Set Linux Rights
     chown -R ${TARGET_BRANCH}:${TARGET_BRANCH} ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
     chmod 755 ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
+
+    # ----- create webserver maintenance files
+    cp ${INSTANCE_PATH}/TOOLS/503.* /usr/share/nginx/html/ >> $INSTANCE_SETUPLOG
+
 
     echo -e "-------------------------------------------------------------------------"
     echo -e " $MODESETUP DONE"
@@ -863,18 +868,38 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
             done
         echo "get latest status of remote github...." >> $UPDATELOGFILE
         git fetch | tee -a $UPDATELOGFILE $REVERTUPDATELOGFILE
-        if [ -n "$(git status --porcelain)" ]; then
+        if [ -n "$(git status --porcelain)" ]; then # wenn es eine differenz gibt
             echo "do parsing and git checks whats up..." >> $UPDATELOGFILES
             git status | grep
-            exit 2 #TODO: noch zu überlegen was hier alles zu tun ist
+            exit 2
+            #TODO: noch zu überlegen was hier alles zu tun ist
             #TODO: git diff --exit-code --> 0 oder 1 --> CHANGESMADE=1 check lokale unstaged changes
             #TODO: git diff --cached --exit-code --> CHANGESMADE=2 check lokale staged aber nicht commited
             #TODO: git ls-files --other --exclude-standard --directory --> finde eventuelle PYC files oder sonst was .... weitere überprüfung notwendig
+            #EXAMPLE write  function for this and call whereever needed check_git_needs()
+            ##!/bin/sh
 
-        else
+            # LOCAL=$(git rev-parse @)
+            #REMOTE=$(git rev-parse @{u})
+            #BASE=$(git merge-base @ @{u})
+
+            #if [ $LOCAL = $REMOTE ]; then
+            #    echo "Up-to-date"
+            #elif [ $LOCAL = $BASE ]; then
+            #    echo "Need to pull"
+            #elif [ $REMOTE = $BASE ]; then
+            #    echo "Need to push"
+            #else
+            #    echo "Diverged"
+            #fi
+
+        else # wenn alles ok ist kann man das update machen FALL 1
             echo "no local changes found this branch will be updated, git pull..." >> $UPDATELOGFILE
-            #TODO: rewrite rule im nginx für temp update
-            init 4 # stop all running processes postgres, openerp, pads, clouds
+            #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus.html --> /usr/share/nginx/html/maintenance_ein.html
+            #a rule in nginx.conf will check if the maintenance file is set or not
+            mv /usr/share/nginx/html/maintenance_aus.html /usr/share/nginx/html/maintenance_ein.html | tee -a $UPDATELOGFILE
+            #TODO: im init 4 do not stop NGINX
+            init 4 | tee -a $UPDATELOGFILE # stop all running processes postgres, openerp, pads, clouds
             sleep 10 #wait for processes to be shut down
             INIT4REACHED=0 #init 4 ist solange nicht erreicht solange ein process lauft
             WAITINGCOUNTER=0
@@ -894,13 +919,18 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
                     INIT4REACHED=1
                 fi
             done
+
+            git pull | tee -a $UPDATELOGFILE
             #get update todos from updatedevfile.
         fi
+        #update special DATABASES on this server
+    else
+        if [ "$DATABASE_NAME" = "" ]; then
+            #do only updatedev files but stopping stuff aso.... maybe write a function for some basic tests
+        fi
+    fi
+fi
 
-
-
-        #update ALL DATABASES on this server
-    elif [ "$DATABASE_NAME" = "" ]; then
 
 
     # TODO: Stop all o8_INSTANCENAME_* Services (remember all that where running!!!)
@@ -916,22 +946,22 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
 fi
 
 # ---------------------------------------------------------------------------------------
-# $ odoo-tools.sh updatecorebranch  {TARGET_BRANCH}
+# $ odoo-tools.sh updatecorebranch {TARGET_BRANCH} {DATABASE_NAME}
 # ---------------------------------------------------------------------------------------
-MODEUPDATECORE="$ odoo-tools.sh updatecorebranch  {TARGET_BRANCH}"
+MODEUPDATECORE="$ odoo-tools.sh updatecorebranch {TARGET_BRANCH} {DATABASE_NAME}"
 if [ "$SCRIPT_MODE" = "updatecorebranch" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
-    echo -e " $MODEUPDATEINST"
+    echo -e " $MODEUPDATECORE"
     echo -e "--------------------------------------------------------------------------------------------------------"
     if [ $# -ne 2 ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
         exit 2
     fi
 
-    #mit diesem teil soll
+    #vielleicht brauch ich den teil nicht aber mit diesem teil soll sonst das Core Update Lokal durchgeführt werden
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
-    echo -e " $MODEUPDATEINST DONE"
+    echo -e " $MODEUPDATECORE DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
 fi
 
