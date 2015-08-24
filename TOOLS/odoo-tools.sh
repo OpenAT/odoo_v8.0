@@ -861,11 +861,11 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
         #DATABASE_RUNNING=( `ps -ef|grep "o8_${TARGET_BRANCH}" |grep grep --invert-match|awk '{printf $2;printf "\n"; }'` )
         # CHECK WHICH INSTACES ARE RUNNING
         DATABASE_RUNNING=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
-        for i in "${DATABASE_RUNNING[@]}" #store running databases and log
-            do
+        for i in "${DATABASE_RUNNING[@]}";
+        do #store running databases and log do
                 :
              echo "Running DB: " $i >> $UPDATELOGFILE $REVERTUPDATELOGFILE
-            done
+        done
         echo "get latest status of remote github...." >> $UPDATELOGFILE
         git fetch | tee -a $UPDATELOGFILE $REVERTUPDATELOGFILE
         if [ -n "$(git status --porcelain)" ]; then # wenn es eine differenz gibt
@@ -897,6 +897,7 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
             echo "no local changes found this branch will be updated, git pull..." >> $UPDATELOGFILE
             #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus.html --> /usr/share/nginx/html/maintenance_ein.html
             #a rule in nginx.conf will check if the maintenance file is set or not
+            # enable Maintenance mode
             mv /usr/share/nginx/html/maintenance_aus.html /usr/share/nginx/html/maintenance_ein.html | tee -a $UPDATELOGFILE
             #TODO: im init 4 do not stop NGINX
             init 4 | tee -a $UPDATELOGFILE # stop all running processes postgres, openerp, pads, clouds
@@ -907,11 +908,11 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
             do
                 DATABASE_RUNNING=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }'))
                 inarray=$(echo ${DATABASE_RUNNING[@]} | grep -o "" | wc -w)
-                if [ $inarray != 0 ]; then
+                if [ $inarray -ne 0 ]; then
                     sleep 1
-                    WAITINGCOUNTER+=1
+                    WAITINGCOUNTER=$[$WAITINGCOUNTER +1]
                     echo "waiting...."
-                    if [ $WAITINGCOUTNER == 20 ]; then #warte max 20 sec
+                    if [ $WAITINGCOUTNER -eq 20 ]; then #warte max 20 sec
                         echo "check running process and kill process"
                         break
                     fi
@@ -920,19 +921,19 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
                 fi
             done
 
-            git pull | tee -a $UPDATELOGFILE
+            $INSTANCE_PATH/git pull | tee -a $UPDATELOGFILE
             #get update todos from updatedevfile.
+
+            #update finished all works
+            #disable maintenance mode
+            mv /usr/share/nginx/html/maintenance_ein.html /usr/share/nginx/html/maintenance_aus.html | tee -a $UPDATELOGFILE
         fi
         #update special DATABASES on this server
     else
         if [ "$DATABASE_NAME" = "" ]; then
-            #do only updatedev files but stopping stuff aso.... maybe write a function for some basic tests
+            echo "nix" #do only updatedev files but stopping stuff aso.... maybe write a function for some basic tests
         fi
     fi
-fi
-
-
-
     # TODO: Stop all o8_INSTANCENAME_* Services (remember all that where running!!!)
     # TODO: Stop all o8_INSTANCENAME PAD SERVICES (because etherpad-lite is maybe updated as well)
     # ATTENTION: Do not stop aeroo service (important if more than one instance is on the server)
