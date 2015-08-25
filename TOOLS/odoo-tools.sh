@@ -846,6 +846,9 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
     TARGET_BRANCH=%2
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     REVERTUPDATELOGFILE="${DBPATH}/${SCRIPT_MODE}--${TARGET_BRANCH}--UPDATELOGFILE--`date +%Y-%m-%d__%H-%M`.log"
+    MAINTENANCEMODESWITCHERON="/usr/share/nginx/html/maintenance_ein.html"
+    MAINTENANCEMODESWITCHEROFF="/usr/share/nginx/html/maintenance_aus.html"
+    UPGRADEPATHCONFIG="${REPOPATH}/TOOLS/upgradepathconfig.txt"
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEUPDATEINST"
@@ -902,10 +905,23 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
             #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus.html --> /usr/share/nginx/html/maintenance_ein.html
             #a rule in nginx.conf will check if the maintenance file is set or not
             # enable Maintenance mode
-            mv /usr/share/nginx/html/maintenance_aus.html /usr/share/nginx/html/maintenance_ein.html | tee -a $UPDATELOGFILE
-            #TODO: im init 4 do not stop NGINX
+            # --------------- Todo: write this into a function called local checks_before_update() BEGIN
+
+            if [ -e "$MAINTENANCEMODESWITCHEROFF" ]; then
+                mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE
+            else
+                touch $MAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
+            fi
+            #init 4 also stops
             init 4 | tee -a $UPDATELOGFILE # stop all running processes postgres, openerp, pads, clouds
             sleep 10 #wait for processes to be shut down
+            #its a good idea to restart nginx this time staled processes aso are cleared now ...
+            if [ "$(pgrep nginx)" = "" ]; then
+                service nginx start
+            else
+                killall nginx
+                service nginx start
+            fi
             INIT4REACHED=0 #init 4 ist solange nicht erreicht solange ein process lauft
             WAITINGCOUNTER=0
             while [ $INIT4REACHED != 1 ]; do
@@ -917,19 +933,76 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
                     echo "waiting...."
                     if [ $WAITINGCOUTNER -eq 20 ]; then #warte max 20 sec
                         echo "check running process and kill process"
+                        #Todo: kill processes still running and postgres databases to that process
                         break
                     fi
                 else
                     INIT4REACHED=1
                 fi
             done
-
-            $INSTANCE_PATH/git pull | tee -a $UPDATELOGFILE
-            #get update todos from updatedevfile.
-
+            # --------------- Todo: write this into a function called local checks_before_update() END
+            #Todo: backup databases
+            #check $UPGRADEPATHCONFIGremote and consider Todos
+            #compare local $UPGRADEPATHCONFIGlocal <> $UPGRADEPATHCONFIGremote
+            #write remoteconfig file into a local store log to have the positions where to go
+            #find start position mylocalrepoID == linepostion-commitIDremotefile
+            #commitIDtarget = last commit entry from $UPGRADEPATHCONFIGremotefile
+            #while mylocalrepoID != $commitIDtarget do
+                #while readline $UPGRADEPATHCONFIGremotefile Todo: == ZERO || mylocalrepoID != $commitIDtarget do
+                    #commitIDtarget = commitID from next line in remotefile
+                #done
+                #Todo: $INSTANCE_PATH/git pull commitIDtarget | tee -a $UPDATELOGFILE
+                #Todo: echo "UpgradePositioncommitID" $commitIDtarget >> $REVERTUPDATELOGFILE
+                #Todo: check config file Todo: and get parameter from appropriate line
+                #Todo: get $DATABASE_RUNNING= Running DB's from $REVERTUPDATELOGFILE awk second param
+                #Todo: get parameters to work on --> SPLIT line of config FILE into
+                #odooserver -- gitsuff -- reservedpython -- reservedpostgresql
+                #Todo: split line to these parameters
+                #for i in "${DATABASE_RUNNING[@]}";
+                #do
+                #    :
+                #    #todo: if abfrage für die optionsbereiche im config file
+                #    #if [ todo: == ZERO ]; then
+                #        echo "nothing to do"
+                #    #else
+                #        if [ $odooserver != "" ]; then
+                #            paramcounter=0
+                #            while readline ${odooserver{@}}; do
+                #                git ${odooserver[$paramcounter]} #todo: checks if command successfully
+                #                paramcounter+=1
+                #            done
+                #        else
+                #        if [ $gitstuff != "" ]; then
+                #            paramcounter=0
+                #            while readline ${gitstuff{@}}; do
+                #                git ${odooserver[$paramcounter]} #todo: checks if command successfully
+                #                paramcounter+=1
+                #            done
+                #        else
+                #        if [ $reservedpython != "" ]; then
+                #            paramcounter=0
+                #            while readline ${reservedpython{@}}; do
+                #                python ${reservedpython[$paramcounter]} #todo: checks if command successfully
+                #                paramcounter+=1
+                #            done
+                #        else
+                #        if [ $reservedpostgresql != "" ]; then
+                #            paramcounter=0
+                #            while readline $reservedpostgresql{{@}}; do
+                #                postgresql ${reservedpostgresql[$paramcounter]} #todo: checks if command successfully
+                #                paramcounter+=1
+                #            done
+                #        else
+                #        fi
+                #    fi
+                #done
+            #done
+            #Todo: if [ -n "$(git status --porcelain)" ]; then # alles gut
+            #Todo: schreibe logfile mit Status
+            #$INSTANCE_PATH/git status | tee -a $UPDATELOGFILE
             #update finished all works
             #disable maintenance mode
-            mv /usr/share/nginx/html/maintenance_ein.html /usr/share/nginx/html/maintenance_aus.html | tee -a $UPDATELOGFILE
+            mv $MAINTENANCEMODESWITCHERON $MAINTENANCEMODESWITCHEROFF | tee -a $UPDATELOGFILE
         fi
         #update special DATABASES on this server
     else

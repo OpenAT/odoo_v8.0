@@ -1,0 +1,16 @@
+#This File has to be filled each time someone makes a source Change to have a new running source Repo
+#This File is considered when you use <odor-tools.sh upgradeinst {} {}……>
+#IF ZERO is in the Line after Todo —> the automatic UPDATE Script over jumps this commit and just takes the next commit level
+#in this way a developer can make options obsolete from older commit states if a new one would fix all needed action till that point, so Disable update States this way but be sure what you do
+#EXAMPLE Upgrade path
+# : delimits the base parts so we can later on extend keywords for program logic
+# , delimites next option area
+# ; delimites multiple arguments in an option area
+#commitID: 1111111,Todo: odooserver -i modulname1,gitstuff git rm „filename“;git add modulname,reserverdpython,reservedpostgresql
+#commitID: 2222222,Todo: odooserver -u Modulname1;-i Modulname 2,gitstuff,reserverdpython,reservedpostgresql
+#commitID: 3333333,Todo: ZERO # THIS MEANS with this commit nothing special is to do so we can use next commit in case no higher commit exists this is the latest Version wich gets updated to it
+#commitID 4444444,Todo: odooserver -i Modulname1,gitstuff,reserverdpython,reservedpostgresql
+#JUST ENTER YOUR LINE NEXT WITH THE OPTIONS YOU WANT LIKE IN THE EXAMPLE
+
+
+EOF # DO NOT DELETE THIS LINE
