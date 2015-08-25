@@ -35,3 +35,6 @@ data_dir
 
 #Mac OSX
 .DS_*
+
+#Sass
+*.css.map

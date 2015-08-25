@@ -2,9 +2,7 @@
 <openerp>
     <data>
 
-        <!-- TODO: Hide Tax and Delivery from all relevant pages if 0 -->
-
-        <!-- Load custom js -->
+        <!-- Load custom js and css -->
         <template id="assets_frontend" inherit_id="website.assets_frontend" name="Shop Donate">
             <xpath expr="." position="inside">
                 <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_donate.css' t-ignore="true"/>

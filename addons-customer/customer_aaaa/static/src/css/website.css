@@ -1,0 +1,61 @@
+@font-face {
+  font-family: 'CorporateABold';
+  src: url("https://shop.aids.ch/fonts/corporatea-bold-webfont.eot");
+  src: url("https://shop.aids.ch/fonts/corporatea-bold-webfont.eot?#iefix") format("embedded-opentype"), url("https://shop.aids.ch/fonts/corporatea-bold-webfont.woff") format("woff"), url("https://shop.aids.ch/fonts/corporatea-bold-webfont.ttf") format("truetype"), url("https://shop.aids.ch/fonts/corporatea-bold-webfont.svg#corporate_abold") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+@font-face {
+  font-family: 'CorporateARegular';
+  src: url("https://shop.aids.ch/fonts/corporatea-regular-webfont.eot");
+  src: url("https://shop.aids.ch/fonts/corporatea-regular-webfont.eot?#iefix") format("embedded-opentype"), url("https://shop.aids.ch/fonts/corporatea-regular-webfont.woff") format("woff"), url("https://shop.aids.ch/fonts/corporatea-regular-webfont.ttf") format("truetype"), url("https://shop.aids.ch/fonts/corporatea-regular-webfont.svg#corporatearegular") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+@font-face {
+  font-family: 'CorporateAItalic';
+  src: url("https://shop.aids.ch/fonts/corporatea-regularitalic-webfont.eot");
+  src: url("https://shop.aids.ch/fonts/corporatea-regularitalic-webfont.eot?#iefix") format("embedded-opentype"), url("https://shop.aids.ch/fonts/corporatea-regularitalic-webfont.woff") format("woff"), url("https://shop.aids.ch/fonts/corporatea-regularitalic-webfont.ttf") format("truetype"), url("https://shop.aids.ch/fonts/corporatea-regularitalic-webfont.svg#corporate_aitalic") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+@font-face {
+  font-family: 'ahsicons';
+  src: url("https://shop.aids.ch/fonts/ahsicons-regular-webfont.eot");
+  src: url("https://shop.aids.ch/fonts/ahsicons-regular-webfont.eot?#iefix") format("embedded-opentype"), url("https://shop.aids.ch/fonts/ahsicons-regular-webfont.woff") format("woff"), url("https://shop.aids.ch/fonts/ahsicons-regular-webfont.ttf") format("truetype"), url("https://shop.aids.ch/fonts/ahsicons-regular-webfont.svg#ahsiconsregular") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+body {
+  font-family: 'CorporateARegular', Georgia, "Times New Roman", Times, serif;
+  font-size: 1em;
+  line-height: 1.618em;
+  color: #333;
+  margin: 0;
+  padding: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 300;
+  margin: 0 0 0.809em 0;
+  line-height: 1.2em; }
+
+h4 {
+  font-family: 'CorporateABold', Georgia, "Times New Roman", Times, serif; }
+
+h1 {
+  font-size: 2em; }
+
+h2 {
+  font-size: 1.6em; }
+
+h3 {
+  font-size: 1.3em; }
+
+h4 {
+  font-size: 1.1em;
+  margin-bottom: 0.125em;
+  padding: 0; }
+
+p, ul, ol, dl, blockquote, address {
+  font-size: 1em;
+  line-height: 1.518em;
+  margin: 0 0 1.618em 0;
+  padding: 0; }
+
+/*# sourceMappingURL=website.css.map */

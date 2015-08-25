@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Load custom CSS and JS for the website -->
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="customer_aaaa Frontend CSS and JS">
+            <xpath expr="." position="inside">
+                <!-- Java Scripts -->
+                <!--<script type="text/javascript" src="/customer_aaaa/static/src/js/javascript.js"></script>-->
+
+                <!-- Style Sheets -->
+                <link rel="stylesheet" href='/addons-customer/customer_aaaa/static/src/css/website.css'/>
+                <link rel="stylesheet" href='/addons-customer/customer_aaaa/static/src/css/website_sale.css'/>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

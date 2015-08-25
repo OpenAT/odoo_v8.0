@@ -1,0 +1,52 @@
+// INFO: Currently we load the fonts from the original website URL
+//       in production we should load it from /customer_aaaa/static/src/css/fonts
+$base_url: 'https://shop.aids.ch/fonts';
+
+// Font Faces
+@font-face {
+    font-family: 'CorporateABold';
+    src: url('#{$base_url}/corporatea-bold-webfont.eot');
+    src: url('#{$base_url}/corporatea-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('#{$base_url}/corporatea-bold-webfont.woff') format('woff'),
+         url('#{$base_url}/corporatea-bold-webfont.ttf') format('truetype'),
+         url('#{$base_url}/corporatea-bold-webfont.svg#corporate_abold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'CorporateARegular';
+    src: url('#{$base_url}/corporatea-regular-webfont.eot');
+    src: url('#{$base_url}/corporatea-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('#{$base_url}/corporatea-regular-webfont.woff') format('woff'),
+         url('#{$base_url}/corporatea-regular-webfont.ttf') format('truetype'),
+         url('#{$base_url}/corporatea-regular-webfont.svg#corporatearegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'CorporateAItalic';
+    src: url('#{$base_url}/corporatea-regularitalic-webfont.eot');
+    src: url('#{$base_url}/corporatea-regularitalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('#{$base_url}/corporatea-regularitalic-webfont.woff') format('woff'),
+         url('#{$base_url}/corporatea-regularitalic-webfont.ttf') format('truetype'),
+         url('#{$base_url}/corporatea-regularitalic-webfont.svg#corporate_aitalic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'ahsicons';
+    src: url('#{$base_url}/ahsicons-regular-webfont.eot');
+    src: url('#{$base_url}/ahsicons-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('#{$base_url}/ahsicons-regular-webfont.woff') format('woff'),
+         url('#{$base_url}/ahsicons-regular-webfont.ttf') format('truetype'),
+         url('#{$base_url}/ahsicons-regular-webfont.svg#ahsiconsregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
