@@ -137,7 +137,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     update-rc.d -f nginx remove
     update-rc.d nginx start 20 2 3 5 . stop 80 0 1 4 6 . >> $SETUP_LOG
     service nginx restart | tee -a $SETUP_LOG
-    touch /usr/share/nginx/html/maintenance_aus.html
+    touch /usr/share/nginx/html/maintenance_aus.html >>$SETUP_LOG
     echo -e "----- Install nginx Done"
 
     # ----- Install Python Packages
@@ -855,7 +855,11 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
         exit 2
     fi
     #safe status infos for revert and log
-    git log -1 --pretty="%H" | while read line; do echo "[local CommitID = ] $line" | tee -a $UPDATELOGFILE $REVERTUPDATELOGFILE done;
+    git log -1 --pretty="%H" |
+    while read line; do
+        echo "[local CommitID = ] $line" | tee -a $UPDATELOGFILE $REVERTUPDATELOGFILE
+    done
+
     if [ "$DATABASE_NAME" = "all" ]; then
         #get all running Databases DATABASES_RUNNING = ($(ps -ef |grep "o8_$TARGET_BRANCH_*" -v grep "o8_$TARGET_BRANCH_*" )
         #DATABASE_RUNNING=( `ps -ef|grep "o8_${TARGET_BRANCH}" |grep grep --invert-match|awk '{printf $2;printf "\n"; }'` )
@@ -904,8 +908,7 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
             sleep 10 #wait for processes to be shut down
             INIT4REACHED=0 #init 4 ist solange nicht erreicht solange ein process lauft
             WAITINGCOUNTER=0
-            while [ $INIT4REACHED != 1 ];
-            do
+            while [ $INIT4REACHED != 1 ]; do
                 DATABASE_RUNNING=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }'))
                 inarray=$(echo ${DATABASE_RUNNING[@]} | grep -o "" | wc -w)
                 if [ $inarray -ne 0 ]; then
@@ -943,7 +946,7 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEUPDATEINST DONE"
-    echo -e "--------------------------------------------------------------------------------------------------------"
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
 fi
 
 # ---------------------------------------------------------------------------------------
