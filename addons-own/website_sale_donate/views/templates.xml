@@ -48,7 +48,7 @@
 
         <!-- SUB-TEMPLATE: wsd_custom_total -->
         <template id="wsd_custom_total" name="Website Sale Donate Custom Total Carts">
-            <table class='pull-right wsd_custom_total' id="cart_total" t-if="website_sale_order">
+            <table class='pull-right wsd_custom_total' id="cart_total" t-if="website_sale_order and website_sale_order.website_order_line">
                 <!-- TAX -->
                 <tr id="order_total_taxes" t-att-class="'text-muted' if website_sale_order.amount_tax else 'hidden'">
                     <td><abbr title="Taxes may be updated after providing shipping address">Taxes: </abbr></td>
@@ -86,7 +86,7 @@
 
         <!-- SUB-TEMPLATE: Small Cart Header -->
         <template id="small_cart_header" name="Small Cart Header">
-          <h3 class="small_cart_header">
+          <h3 class="small_cart_header" t-if="website_sale_order and website_sale_order.website_order_line">
               <a href="/shop/cart">
                   <i class="fa fa-shopping-cart"></i>My Items <small class="text-danger">(change)</small>
 
@@ -149,9 +149,7 @@
                 <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
 
                 <!-- Small Cart Header -->
-                <t t-att-class="'' if website_sale_order and website_sale_order.cart_quantity else 'hidden'">
-                    <t t-call="website_sale_donate.small_cart_header"/>
-                </t>
+                <t t-call="website_sale_donate.small_cart_header"/>
 
                 <!-- Small Cart -->
                 <t t-call="website_sale_donate.small_cart"/>
