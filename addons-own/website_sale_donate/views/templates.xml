@@ -5,7 +5,7 @@
         <!-- Load custom js and css -->
         <template id="assets_frontend" inherit_id="website.assets_frontend" name="Shop Donate">
             <xpath expr="." position="inside">
-                <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_donate.css' t-ignore="true"/>
+                <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_donate.css'/>
                 <!-- INFO: jquery validate is loaded in website_tools -->
                 <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_product_price_form_validate.js"></script>
                 <!-- DISABLED just prepared: <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_contact_form_validate.js"></script> -->
@@ -104,37 +104,36 @@
 
         <!-- SHOP PRODUCT LISTING: small cart on left side -->
         <template id="products_cart" inherit_id="website_sale.products" active="False" customize_show="True" name="Product Cart">
-          <xpath expr="//div[@id='products_grid_before']" position="inside">
-              <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
-
-              <!-- Small Cart Header -->
-              <ul class="nav nav-pills nav-stacked mb8">
-                  <li t-att-class="'' if website_sale_order and website_sale_order.cart_quantity else 'hidden'">
-                      <t t-call="website_sale_donate.small_cart_header"/>
-                  </li>
-              </ul>
-
-              <!-- Small Cart -->
-              <t t-call="website_sale_donate.small_cart"/>
-
-              <!-- Checkout Button -->
-              <div class="text-left">
-                  <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line" class="btn btn-primary pull-right mb32" href="/shop/checkout">Checkout</a>
-              </div>
-              <div class="clearfix"/>
-
-          </xpath>
-            <!-- ATTENTION this will also be done by the product categories: Test what happens if we use both -->
-          <xpath expr="//div[@id='products_grid_before']" position="attributes">
-              <attribute name="class">col-md-3</attribute>
-          </xpath>
-          <xpath expr="//div[@id='products_grid']" position="attributes">
-              <attribute name="class">col-md-9</attribute>
-          </xpath>
             <!-- ToDo: Add a Warenkorb Button to the top of the product grid only visible for in extra small mode
-                       This is needed because the left column may disaper in extra small depending on the load order
-                       of the templates :(
-            -->
+                       This is needed because the left column may disapear in extra small -->
+
+            <xpath expr="//div[@id='products_grid_before']" position="inside">
+                <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+
+                <!-- Small Cart Header -->
+                <t t-att-class="'' if website_sale_order and website_sale_order.cart_quantity else 'hidden'">
+                    <t t-call="website_sale_donate.small_cart_header"/>
+                </t>
+
+                <!-- Small Cart -->
+                <t t-call="website_sale_donate.small_cart"/>
+
+                <!-- Checkout Button -->
+                <div class="text-left">
+                    <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line" class="btn btn-primary pull-right" href="/shop/checkout">Checkout</a>
+                </div>
+                <div class="clearfix"/>
+            </xpath>
+
+            <!-- ATTENTION this will also be done by the product categories: Test what happens if we use both -->
+            <xpath expr="//div[@id='products_grid_before']" position="attributes">
+                <attribute name="class">col-md-3</attribute>
+            </xpath>
+
+            <xpath expr="//div[@id='products_grid']" position="attributes">
+                <attribute name="class">col-md-9</attribute>
+            </xpath>
+
         </template>
 
 
