@@ -281,6 +281,11 @@
     margin-bottom: 0;
 }
 
+/* Custom Total for small_cart wsd_custom_total */
+.wsd_custom_total {
+    border-top: 1px solid black;
+}
+
 /* Small Product Cart */
 .small_cart #cart_total h3 {
     font-size: 18px;

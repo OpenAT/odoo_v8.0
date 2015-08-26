@@ -46,6 +46,44 @@
             </xpath>
         </template>
 
+        <!-- SUB-TEMPLATE: wsd_custom_total -->
+        <template id="wsd_custom_total" name="Website Sale Donate Custom Total Carts">
+            <table class='pull-right wsd_custom_total' id="cart_total" t-if="website_sale_order">
+                <!-- TAX -->
+                <tr id="order_total_taxes" t-att-class="'text-muted' if website_sale_order.amount_tax else 'hidden'">
+                    <td><abbr title="Taxes may be updated after providing shipping address">Taxes: </abbr></td>
+                    <td class="text-right">
+                        <span t-field="website_sale_order.amount_tax" style="white-space: nowrap;" t-field-options='{
+                            "widget": "monetary",
+                            "from_currency": "website_sale_order.pricelist_id.currency_id",
+                            "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+                        }'/>
+                    </td>
+                </tr>
+                <!-- DELIVERY -->
+                <tr id="order_delivery" t-att-class="'text-muted' if website_sale_order.amount_delivery else 'hidden'">
+                    <td><abbr title="Delivery will be updated after choosing a new delivery method">Delivery: </abbr></td>
+                    <td class="text-right">
+                        <span t-field="website_sale_order.amount_delivery" t-field-options='{
+                            "widget": "monetary",
+                            "display_currency": "website.pricelist_id.currency_id"
+                        }'/>
+                    </td>
+                </tr>
+                <!-- TOTAL -->
+                <tr id="order_total">
+                    <td><h3>Total: </h3></td>
+                    <td class="text-right">
+                      <h3><span t-field="website_sale_order.amount_total" style="white-space: nowrap;" t-field-options='{
+                          "widget": "monetary",
+                          "from_currency": "website_sale_order.pricelist_id.currency_id",
+                          "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+                        }'/></h3>
+                    </td>
+                </tr>
+            </table>
+        </template>
+
         <!-- SUB-TEMPLATE: Small Cart Header -->
         <template id="small_cart_header" name="Small Cart Header">
           <h3 class="small_cart_header">
@@ -97,7 +135,7 @@
                     </t>
                   </tbody>
               </table>
-              <t t-call="website_sale.total"/>
+              <t t-call="website_sale_donate.wsd_custom_total"/>
               <div class="clearfix"/>
             </div>
         </template>

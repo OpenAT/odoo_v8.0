@@ -633,6 +633,31 @@ msgstr "vat_subjected"
 msgid "zip"
 msgstr "zip"
 
+#. module: website_sale_donate
+#: view:website:website_sale_donate.wsd_custom_total
+msgid "Total:"
+msgstr "Summe:"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.wsd_custom_total
+msgid "Delivery will be updated after choosing a new delivery method"
+msgstr "Lieferkosten werden nach Auswahl der Liefermethode aktualisiert!"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.wsd_custom_total
+msgid "Delivery:"
+msgstr "Lieferkosten:"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.wsd_custom_total
+msgid "Taxes may be updated after providing shipping address"
+msgstr "Steuern werden bei einer Änderung der Lieferadresse eventuell angepasst!"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.wsd_custom_total
+msgid "Taxes:"
+msgstr "Steuern:"
+
 
 
 
