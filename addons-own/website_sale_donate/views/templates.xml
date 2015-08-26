@@ -102,7 +102,7 @@
                   <thead>
                       <tr>
                           <th colspan="2">Item</th>
-                          <th>Price</th>
+                          <th class="text-right">Price</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -157,7 +157,7 @@
                 <t t-call="website_sale_donate.small_cart"/>
 
                 <!-- Checkout Button -->
-                <div class="text-left">
+                <div class="text-left small_cart_buttons">
                     <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line" class="btn btn-primary pull-right" href="/shop/checkout">Checkout</a>
                 </div>
                 <div class="clearfix"/>
@@ -514,7 +514,7 @@
                     <t t-call="website_sale_donate.small_cart"/>
 
                     <!-- Back and Forward Buttons -->
-                    <div class="text-left">
+                    <div class="text-left small_cart_buttons">
                           <t t-if="request.session['last_shop_page']">
                               <a t-att-href="request.session['last_shop_page']" class="btn btn-default">Back</a>
                           </t>
