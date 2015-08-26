@@ -108,21 +108,24 @@ git push origin dev-ckeditor_advanced
 # - rebase dev-ckeditor_advanced on master
 # - rebase dev-ckeditor_advanced submodules on master
 # - merge dev-ckeditor_advanced in master with rebase
+git fetch
 git checkout master    # NOW IN BRANCH master
 git pull
 git checkout dev-ckeditor_advanced    # NOW IN BRANCH dev-ckeditor_advanced
 git rebase master
-git submodule update --rebase
+git submodule update
 git checkout master    # NOW IN BRANCH master
 git merge dev-ckeditor_advanced
 git push origin master
-
 ```
 
 Adding new Submodules to the repo:
 ```bash
 # This is an example how to add a submodule:
 git submodule add -b master https://github.com/ether/etherpad-lite.git etherpad-lite
+
+# Ubdate all submodules
+git submodule update --rebase --remote --recursive
 ```
 
 
@@ -134,12 +137,12 @@ This is for now only a placeholder but will describe the update process of a cus
 # Update Master
 git checkout master                             
 git pull                                        
-git submodule update --rebase --recusive
+git submodule update
 
 # Update Branch (Code Repo for a server in this case)
 git checkout intdadi                            
 git rebase master
-git submodule update --rebase --recusive
+git submodule update
 git push origin intdadi
 ```
 
