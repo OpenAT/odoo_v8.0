@@ -3,7 +3,7 @@
 <data>
     <!-- Recursive Category Navigation for Trees with a root category set -->
     <template id="categories_recursive_extended" name="Category list">
-      <li t-att-class="'active' if c.id == int(category or 0) else ''">
+      <li t-att-class="'active cat%s' % int(c.id or 0) if c.id == int(category or 0) else 'cat%s' % int(c.id or 0)">
           <a t-att-href="keep('/shop/category/' + slug(c), category=0)" t-field="c.name"></a>
           <ul t-if="c.child_id" class="nav nav-pills nav-stacked nav-hierarchy">
               <t t-foreach="c.child_id" t-as="c">
@@ -15,6 +15,17 @@
       </li>
     </template>
 
+    <template id="categories_recursive" name="Category list">
+        <li t-att-class="'active cat%s' % int(c.id or 0) if c.id == int(category or 0) else 'cat%s' % int(c.id or 0)">
+        <!--<li t-att-class="'active' if c.id == int(category or 0) else ''">-->
+            <a t-att-href="keep('/shop/category/' + slug(c), category=0)" t-field="c.name"></a>
+            <ul t-if="c.child_id" class="nav nav-pills nav-stacked nav-hierarchy">
+                <t t-foreach="c.child_id" t-as="c">
+                    <t t-call="website_sale_categories.categories_recursive"/>
+                </t>
+            </ul>
+        </li>
+    </template>
 
     <!-- Recursive Category Descriptions - TEXT BLOCK -->
     <template id="categories_description_text" name="Category Description at Top">
@@ -134,14 +145,14 @@
             </t>
 
             <t t-if="not cat_hide">
-              <ul class="nav nav-pills nav-stacked mt16">
+              <ul class="cat_menu nav nav-pills nav-stacked">
                   <t t-if="hasrootcat">
                       <t t-foreach="category.cat_root_id" t-as="c">
-                          <t t-call="website_sale.categories_recursive"/>
+                          <t t-call="website_sale_categories.categories_recursive"/>
                       </t>
                   </t>
                   <t t-if="not hasrootcat">
-                      <li t-att-class=" '' if category else 'active' "><a t-att-href="keep('/shop',category=0)">All Products</a></li>
+                      <li t-att-class=" 'cat0' if category else 'active cat0' "><a t-att-href="keep('/shop',category=0)">All Products</a></li>
                       <t t-foreach="categories" t-as="c">
                           <t t-if="not c.cat_root_id.cat_root and not c.cat_hide">
                               <t t-call="website_sale_categories.categories_recursive_extended"/>
