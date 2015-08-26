@@ -118,6 +118,8 @@
     <!-- Categories Advanced Navigation AND Category Descriptions -->
     <template id="products_categories_menu" inherit_id="website_sale.products" active="True" customize_show="True" name="Product Categories Advanced">
 
+        <!-- ToDo add unique class to all categories based on their id -->
+
         <!-- Categories Advanced Navigation -->
         <xpath expr="//div[@id='products_grid_before']" position="inside">
 
