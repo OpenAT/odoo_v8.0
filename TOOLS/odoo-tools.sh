@@ -838,7 +838,7 @@ fi
 # $ odoo-tools.sh updateinst  {TARGET_BRANCH} {DATABASE_NAME}
 # in diesem teil sollten die Updates am Kundenserver durchgeführt werden und alle kundendb's upgedated werden
 # ---------------------------------------------------------------------------------------
-MODEUPDATEINST="$ odoo-tools.sh updateinst {TARGET_BRANCH} {DATABASE_NAME}"
+MODEUPDATEINST="$ odoo-tools.sh updateinst {TARGET_BRANCH} check|dbname|all"
 if [ "$SCRIPT_MODE" = "updateinst" ]; then
 
     UPDATELOGFILE="${DBPATH}/${SCRIPT_MODE}--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
@@ -880,9 +880,11 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
             git status | grep
             exit 2
             #TODO: noch zu überlegen was hier alles zu tun ist
+            #Todo: Branch Check
             #TODO: git diff --exit-code --> 0 oder 1 --> CHANGESMADE=1 check lokale unstaged changes
             #TODO: git diff --cached --exit-code --> CHANGESMADE=2 check lokale staged aber nicht commited
             #TODO: git ls-files --other --exclude-standard --directory --> finde eventuelle PYC files oder sonst was .... weitere überprüfung notwendig
+            #Todo: oder check gitignore löschen der PYC files wenn nicht im repo
             #EXAMPLE write  function for this and call whereever needed check_git_needs()
             ##!/bin/sh
 
@@ -905,10 +907,10 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
             #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus.html --> /usr/share/nginx/html/maintenance_ein.html
             #a rule in nginx.conf will check if the maintenance file is set or not
             # enable Maintenance mode
-            # --------------- Todo: write this into a function called local checks_before_update() BEGIN
+            # --------------- Todo: write this into a function called local maintainenancemode() {start stop} BEGIN
 
             if [ -e "$MAINTENANCEMODESWITCHEROFF" ]; then
-                mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE
+                mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
             else
                 touch $MAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
             fi
@@ -934,14 +936,22 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
                     if [ $WAITINGCOUTNER -eq 20 ]; then #warte max 20 sec
                         echo "check running process and kill process"
                         #Todo: kill processes still running and postgres databases to that process
+                        #downfahren etherpad und owncloud
                         break
                     fi
                 else
                     INIT4REACHED=1
                 fi
             done
-            # --------------- Todo: write this into a function called local checks_before_update() END
-            #Todo: backup databases
+            # --------------- Todo: write this into a function called local maintainenancemode() END
+            #Todo: backup databases check stuff with BARMAN Server more efficient BAckup and REVERT ABER ALLE
+            #Todo: start odoo_tools maintainenance all|database {start|stop}
+            #Todo: backup and restore use odoo tool
+            #TODO: another VMWARE Snapshot to have all OFFLINE
+            #Todo: garantieren das das Backup Funktioniert --> restore psql dryrun restore run check oder in ein fak_backup db ....
+            #Todo: update tools for singular BACKUP of one DATABASE rewrite o8_repo_..... only nginx config file use backup.sh tool
+            #todo: restore.sh dry run erweitern
+            #--------------------------- git checks
             #check $UPGRADEPATHCONFIGremote and consider Todos
             #compare local $UPGRADEPATHCONFIGlocal <> $UPGRADEPATHCONFIGremote
             #write remoteconfig file into a local store log to have the positions where to go
@@ -952,6 +962,7 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
                     #commitIDtarget = commitID from next line in remotefile
                 #done
                 #Todo: $INSTANCE_PATH/git pull commitIDtarget | tee -a $UPDATELOGFILE
+                #Todo: git pull all NEU weil wir das neu beschlossen haben wegen des zusammenfaassens der befehle
                 #Todo: echo "UpgradePositioncommitID" $commitIDtarget >> $REVERTUPDATELOGFILE
                 #Todo: check config file Todo: and get parameter from appropriate line
                 #Todo: get $DATABASE_RUNNING= Running DB's from $REVERTUPDATELOGFILE awk second param
@@ -1034,11 +1045,26 @@ if [ "$SCRIPT_MODE" = "updatecorebranch" ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
         exit 2
     fi
-
+    #ERSTER SCHRITT für das UPDATE des CORE
     #vielleicht brauch ich den teil nicht aber mit diesem teil soll sonst das Core Update Lokal durchgeführt werden
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEUPDATECORE DONE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+fi
+
+MAINTENANCEMODE="$ odoo-tools.sh maintenancemode {all|dbname} {enable|disable}"
+if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MAINTENANCEMODE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    if [ $# -ne 2 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
+        exit 2
+    fi
+    #ERSTER SCHRITT setzt die jeweilige instanz von Nginx in den maintenance mode oder den ganzen server
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MAINTENANCEMODE DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
 fi
 
@@ -1100,8 +1126,11 @@ echo -e "$ odoo-tools.sh {prepare|setup|newdb|dupdb|deploy|backup|restore}\n"
 echo -e "$ $MODEPREPARE"
 echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
+echo -e "$ odoo-tools.sh upgradeinst {TARGET_BRANCH} check|dbname|all"
+echo -e "$ $MODEUPDATEINST"
+echo -e "$ odoo-tools.sh maintenancemode {all|dbname} {enable|disable}"
+echo -e "$ $MAINTENANCEMODE"
 echo -e "TODO: $ odoo-tools.sh dupdb {BRANCH} {SOURCE_SUPER_PASSWORD} {SOURCE_DBNAME} {TARGET_DBNAME} {TARGET_DOMAIN}"
-echo -e "TODO: $MODEUPDATEINST"
 echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEBACKUP"
 echo -e "TODO: $MODERESTORE"
