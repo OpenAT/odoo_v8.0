@@ -904,26 +904,8 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
 
         else # wenn alles ok ist kann man das update machen FALL 1
             echo "no local changes found this branch will be updated, git pull..." >> $UPDATELOGFILE
-            #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus.html --> /usr/share/nginx/html/maintenance_ein.html
-            #a rule in nginx.conf will check if the maintenance file is set or not
-            # enable Maintenance mode
-            # --------------- Todo: write this into a function called local maintainenancemode() {start stop} BEGIN
-
-            if [ -e "$MAINTENANCEMODESWITCHEROFF" ]; then
-                mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
-            else
-                touch $MAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
-            fi
-            #init 4 also stops
-            init 4 | tee -a $UPDATELOGFILE # stop all running processes postgres, openerp, pads, clouds
-            sleep 10 #wait for processes to be shut down
-            #its a good idea to restart nginx this time staled processes aso are cleared now ...
-            if [ "$(pgrep nginx)" = "" ]; then
-                service nginx start
-            else
-                killall nginx
-                service nginx start
-            fi
+            #TODO: check if i can reversibly call odoo-tools.sh
+            odoo-tools.sh maintenancemode all start | tee -a $UPDATELOGFILE
             INIT4REACHED=0 #init 4 ist solange nicht erreicht solange ein process lauft
             WAITINGCOUNTER=0
             while [ $INIT4REACHED != 1 ]; do
@@ -1053,7 +1035,7 @@ if [ "$SCRIPT_MODE" = "updatecorebranch" ]; then
     echo -e "--------------------------------------------------------------------------------------------------------"
 fi
 
-MAINTENANCEMODE="$ odoo-tools.sh maintenancemode {all|dbname} {enable|disable}"
+MAINTENANCEMODE="$ odoo-tools.sh maintenancemode {TARGET_BRANCH} {SWITCHER}"
 if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MAINTENANCEMODE"
@@ -1062,6 +1044,32 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
         exit 2
     fi
+            #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus.html --> /usr/share/nginx/html/maintenance_ein.html
+            #a rule in nginx.conf will check if the maintenance file is set or not
+            # enable Maintenance mode
+            # --------------- Todo: write this into a function called local maintainenancemode() {start stop} BEGIN
+            #TODO: create two ways single and ALL all switches nginx defaut
+            if [ "$TARGET" = "all" ]; then
+                    if [ -e "$MAINTENANCEMODES WITCHEROFF" ]; then
+                        mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
+                    else
+                        touch $MAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
+                    fi
+            else
+                #Todo: move nginx witcher file in target db only but first change Install script to add nginx config to database nginx config not default
+                # ${TARGET_BRANCH}
+
+            fi
+            #init 4 also stops
+            init 4 | tee -a $UPDATELOGFILE # stop all running processes postgres, openerp, pads, clouds
+            sleep 10 #wait for processes to be shut down
+            #its a good idea to restart nginx this time staled processes aso are cleared now ...
+            if [ "$(pgrep nginx)" = "" ]; then
+                service nginx start
+            else
+                killall nginx
+                service nginx start
+            fi
     #ERSTER SCHRITT setzt die jeweilige instanz von Nginx in den maintenance mode oder den ganzen server
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MAINTENANCEMODE DONE"
