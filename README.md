@@ -153,9 +153,11 @@ git commit -am "[UPDATE] all submodules updated"
 # then you have to push master branch back to origin/master
 ```
 
-#### Update configuration File of Developer howto and definitions of "upgradepathconfig.txt"
-#This File has to be filled each time someone makes a source Change to have a new running source Repo
-#This File is considered when you use <odoo-tools.sh upgradeinst {} {}……>
+## Development upgrade PATH config
+
+Update configuration File of Developer howto and definitions of "upgradepathconfig.txt"
+This File has to be filled each time someone makes a source Change to have a new running source Repo
+This File is considered when you use <odoo-tools.sh upgradeinst {} {}……>
 - EXAMPLE Upgrade path description
     - 4 Areas are available NOW
     - each line should be the contenct of one single fully qualified command
@@ -164,13 +166,13 @@ git commit -am "[UPDATE] all submodules updated"
         - python-commands: reserved
         - postgresql-commands: reserved
     - first line of a commit block is always commit ID
-** !!!!! IMPORTANT !!!!!** last commit Block has to be the named github branchname not an ID --> otherwise update process will not start
-
+**IMPORTANT** last commit Block has to be the named github branchname not an ID --> otherwise update process will not start
+```bash
 #commitID: 1111111
 #bash-branch-commands:
 git submodule update
 git add modulname
-#databasespecific-commands:
+**databasespecific-commands:**
 -i modulname1,modulname2
 #python-commands:
 #postgresql-commands:
@@ -195,7 +197,7 @@ git add modulname
 
 **LETZTE COMMIT ID** --> MUSS der named Branch Name sein z.B. intdadi für die überprüfung ob der Update Prozess überhaupt los startet
 #JUST ENTER YOUR LINE NEXT WITH THE OPTIONS YOU WANT LIKE IN THE EXAMPLE
-
+```
 
 
 ## DOCUMENTATION
