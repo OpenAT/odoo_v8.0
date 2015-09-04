@@ -634,15 +634,18 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     # ----- Setup nginx
     echo -e "---- Create NGINX config file"
     NGINXCONF=${DBPATH}/${DBNAME}-nginx.conf
+    NGINXDBMAINTENANCEONLYFILE=${DBPATH}/${DBNAME}-maintenance
     /bin/sed '{
         s!BASEPORT!'"${BASEPORT}"'!g
         s!DBNAME!'"${DBNAME}"'!g
         s!DOMAIN_NAME!'"${DOMAIN_NAME}"'!g
         s!DBLOGPATH!'"${DBLOGPATH}"'!g
         s!DBPATH!'"${DBPATH}"'!g
+        s!MAINTENANCEMODE!'"${NGINXDBMAINTENANCEONLYFILE}_ein"'!g
             }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a $DB_SETUPLOG
     chown root:root ${NGINXCONF}
     chmod ugo=r ${NGINXCONF}
+    touch ${DBMAINTENANCEONLYFILE}_aus
     ln -s ${NGINXCONF}  /etc/nginx/sites-enabled/${DBNAME}-${DOMAIN_NAME}
     service nginx restart
     echo -e "---- Create NGINX config file DONE"
@@ -846,8 +849,6 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
     TARGET_BRANCH=%2
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     REVERTUPDATELOGFILE="${DBPATH}/${SCRIPT_MODE}--${TARGET_BRANCH}--UPDATELOGFILE--`date +%Y-%m-%d__%H-%M`.log"
-    MAINTENANCEMODESWITCHERON="/usr/share/nginx/html/maintenance_ein.html"
-    MAINTENANCEMODESWITCHEROFF="/usr/share/nginx/html/maintenance_aus.html"
     UPGRADEPATHCONFIG="${REPOPATH}/TOOLS/upgradepathconfig.txt"
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
@@ -1044,13 +1045,17 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
         exit 2
     fi
-            #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus.html --> /usr/share/nginx/html/maintenance_ein.html
+    MAINTENANCEMODESWITCHERON="/usr/share/nginx/html/maintenance_ein"
+    MAINTENANCEMODESWITCHEROFF="/usr/share/nginx/html/maintenance_aus"
+    DBONLYMAINTENANCEMODESWITCHERON="$INSTANCE_PATH/maintenance_ein"
+    DBONLYMAINTENANCEMODESWITCHEROFF="$INSTANCE_PATH/maintenance_aus"
+            #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus --> /usr/share/nginx/html/maintenance_ein
             #a rule in nginx.conf will check if the maintenance file is set or not
             # enable Maintenance mode
             # --------------- Todo: write this into a function called local maintainenancemode() {start stop} BEGIN
             #TODO: create two ways single and ALL all switches nginx defaut
             if [ "$TARGET" = "all" ]; then
-                    if [ -e "$MAINTENANCEMODES WITCHEROFF" ]; then
+                    if [ -e "$MAINTENANCEMODESWITCHEROFF" ]; then
                         mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
                     else
                         touch $MAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
@@ -1058,10 +1063,16 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
             else
                 #Todo: move nginx witcher file in target db only but first change Install script to add nginx config to database nginx config not default
                 # ${TARGET_BRANCH}
+                if [ -e "$DBONLYMAINTENANCEMODESWITCHEROFF" ]; then
+                    mv $DBONLYMAINTENANCEMODESWITCHEROFF $DBONLYMAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
+                else
+                    touch $DBONLYMAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
+                fi
 
             fi
             #init 4 also stops
-            init 4 | tee -a $UPDATELOGFILE # stop all running processes postgres, openerp, pads, clouds
+            service nginx stop
+            #ONLY STOPPING NGINX NO INSTANCE OR ANYTHING ELSE init 4 | tee -a $UPDATELOGFILE # stop all running processes postgres, openerp, pads, clouds
             sleep 10 #wait for processes to be shut down
             #its a good idea to restart nginx this time staled processes aso are cleared now ...
             if [ "$(pgrep nginx)" = "" ]; then
