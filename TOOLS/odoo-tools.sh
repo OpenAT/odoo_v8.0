@@ -906,7 +906,7 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
         else # wenn alles ok ist kann man das update machen FALL 1
             echo "no local changes found this branch will be updated, git pull..." >> $UPDATELOGFILE
             #TODO: check if i can reversibly call odoo-tools.sh
-            odoo-tools.sh maintenancemode "all" "enable" | tee -a $UPDATELOGFILE
+            %0 maintenancemode "all" "enable" | tee -a $UPDATELOGFILE
             INIT4REACHED=0 #init 4 ist solange nicht erreicht solange ein process lauft
             WAITINGCOUNTER=0
             while [ $INIT4REACHED != 1 ]; do
@@ -996,7 +996,7 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
             #$INSTANCE_PATH/git status | tee -a $UPDATELOGFILE
             #update finished all works
             #disable maintenance mode
-            odoo-tools.sh maintenancemode $TARGET_BRANCH "disable"
+            %0 maintenancemode $TARGET_BRANCH "disable"
             #mv $MAINTENANCEMODESWITCHERON $MAINTENANCEMODESWITCHEROFF | tee -a $UPDATELOGFILE
         fi
         #update special DATABASES on this server
@@ -1042,7 +1042,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MAINTENANCEMODE"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ne 2 ]; then
+    if [ $# -ne 3 ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
         exit 2
     fi
