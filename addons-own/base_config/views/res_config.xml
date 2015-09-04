@@ -131,8 +131,8 @@
                                     <label for="module_inactive_session_timeout" />
                                 </div>
                                 <div>
-                                    <field name="website_event_register_free" class="oe_inline" />
-                                    <label for="website_event_register_free" />
+                                    <field name="module_website_event_register_free" class="oe_inline" />
+                                    <label for="module_website_event_register_free" />
                                 </div>
 							</div>
 						</div>
