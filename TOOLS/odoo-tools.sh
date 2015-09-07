@@ -1046,6 +1046,13 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
         exit 2
     fi
+    COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
+    echo -e "zählerfie $COUNTERFILE"
+    if [ -f ${COUNTERFILE} ]; then #no instanz installed use different log dir
+        echo GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/$SCRIPT_MODE--`date +%Y-%m-%d__%H-%M`.log"
+    else
+        echo GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/${TARGET_BRANCH}/$SCRIPT_MODE--`date +%Y-%m-%d__%H-%M`.log"
+    fi
     MAINTENANCEMODESWITCHERON="/usr/share/nginx/html/maintenance_ein"
     MAINTENANCEMODESWITCHEROFF="/usr/share/nginx/html/maintenance_aus"
     DBONLYMAINTENANCEMODESWITCHERON="$INSTANCE_PATH/maintenance_ein"
@@ -1057,24 +1064,24 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
             #TODO: create two ways single and ALL all switches nginx defaut
             if [ "$TARGET" = "all" ]; then
                     if [ -e "$MAINTENANCEMODESWITCHEROFF" ]; then
-                        mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
+                        echo mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
                     else
-                        touch $MAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
+                        echo touch $MAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
                     fi
             else
                 #Todo: move nginx witcher file in target db only but first change Install script to add nginx config to database nginx config not default
                 # ${TARGET_BRANCH}
                 if [ -e "$DBONLYMAINTENANCEMODESWITCHEROFF" ]; then
-                    mv $DBONLYMAINTENANCEMODESWITCHEROFF $DBONLYMAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
+                    echo mv $DBONLYMAINTENANCEMODESWITCHEROFF $DBONLYMAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
                 else
-                    touch $DBONLYMAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
+                    echo touch $DBONLYMAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
                 fi
 
             fi
             #init 4 also stops
             service nginx stop
             #ONLY STOPPING NGINX NO INSTANCE OR ANYTHING ELSE init 4 | tee -a $UPDATELOGFILE # stop all running processes postgres, openerp, pads, clouds
-            sleep 10 #wait for processes to be shut down
+            echo sleep 10 #wait for processes to be shut down
             #its a good idea to restart nginx this time staled processes aso are cleared now ...
             if [ "$(pgrep nginx)" = "" ]; then
                 service nginx start
