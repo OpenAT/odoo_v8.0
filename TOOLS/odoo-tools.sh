@@ -1047,8 +1047,8 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         exit 2
     fi
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
-    GLOBALMAINTENANCELOG="${REPO_SETUPPATH}${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
-    DBMAINTENANCELOG="${REPO_SETUPPATH}${TARGET_BRANCH}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
+    GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
+    DBMAINTENANCELOG="${REPO_SETUPPATH}/${TARGET_BRANCH}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
 
     if ! [ -f ${COUNTERFILE} ]; then #no instance installed use different log dir
         if [ -f ${GLOBALMAINTENANCELOG} ]; then
