@@ -1047,16 +1047,19 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         exit 2
     fi
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
-    echo -e "zählerfie $COUNTERFILE"
-    if [ -f ${COUNTERFILE} ]; then #no instanz installed use different log dir
-        echo GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/$SCRIPT_MODE--`date +%Y-%m-%d__%H-%M`.log"
+    if [ -f ${COUNTERFILE} ]; then #no instance installed use different log dir
+        GLOBALMAINTENANCELOG="${REPO_SETUPPATH}${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
+        INSTANCE_RUNNING=0
     else
-        echo GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/${TARGET_BRANCH}/$SCRIPT_MODE--`date +%Y-%m-%d__%H-%M`.log"
+        DBMAINTENANCELOG="${REPO_SETUPPATH}${TARGET_BRANCH}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
+        INSTANCE_RUNNING=1
     fi
+    if [ ${INSTANCE_RUNNING} -eq 1 ]; then
+    echo -e "starting maintenance checks..."
     MAINTENANCEMODESWITCHERON="/usr/share/nginx/html/maintenance_ein"
     MAINTENANCEMODESWITCHEROFF="/usr/share/nginx/html/maintenance_aus"
-    DBONLYMAINTENANCEMODESWITCHERON="$INSTANCE_PATH/maintenance_ein"
-    DBONLYMAINTENANCEMODESWITCHEROFF="$INSTANCE_PATH/maintenance_aus"
+    DBONLYMAINTENANCEMODESWITCHERON="${INSTANCE_PATH}/maintenance_ein"
+    DBONLYMAINTENANCEMODESWITCHEROFF="${INSTANCE_PATH}/maintenance_aus"
             #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus --> /usr/share/nginx/html/maintenance_ein
             #a rule in nginx.conf will check if the maintenance file is set or not
             # enable Maintenance mode
@@ -1064,31 +1067,38 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
             #TODO: create two ways single and ALL all switches nginx defaut
             if [ "$TARGET" = "all" ]; then
                     if [ -e "$MAINTENANCEMODESWITCHEROFF" ]; then
-                        echo mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
+                        mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #check
                     else
-                        echo touch $MAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
+                        touch $MAINTENANCEMODESWITCHERON | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
                     fi
             else
                 #Todo: move nginx witcher file in target db only but first change Install script to add nginx config to database nginx config not default
                 # ${TARGET_BRANCH}
                 if [ -e "$DBONLYMAINTENANCEMODESWITCHEROFF" ]; then
-                    echo mv $DBONLYMAINTENANCEMODESWITCHEROFF $DBONLYMAINTENANCEMODESWITCHERON | tee -a $UPDATELOGFILE #check
+                    mv $DBONLYMAINTENANCEMODESWITCHEROFF $DBONLYMAINTENANCEMODESWITCHERON | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #check
                 else
-                    echo touch $DBONLYMAINTENANCEMODESWITCHERON #if file exists error occures but status is now correct
+                    touch $DBONLYMAINTENANCEMODESWITCHERON | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
                 fi
 
             fi
             #init 4 also stops
+            echo -e "Stopping nginx...."
             service nginx stop
             #ONLY STOPPING NGINX NO INSTANCE OR ANYTHING ELSE init 4 | tee -a $UPDATELOGFILE # stop all running processes postgres, openerp, pads, clouds
-            echo sleep 10 #wait for processes to be shut down
+            echo -e "waiting 10 sec for recheck if all instances of nginx are stopped..."
+            sleep 10 #wait for processes to be shut down
             #its a good idea to restart nginx this time staled processes aso are cleared now ...
             if [ "$(pgrep nginx)" = "" ]; then
                 service nginx start
             else
+                echo -e "could not stop everything clean so killing all nginx processes still running .... "
                 killall nginx
+                echo -e "restart nginx ....."
                 service nginx start
             fi
+    else
+        echo -e "nothing todo for maintenancemode script, no instance running" >> ${GLOBALMAINTENANCELOG}
+    fi
     #ERSTER SCHRITT setzt die jeweilige instanz von Nginx in den maintenance mode oder den ganzen server
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MAINTENANCEMODE DONE"
