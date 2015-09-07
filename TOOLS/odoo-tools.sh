@@ -1054,7 +1054,6 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         if [ -f ${GLOBALMAINTENANCELOG} ]; then
             INSTANCE_RUNNING=0
         else
-            echo "globallog ${GLOBALMAINTENANCELOG}"
             touch ${GLOBALMAINTENANCELOG}
             INSTANCE_RUNNING=0
         fi
@@ -1062,7 +1061,6 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         if [ -f ${DBMAINTENANCELOG} ]; then
             INSTANCE_RUNNING=1
         else
-            echo "dblog ${DBMAINENANCELOG}"
             touch ${DBMAINTENANCELOG}
             INSTANCE_RUNNING=1
         fi
