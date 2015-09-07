@@ -1047,12 +1047,23 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         exit 2
     fi
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
+    GLOBALMAINTENANCELOG="${REPO_SETUPPATH}${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
+    DBMAINTENANCELOG="${REPO_SETUPPATH}${TARGET_BRANCH}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
+
     if [ -f ${COUNTERFILE} ]; then #no instance installed use different log dir
-        GLOBALMAINTENANCELOG="${REPO_SETUPPATH}${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
-        INSTANCE_RUNNING=0
+        if [ -f ${GLOBALMAINTENANCELOG} ]; then
+            INSTANCE_RUNNING=0
+        else
+            touch ${GLOBALMAINTENANCELOG}
+            INSTANCE_RUNNING=0
+        fi
     else
-        DBMAINTENANCELOG="${REPO_SETUPPATH}${TARGET_BRANCH}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
-        INSTANCE_RUNNING=1
+        if [ -f ${DBMAINTENANCELOG} ]; then
+            INSTANCE_RUNNING=1
+        else
+            touch ${DBMAINTENANCELOG}
+            INSTANCE_RUNNING=1
+        fi
     fi
     if [ ${INSTANCE_RUNNING} -eq 1 ]; then
     echo -e "starting maintenance checks..."
@@ -1101,8 +1112,9 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     fi
     #ERSTER SCHRITT setzt die jeweilige instanz von Nginx in den maintenance mode oder den ganzen server
     echo -e "\n--------------------------------------------------------------------------------------------------------"
-    echo -e " $MAINTENANCEMODE DONE"
+    echo -e "MAINTENANCEMODE DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
+    exit 0
 fi
 
 # ---------------------------------------------------------------------------------------
@@ -1124,7 +1136,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
-    echo -e " $MODEBACKUP DONE"
+    echo -e "MODEBACKUP DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
 fi
 
