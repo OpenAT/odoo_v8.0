@@ -1054,6 +1054,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         if [ -f ${GLOBALMAINTENANCELOG} ]; then
             INSTANCE_RUNNING=0
         else
+            echo "globallog ${GLOBALMAINTENANCELOG}"
             touch ${GLOBALMAINTENANCELOG}
             INSTANCE_RUNNING=0
         fi
@@ -1061,6 +1062,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         if [ -f ${DBMAINTENANCELOG} ]; then
             INSTANCE_RUNNING=1
         else
+            echo "dblog ${DBMAINENANCELOG}"
             touch ${DBMAINTENANCELOG}
             INSTANCE_RUNNING=1
         fi
@@ -1108,7 +1110,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
                 service nginx start
             fi
     else
-        echo -e "nothing todo for maintenancemode script, no instance running" >> ${GLOBALMAINTENANCELOG}
+        echo "nothing todo for maintenancemode script, no instance running" >> ${GLOBALMAINTENANCELOG}
     fi
     #ERSTER SCHRITT setzt die jeweilige instanz von Nginx in den maintenance mode oder den ganzen server
     echo -e "\n--------------------------------------------------------------------------------------------------------"
