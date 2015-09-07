@@ -1050,7 +1050,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     GLOBALMAINTENANCELOG="${REPO_SETUPPATH}${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
     DBMAINTENANCELOG="${REPO_SETUPPATH}${TARGET_BRANCH}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
 
-    if [ -f ${COUNTERFILE} ]; then #no instance installed use different log dir
+    if ! [ -f ${COUNTERFILE} ]; then #no instance installed use different log dir
         if [ -f ${GLOBALMAINTENANCELOG} ]; then
             INSTANCE_RUNNING=0
         else
