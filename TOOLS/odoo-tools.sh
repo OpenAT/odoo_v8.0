@@ -1188,7 +1188,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     DBNAME=$3
     TARGET_BRANCH=$2
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
-    echo ${INSTANCE_PATH}
+    echo "INSTANCE_PATH ${INSTANCE_PATH}"
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command if with ssh connection to esx erver directly check if the VM is running on this machine
     # Todo: or find a way of acting from Virtual center server this has access to the whole cluster
     # Check if a database with this name exists
@@ -1207,6 +1207,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
          do #store running databases and log do
             #getting config of database
             DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING[i]}.conf
+            echo "configflepath ${DATABASECONFIGFILE[i]}"
             BASEPORT69=($(grep ${DATABASECONFIGFILE} "xmlrpc_port" | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep ${DATABASECONFIGFILE} "db_password" | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING[i]}/BACKUP/${DATABASE_RUNNING[i]}
