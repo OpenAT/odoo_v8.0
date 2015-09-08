@@ -645,7 +645,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
             }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a $DB_SETUPLOG
     chown root:root ${NGINXCONF}
     chmod ugo=r ${NGINXCONF}
-    touch ${DBMAINTENANCEONLYFILE}_aus
+    touch ${NGINXDBMAINTENANCEONLYFILE}_aus
     ln -s ${NGINXCONF}  /etc/nginx/sites-enabled/${DBNAME}-${DOMAIN_NAME}
     service nginx restart
     echo -e "---- Create NGINX config file DONE"
