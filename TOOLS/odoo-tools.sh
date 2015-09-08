@@ -1216,12 +1216,15 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         done
     else
             DATABASE_RUNNING=${DBNAME}
-            echo "DBNAME: ${DBNAME}"
+            echo "DBNAME: ${DATABASE_RUNNING}"
             DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING}.conf
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "db_password" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-            BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING[i]}/BACKUP/${DATABASE_RUNNING}
+            BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}
             echo "backup database ${DBNAME} ...."
+            echo "BASEPORT: ${BASEPORT69}"
+            echo "SUPERPWD: ${SUPER_PASSWORD}"
+             echo"CONFIGFILE: ${DATABASECONFIGFILE}"
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING} -f ${BACKUPFILENAME})
 
     fi
