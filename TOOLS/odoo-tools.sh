@@ -1052,8 +1052,8 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     echo "Instanzpfad ${INSTANCE_PATH}"
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
-    GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
-    DBMAINTENANCELOG="${INSTANCE_PATH}/${DBNAME}/$SCRIPT_MODE--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
+    GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/${SCRIPT_MODE}--.log"
+    DBMAINTENANCELOG="${INSTANCE_PATH}/${DBNAME}/$SCRIPT_MODE--${DBNAME}--.log"
     MAINTENANCEMODESWITCHERON="/usr/share/nginx/html/maintenance_ein"
     MAINTENANCEMODESWITCHEROFF="/usr/share/nginx/html/maintenance_aus"
     DBONLYMAINTENANCEMODESWITCHERON="${INSTANCE_PATH}/${DBNAME}/${DBNAME}-maintenance_ein"
@@ -1074,14 +1074,14 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         exit 2
     fi
     if ! [ -f ${COUNTERFILE} ]; then #no instance installed use different log dir
-        if [ -f "${REPO_SETUPPATH}/${SCRIPT_MODE}--*.log" ]; then
+        if [ -f ${GLOBALMAINTENANCELOG} ]; then
             INSTANCE_RUNNING=0
         else
             touch ${GLOBALMAINTENANCELOG}
             INSTANCE_RUNNING=0
         fi
     else
-        if [ -f "${INSTANCE_PATH}/${DBNAME}/$SCRIPT_MODE--${DBNAME}--*.log" ]; then
+        if [ -f ${DBMAINTENANCELOG} ]; then
             INSTANCE_RUNNING=1
         else
             touch ${DBMAINTENANCELOG}
