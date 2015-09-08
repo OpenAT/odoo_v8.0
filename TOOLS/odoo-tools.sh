@@ -1207,18 +1207,19 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
          do #store running databases and log do
             #getting config of database
             DATABASECONFIGFILE=${INSTANCE_PATH}/$i.conf
-            echo "configflepath $i"
-            BASEPORT69=($(grep ${DATABASECONFIGFILE} "xmlrpc_port" | awk '{printf $3;printf "\n"; }'))
-            SUPER_PASSWORD=($(grep ${DATABASECONFIGFILE} "db_password" | awk '{printf $3;printf "\n"; }'))
+            echo "configflepath --> ${DATABASECONFIGFILE}"
+            BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            SUPER_PASSWORD=($(grep "db_password" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/$i/BACKUP/$i
             echo "backup all Databases, while now backing up ${DBNAME} ...."
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d $i} -f ${BACKUPFILENAME})
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d $i -f ${BACKUPFILENAME})
         done
     else
             DATABASE_RUNNING=${DBNAME}
+            echo "DBNAME: ${DBNAME}"
             DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING}.conf
-            BASEPORT69=($(grep ${DATABASECONFIGFILE} "xmlrpc_port" | awk '{printf $3;printf "\n"; }'))
-            SUPER_PASSWORD=($(grep ${DATABASECONFIGFILE} "db_password" | awk '{printf $3;printf "\n"; }'))
+            BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            SUPER_PASSWORD=($(grep "db_password" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING[i]}/BACKUP/${DATABASE_RUNNING}
             echo "backup database ${DBNAME} ...."
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING} -f ${BACKUPFILENAME})
