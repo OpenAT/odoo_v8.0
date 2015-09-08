@@ -1037,22 +1037,40 @@ if [ "$SCRIPT_MODE" = "updatecorebranch" ]; then
     echo -e "--------------------------------------------------------------------------------------------------------"
 fi
 
-MAINTENANCEMODE="$ odoo-tools.sh maintenancemode {TARGET_BRANCH} dbname|all {SWITCHER} enable|disable"
+MAINTENANCEMODE="$ odoo-tools.sh maintenancemode {TARGET_BRANCH} dbname|all enable|disable"
 if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MAINTENANCEMODE"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ne 3 ]; then
+    if [ $# -ne 4 ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
         exit 2
     fi
     TARGET_BRANCH=$2
+    DBNAME=$3
+    OPTION=$4
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     echo "Instanzpfad ${INSTANCE_PATH}"
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
     GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
-    DBMAINTENANCELOG="${INSTANCE_PATH}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
-
+    DBMAINTENANCELOG="${INSTANCE_PATH}/${DBNAME}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
+    MAINTENANCEMODESWITCHERON="/usr/share/nginx/html/maintenance_ein"
+    MAINTENANCEMODESWITCHEROFF="/usr/share/nginx/html/maintenance_aus"
+    DBONLYMAINTENANCEMODESWITCHERON="${INSTANCE_PATH}/${DBNAME}/maintenance_ein"
+    DBONLYMAINTENANCEMODESWITCHEROFF="${INSTANCE_PATH}/${DBNAME}/maintenance_aus"
+    if [ ${OPTION} = "enable" ] || [ ${OPTION} = "disable" ]; then
+        echo "starting maintenancemode check..."
+    else
+        echo -e "ERROR: check your enable disable parameter"
+        exit 2
+    fi
+    # Check if a database with this name already exists (and exit with error if yes)
+    if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
+        echo -e "Database ${DBNAME} exists, starting maintenance mode checks"
+    else
+        echo -e "check your Databasename, you gave ${DBNAME}, but this seems not to exist, stopping script......"
+        exit 2
+    fi
     if ! [ -f ${COUNTERFILE} ]; then #no instance installed use different log dir
         if [ -f ${GLOBALMAINTENANCELOG} ]; then
             INSTANCE_RUNNING=0
@@ -1070,30 +1088,65 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     fi
     if [ ${INSTANCE_RUNNING} -eq 1 ]; then
     echo -e "starting maintenance checks..."
-    MAINTENANCEMODESWITCHERON="/usr/share/nginx/html/maintenance_ein"
-    MAINTENANCEMODESWITCHEROFF="/usr/share/nginx/html/maintenance_aus"
-    DBONLYMAINTENANCEMODESWITCHERON="${INSTANCE_PATH}/maintenance_ein"
-    DBONLYMAINTENANCEMODESWITCHEROFF="${INSTANCE_PATH}/maintenance_aus"
+
             #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus --> /usr/share/nginx/html/maintenance_ein
             #a rule in nginx.conf will check if the maintenance file is set or not
             # enable Maintenance mode
             # --------------- Todo: write this into a function called local maintainenancemode() {start stop} BEGIN
             #TODO: create two ways single and ALL all switches nginx defaut
-            if [ "$TARGET" = "all" ]; then
-                    if [ -e "$MAINTENANCEMODESWITCHEROFF" ]; then
-                        mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #check
+            if [ ${DBNAME} = "all" ]; then
+                    if [ -f "${MAINTENANCEMODESWITCHEROFF}" ]; then
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "enabling global maintenancemode of nginx..."
+                            mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #check
+                        elif [ ${OPTION} = "disable" ]; then
+                           echo -e "already disabled nothing to do..."
+                           exit 2
+                        fi
+                    elif [ -f "{$MAINTENANCEMODESWITCHERON}" ]; then
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "already enabled nothing to do..."
+                            exit 2
+                        elif [ ${OPTION} = "disable" ]; then
+                           echo -e "disable global maintenancemode of nginx..."
+                            mv $MAINTENANCEMODESWITCHERON $MAINTENANCEMODESWITCHEROFF | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #check
+                        fi
                     else
-                        touch $MAINTENANCEMODESWITCHERON | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "touching maintenancemode file seems someone deleted this file....."
+                            touch $MAINTENANCEMODESWITCHERON | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                        elif [ ${OPTION} = "disable" ]; then
+                            echo -e "touching maintenancemode file seems someone deleted this file....."
+                            touch $MAINTENANCEMODESWITCHEROFF | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                        fi
                     fi
-            else
-                #Todo: move nginx witcher file in target db only but first change Install script to add nginx config to database nginx config not default
-                # ${TARGET_BRANCH}
-                if [ -e "$DBONLYMAINTENANCEMODESWITCHEROFF" ]; then
-                    mv $DBONLYMAINTENANCEMODESWITCHEROFF $DBONLYMAINTENANCEMODESWITCHERON | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #check
-                else
-                    touch $DBONLYMAINTENANCEMODESWITCHERON | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
-                fi
 
+            else
+                if [ -e "${DBONLYMAINTENANCEMODESWITCHEROFF}" ]; then
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "enabling ${DBNAME} maintenancemode of nginx..."
+                            mv ${DBONLYMAINTENANCEMODESWITCHEROFF} ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #check
+                        elif [ ${OPTION} = "disable" ]; then
+                           echo -e "already disabled nothing to do..."
+                           exit 2
+                        fi
+                elif [ -f "${DBONLYMAINTENANCEMODESWITCHERON}" ]; then
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "already enabled nothing to do..."
+                            exit 2
+                        elif [ ${OPTION} = "disable" ]; then
+                           echo -e "disable ${DBNAME} maintenancemode of nginx..."
+                            mv ${DBONLYMAINTENANCEMODESWITCHERON} ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #check
+                        fi
+                else
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "touching maintenancemode file seems someone deleted this file....."
+                            touch ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                        elif [ ${OPTION} = "disable" ]; then
+                            echo -e "touching maintenancemode file seems someone deleted this file....."
+                            touch ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                        fi
+                fi
             fi
             #init 4 also stops
             echo -e "Stopping nginx...."
