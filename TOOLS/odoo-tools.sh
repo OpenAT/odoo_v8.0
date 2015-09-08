@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -v
 #######################################################################################################################
 
 GITPATH="https://github.com/OpenAT"
@@ -1186,9 +1186,9 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         exit 2
     fi
     DBNAME=$3
-    PASSWORD=$2
-    TARGET_BRANCH=$1
+    TARGET_BRANCH=$2
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    echo ${INSTANCE_PATH}
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command if with ssh connection to esx erver directly check if the VM is running on this machine
     # Todo: or find a way of acting from Virtual center server this has access to the whole cluster
     # Check if a database with this name exists
@@ -1211,7 +1211,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             SUPER_PASSWORD=($(grep ${DATABASECONFIGFILE} "db_password" | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING[i]}/BACKUP/${DATABASE_RUNNING[i]}
             echo "backup all Databases, while now backing up ${DBNAME} ...."
-            echo -e 'INSTANCE_PATH/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING[i]} -f ${BACKUPFILENAME}'
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING[i]} -f ${BACKUPFILENAME})
         done
     else
             DATABASE_RUNNING=${DBNAME}
@@ -1220,7 +1220,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             SUPER_PASSWORD=($(grep ${DATABASECONFIGFILE} "db_password" | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING[i]}/BACKUP/${DATABASE_RUNNING[i]}
             echo "backup database ${DBNAME} ...."
-            echo -e 'INSTANCE_PATH/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING[i]} -f ${BACKUPFILENAME}'
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING[i]} -f ${BACKUPFILENAME})
 
     fi
 
@@ -1232,6 +1232,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e "MODEBACKUP DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
+    exit 0
 fi
 
 # ---------------------------------------------------------------------------------------
