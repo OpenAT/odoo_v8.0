@@ -1046,6 +1046,8 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
         exit 2
     fi
+    TARGET_BRANCH=$2
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
     GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
     DBMAINTENANCELOG="${REPO_SETUPPATH}/${TARGET_BRANCH}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
