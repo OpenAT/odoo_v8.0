@@ -1053,11 +1053,11 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     echo "Instanzpfad ${INSTANCE_PATH}"
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
     GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
-    DBMAINTENANCELOG="${INSTANCE_PATH}/${DBNAME}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
+    DBMAINTENANCELOG="${INSTANCE_PATH}/${DBNAME}/$SCRIPT_MODE--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
     MAINTENANCEMODESWITCHERON="/usr/share/nginx/html/maintenance_ein"
     MAINTENANCEMODESWITCHEROFF="/usr/share/nginx/html/maintenance_aus"
-    DBONLYMAINTENANCEMODESWITCHERON="${INSTANCE_PATH}/${DBNAME}/maintenance_ein"
-    DBONLYMAINTENANCEMODESWITCHEROFF="${INSTANCE_PATH}/${DBNAME}/maintenance_aus"
+    DBONLYMAINTENANCEMODESWITCHERON="${INSTANCE_PATH}/${DBNAME}/${DBNAME}-maintenance_ein"
+    DBONLYMAINTENANCEMODESWITCHEROFF="${INSTANCE_PATH}/${DBNAME}/${DBNAME}-maintenance_aus"
     if [ ${OPTION} = "enable" ] || [ ${OPTION} = "disable" ]; then
         echo "starting maintenancemode check..."
     else
@@ -1067,6 +1067,8 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     # Check if a database with this name already exists (and exit with error if yes)
     if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
         echo -e "Database ${DBNAME} exists, starting maintenance mode checks"
+    elif [ ${DBNAME} = "all" ]; then
+        echo -e "All Nginx Instances will be switched into Maintenance mode"
     else
         echo -e "check your Databasename, you gave ${DBNAME}, but this seems not to exist, stopping script......"
         exit 2
