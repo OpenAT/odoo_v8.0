@@ -1206,8 +1206,8 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         for i in "${DATABASE_RUNNING[@]}"
          do #store running databases and log do
             #getting config of database
-            DATABASECONFIGFILE=${INSTANCE_PATH}/$1.conf
-            echo "configflepath $i}"
+            DATABASECONFIGFILE=${INSTANCE_PATH}/$i.conf
+            echo "configflepath $i"
             BASEPORT69=($(grep ${DATABASECONFIGFILE} "xmlrpc_port" | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep ${DATABASECONFIGFILE} "db_password" | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/$i/BACKUP/$i
