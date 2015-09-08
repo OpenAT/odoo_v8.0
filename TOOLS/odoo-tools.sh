@@ -1094,8 +1094,6 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
             #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus --> /usr/share/nginx/html/maintenance_ein
             #a rule in nginx.conf will check if the maintenance file is set or not
             # enable Maintenance mode
-            # --------------- Todo: write this into a function called local maintainenancemode() {start stop} BEGIN
-            #TODO: create two ways single and ALL all switches nginx defaut
             if [ ${DBNAME} = "all" ]; then
                     if [ -f "${MAINTENANCEMODESWITCHEROFF}" ]; then
                         if [ ${OPTION} = "enable" ]; then
@@ -1168,7 +1166,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     else
         echo "nothing todo for maintenancemode script, no instance running" >> ${GLOBALMAINTENANCELOG}
     fi
-    #ERSTER SCHRITT setzt die jeweilige instanz von Nginx in den maintenance mode oder den ganzen server
+    #setzt die jeweilige instanz von Nginx in den maintenance mode oder den ganzen server
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e "MAINTENANCEMODE DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
@@ -1178,14 +1176,52 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="$ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
+MODEBACKUP="$ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME}"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ne 2 ]; then
+    if [ $# -ne 3 ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly four arguments!"
         exit 2
+    fi
+    DBNAME=$3
+    PASSWORD=$2
+    TARGET_BRANCH=$1
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    # Todo: check vmware Snapshot how to remote execute the vmware-cmd command if with ssh connection to esx erver directly check if the VM is running on this machine
+    # Todo: or find a way of acting from Virtual center server this has access to the whole cluster
+    # Check if a database with this name exists
+    if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
+        echo -e "Database ${DBNAME} exists, starting to backup this dataase ... "
+    elif [ ${DBNAME} = "all" ]; then
+        echo -e "All databases going to be backed up...."
+    else
+        echo -e "check your Databasename, you gave ${DBNAME}, but this seems not to exist, stopping script......"
+        exit 2
+    fi
+
+    if [ ${DBNAME} = "all" ]; then
+        DATABASE_RUNNING=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
+        for i in "${DATABASE_RUNNING[@]}"
+         do #store running databases and log do
+            #getting config of database
+            DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING[i]}.conf
+            BASEPORT69=($(grep ${DATABASECONFIGFILE} "xmlrpc_port" | awk '{printf $3;printf "\n"; }'))
+            SUPER_PASSWORD=($(grep ${DATABASECONFIGFILE} "db_password" | awk '{printf $3;printf "\n"; }'))
+            BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING[i]}/BACKUP/${DATABASE_RUNNING[i]}
+            echo "backup all Databases, while now backing up ${DBNAME} ...."
+            echo -e 'INSTANCE_PATH/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING[i]} -f ${BACKUPFILENAME}'
+        done
+    else
+            DATABASE_RUNNING=${DBNAME}
+            DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING[i]}.conf
+            BASEPORT69=($(grep ${DATABASECONFIGFILE} "xmlrpc_port" | awk '{printf $3;printf "\n"; }'))
+            SUPER_PASSWORD=($(grep ${DATABASECONFIGFILE} "db_password" | awk '{printf $3;printf "\n"; }'))
+            BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING[i]}/BACKUP/${DATABASE_RUNNING[i]}
+            echo "backup database ${DBNAME} ...."
+            echo -e 'INSTANCE_PATH/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING[i]} -f ${BACKUPFILENAME}'
+
     fi
 
     # TODO: check or create INSTANCE/DATABASE/BACKUP folder

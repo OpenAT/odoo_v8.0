@@ -44,6 +44,3 @@ elif [ "${TYPE}" == "owncloud-backup-sql" ] ; then
 fi
 
 #INSTANCE_PATH/TOOLS/db-tools.py -b BASEPORT69 -s 'SUPER_PASSWORD' backup -d DBNAME -f ${FILENAME}
-# Todo: Create Backup directory
-# Todo: Backup etherpad-lite database (pgdump)
-# Todo: Backup owncloud database and data,config,apps directories (rsync, pgdump)

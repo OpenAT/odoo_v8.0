@@ -6,10 +6,8 @@
 #
 # ATTENTION: be aware that for most db.py methods the fist argument is always the SUPER_PASSWORD
 #            look at: passwd = params[0] and params = params[1:]
-import os
 import sys
 import argparse
-import tempfile
 from xmlrpclib import ServerProxy
 
 
@@ -43,6 +41,14 @@ def backup(args):
             sys.exit(0)
         else:
             sys.exit(2)
+# EXAMPLE
+#import base64
+#import xmlrpclib
+
+#sock = xmlrpclib.ServerProxy('http://localhost:8069/xmlrpc/db')
+#backup_file = open('backup.dump', 'wb')
+#backup_file.write(base64.b64decode(sock.dump('mypassword', 'mydb')))
+#backup_file.close()
 
 # Restore DB
 # service/db.py:   def exp_restore(db_name, data, copy=False):
