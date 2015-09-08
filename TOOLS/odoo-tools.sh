@@ -1048,9 +1048,10 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     fi
     TARGET_BRANCH=$2
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    echo "Instanzpfad ${INSTANCE_PATH}"
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
     GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/${SCRIPT_MODE}--`date +%Y-%m-%d__%H-%M`.log"
-    DBMAINTENANCELOG="${REPO_SETUPPATH}/${TARGET_BRANCH}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
+    DBMAINTENANCELOG="${INSTANCE_PATH}/$SCRIPT_MODE--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
 
     if ! [ -f ${COUNTERFILE} ]; then #no instance installed use different log dir
         if [ -f ${GLOBALMAINTENANCELOG} ]; then
