@@ -1252,7 +1252,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     BACKUPFILENAME=$4
     if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
-        echo -e "Database ${DBNAME} exists, starting to backup this dataase ... "
+        echo -e "Database ${DBNAME} exists, starting to restore this database ... "
     elif [ ${DBNAME} = "all" ]; then
         echo -e "All databases going to be backed up...."
     else
@@ -1260,15 +1260,15 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         exit 2
     fi
     if [ ${DBNAME} = "all" ]; then
-        if [ ${BACKUPFILENAME} = "all" ]; then
-            echo "todo automatically latest backup for each instance is used you cannot a single file your backupfile will be ignored..."
-        else
+        echo "todo automatically latest backup for each instance is used you cannot a single file your backupfile will be ignored..."
+    else
             DATABASE_RUNNING=${DBNAME}
             DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING}/${DATABASE_RUNNING}.conf
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             if [ -f ${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${BACKUPFILENAME} ]; then
                 BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip
+                echo "working on ${BACKUPFILENAME}"
             elif [ ${BACKUPFILENAME} = "latest" ]; then
                 echo "todo find latest backup file"# this is in case of single database manual restore ... in upgradeinst mode this option is different
                 #BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip find latest file
@@ -1277,7 +1277,6 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
                 exit 2
             fi
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME})
-        fi
     fi
     # Todo: Check if BACKUPFILE_NAME exists and is readable
     # Todo: Try to restore BACKUPFILE_NAME to DBNAME_restoretest
