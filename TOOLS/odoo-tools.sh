@@ -1236,7 +1236,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 fi
 
 # ---------------------------------------------------------------------------------------
-# $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}
+# $ odoo-tools.sh restore     {TARGET_BRANCH} {DBNAME} {BACKUPFILE_NAME}
 # ---------------------------------------------------------------------------------------
 MODERESTORE="$ odoo-tools.sh restore     {TARGET_BRANCH} {DBNAME} {BACKUPFILE_NAME}"
 if [ "$SCRIPT_MODE" = "restore" ]; then
@@ -1262,7 +1262,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     if [ ${DBNAME} = "all" ]; then
         if [ ${BACKUPFILENAME} = "all" ]; then
             echo "todo automatically latest backup for each instance is used you cannot a single file your backupfile will be ignored..."
-    else
+        else
             DATABASE_RUNNING=${DBNAME}
             DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING}/${DATABASE_RUNNING}.conf
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
@@ -1276,7 +1276,8 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
                 echo "no backup file found or wrong backupfilename stopping ...."
                 exit 2
             fi
-        echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME})
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME})
+        fi
     fi
     # Todo: Check if BACKUPFILE_NAME exists and is readable
     # Todo: Try to restore BACKUPFILE_NAME to DBNAME_restoretest
