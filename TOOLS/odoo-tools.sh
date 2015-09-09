@@ -1210,7 +1210,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             echo "configflepath --> ${DATABASECONFIGFILE}"
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-            BACKUPFILENAME=${INSTANCE_PATH}/$i/BACKUP/$i.zip
+            BACKUPFILENAME=${INSTANCE_PATH}/$i/BACKUP/$i.zip #TODO: actual date incuding not done yet because of saerch *
             echo "backup all Databases, while now backing up ${DBNAME} ...."
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d $i -f ${BACKUPFILENAME})
         done
@@ -1219,7 +1219,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING}/${DATABASE_RUNNING}.conf
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-            BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip
+            BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip #TODO: actualdate including not done yet because of saerch *
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING} -f ${BACKUPFILENAME})
 
     fi
@@ -1238,16 +1238,46 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}
 # ---------------------------------------------------------------------------------------
-MODERESTORE="$ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}"
+MODERESTORE="$ odoo-tools.sh restore     {TARGET_BRANCH} {DBNAME} {BACKUPFILE_NAME|latest}"
 if [ "$SCRIPT_MODE" = "restore" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODERESTORE"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ne 2 ]; then
+    if [ $# -ne 4 ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly five arguments!"
         exit 2
     fi
-
+    DBNAME=$3
+    TARGET_BRANCH=$2
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    BACKUPFILENAME=$4
+    if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
+        echo -e "Database ${DBNAME} exists, starting to backup this dataase ... "
+    elif [ ${DBNAME} = "all" ]; then
+        echo -e "All databases going to be backed up...."
+    else
+        echo -e "check your Databasename, you gave ${DBNAME}, but this seems not to exist, stopping script......"
+        exit 2
+    fi
+    if [ ${DBNAME} = "all" ]; then
+        if [ ${BACKUPFILENAME} = "all" ]; then
+            echo "todo automatically latest backup for each instance is used you cannot a single file your backupfile will be ignored..."
+    else
+            DATABASE_RUNNING=${DBNAME}
+            DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING}/${DATABASE_RUNNING}.conf
+            BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            if [ -f ${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${BACKUPFILENAME} ]; then
+                BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip
+            elif [ ${BACKUPFILENAME} = "latest" ]; then
+                echo "todo find latest backup file"# this is in case of single database manual restore ... in upgradeinst mode this option is different
+                #BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip find latest file
+            else
+                echo "no backup file found or wrong backupfilename stopping ...."
+                exit 2
+            fi
+        echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME})
+    fi
     # Todo: Check if BACKUPFILE_NAME exists and is readable
     # Todo: Try to restore BACKUPFILE_NAME to DBNAME_restoretest
         # If success Todo: Remove DB DBNAME_restoretest
