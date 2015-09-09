@@ -1238,7 +1238,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}
 # ---------------------------------------------------------------------------------------
-MODERESTORE="$ odoo-tools.sh restore     {TARGET_BRANCH} {DBNAME} {BACKUPFILE_NAME|latest}"
+MODERESTORE="$ odoo-tools.sh restore     {TARGET_BRANCH} {DBNAME} {BACKUPFILE_NAME}"
 if [ "$SCRIPT_MODE" = "restore" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODERESTORE"
@@ -1290,6 +1290,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODERESTORE DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
+    exit 0
 fi
 
 # ---------------------------------------------------------
