@@ -1300,7 +1300,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             #mit db-tools geht nicht, try manuell alles
             echo "Unzip ${BACKUPFILENAME}...."
             unzip ${BACKUPFILENAME}
-            DUMPFILE=echo ${DATABASE_RUNNING}.zip | cut -d"." -f1,2
+            DUMPFILE=`echo ${BACKUPFILENAME} | cut -d"." -f1,2`
             echo "DUMPFILE ..... ${DUMPFILE}"
             echo "Create DB ${DBNAME} with ${BACKUPFILENAME} file.."
             su - postgres -c "createdb -U ${DB_USER} -T template0 ${DBNAME}"
