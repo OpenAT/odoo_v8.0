@@ -1277,7 +1277,12 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
                 echo "no backup file found or wrong backupfilename stopping ...."
                 exit 2
             fi
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${DB_PASSWD} "drop" -d ${DBNAME})
+            su postgres  -l -c "psql  -c 'select pg_terminate_backend(procpid) \
+                              from pg_stat_activity \
+                              where datname = '\"'${DBNAME}'\"''"
+            #test su - postgres -c "psql select pg_terminate_backend(procpid) from pg_stat_activity where datname = '${DBNAME}"
+            su - postgres -c "dropdb ${DBNAME}"
+            # test : access denied --> maybe open connection  ??? echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${DB_PASSWD} "drop" -d ${DBNAME})
             echo "DATABASE DELETED"
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME})
     fi
