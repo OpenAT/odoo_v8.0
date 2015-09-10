@@ -1304,7 +1304,8 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             #echo "DUMPFILE ..... ${DUMPFILE}"
             #echo "Create DB ${DBNAME} with ${BACKUPFILENAME} file.."
             #su - postgres -c "createdb -U ${DB_USER} -T template1 ${DBNAME}"
-            if su - postgres -c "psql -c -U ${DB_USER} -f ${BACKUPFILENAME} -d ${DBNAME} -h localhost -p ${BASEPORT69}"; then
+            echo "starting restore ....."
+            if echo -e $($(su - postgres -c "psql -c -U ${DB_USER} -f ${BACKUPFILENAME} -d ${DBNAME} -h localhost -p ${BASEPORT69}")); then
                 echo -e "Datbase restored successfully ..... "
             else
                 echo -e "Error on restoring database ....."
