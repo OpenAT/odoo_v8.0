@@ -1288,23 +1288,23 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             echo "DATABASE DELETED......"
             # ----- Create a new Database
             #echo -e "\n----- Create Database ${DBNAME}"
-            #if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} newdb -d ${DBNAME} -p 'adminpw'; then
-            #    echo -e "Database created!" #| tee -a $DB_SETUPLOG
-            #else
-            #    echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" #| tee -a $DB_SETUPLOG
-            #fi
+            if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} newdb -d ${DBNAME} -p 'adminpw'; then
+                echo -e "Database created!" #| tee -a $DB_SETUPLOG
+            else
+                echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" #| tee -a $DB_SETUPLOG
+            fi
 
             # test : access denied --> maybe open connection  ??? echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${DB_PASSWD} "drop" -d ${DBNAME})
 
             #if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME}; then
             #mit db-tools geht nicht, try manuell alles
-            echo "Unzip ${BACKUPFILENAME}...."
-            unzip ${BACKUPFILENAME}
-            DUMPFILE=`echo ${BACKUPFILENAME} | cut -d"." -f1,2`
-            echo "DUMPFILE ..... ${DUMPFILE}"
-            echo "Create DB ${DBNAME} with ${BACKUPFILENAME} file.."
-            su - postgres -c "createdb -U ${DB_USER} -T template0 ${DBNAME}"
-            if su - postgres -c "psql -c -U ${DB_USER} -f ${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DUMPFILE} -d ${DBNAME} -h localhost -p ${BASEPORT69}"; then
+            #echo "Unzip ${BACKUPFILENAME}...."
+            #unzip ${BACKUPFILENAME}
+            #DUMPFILE=`echo ${BACKUPFILENAME} | cut -d"." -f1,2`
+            #echo "DUMPFILE ..... ${DUMPFILE}"
+            #echo "Create DB ${DBNAME} with ${BACKUPFILENAME} file.."
+            #su - postgres -c "createdb -U ${DB_USER} -T template1 ${DBNAME}"
+            if su - postgres -c "psql -c -U ${DB_USER} -f ${BACKUPFILENAME} -d ${DBNAME} -h localhost -p ${BASEPORT69}"; then
                 echo -e "Datbase restored successfully ..... "
             else
                 echo -e "Error on restoring database ....."
