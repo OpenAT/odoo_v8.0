@@ -1276,6 +1276,8 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
                 echo "no backup file found or wrong backupfilename stopping ...."
                 exit 2
             fi
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "drop" -d ${DBNAME})
+            echo "DATABASE DELETED"
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME})
     fi
     # Todo: Check if BACKUPFILE_NAME exists and is readable
@@ -1307,6 +1309,8 @@ echo -e "$ odoo-tools.sh maintenancemode {all|dbname} {enable|disable}"
 echo -e "$ $MAINTENANCEMODE"
 echo -e "TODO: $ odoo-tools.sh dupdb {BRANCH} {SOURCE_SUPER_PASSWORD} {SOURCE_DBNAME} {TARGET_DBNAME} {TARGET_DOMAIN}"
 echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
+echo -e "$ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME}"
 echo -e "TODO: $MODEBACKUP"
+echo -e "$ odoo-tools.sh restore     {TARGET_BRANCH} {DBNAME} {BACKUPFILE_NAME}"
 echo -e "TODO: $MODERESTORE"
 echo -e "------------------------\n"
