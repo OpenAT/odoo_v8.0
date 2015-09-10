@@ -1277,7 +1277,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
                 echo "no backup file found or wrong backupfilename stopping ...."
                 exit 2
             fi
-            su postgres  -l -c "psql  -c 'select pg_terminate_backend(procpid) \
+            su postgres  -l -c "psql  -c 'select pg_terminate_backend(pid) \
                               from pg_stat_activity \
                               where datname = '\"'${DBNAME}'\"''"
             #test su - postgres -c "psql select pg_terminate_backend(procpid) from pg_stat_activity where datname = '${DBNAME}"
