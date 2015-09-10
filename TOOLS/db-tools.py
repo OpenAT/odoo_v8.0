@@ -54,7 +54,7 @@ def backup(args):
 # service/db.py:   def exp_restore(db_name, data, copy=False):
 def restore(args):
     print 'Restore Database: %s' % args.database
-    if server.restore(args.superpwd, args.database, args.filedump):
+    if server.restore(args.superpwd, args.database, (args.filedump).encode('base64')):
         sys.exit(0)
     else:
         sys.exit(2)
