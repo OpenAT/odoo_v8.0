@@ -1287,16 +1287,20 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             su - postgres -c "dropdb ${DBNAME}"
             echo "DATABASE DELETED......"
             # ----- Create a new Database
-            echo -e "\n----- Create Database ${DBNAME}"
-            if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} newdb -d ${DBNAME} -p 'adminpw'; then
-                echo -e "Database created!" #| tee -a $DB_SETUPLOG
-            else
-                echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" #| tee -a $DB_SETUPLOG
-            fi
+            #echo -e "\n----- Create Database ${DBNAME}"
+            #if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} newdb -d ${DBNAME} -p 'adminpw'; then
+            #    echo -e "Database created!" #| tee -a $DB_SETUPLOG
+            #else
+            #    echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" #| tee -a $DB_SETUPLOG
+            #fi
 
             # test : access denied --> maybe open connection  ??? echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${DB_PASSWD} "drop" -d ${DBNAME})
 
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME})
+            if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME}; then
+                echo -e "Datbase restored successfully ..... "
+            else
+                echo -e "Error on restoring database ....."
+            fi
     fi
     # Todo: Check if BACKUPFILE_NAME exists and is readable
     # Todo: Try to restore BACKUPFILE_NAME to DBNAME_restoretest
