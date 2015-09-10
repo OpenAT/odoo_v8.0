@@ -1267,6 +1267,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             DB_PASSWD=($(grep "db_password" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            DB_USER=($(grep "db_user" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             if [ -f ${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${BACKUPFILENAME} ]; then
                 BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip
                 echo "working on ${BACKUPFILENAME}"
@@ -1277,13 +1278,24 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
                 echo "no backup file found or wrong backupfilename stopping ...."
                 exit 2
             fi
+            echo "check if open connections are available to databae ${DBAME} ...."
             su postgres  -l -c "psql  -c 'select pg_terminate_backend(pid) \
                               from pg_stat_activity \
                               where datname = '\"'${DBNAME}'\"''"
             #test su - postgres -c "psql select pg_terminate_backend(procpid) from pg_stat_activity where datname = '${DBNAME}"
+            echo "deleting Database before restore ...."
             su - postgres -c "dropdb ${DBNAME}"
+            echo "DATABASE DELETED......"
+            # ----- Create a new Database
+            echo -e "\n----- Create Database ${DBNAME}"
+            if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} newdb -d ${DBNAME} -p 'adminpw'; then
+                echo -e "Database created!" #| tee -a $DB_SETUPLOG
+            else
+                echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" #| tee -a $DB_SETUPLOG
+            fi
+
             # test : access denied --> maybe open connection  ??? echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${DB_PASSWD} "drop" -d ${DBNAME})
-            echo "DATABASE DELETED"
+
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME})
     fi
     # Todo: Check if BACKUPFILE_NAME exists and is readable
