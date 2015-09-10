@@ -41,14 +41,6 @@ def backup(args):
             sys.exit(0)
         else:
             sys.exit(2)
-# EXAMPLE
-#import base64
-#import xmlrpclib
-
-#sock = xmlrpclib.ServerProxy('http://localhost:8069/xmlrpc/db')
-#backup_file = open('backup.dump', 'wb')
-#backup_file.write(base64.b64decode(sock.dump('mypassword', 'mydb')))
-#backup_file.close()
 
 # Restore DB
 # service/db.py:   def exp_restore(db_name, data, copy=False):
@@ -59,6 +51,15 @@ def restore(args):
     else:
         sys.exit(2)
 
+# Drop Database:
+def drop(args):
+    # Drop the Database
+    # service/db.py:   def exp_drop(db_name):
+    print 'Drop Database: %s' % args.database
+    if server.drop(args.database):
+        sys.exit(0)
+    else:
+        sys.exit(2)
 
 # ----------------------------
 # Create the command parser
@@ -93,6 +94,11 @@ parser_restore = subparsers.add_parser('restore', help='restore database with da
 parser_restore.add_argument('-d', '--database', required='True', help='Name of new database')
 parser_restore.add_argument('-f', '--filedump', required='True', help='Backupfile to restore')
 parser_restore.set_defaults(func=restore)
+
+# SubParser for drop
+parser_drop = subparsers.add_parser('drop', help='drop database')
+parser_drop.add_argument('-d', '--database', required='True', help='Name of database to be dropped')
+parser_drop.set_defaults(func=drop)
 
 # --------------------
 # START
