@@ -309,3 +309,48 @@ hr {
   background: black url(#{$_path}/woven.png) repeat;
     @include dd_text(black);
 }
+
+//----------- BLOG AREA --------
+.blog_title h1, .blog_title .h1 {
+    background-color: #000001;
+    background: rgba(0,0,0,0.4);
+  @include dd_text(white);
+}
+.blog_title h2, .blog_title .h2 {
+    background-color: #000000;
+    background: rgba(0,0,0,0.4);
+  @include dd_text(grey);
+}
+address.mb0 {
+  display: none;
+}
+#wrap > div.container > div > div.col-md-4.mb32 > address > div > address {
+  display: block;
+}
+#blog_angle_down > strong > a {
+  background-color: rgba(0,0,0, 0.4) !important;
+  border-radius: 10px;
+  color: $website_red_medium}
+
+.bloglist-img {
+  width: 151px;
+}
+
+.website_blog {
+  h2.mb4 {
+    font-size: 34px;
+  }
+}
+
+/* ---- DONATION AREA ---- */
+.panel {
+  background-color: rgba($website_grey_light, 0.45);
+
+}
+.panel-default {
+  border-color: $website_red_dark;
+}
+
+#oe_website_sale_donate_funding {
+  background-color: transparent;
+}
