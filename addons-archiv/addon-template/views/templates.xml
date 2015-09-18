@@ -9,8 +9,10 @@
                 <!--<script type="text/javascript" src="/customer_aaaa/static/src/js/javascript.js"></script>-->
 
                 <!-- Style Sheets -->
-                <link rel="stylesheet" href='/addons/cu_aaaa/static/src/css/website.css'/>
-                <link rel="stylesheet" href='/addons/cu_aaaa/static/src/css/website_sale.css'/>
+                <link rel="stylesheet" href='/cu_aaaa/static/src/css/website.css'/>
+                <link rel="stylesheet" href='/cu_aaaa/static/src/css/website_sale.css'/>
+                <link rel="stylesheet" href='/cu_aaaa/static/src/css/donation_shop.css'/>
+                <link rel="stylesheet" href='/cu_aaaa/static/src/css/blog_page.css'/>
             </xpath>
         </template>
 

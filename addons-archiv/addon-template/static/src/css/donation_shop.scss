@@ -1,0 +1,14 @@
+@import 'basic_definitions';
+
+/* ---- DONATION AREA ---- */
+.panel {
+  background-color: rgba($website_grey_light, 0.45);
+
+}
+.panel-default {
+  border-color: $website_red_dark;
+}
+
+#oe_website_sale_donate_funding {
+  background-color: transparent;
+}

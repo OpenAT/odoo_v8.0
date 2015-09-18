@@ -1,7 +1,7 @@
 <openerp>
 <data>
 
-<template id="cu_herz_snippet_options" inherit_id="website.snippet_options">
+<template id="cu_aaaa_snippet_options" inherit_id="website.snippet_options">
 
     <!-- Replace Background Colors and Images -->
     <xpath expr="//div[@data-snippet-option-id='background']/li" position="replace">
@@ -40,19 +40,19 @@
                 <li class="dropdown-submenu">
                     <a tabindex="-2" href="#">Backgrounds</a>
                     <ul class="dropdown-menu">
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/book.jpg"><a>book</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/cooking.jpg"><a>cooking</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/cuba-cup.jpg"><a>cuba-cup</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/dessert.jpeg"><a>dessert</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/dont.jpeg"><a>dont</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/honey.jpg"><a>honey</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/leaves.jpeg"><a>leaves</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/locks.jpg"><a>locks</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/macbook.jpg"><a>macbook</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/park.jpeg"><a>park</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/ruler.jpeg"><a>ruler</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/school.jpg"><a>school</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/strawberry.jpg"><a>strawberry</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/book.jpg"><a>book</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/cooking.jpg"><a>cooking</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/cuba-cup.jpg"><a>cuba-cup</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/dessert.jpeg"><a>dessert</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/dont.jpeg"><a>dont</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/honey.jpg"><a>honey</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/leaves.jpeg"><a>leaves</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/locks.jpg"><a>locks</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/macbook.jpg"><a>macbook</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/park.jpeg"><a>park</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/ruler.jpeg"><a>ruler</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/school.jpg"><a>school</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/banner/strawberry.jpg"><a>strawberry</a></li>
                     </ul>
                 </li>
                 <li class="dropdown-submenu">
@@ -80,20 +80,20 @@
                 <li class="dropdown-submenu">
                     <a tabindex="-2" href="#">Parallax</a>
                     <ul class="dropdown-menu">
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/boat.jpg"><a>boat</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/clouds.jpeg"><a>clouds</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/dive.jpg"><a>dive</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/drops.jpeg"><a>drops</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/fields.jpg"><a>fields</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/map.jpg"><a>map</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/mobile.jpeg"><a>mobile</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/mountain.jpeg"><a>mountain</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/sand.jpeg"><a>sand</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/sunset-hair.jpg"><a>sunset hair</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/wheat.jpeg"><a>wheat</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/wii.jpg"><a>wii</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/yellow.jpg"><a>yellow</a></li>
-                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/yellow_ls.jpg"><a>yellow landscape</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/boat.jpg"><a>boat</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/clouds.jpeg"><a>clouds</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/dive.jpg"><a>dive</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/drops.jpeg"><a>drops</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/fields.jpg"><a>fields</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/map.jpg"><a>map</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/mobile.jpeg"><a>mobile</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/mountain.jpeg"><a>mountain</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/sand.jpeg"><a>sand</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/sunset-hair.jpg"><a>sunset hair</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/wheat.jpeg"><a>wheat</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/wii.jpg"><a>wii</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/yellow.jpg"><a>yellow</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_aaaa/static/src/img/parallax/yellow_ls.jpg"><a>yellow landscape</a></li>
                     </ul>
                 </li>
                 <li class="dropdown-submenu">

@@ -1,4 +1,5 @@
 @import 'fontfaces';
+@import 'basic_definitions';
 
 body {
     font-family: 'CorporateARegular', Georgia, "Times New Roman", Times, serif;
@@ -30,45 +31,6 @@ p, ul, ol, dl, blockquote, address {
     margin: 0 0 1.618em 0;
     padding: 0;
 }
-
-
-// ---------- BASIS FARBEN --------
-// Adobe Kuler; Komplementaer, Basis=BF1E2E
-
-/* DEFAULTS available in all webpages */
-$_path: "/cu_herz/static/src/img/patterns";
-$website_grey_light: #E5E4E2;
-$website_grey_medium: #736F6E;
-$website_grey_dark: #413839;
-$website_grey_darkdesat: #414141;
-$website_grey_black: #2B1B17;
-
-
-/* CUSTOMMER COLOURS */
-$website_red_light: #FF283D;
-$website_red_medium: #DB2235;
-$website_red_dark: #BF1E2E;
-$website_red_black: #450B11;
-$website_green_medium: #676535;
-$website_green_light: #A6A355;
-$website_lightblue: #00CBFF;
-$website_lightblue_dark: #008EB2;
-$bgcolor: #ffffff;
-$footer_background_color: #f1e7e6;
-$linkcolor: #008EB2;
-$startcolor: #777777;
-// Text
-$website_text_dark: black;
-$website_text_light: white;
-
-// Hyperlinks
-$website_link_dark: $website_red_medium;
-$website_link_dark_hover: lighten($website_link_dark, 16%);
-$website_link_light: $website_red_light;
-$website_link_light_hover: darken($website_link_light, 16%);
-
-// Transparent
-$website_transparent: 0.85;
 
 //* ---- BASIC GRID ---- */
 header, main, footer {
@@ -156,19 +118,6 @@ footer {
   color: $website_grey_dark;
   background: $footer_background_color;
   a {color: $website_red_dark;}
-}
-
-/* ---- DONATION AREA ---- */
-.panel {
-  background-color: rgba($website_grey_light, 0.45);
-
-}
-.panel-default {
-  border-color: $website_red_dark;
-}
-
-#oe_website_sale_donate_funding {
-  background-color: transparent;
 }
 
 /* MIXINS AND GUARDS */
@@ -359,37 +308,4 @@ hr {
 .website_pattern_woven {
   background: black url(#{$_path}/woven.png) repeat;
     @include dd_text(black);
-}
-
-
-//----------- BLOG AREA --------
-.blog_title h1, .blog_title .h1 {
-    background-color: #000000;
-    background: rgba(0,0,0,0.4);
-  @include dd_text(white);
-}
-.blog_title h2, .blog_title .h2 {
-    background-color: #000000;
-    background: rgba(0,0,0,0.4);
-  @include dd_text(grey);
-}
-address.mb0 {
-  display: none;
-}
-#wrap > div.container > div > div.col-md-4.mb32 > address > div > address {
-  display: block;
-}
-#blog_angle_down > strong > a {
-  background-color: rgba(0,0,0, 0.4) !important;
-  border-radius: 10px;
-  color: $website_red_medium}
-
-.bloglist-img {
-  width: 151px;
-}
-
-.website_blog {
-  h2.mb4 {
-    font-size: 34px;
-  }
 }

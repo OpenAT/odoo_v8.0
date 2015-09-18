@@ -68,6 +68,8 @@ $base_url: 'https://shop.aids.ch/fonts';
 
 }
 */
+/* DEFAULTS available in all webpages */
+/* CUSTOMMER COLOURS */
 body {
   font-family: 'CorporateARegular', Georgia, "Times New Roman", Times, serif;
   font-size: 1em;
@@ -104,8 +106,6 @@ p, ul, ol, dl, blockquote, address {
   margin: 0 0 1.618em 0;
   padding: 0; }
 
-/* DEFAULTS available in all webpages */
-/* CUSTOMMER COLOURS */
 header, main, footer {
   display: block; }
 
@@ -187,16 +187,6 @@ footer {
   background: #f1e7e6; }
   footer a {
     color: #BF1E2E; }
-
-/* ---- DONATION AREA ---- */
-.panel {
-  background-color: rgba(229, 228, 226, 0.45); }
-
-.panel-default {
-  border-color: #BF1E2E; }
-
-#oe_website_sale_donate_funding {
-  background-color: transparent; }
 
 /* MIXINS AND GUARDS */
 hr {
@@ -339,90 +329,65 @@ hr {
   background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 142, 178, 0.85) 1); }
 
 .website_pattern_cartographer {
-  background: url(/cu_herz/static/src/img/patterns/cartographer.png) repeat;
+  background: url(/cu_aaaa/static/src/img/patterns/cartographer.png) repeat;
   color: white; }
 
 .website_pattern_concrete_wall {
-  background: url(/cu_herz/static/src/img/patterns/concrete_wall.png) repeat;
+  background: url(/cu_aaaa/static/src/img/patterns/concrete_wall.png) repeat;
   color: white; }
 
 .website_pattern_congruent_outline {
-  background: url(/cu_herz/static/src/img/patterns/congruent_outline.png) repeat;
+  background: url(/cu_aaaa/static/src/img/patterns/congruent_outline.png) repeat;
   color: white; }
 
 .website_pattern_debut_dark {
-  background: url(/cu_herz/static/src/img/patterns/debut_dark.png) repeat;
+  background: url(/cu_aaaa/static/src/img/patterns/debut_dark.png) repeat;
   color: white; }
 
 .website_pattern_debut_light {
-  background: white url(/cu_herz/static/src/img/patterns/debut_light.png) repeat; }
+  background: white url(/cu_aaaa/static/src/img/patterns/debut_light.png) repeat; }
 
 .website_pattern_escheresque {
-  background: url(/cu_herz/static/src/img/patterns/escheresque.png) repeat; }
+  background: url(/cu_aaaa/static/src/img/patterns/escheresque.png) repeat; }
 
 .website_pattern_escheresque_ste {
-  background: url(/cu_herz/static/src/img/patterns/escheresque_ste.png) repeat;
+  background: url(/cu_aaaa/static/src/img/patterns/escheresque_ste.png) repeat;
   color: white; }
 
 .website_pattern_footer_lodyas {
-  background: url(/cu_herz/static/src/img/patterns/footer_lodyas.png) repeat;
+  background: url(/cu_aaaa/static/src/img/patterns/footer_lodyas.png) repeat;
   color: white; }
 
 .website_pattern_hexabump {
-  background: url(/cu_herz/static/src/img/patterns/hexabump.png) repeat;
+  background: url(/cu_aaaa/static/src/img/patterns/hexabump.png) repeat;
   color: white; }
 
 .website_pattern_mooning {
-  background: url(/cu_herz/static/src/img/patterns/mooning.png) repeat; }
+  background: url(/cu_aaaa/static/src/img/patterns/mooning.png) repeat; }
 
 .website_pattern_pinstriped_suit {
-  background: black url(/cu_herz/static/src/img/patterns/pinstriped_suit.png) repeat;
+  background: black url(/cu_aaaa/static/src/img/patterns/pinstriped_suit.png) repeat;
   color: white; }
 
 .website_pattern_purty_wood {
-  background: url(/cu_herz/static/src/img/patterns/purty_wood.png) repeat; }
+  background: url(/cu_aaaa/static/src/img/patterns/purty_wood.png) repeat; }
 
 .website_pattern_retina_wood {
-  background: url(/cu_herz/static/src/img/patterns/retina_wood.png) repeat; }
+  background: url(/cu_aaaa/static/src/img/patterns/retina_wood.png) repeat; }
 
 .website_pattern_shattered {
-  background: url(/cu_herz/static/src/img/patterns/shattered.png) repeat; }
+  background: url(/cu_aaaa/static/src/img/patterns/shattered.png) repeat; }
 
 .website_pattern_stardust {
-  background: black url(/cu_herz/static/src/img/patterns/stardust.png) repeat;
+  background: black url(/cu_aaaa/static/src/img/patterns/stardust.png) repeat;
   color: white; }
 
 .website_pattern_tweed {
-  background: black url(/cu_herz/static/src/img/patterns/tweed.png) repeat;
+  background: black url(/cu_aaaa/static/src/img/patterns/tweed.png) repeat;
   color: white; }
 
 .website_pattern_woven {
-  background: black url(/cu_herz/static/src/img/patterns/woven.png) repeat;
+  background: black url(/cu_aaaa/static/src/img/patterns/woven.png) repeat;
   color: white; }
-
-.blog_title h1, .blog_title .h1 {
-  background-color: #000000;
-  background: rgba(0, 0, 0, 0.4); }
-
-.blog_title h2, .blog_title .h2 {
-  background-color: #000000;
-  background: rgba(0, 0, 0, 0.4); }
-
-address.mb0 {
-  display: none; }
-
-#wrap > div.container > div > div.col-md-4.mb32 > address > div > address {
-  display: block; }
-
-#blog_angle_down > strong > a {
-  background-color: rgba(0, 0, 0, 0.4) !important;
-  border-radius: 10px;
-  color: #DB2235; }
-
-.bloglist-img {
-  width: 151px; }
-
-.website_blog h2.mb4 {
-  font-size: 34px; }
 
 /*# sourceMappingURL=website.css.map */
