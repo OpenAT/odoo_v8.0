@@ -18,7 +18,7 @@
 
 {
     'name': 'cu_aaaa',
-    'summary': """FCOM Customer AAAA Modifications""",
+    'summary': """FCOM CUSTOMERNAME Modifications""",
     'description': """
 FCOM Customer Modifications - Template
 ======================================

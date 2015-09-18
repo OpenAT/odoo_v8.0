@@ -11,8 +11,6 @@
                 <!-- Style Sheets -->
                 <link rel="stylesheet" href='/cu_aaaa/static/src/css/website.css'/>
                 <link rel="stylesheet" href='/cu_aaaa/static/src/css/website_sale.css'/>
-                <link rel="stylesheet" href='/cu_aaaa/static/src/css/donation_shop.css'/>
-                <link rel="stylesheet" href='/cu_aaaa/static/src/css/blog_page.css'/>
             </xpath>
         </template>
 
