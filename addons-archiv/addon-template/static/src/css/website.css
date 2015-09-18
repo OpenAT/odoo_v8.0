@@ -1,19 +1,19 @@
 @font-face {
   font-family: 'muliBold';
-  src: url("/static/src/css/fonts/muli-bold-webfont.eot");
-  src: url("/static/src/css/fonts/muli-bold-webfont.eot?#iefix") format("embedded-opentype"), url("/static/src/css/fonts/muli-bold-webfont.woff") format("woff"), url("/static/src/css/fonts/muli-bold-webfont.ttf") format("truetype"), url("/static/src/css/fonts/muli-bold-webfont.svg#muli_bold") format("svg");
+  src: url("/cu_aaaa/static/src/css/fonts/muli-bold-webfont.eot");
+  src: url("/cu_aaaa/static/src/css/fonts/muli-bold-webfont.eot?#iefix") format("embedded-opentype"), url("/cu_aaaa/static/src/css/fonts/muli-bold-webfont.woff") format("woff"), url("/cu_aaaa/static/src/css/fonts/muli-bold-webfont.ttf") format("truetype"), url("/cu_aaaa/static/src/css/fonts/muli-bold-webfont.svg#muli_bold") format("svg");
   font-weight: normal;
   font-style: normal; }
 @font-face {
   font-family: 'muliRegular';
-  src: url("/static/src/css/fonts/muli-regular-webfont.eot");
-  src: url("/static/src/css/fonts/muli-regular-webfont.eot?#iefix") format("embedded-opentype"), url("/static/src/css/fonts/muli-regular-webfont.woff") format("woff"), url("/static/src/css/fonts/muli-regular-webfont.ttf") format("truetype"), url("/static/src/css/fonts/muli-regular-webfont.svg#muli_regular") format("svg");
+  src: url("/cu_aaaa/static/src/css/fonts/muli-regular-webfont.eot");
+  src: url("/cu_aaaa/static/src/css/fonts/muli-regular-webfont.eot?#iefix") format("embedded-opentype"), url("/cu_aaaa/static/src/css/fonts/muli-regular-webfont.woff") format("woff"), url("/cu_aaaa/static/src/css/fonts/muli-regular-webfont.ttf") format("truetype"), url("/cu_aaaa/static/src/css/fonts/muli-regular-webfont.svg#muli_regular") format("svg");
   font-weight: normal;
   font-style: normal; }
 @font-face {
   font-family: 'muliItalic';
-  src: url("/static/src/css/fonts/muli-italic-webfont.eot");
-  src: url("/static/src/css/fonts/muli-italic-webfont.eot?#iefix") format("embedded-opentype"), url("/static/src/css/fonts/muli-italic-webfont.woff") format("woff"), url("/static/src/css/fonts/muli-italic-webfont.ttf") format("truetype"), url("/static/src/css/fonts/muli-italic-webfont.svg#muli_italic") format("svg");
+  src: url("/cu_aaaa/static/src/css/fonts/muli-italic-webfont.eot");
+  src: url("/cu_aaaa/static/src/css/fonts/muli-italic-webfont.eot?#iefix") format("embedded-opentype"), url("/cu_aaaa/static/src/css/fonts/muli-italic-webfont.woff") format("woff"), url("/cu_aaaa/static/src/css/fonts/muli-italic-webfont.ttf") format("truetype"), url("/cu_aaaa/static/src/css/fonts/muli-italic-webfont.svg#muli_italic") format("svg");
   font-weight: normal;
   font-style: normal; }
 /*
@@ -22,11 +22,11 @@ $base_url: 'https://shop.aids.ch/fonts';
 // Font Faces
 @font-face {
     font-family: 'CorporateABold';
-    src: url('/static/src/css/fonts/corporatea-bold-webfont.eot');
-    src: url('/static/src/css/fonts/corporatea-bold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/static/src/css/fonts/corporatea-bold-webfont.woff') format('woff'),
-         url('/static/src/css/fonts/corporatea-bold-webfont.ttf') format('truetype'),
-         url('/static/src/css/fonts/corporatea-bold-webfont.svg#corporate_abold') format('svg');
+    src: url('/cu_aaaa/static/src/css/fonts/corporatea-bold-webfont.eot');
+    src: url('/cu_aaaa/static/src/css/fonts/corporatea-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/cu_aaaa/static/src/css/fonts/corporatea-bold-webfont.woff') format('woff'),
+         url('/cu_aaaa/static/src/css/fonts/corporatea-bold-webfont.ttf') format('truetype'),
+         url('/cu_aaaa/static/src/css/fonts/corporatea-bold-webfont.svg#corporate_abold') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -34,11 +34,11 @@ $base_url: 'https://shop.aids.ch/fonts';
 
 @font-face {
     font-family: 'CorporateARegular';
-    src: url('/static/src/css/fonts/corporatea-regular-webfont.eot');
-    src: url('/static/src/css/fonts/corporatea-regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/static/src/css/fonts/corporatea-regular-webfont.woff') format('woff'),
-         url('/static/src/css/fonts/corporatea-regular-webfont.ttf') format('truetype'),
-         url('/static/src/css/fonts/corporatea-regular-webfont.svg#corporatearegular') format('svg');
+    src: url('/cu_aaaa/static/src/css/fonts/corporatea-regular-webfont.eot');
+    src: url('/cu_aaaa/static/src/css/fonts/corporatea-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/cu_aaaa/static/src/css/fonts/corporatea-regular-webfont.woff') format('woff'),
+         url('/cu_aaaa/static/src/css/fonts/corporatea-regular-webfont.ttf') format('truetype'),
+         url('/cu_aaaa/static/src/css/fonts/corporatea-regular-webfont.svg#corporatearegular') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -46,11 +46,11 @@ $base_url: 'https://shop.aids.ch/fonts';
 
 @font-face {
     font-family: 'CorporateAItalic';
-    src: url('/static/src/css/fonts/corporatea-regularitalic-webfont.eot');
-    src: url('/static/src/css/fonts/corporatea-regularitalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/static/src/css/fonts/corporatea-regularitalic-webfont.woff') format('woff'),
-         url('/static/src/css/fonts/corporatea-regularitalic-webfont.ttf') format('truetype'),
-         url('/static/src/css/fonts/corporatea-regularitalic-webfont.svg#corporate_aitalic') format('svg');
+    src: url('/cu_aaaa/static/src/css/fonts/corporatea-regularitalic-webfont.eot');
+    src: url('/cu_aaaa/static/src/css/fonts/corporatea-regularitalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/cu_aaaa/static/src/css/fonts/corporatea-regularitalic-webfont.woff') format('woff'),
+         url('/cu_aaaa/static/src/css/fonts/corporatea-regularitalic-webfont.ttf') format('truetype'),
+         url('/cu_aaaa/static/src/css/fonts/corporatea-regularitalic-webfont.svg#corporate_aitalic') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -58,11 +58,11 @@ $base_url: 'https://shop.aids.ch/fonts';
 
 @font-face {
     font-family: 'ahsicons';
-    src: url('/static/src/css/fonts/ahsicons-regular-webfont.eot');
-    src: url('/static/src/css/fonts/ahsicons-regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/static/src/css/fonts/ahsicons-regular-webfont.woff') format('woff'),
-         url('/static/src/css/fonts/ahsicons-regular-webfont.ttf') format('truetype'),
-         url('/static/src/css/fonts/ahsicons-regular-webfont.svg#ahsiconsregular') format('svg');
+    src: url('/cu_aaaa/static/src/css/fonts/ahsicons-regular-webfont.eot');
+    src: url('/cu_aaaa/static/src/css/fonts/ahsicons-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/cu_aaaa/static/src/css/fonts/ahsicons-regular-webfont.woff') format('woff'),
+         url('/cu_aaaa/static/src/css/fonts/ahsicons-regular-webfont.ttf') format('truetype'),
+         url('/cu_aaaa/static/src/css/fonts/ahsicons-regular-webfont.svg#ahsiconsregular') format('svg');
     font-weight: normal;
     font-style: normal;
 
