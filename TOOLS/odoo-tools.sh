@@ -1254,13 +1254,13 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
         echo -e "Database ${DBNAME} exists, starting to restore this database ... "
     elif [ ${DBNAME} = "all" ]; then
-        echo -e "All databases going to be backed up...."
+        echo -e "All databases going to be restored ...."
     else
         echo -e "check your Databasename, you gave ${DBNAME}, but this seems not to exist, stopping script......"
         exit 2
     fi
     if [ ${DBNAME} = "all" ]; then
-        echo "todo automatically latest backup for each instance is used you cannot a single file your backupfile will be ignored..."
+        echo "todo automatically restore latest backup for each instance is used, you cannot give a single file your backupfile will be ignored..."
     else
             DATABASE_RUNNING=${DBNAME}
             DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING}/${DATABASE_RUNNING}.conf
@@ -1268,6 +1268,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             DB_PASSWD=($(grep "db_password" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             DB_USER=($(grep "db_user" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            BACKUPPATH=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP
             if [ -f ${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${BACKUPFILENAME} ]; then
                 BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip
                 echo "working on ${BACKUPFILENAME}"
@@ -1276,6 +1277,23 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
                 #BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip find latest file
             else
                 echo "no backup file found or wrong backupfilename stopping ...."
+                exit 2
+            fi
+            if [ "$DB_NAME" != "" ]; then
+                echo "Unzip $BACKUPFILENAME"
+                echo "prepare and creating temp restore directory"
+                mkdir $BACKUPPATH/temprestore
+                if [ $(unzip $BACKUPFILENAME $BACKUPPATH/temprestore) ]; then
+                    echo "unzipping successfully..."
+                    ACTRESTOREDBDUMPNAME=$BACKUPATH/temprestore/dump.sql
+                    ACTRESTOREFILESTOREPATH=$BACKUPATH/temprestore/filestore
+                    ACTDATADIRPATH=$INSTANCE_PATH/$DATABASE_RUNNING/data_dir
+                else
+                    echo "some error occured ...."
+                    exit 2
+                fi
+            else
+                echo "Database Empty"
                 exit 2
             fi
             echo "check if open connections are available to databae ${DBAME} ...."
@@ -1287,16 +1305,40 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             su - postgres -c "dropdb ${DBNAME}"
             echo "DATABASE DELETED......"
             # ----- Create a new Database
-            #echo -e "\n----- Create Database ${DBNAME}"
-            #if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} newdb -d ${DBNAME} -p 'adminpw'; then
-            #    echo -e "Database created!" #| tee -a $DB_SETUPLOG
-            #else
-            #    echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" #| tee -a $DB_SETUPLOG
-            #fi
+            echo -e "\n----- Create empty Database ${DBNAME}"
+            if [ $(su - postgres -l -c "createdb -U $DB_USER -T template0 $DB_NAME") ] ; then
+                echo -e "Database created!" #| tee -a $DB_SETUPLOG
+                echo -e "going to restore Database $DB_NAME..."
+                if [ $(su - postgres -l -c "psql -U $DB_USER -p ${BASEPORT69} -d ${DBNAME} -h localhost -f ${BACKUPFILENAME}") ] ; then
+                    echo -e "Database restore successfully finished .... doing some testt ..... "
+                    echo -e "deleting sessions..."
+                    rm -rf $ACTDATADIRPATH/sessions
+                    echo -e "going to restere filestore"
+                    if [ -d $ACTDATADIRPATH/filestore ]; then
+                        echo "removing existing filestore..."
+                        rm -rf $ACTDATADIRPATH/filestore
+                    else
+                        mkdir -p $ACTDATADIRPATH/filestore
+                    fi
+                    cp -r $ACTRESTOREFILESTOREPATH $ACTDATADIRPATH/filestore
+                    echo "removing temprestore path..."
+                    rm -r $BACKUPPATH/temprestore
+                else
+                    echo -e "Database restore error stopping restore"
+                    exit 2 # ??? TODO
+                fi
+            else
+                echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" #| tee -a $DB_SETUPLOG
+                echo -e "stopping restore process..."
+                exit 2
+            fi
+            #if [ $(su - postgres -l -c "psql -b ${BASEPORT69} -s ${SUPER_PASSWORD} newdb -d ${DBNAME} -p 'adminpw'") ] ; then
 
             # test : access denied --> maybe open connection  ??? echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${DB_PASSWD} "drop" -d ${DBNAME})
 
-            if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME}; then
+            #if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME}; then
+            #if ${INSTANCE_PATH}/TOOLS/psql -U DB_USER -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME}; then
+
             #mit db-tools geht nicht, try manuell alles
             #echo "Unzip ${BACKUPFILENAME}...."
             #unzip ${BACKUPFILENAME}
@@ -1306,10 +1348,10 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             #su - postgres -c "createdb -U ${DB_USER} -T template1 ${DBNAME}"
             #echo "starting restore ....."
             #if $(su - postgres -c "psql -f ${BACKUPFILENAME} -d ${DBNAME}"); then
-                echo -e "Datbase restored successfully ..... "
-            else
-                echo -e "Error on restoring database ....."
-            fi
+            #    echo -e "Datbase restored successfully ..... "
+            #else
+            #    echo -e "Error on restoring database ....."
+            #fi
     fi
     # Todo: Check if BACKUPFILE_NAME exists and is readable
     # Todo: Try to restore BACKUPFILE_NAME to DBNAME_restoretest
