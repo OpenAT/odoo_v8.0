@@ -1,27 +1,73 @@
 @font-face {
-  font-family: 'CorporateABold';
-  src: url("https://shop.aids.ch/fonts/corporatea-bold-webfont.eot");
-  src: url("https://shop.aids.ch/fonts/corporatea-bold-webfont.eot?#iefix") format("embedded-opentype"), url("https://shop.aids.ch/fonts/corporatea-bold-webfont.woff") format("woff"), url("https://shop.aids.ch/fonts/corporatea-bold-webfont.ttf") format("truetype"), url("https://shop.aids.ch/fonts/corporatea-bold-webfont.svg#corporate_abold") format("svg");
+  font-family: 'muliBold';
+  src: url("/static/src/css/fonts/muli-bold-webfont.eot");
+  src: url("/static/src/css/fonts/muli-bold-webfont.eot?#iefix") format("embedded-opentype"), url("/static/src/css/fonts/muli-bold-webfont.woff") format("woff"), url("/static/src/css/fonts/muli-bold-webfont.ttf") format("truetype"), url("/static/src/css/fonts/muli-bold-webfont.svg#muli_bold") format("svg");
   font-weight: normal;
   font-style: normal; }
 @font-face {
-  font-family: 'CorporateARegular';
-  src: url("https://shop.aids.ch/fonts/corporatea-regular-webfont.eot");
-  src: url("https://shop.aids.ch/fonts/corporatea-regular-webfont.eot?#iefix") format("embedded-opentype"), url("https://shop.aids.ch/fonts/corporatea-regular-webfont.woff") format("woff"), url("https://shop.aids.ch/fonts/corporatea-regular-webfont.ttf") format("truetype"), url("https://shop.aids.ch/fonts/corporatea-regular-webfont.svg#corporatearegular") format("svg");
+  font-family: 'muliRegular';
+  src: url("/static/src/css/fonts/muli-regular-webfont.eot");
+  src: url("/static/src/css/fonts/muli-regular-webfont.eot?#iefix") format("embedded-opentype"), url("/static/src/css/fonts/muli-regular-webfont.woff") format("woff"), url("/static/src/css/fonts/muli-regular-webfont.ttf") format("truetype"), url("/static/src/css/fonts/muli-regular-webfont.svg#muli_regular") format("svg");
   font-weight: normal;
   font-style: normal; }
 @font-face {
-  font-family: 'CorporateAItalic';
-  src: url("https://shop.aids.ch/fonts/corporatea-regularitalic-webfont.eot");
-  src: url("https://shop.aids.ch/fonts/corporatea-regularitalic-webfont.eot?#iefix") format("embedded-opentype"), url("https://shop.aids.ch/fonts/corporatea-regularitalic-webfont.woff") format("woff"), url("https://shop.aids.ch/fonts/corporatea-regularitalic-webfont.ttf") format("truetype"), url("https://shop.aids.ch/fonts/corporatea-regularitalic-webfont.svg#corporate_aitalic") format("svg");
+  font-family: 'muliItalic';
+  src: url("/static/src/css/fonts/muli-italic-webfont.eot");
+  src: url("/static/src/css/fonts/muli-italic-webfont.eot?#iefix") format("embedded-opentype"), url("/static/src/css/fonts/muli-italic-webfont.woff") format("woff"), url("/static/src/css/fonts/muli-italic-webfont.ttf") format("truetype"), url("/static/src/css/fonts/muli-italic-webfont.svg#muli_italic") format("svg");
   font-weight: normal;
   font-style: normal; }
+/*
+$base_url: 'https://shop.aids.ch/fonts';
+
+// Font Faces
 @font-face {
-  font-family: 'ahsicons';
-  src: url("https://shop.aids.ch/fonts/ahsicons-regular-webfont.eot");
-  src: url("https://shop.aids.ch/fonts/ahsicons-regular-webfont.eot?#iefix") format("embedded-opentype"), url("https://shop.aids.ch/fonts/ahsicons-regular-webfont.woff") format("woff"), url("https://shop.aids.ch/fonts/ahsicons-regular-webfont.ttf") format("truetype"), url("https://shop.aids.ch/fonts/ahsicons-regular-webfont.svg#ahsiconsregular") format("svg");
-  font-weight: normal;
-  font-style: normal; }
+    font-family: 'CorporateABold';
+    src: url('/static/src/css/fonts/corporatea-bold-webfont.eot');
+    src: url('/static/src/css/fonts/corporatea-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/src/css/fonts/corporatea-bold-webfont.woff') format('woff'),
+         url('/static/src/css/fonts/corporatea-bold-webfont.ttf') format('truetype'),
+         url('/static/src/css/fonts/corporatea-bold-webfont.svg#corporate_abold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'CorporateARegular';
+    src: url('/static/src/css/fonts/corporatea-regular-webfont.eot');
+    src: url('/static/src/css/fonts/corporatea-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/src/css/fonts/corporatea-regular-webfont.woff') format('woff'),
+         url('/static/src/css/fonts/corporatea-regular-webfont.ttf') format('truetype'),
+         url('/static/src/css/fonts/corporatea-regular-webfont.svg#corporatearegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'CorporateAItalic';
+    src: url('/static/src/css/fonts/corporatea-regularitalic-webfont.eot');
+    src: url('/static/src/css/fonts/corporatea-regularitalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/src/css/fonts/corporatea-regularitalic-webfont.woff') format('woff'),
+         url('/static/src/css/fonts/corporatea-regularitalic-webfont.ttf') format('truetype'),
+         url('/static/src/css/fonts/corporatea-regularitalic-webfont.svg#corporate_aitalic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'ahsicons';
+    src: url('/static/src/css/fonts/ahsicons-regular-webfont.eot');
+    src: url('/static/src/css/fonts/ahsicons-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/src/css/fonts/ahsicons-regular-webfont.woff') format('woff'),
+         url('/static/src/css/fonts/ahsicons-regular-webfont.ttf') format('truetype'),
+         url('/static/src/css/fonts/ahsicons-regular-webfont.svg#ahsiconsregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+*/
 body {
   font-family: 'CorporateARegular', Georgia, "Times New Roman", Times, serif;
   font-size: 1em;
@@ -57,5 +103,326 @@ p, ul, ol, dl, blockquote, address {
   line-height: 1.518em;
   margin: 0 0 1.618em 0;
   padding: 0; }
+
+/* DEFAULTS available in all webpages */
+/* CUSTOMMER COLOURS */
+header, main, footer {
+  display: block; }
+
+/* ---- BASIC ELEMENTS ---- */
+/* Links */
+a {
+  color: #DB2235; }
+  a:hover {
+    color: #e76774; }
+
+main a.btn {
+  color: white; }
+  main a.btn:hover {
+    color: white; }
+
+/* --- Buttons ---*/
+.btn-default {
+  background-color: #676535;
+  border-color: #676535;
+  color: white; }
+  .btn-default:hover {
+    background-color: #A6A355;
+    border-color: #A6A355;
+    color: white; }
+
+.btn-primary {
+  background-color: #676535;
+  border-color: #676535;
+  color: white; }
+  .btn-primary:hover {
+    background-color: #A6A355;
+    border-color: #A6A355;
+    color: white; }
+
+.btn-success {
+  background-color: green;
+  border-color: green; }
+  .btn-success:hover {
+    background-color: greenyellow;
+    border-color: greenyellow; }
+
+/* ---- CONTENT HEADER ---- */
+/*
+.navbar-default {
+  background-color: $website_red_light;
+  border-color: $website_grey_darkdesat;
+}
+header a.navbar-brand.logo {
+  padding: 0 15px;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+header .nav {
+  margin-top: 5px;
+}
+.navbar-default .navbar-nav>li>a {
+  color: $website_grey_medium;
+}
+.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
+  color: $website_link_dark;
+  background-color: transparent;
+}
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+  background-color: rgba($website_red_dark,30%);
+  border-radius: 5px;
+}
+*/
+/* -- BODY -- */
+body {
+  background-color: #ffffff; }
+
+/* ---- CONTENT FOOTER ---- */
+footer {
+  display: inline-block;
+  width: 100%;
+  margin-top: 3em;
+  padding-top: 3em;
+  color: #413839;
+  background: #f1e7e6; }
+  footer a {
+    color: #BF1E2E; }
+
+/* ---- DONATION AREA ---- */
+.panel {
+  background-color: rgba(229, 228, 226, 0.45); }
+
+.panel-default {
+  border-color: #BF1E2E; }
+
+#oe_website_sale_donate_funding {
+  background-color: transparent; }
+
+/* MIXINS AND GUARDS */
+hr {
+  border: none;
+  height: 1px;
+  /* Fallback if gradient is not supported at all */
+  background-color: #E5E4E2;
+  /* Older Browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(229, 228, 226, 0.85));
+  background: -webkit-gradient(radial, center center, 0px, center center, 1, color-stop(0.14, rgba(255, 255, 255, 0.85)), color-stop(1, rgba(229, 228, 226, 0.85)));
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(229, 228, 226, 0.85) 1);
+  background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(229, 228, 226, 0.85) 1);
+  background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(229, 228, 226, 0.85) 1);
+  /* W3C CSS3 */
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0.14, rgba(229, 228, 226, 0.85) 1); }
+
+/* -------------------- SNIPPET OPTIONS ------------------------ */
+.website_red_light {
+  background-color: #FF283D;
+  background-color: #ff283d; }
+
+.website_red_medium {
+  background-color: #DB2235;
+  background-color: #db2235; }
+
+.website_red_dark {
+  background-color: #BF1E2E;
+  background-color: #bf1e2e; }
+
+.website_red_black {
+  background-color: #450B11;
+  background-color: #450b11;
+  color: white; }
+
+.website_lightblue {
+  background-color: #00CBFF;
+  background-color: #00cbff; }
+
+.website_lightblue_dark {
+  background-color: #008EB2;
+  background-color: #008eb2;
+  color: white; }
+
+.website_red_light_tr {
+  background-color: #FF283D;
+  background-color: rgba(255, 40, 61, 0.85); }
+
+.website_red_medium_tr {
+  background-color: #DB2235;
+  background-color: rgba(219, 34, 53, 0.85); }
+
+.website_red_dark_tr {
+  background-color: #BF1E2E;
+  background-color: rgba(191, 30, 46, 0.85); }
+
+.website_red_black_tr {
+  background-color: #450B11;
+  background-color: rgba(69, 11, 17, 0.85);
+  color: white; }
+
+.website_lightblue_tr {
+  background-color: #00CBFF;
+  background-color: rgba(0, 203, 255, 0.85); }
+
+.website_lightblue_dark_tr {
+  background-color: #008EB2;
+  background-color: rgba(0, 142, 178, 0.85);
+  color: white; }
+
+.website_radgradient_red_light {
+  /* Fallback if gradient is not supported at all */
+  background-color: #FF283D;
+  /* Older Browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(255, 40, 61, 0.85));
+  background: -webkit-gradient(radial, center center, 0px, center center, 1, color-stop(0.14, rgba(255, 255, 255, 0.85)), color-stop(1, rgba(255, 40, 61, 0.85)));
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(255, 40, 61, 0.85) 1);
+  background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(255, 40, 61, 0.85) 1);
+  background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(255, 40, 61, 0.85) 1);
+  /* W3C CSS3 */
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0.14, rgba(255, 40, 61, 0.85) 1); }
+
+.website_radgradient_red_medium {
+  /* Fallback if gradient is not supported at all */
+  background-color: #DB2235;
+  /* Older Browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(219, 34, 53, 0.85));
+  background: -webkit-gradient(radial, center center, 0px, center center, 1, color-stop(0.14, rgba(255, 255, 255, 0.85)), color-stop(1, rgba(219, 34, 53, 0.85)));
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(219, 34, 53, 0.85) 1);
+  background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(219, 34, 53, 0.85) 1);
+  background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(219, 34, 53, 0.85) 1);
+  /* W3C CSS3 */
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0.14, rgba(219, 34, 53, 0.85) 1); }
+
+.website_radgradient_red_dark {
+  /* Fallback if gradient is not supported at all */
+  background-color: #BF1E2E;
+  /* Older Browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(191, 30, 46, 0.85));
+  background: -webkit-gradient(radial, center center, 0px, center center, 1, color-stop(0.14, rgba(255, 255, 255, 0.85)), color-stop(1, rgba(191, 30, 46, 0.85)));
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(191, 30, 46, 0.85) 1);
+  background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(191, 30, 46, 0.85) 1);
+  background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(191, 30, 46, 0.85) 1);
+  /* W3C CSS3 */
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0.14, rgba(191, 30, 46, 0.85) 1); }
+
+.website_radgradient_red_black {
+  /* Fallback if gradient is not supported at all */
+  background-color: #450B11;
+  /* Older Browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(69, 11, 17, 0.85));
+  background: -webkit-gradient(radial, center center, 0px, center center, 1, color-stop(0.14, rgba(255, 255, 255, 0.85)), color-stop(1, rgba(69, 11, 17, 0.85)));
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(69, 11, 17, 0.85) 1);
+  background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(69, 11, 17, 0.85) 1);
+  background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(69, 11, 17, 0.85) 1);
+  /* W3C CSS3 */
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0.14, rgba(69, 11, 17, 0.85) 1); }
+
+.website_radgradient_lightblue {
+  /* Fallback if gradient is not supported at all */
+  background-color: #00CBFF;
+  /* Older Browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 203, 255, 0.85));
+  background: -webkit-gradient(radial, center center, 0px, center center, 1, color-stop(0.14, rgba(255, 255, 255, 0.85)), color-stop(1, rgba(0, 203, 255, 0.85)));
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 203, 255, 0.85) 1);
+  background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 203, 255, 0.85) 1);
+  background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 203, 255, 0.85) 1);
+  /* W3C CSS3 */
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 203, 255, 0.85) 1); }
+
+.website_radgradient_lightblue_dark {
+  /* Fallback if gradient is not supported at all */
+  background-color: #008EB2;
+  /* Older Browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 142, 178, 0.85));
+  background: -webkit-gradient(radial, center center, 0px, center center, 1, color-stop(0.14, rgba(255, 255, 255, 0.85)), color-stop(1, rgba(0, 142, 178, 0.85)));
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 142, 178, 0.85) 1);
+  background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 142, 178, 0.85) 1);
+  background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 142, 178, 0.85) 1);
+  /* W3C CSS3 */
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0.14, rgba(0, 142, 178, 0.85) 1); }
+
+.website_pattern_cartographer {
+  background: url(/cu_herz/static/src/img/patterns/cartographer.png) repeat;
+  color: white; }
+
+.website_pattern_concrete_wall {
+  background: url(/cu_herz/static/src/img/patterns/concrete_wall.png) repeat;
+  color: white; }
+
+.website_pattern_congruent_outline {
+  background: url(/cu_herz/static/src/img/patterns/congruent_outline.png) repeat;
+  color: white; }
+
+.website_pattern_debut_dark {
+  background: url(/cu_herz/static/src/img/patterns/debut_dark.png) repeat;
+  color: white; }
+
+.website_pattern_debut_light {
+  background: white url(/cu_herz/static/src/img/patterns/debut_light.png) repeat; }
+
+.website_pattern_escheresque {
+  background: url(/cu_herz/static/src/img/patterns/escheresque.png) repeat; }
+
+.website_pattern_escheresque_ste {
+  background: url(/cu_herz/static/src/img/patterns/escheresque_ste.png) repeat;
+  color: white; }
+
+.website_pattern_footer_lodyas {
+  background: url(/cu_herz/static/src/img/patterns/footer_lodyas.png) repeat;
+  color: white; }
+
+.website_pattern_hexabump {
+  background: url(/cu_herz/static/src/img/patterns/hexabump.png) repeat;
+  color: white; }
+
+.website_pattern_mooning {
+  background: url(/cu_herz/static/src/img/patterns/mooning.png) repeat; }
+
+.website_pattern_pinstriped_suit {
+  background: black url(/cu_herz/static/src/img/patterns/pinstriped_suit.png) repeat;
+  color: white; }
+
+.website_pattern_purty_wood {
+  background: url(/cu_herz/static/src/img/patterns/purty_wood.png) repeat; }
+
+.website_pattern_retina_wood {
+  background: url(/cu_herz/static/src/img/patterns/retina_wood.png) repeat; }
+
+.website_pattern_shattered {
+  background: url(/cu_herz/static/src/img/patterns/shattered.png) repeat; }
+
+.website_pattern_stardust {
+  background: black url(/cu_herz/static/src/img/patterns/stardust.png) repeat;
+  color: white; }
+
+.website_pattern_tweed {
+  background: black url(/cu_herz/static/src/img/patterns/tweed.png) repeat;
+  color: white; }
+
+.website_pattern_woven {
+  background: black url(/cu_herz/static/src/img/patterns/woven.png) repeat;
+  color: white; }
+
+.blog_title h1, .blog_title .h1 {
+  background-color: #000000;
+  background: rgba(0, 0, 0, 0.4); }
+
+.blog_title h2, .blog_title .h2 {
+  background-color: #000000;
+  background: rgba(0, 0, 0, 0.4); }
+
+address.mb0 {
+  display: none; }
+
+#wrap > div.container > div > div.col-md-4.mb32 > address > div > address {
+  display: block; }
+
+#blog_angle_down > strong > a {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  border-radius: 10px;
+  color: #DB2235; }
+
+.bloglist-img {
+  width: 151px; }
+
+.website_blog h2.mb4 {
+  font-size: 34px; }
 
 /*# sourceMappingURL=website.css.map */

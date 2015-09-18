@@ -17,7 +17,7 @@
 ##############################################################################
 
 {
-    'name': 'customer_aaaa',
+    'name': 'cu_aaaa',
     'summary': """FCOM Customer AAAA Modifications""",
     'description': """
 FCOM Customer Modifications - Template
@@ -44,5 +44,6 @@ Use this Addon as a Base for all Customer specific Modifications containing:
         'views/snippets.xml',
         'views/views.xml',
         'data/data.xml',
+        'views/snippet_options.xml',
     ],
 }

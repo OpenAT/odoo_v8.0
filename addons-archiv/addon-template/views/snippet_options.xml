@@ -1,0 +1,119 @@
+<openerp>
+<data>
+
+<template id="cu_herz_snippet_options" inherit_id="website.snippet_options">
+
+    <!-- Replace Background Colors and Images -->
+    <xpath expr="//div[@data-snippet-option-id='background']/li" position="replace">
+        <li class="dropdown-submenu" data-required="true">
+            <a tabindex="-1" href="#">Background</a>
+            <ul class="dropdown-menu">
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Uniform Color</a>
+                    <ul class="dropdown-menu">
+                        <li data-value='oe_dark'><a>Darken</a></li>
+                        <li data-value='website_red_light'><a>red Light</a></li>
+                        <li data-value='website_red_medium'><a>red Medium</a></li>
+                        <li data-value='website_red_dark'><a>red Dark</a></li>
+                        <li data-value='website_red_black'><a>red Black</a></li>
+                        <li data-value='website_lightblue'><a>Lightblue</a></li>
+                        <li data-value='website_lightblue_dark'><a>Lightblue Dark</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Gradients</a>
+                    <ul class="dropdown-menu">
+                        <li data-value='website_radgradient_red_light'><a>red Light</a></li>
+                        <li data-value='website_radgradient_red_medium'><a>redMedium</a></li>
+                        <li data-value='website_radgradient_red_dark'><a>red Dark</a></li>
+                        <li data-value='website_radgradient_red_black'><a>red Black</a></li>
+                        <li data-value='website_radgradient_lightblue'><a>Lightblue</a></li>
+                        <li data-value='website_radgradient_lightblue_dark'><a>Lightblue Dark</a></li>
+                        <li data-value='website_red_light_tr'><a>red Light Transparent</a></li>
+                        <li data-value='website_red_medium_tr'><a>red Medium Transparent</a></li>
+                        <li data-value='website_red_dark_tr'><a>red Dark Transparent</a></li>
+                        <li data-value='website_red_black_tr'><a>red Black Transparent</a></li>
+                        <li data-value='website_lightblue_tr'><a>Lightblue Transparent</a></li>
+                        <li data-value='website_lightblue_dark_tr'><a>Lightblue Dark Transparent</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Backgrounds</a>
+                    <ul class="dropdown-menu">
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/book.jpg"><a>book</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/cooking.jpg"><a>cooking</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/cuba-cup.jpg"><a>cuba-cup</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/dessert.jpeg"><a>dessert</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/dont.jpeg"><a>dont</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/honey.jpg"><a>honey</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/leaves.jpeg"><a>leaves</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/locks.jpg"><a>locks</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/macbook.jpg"><a>macbook</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/park.jpeg"><a>park</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/ruler.jpeg"><a>ruler</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/school.jpg"><a>school</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/banner/strawberry.jpg"><a>strawberry</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Patterns</a>
+                    <ul class="dropdown-menu">
+                        <li data-value="website_pattern_cartographer"><a>cartographer</a></li>
+                        <li data-value="website_pattern_concrete_wall"><a>concrete_wall</a></li>
+                        <li data-value="website_pattern_congruent_outline"><a>congruent_outline</a></li>
+                        <li data-value="website_pattern_debut_dark"><a>debut_dark</a></li>
+                        <li data-value="website_pattern_debut_light"><a>debut_light</a></li>
+                        <li data-value="website_pattern_escheresque"><a>escheresque</a></li>
+                        <li data-value="website_pattern_escheresque_ste"><a>escheresque_ste</a></li>
+                        <li data-value="website_pattern_footer_lodyas"><a>footer_lodyas</a></li>
+                        <li data-value="website_pattern_hexabump"><a>hexabump</a></li>
+                        <li data-value="website_pattern_mooning"><a>mooning</a></li>
+                        <li data-value="website_pattern_pinstriped_suit"><a>pinstriped_suit</a></li>
+                        <li data-value="website_pattern_purty_wood"><a>purty_wood</a></li>
+                        <li data-value="website_pattern_retina_wood"><a>retina_wood</a></li>
+                        <li data-value="website_pattern_shattered"><a>shattered</a></li>
+                        <li data-value="website_pattern_stardust"><a>stardust</a></li>
+                        <li data-value="website_pattern_tweed"><a>tweed</a></li>
+                        <li data-value="website_pattern_woven"><a>woven</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Parallax</a>
+                    <ul class="dropdown-menu">
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/boat.jpg"><a>boat</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/clouds.jpeg"><a>clouds</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/dive.jpg"><a>dive</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/drops.jpeg"><a>drops</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/fields.jpg"><a>fields</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/map.jpg"><a>map</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/mobile.jpeg"><a>mobile</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/mountain.jpeg"><a>mountain</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/sand.jpeg"><a>sand</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/sunset-hair.jpg"><a>sunset hair</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/wheat.jpeg"><a>wheat</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/wii.jpg"><a>wii</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/yellow.jpg"><a>yellow</a></li>
+                        <li data-value="oe_img_bg" data-src="/cu_herz/static/src/img/parallax/yellow_ls.jpg"><a>yellow landscape</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown-submenu">
+                    <a tabindex="-2" href="#">Various</a>
+                    <ul class="dropdown-menu">
+                        <li data-value="oe_img_bg" data-src="/website/static/src/img/banner/aqua.jpg"><a>Aqua</a></li>
+                        <li data-value="oe_img_bg" data-src="/website/static/src/img/banner/baby_blue.jpg"><a>Baby Blue</a></li>
+                        <li data-value="oe_img_bg" data-src="/website/static/src/img/banner/black.jpg"><a>Black</a></li>
+                    </ul>
+                </li>
+                <li data-value=""><a>None</a></li>
+                <li><a style="background: none; padding: 5px; border-top: 1px solid #ddd;"></a></li>
+                <li class="oe_custom_bg" data-value="oe_img_bg"><a><b>Choose an image...</b></a></li>
+            </ul>
+        </li>
+    </xpath>
+
+    <!-- Replace Button / Links Colors -->
+
+</template>
+
+</data>
+</openerp>
