@@ -88,6 +88,7 @@ class base_config_settings(osv.osv_memory):
         'module_mail_outgoing': fields.boolean('mail_outgoing -- Outgoing E-Mail overview for admins'),
         'module_mail_fix_553': fields.boolean('mail_fix_553 -- change Domain of FROM field for outgoing mails'),
         'module_inactive_session_timeout': fields.boolean('inactive_session_timeout -- Remove all inactive session after a given time'),
+        'module_website_event_register_free': fields.boolean('website_event_register_free -- prevents sales order and shop payment on cost free event tickets'),
 
         # Addons Own
         'module_website_crm_extended': fields.boolean('website_crm_extended -- Default sales group for lead from contact formular',
