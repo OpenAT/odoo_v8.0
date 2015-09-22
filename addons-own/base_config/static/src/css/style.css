@@ -25,3 +25,8 @@
 .modal-body {
     min-height: 600px;
 }
+
+/* Smaller kanban titles */
+.openerp .oe_kanban_view .oe_kanban_group_title .oe_kanban_group_title_text {
+    font-size: 10px;
+}
