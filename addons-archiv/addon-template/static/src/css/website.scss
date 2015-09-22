@@ -1,4 +1,5 @@
 @import 'fontfaces';
+@import 'basic_definitions';
 
 body {
     font-family: 'CorporateARegular', Georgia, "Times New Roman", Times, serif;
@@ -29,4 +30,327 @@ p, ul, ol, dl, blockquote, address {
     line-height: 1.518em;
     margin: 0 0 1.618em 0;
     padding: 0;
+}
+
+//* ---- BASIC GRID ---- */
+header, main, footer {
+  display: block;
+}
+/* ---- BASIC ELEMENTS ---- */
+/* Links */
+a {
+  color: $website_link_dark;
+  &:hover {color: $website_link_dark_hover;}
+}
+main a.btn {
+    color: white;
+    &:hover {color: white;}
+}
+/* --- Buttons ---*/
+
+.btn-default {
+    background-color: $website_green_medium;
+  border-color:$website_green_medium;
+  color: $website_text_light;
+  &:hover {
+    background-color: $website_green_light;
+    border-color: $website_green_light;
+    color: $website_text_light;
+  }
+}
+.btn-primary {
+    background-color: $website_green_medium;
+  border-color: $website_green_medium;
+  color: $website_text_light;
+  &:hover {
+    background-color: $website_green_light;
+    border-color: $website_green_light;
+  color: $website_text_light;
+  }
+}
+
+.btn-success {
+  background-color: green;
+  border-color: green;
+  &:hover {
+    background-color: greenyellow;
+    border-color: greenyellow;
+  }
+}
+
+/* ---- CONTENT HEADER ---- */
+/*
+.navbar-default {
+  background-color: $website_red_light;
+  border-color: $website_grey_darkdesat;
+}
+header a.navbar-brand.logo {
+  padding: 0 15px;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+header .nav {
+  margin-top: 5px;
+}
+.navbar-default .navbar-nav>li>a {
+  color: $website_grey_medium;
+}
+.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
+  color: $website_link_dark;
+  background-color: transparent;
+}
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+  background-color: rgba($website_red_dark,30%);
+  border-radius: 5px;
+}
+*/
+/* -- BODY -- */
+body {
+  background-color: $bgcolor;
+}
+/* ---- CONTENT FOOTER ---- */
+footer {
+  display: inline-block;
+//  height: 100%;
+  width: 100%;
+  margin-top: 3em;
+  padding-top: 3em;
+  color: $website_grey_dark;
+  background: $footer_background_color;
+  a {color: $website_red_dark;}
+}
+
+/* MIXINS AND GUARDS */
+
+// .website_link: Set Link Color
+@mixin dd_link($linkcolor, $linkcolorhover, $bgcolor, $lightness) {
+    a {
+      color: $linkcolor;
+      &:hover {
+        color: $linkcolorhover;
+      }
+    }
+  }
+// Change Link Color if link and background colors have similar hue and saturation
+@mixin dd_link($linkcolor, $linkcolorhover, $bgcolor, $lightness) {
+  @if (abs((hue($bgcolor) - hue($linkcolor))) < 36) and (abs((lightness($bgcolor) - lightness($linkcolor))) < 20%) {
+    a {
+      color: hsl(hue($linkcolor), saturation($linkcolor), lightness($linkcolor) + $lightness);
+      &:hover {
+        color: hsl(hue($linkcolorhover), saturation($linkcolorhover), lightness($linkcolorhover) + $lightness);
+      }
+    }
+  }
+}
+
+// dd_text: set text color and call .website_link (see treshold of 37% in second statement)
+// Light Background = dark text, dark links
+@mixin dd_text($bgcolor, $transparent: 1)  {
+  color: $website_text_dark;
+    @include dd_link($website_link_dark, $website_link_dark_hover, rgba($bgcolor, $transparent), -26%);
+}
+// Dark background = light text, light links
+@mixin dd_text($bgcolor, $transparent: 1) {
+  @if (lightness($bgcolor) < 37%) {
+    color: $website_text_light;
+      @include dd_link($website_link_light, $website_link_light_hover, rgba($bgcolor, $transparent), -26%);
+  }
+}
+// .website_background: Set Background Color
+@mixin dd_background($bgcolor, $transparent: 1) {
+  background-color: $bgcolor;
+  background-color: rgba($bgcolor, $transparent);
+  @include dd_text($bgcolor, $transparent);
+}
+
+// .website_radgradient: Set Background as Radial Gradient
+@mixin dd_radgradient($bgcolor: #000000, $transparent: 1, $start: 0.14, $end: 1, $startcolor: #FFFFFF) {
+  /* Fallback if gradient is not supported at all */
+  background-color: $bgcolor;
+  /* Older Browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgba($startcolor, $transparent) $start, rgba($bgcolor, $transparent));
+  background: -webkit-gradient(radial, center center, 0px, center center, $end, color-stop($start,rgba($startcolor, $transparent)), color-stop( $end,rgba($bgcolor, $transparent)));
+  background: -webkit-radial-gradient(center, ellipse cover,  rgba($startcolor, $transparent) $start,rgba($bgcolor, $transparent)  $end);
+  background: -o-radial-gradient(center, ellipse cover,  rgba($startcolor, $transparent) $start,rgba($bgcolor, $transparent)  $end);
+  background: -ms-radial-gradient(center, ellipse cover,  rgba($startcolor, $transparent) $start,rgba($bgcolor, $transparent)  $end);
+  /* W3C CSS3 */
+  background: radial-gradient(ellipse at center,  rgba($startcolor, $transparent) $start,rgba($bgcolor, $transparent)  $end);
+  @include dd_text($startcolor, $transparent);
+}
+
+hr {
+  border: none;
+  height: 1px;
+  @include dd_radgradient($website_grey_light, $website_transparent);
+}
+
+/* -------------------- SNIPPET OPTIONS ------------------------ */
+// Uniform Color
+.website_red_light {
+  @include dd_background($website_red_light);
+}
+.website_red_medium {
+  @include  dd_background($website_red_medium);
+}
+.website_red_dark {
+  @include dd_background($website_red_dark);
+}
+.website_red_black {
+    @include dd_background($website_red_black);
+}
+.website_lightblue {
+    @include dd_background($website_lightblue);
+}
+.website_lightblue_dark {
+    @include dd_background($website_lightblue_dark);
+}
+.website_red_light_tr {
+  @include dd_background($website_red_light, $website_transparent);
+}
+.website_red_medium_tr {
+    @include dd_background($website_red_medium, $website_transparent);
+}
+.website_red_dark_tr {
+    @include dd_background($website_red_dark, $website_transparent);
+}
+.website_red_black_tr {
+    @include dd_background($website_red_black, $website_transparent);
+}
+.website_lightblue_tr {
+    @include dd_background($website_lightblue, $website_transparent);
+}
+.website_lightblue_dark_tr {
+    @include dd_background($website_lightblue_dark, $website_transparent);
+}
+
+// Gradients
+.website_radgradient_red_light {
+    @include dd_radgradient($website_red_light, $website_transparent);
+}
+.website_radgradient_red_medium {
+    @include dd_radgradient($website_red_medium, $website_transparent);
+}
+.website_radgradient_red_dark {
+    @include dd_radgradient($website_red_dark, $website_transparent);
+}
+.website_radgradient_red_black {
+    @include dd_radgradient($website_red_black, $website_transparent);
+}
+.website_radgradient_lightblue {
+    @include dd_radgradient($website_lightblue, $website_transparent);
+}
+.website_radgradient_lightblue_dark {
+    @include dd_radgradient($website_lightblue_dark, $website_transparent);
+}
+
+// Patterns
+// HINT: carefully find out the average background color of the pattern and set it in background as fallback and
+//       call .website_text with this color also!
+.website_pattern_cartographer {
+  background: url(#{$_path}/cartographer.png) repeat;
+    @include dd_text(black);
+}
+.website_pattern_concrete_wall {
+  background: url(#{$_path}/concrete_wall.png) repeat;
+    @include dd_text(black);
+}
+.website_pattern_congruent_outline {
+  background: url(#{$_path}/congruent_outline.png) repeat;
+    @include dd_text(black);
+}
+.website_pattern_debut_dark {
+  background: url(#{$_path}/debut_dark.png) repeat;
+    @include dd_text(black);
+}
+.website_pattern_debut_light {
+  background: white url(#{$_path}/debut_light.png) repeat;
+}
+.website_pattern_escheresque {
+  background: url(#{$_path}/escheresque.png) repeat;
+    @include dd_text(grey);
+}
+.website_pattern_escheresque_ste {
+  background: url(#{$_path}/escheresque_ste.png) repeat;
+    @include dd_text(black);
+}
+.website_pattern_footer_lodyas {
+  background: url(#{$_path}/footer_lodyas.png) repeat;
+    @include dd_text(black);
+}
+.website_pattern_hexabump {
+  background: url(#{$_path}/hexabump.png) repeat;
+    @include dd_text(black);
+}
+.website_pattern_mooning {
+  background: url(#{$_path}/mooning.png) repeat;
+}
+.website_pattern_pinstriped_suit {
+  background: black url(#{$_path}/pinstriped_suit.png) repeat;
+    @include dd_text(black);
+}
+.website_pattern_purty_wood {
+  background: url(#{$_path}/purty_wood.png) repeat;
+}
+.website_pattern_retina_wood {
+  background: url(#{$_path}/retina_wood.png) repeat;
+}
+.website_pattern_shattered {
+  background: url(#{$_path}/shattered.png) repeat;
+}
+.website_pattern_stardust {
+  background: black url(#{$_path}/stardust.png) repeat;
+    @include dd_text(black);
+}
+.website_pattern_tweed {
+  background: black url(#{$_path}/tweed.png) repeat;
+    @include dd_text(black);
+}
+.website_pattern_woven {
+  background: black url(#{$_path}/woven.png) repeat;
+    @include dd_text(black);
+}
+
+//----------- BLOG AREA --------
+.blog_title h1, .blog_title .h1 {
+    background-color: #000001;
+    background: rgba(0,0,0,0.4);
+  @include dd_text(white);
+}
+.blog_title h2, .blog_title .h2 {
+    background-color: #000000;
+    background: rgba(0,0,0,0.4);
+  @include dd_text(grey);
+}
+address.mb0 {
+  display: none;
+}
+#wrap > div.container > div > div.col-md-4.mb32 > address > div > address {
+  display: block;
+}
+#blog_angle_down > strong > a {
+  background-color: rgba(0,0,0, 0.4) !important;
+  border-radius: 10px;
+  color: $website_red_medium}
+
+.bloglist-img {
+  width: 151px;
+}
+
+.website_blog {
+  h2.mb4 {
+    font-size: 34px;
+  }
+}
+
+/* ---- DONATION AREA ---- */
+.panel {
+  background-color: rgba($website_grey_light, 0.45);
+
+}
+.panel-default {
+  border-color: $website_red_dark;
+}
+
+#oe_website_sale_donate_funding {
+  background-color: transparent;
 }

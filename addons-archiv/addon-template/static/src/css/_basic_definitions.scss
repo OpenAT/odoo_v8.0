@@ -1,0 +1,37 @@
+// ---------- BASIS FARBEN --------
+// Adobe Kuler; Komplementaer, Basis=BF1E2E
+
+/* DEFAULTS available in all webpages */
+$_path: "/cu_aaaa/static/src/img/patterns";
+$website_grey_light: #E5E4E2;
+$website_grey_medium: #736F6E;
+$website_grey_dark: #413839;
+$website_grey_darkdesat: #414141;
+$website_grey_black: #2B1B17;
+
+
+/* CUSTOMMER COLOURS */
+$website_red_light: #FF283D;
+$website_red_medium: #DB2235;
+$website_red_dark: #BF1E2E;
+$website_red_black: #450B11;
+$website_green_medium: #676535;
+$website_green_light: #A6A355;
+$website_lightblue: #00CBFF;
+$website_lightblue_dark: #008EB2;
+$bgcolor: #ffffff;
+$footer_background_color: #f1e7e6;
+$linkcolor: #008EB2;
+$startcolor: #777777;
+// Text
+$website_text_dark: black;
+$website_text_light: white;
+
+// Hyperlinks
+$website_link_dark: $website_red_medium;
+$website_link_dark_hover: lighten($website_link_dark, 16%);
+$website_link_light: $website_red_light;
+$website_link_light_hover: darken($website_link_light, 16%);
+
+// Transparent
+$website_transparent: 0.85;
