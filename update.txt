@@ -1,0 +1,9 @@
+# Update Instruction File
+# INFO: - Find the commit you are currently then execute all commands after this line
+#       - All oddo server commands are written int the format "odoo-start.py" [commands]
+#         all other commands are interpreted as shell (bash) commands
+#       - Shell commands are executed before the odoo-start.py commands
+#       - odoo-start.py commands are combined and executed only once (e.g. a -u all makes all other -u obsolete)
+#
+https://github.com/OpenAT/odoo_v8.0/commit/cd9b235902eafa408c5779a38f207a3ba7c80d06
+odoo-start.py -u website_sale,website_sale_donate

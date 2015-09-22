@@ -10,6 +10,8 @@ from openerp.addons.base_tools.image import resize_to_thumbnail
 
 
 # mandatory fields setting for checkout form
+# HINT: used in website_sale_donate main.py -> _get_mandatory_*_fields
+# ATTENTION: You must use *_mandatory_bill and *_mandatory_ship after the field name! (to later identify the fields)
 class website_sale_donate_settings(osv.Model):
     _inherit = 'website'
     _columns = {

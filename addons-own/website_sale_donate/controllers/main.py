@@ -130,34 +130,28 @@ class website_sale_donate(website_sale):
         return request.redirect("/shop/cart")
 
 
-    # SET CUSTOM MANDATORY BILLING AND OR SHIPPING FIELDS:
-    def checkout_parse(self, address_type, data, remove_prefix=False):
+    # Set mandatory billing and shipping fields
+    # HINT: All possible fields are added to the website object as boolean fields in
+    #       website_sale_donate.py -> website_sale_donate_settings with a naming convention of
+    #       _mandatory_bill and _mandatory_ship
+    # HINT: Possible since odoo commit
+    #       https://github.com/odoo/odoo/commit/4f41c3327c40d3fbbd219dad732a98d09d52bd30
+    def _get_mandatory_billing_fields(self):
+        return [key.replace("_mandatory_bill", "", 1)
+                for key in request.website._fields.keys()
+                if "_mandatory_bill" in key and request.website[key] is True]
 
-        # Set Billing Fields
-        # HINT: I change the original class attributes just in case any other method uses them later.
-        #       If any other method uses them before checkout parse is run it will still get the original
-        #       values - so it is still poor design - but this is basically odoo's fault and not mine ;)
-        website_sale.mandatory_billing_fields = []
-        website_sale.optional_billing_fields = []
-        bill_keys = [key.replace("_mandatory_bill", "", 1)
-                     for key in request.website._fields.keys()
-                     if "_mandatory_bill" in key]
-        for key in bill_keys:
-            if request.website[key + "_mandatory_bill"] is True:
-                website_sale.mandatory_billing_fields += [key, ]
-            else:
-                website_sale.optional_billing_fields += [key, ]
+    def _get_optional_billing_fields(self):
+        return [key.replace("_mandatory_bill", "", 1)
+                for key in request.website._fields.keys()
+                if "_mandatory_bill" in key and request.website[key] is False]
 
-        # Set Shipping Fields
-        website_sale.mandatory_shipping_fields = []
-        website_sale.optional_shipping_fields = []
-        ship_keys = [key.replace("_mandatory_ship", "", 1)
-                     for key in request.website._fields.keys()
-                     if "_mandatory_ship" in key]
-        for key in ship_keys:
-            if request.website[key + "_mandatory_ship"] is True:
-                website_sale.mandatory_shipping_fields += [key, ]
-            else:
-                website_sale.optional_shipping_fields += [key, ]
+    def _get_mandatory_shipping_fields(self):
+        return [key.replace("_mandatory_ship", "", 1)
+                for key in request.website._fields.keys()
+                if "_mandatory_ship" in key and request.website[key] is True]
 
-        return super(website_sale_donate, self).checkout_parse(address_type, data, remove_prefix)
+    def _get_optional_shipping_fields(self):
+        return [key.replace("_mandatory_ship", "", 1)
+                for key in request.website._fields.keys()
+                if "_mandatory_ship" in key and request.website[key] is False]

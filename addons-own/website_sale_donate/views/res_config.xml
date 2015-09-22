@@ -18,12 +18,12 @@
                     </group>
                     <group string="Mandatory Billing Fields">
                         <!-- NAME IS MANDATORY BY ODOO! -->
-                        <!--<label for="name_mandatory_bill"/>-->
-                        <!--<div name="name_mandatory_bill">-->
-                            <!--<div class="oe_inline">-->
-                                <!--<field name="name_mandatory_bill"/>-->
-                            <!--</div>-->
-                        <!--</div>-->
+                        <label for="name_mandatory_bill"/>
+                        <div name="name_mandatory_bill">
+                            <div class="oe_inline">
+                                <field name="name_mandatory_bill" readonly="True"/>
+                            </div>
+                        </div>
                         <label for="email_mandatory_bill"/>
                         <div name="email_mandatory_bill">
                             <div class="oe_inline">
@@ -87,12 +87,12 @@
                     </group>
                     <group string="Mandatory Shipping Fields">
                         <!-- NAME IS MANDATORY BY ODOO! -->
-                        <!--<label for="name_mandatory_ship"/>-->
-                        <!--<div name="name_mandatory_ship">-->
-                            <!--<div class="oe_inline">-->
-                                <!--<field name="name_mandatory_ship"/>-->
-                            <!--</div>-->
-                        <!--</div>-->
+                        <label for="name_mandatory_ship"/>
+                        <div name="name_mandatory_ship">
+                            <div class="oe_inline">
+                                <field name="name_mandatory_ship" readonly="True"/>
+                            </div>
+                        </div>
                         <label for="phone_mandatory_ship"/>
                         <div name="phone_mandatory_ship">
                             <div class="oe_inline">

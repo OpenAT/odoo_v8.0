@@ -649,6 +649,11 @@
             </xpath>
 
             <!-- SHIPPING -->
+            <xpath expr="//label[@for='shipping_name']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_name' if website.name_mandatory_ship else 'control-label f-shipping_name'</attribute>
+            </xpath>
             <xpath expr="//label[@for='shipping_phone']" position="attributes">
                 <attribute name="style"></attribute>
                 <attribute name="class"></attribute>
