@@ -26,7 +26,7 @@
         <!-- SHOP PRODUCT LISTING: Use Square Images -->
         <template id="wsd_products_item_image" inherit_id="website_sale.products_item" name="Square Images" customize_show="True" active="False">
             <xpath expr="//div[@class='oe_product_image']/a/img[@itemprop='image']" position="replace">
-                <img itemprop="image" class="img img-responsive" t-att-src="website.image_url(product, 'image_square')"/>
+                <img itemprop="image" class="img img-responsive" t-att-src="website.image_url(product, 'image_square')" t-att-alt="product.name"/>
             </xpath>
         </template>
 
@@ -387,7 +387,7 @@
                                                         <span itemprop="url" style="display:none;" t-esc="'/shop/product/%s' % slug(product)"/>
 
                                                         <!-- Product Image -->
-                                                        <t t-if="not product.hide_image"><p t-field="product.image_square" t-field-options='{"widget": "image", "class": "img-circle"}'/></t>
+                                                        <t t-if="not product.hide_image"><p t-field="product.image_square" t-field-options='{"widget": "image", "class": "img-circle", "alt-field": "name"}'/></t>
 
                                                         <!-- Product Sales Text -->
                                                         <t t-if="product.description_sale and not product.hide_salesdesc">

@@ -7,3 +7,5 @@
 #
 https://github.com/OpenAT/odoo_v8.0/commit/cd9b235902eafa408c5779a38f207a3ba7c80d06
 odoo-start.py -u website_sale,website_sale_donate
+https://github.com/OpenAT/odoo_v8.0/commit/724074528a64b0f5349622aebbd5cefb03803c1b
+odoo-start.py -u website_sale_donate
