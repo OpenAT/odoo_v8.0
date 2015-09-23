@@ -6,10 +6,9 @@
 #
 # ATTENTION: be aware that for most db.py methods the fist argument is always the SUPER_PASSWORD
 #            look at: passwd = params[0] and params = params[1:]
-import os
 import sys
 import argparse
-import tempfile
+import base64
 from xmlrpclib import ServerProxy
 
 
@@ -48,10 +47,11 @@ def backup(args):
 # service/db.py:   def exp_restore(db_name, data, copy=False):
 def restore(args):
     print 'Restore Database: %s' % args.database
-    if server.restore(args.superpwd, args.database, args.filedump):
-        sys.exit(0)
-    else:
-        sys.exit(2)
+    with open(args.filedump) as dump_file:
+        if server.restore(args.superpwd, args.database, base64.b64encode(dump_file.read())):
+            sys.exit(0)
+        else:
+            sys.exit(2)
 
 
 # ----------------------------
