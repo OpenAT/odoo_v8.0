@@ -1,0 +1,17 @@
+# On a new master commit, run STAGE deployment.
+OpenAT/PUSHTODEPLOYLOCATION/push/heads/master:
+  - echo "Running STAGE deployment (checkout out {{commit}})" &&
+    cd DBPATH/addons &&
+    git fetch origin &&
+    git checkout --force {{commit}}
+  - echo "Restarting Instance o8_intdadidev_autoupdatetools2" &&
+    service PUSHTODEPLOYSERVICENAME restart
+
+# On a new tag, run LIVE deployment.
+OpenAT/PUSHTODEPLOYLOCATION/push/tags/*:
+  - echo "Running LIVE deployment (checking out {{tag}})" &&
+    cd DBPATH/addons &&
+    git fetch origin &&
+    git checkout --force {{tag}}
+  - echo "Restarting LIVE app" &&
+    service PUSHTODEPLOYSERVICENAME restart

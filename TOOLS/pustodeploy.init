@@ -1,0 +1,2 @@
+#!/bin/bash
+PUSHTODEPLOYPATH/bin/push-to-deploy -p PUSHTODEPLOYPORT PTDPATH >> PTDLOGFILE &

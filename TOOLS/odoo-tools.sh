@@ -139,6 +139,11 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     service nginx restart | tee -a $SETUP_LOG
     echo -e "----- Install nginx Done"
 
+    # ----- Install push-to-deploy
+    echo -e "\n----- Install pushtodeploy node"
+    npm install push-to-deploy -y >> $SETUP_LOG
+    echo -e "----- Install pushtodeploy Done"
+
     # ----- Install Python Packages
     echo -e "\n----- Install Python Apt Packages"
     apt-get install libldap2-dev libsasl2-dev python-pip python-virtualenv python-dev python-software-properties python-pychart \
@@ -372,9 +377,9 @@ fi
 
 
 # ---------------------------------------------------------------------------------------
-# $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME}
+# $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME} {CUADDONSNAME}
 # ---------------------------------------------------------------------------------------
-MODENEWDB="odoo-tools.sh newdb       {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME}"
+MODENEWDB="odoo-tools.sh newdb       {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {CUADDONSNAME}"
 MODEDUPDB="odoo-tools.sh duplicatedb {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {DATABASE_TEMPLATE}"
 if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
@@ -382,7 +387,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "--------------------------------------------------------------------------------------------------------"
     echo -e "DATABASE_NAME should be something like: hof, hof01, db01, erp, test or demo!"
     echo -e "So customer_id (e.g.: hof) or keyword depending on the instance! Do not use \"_\" in db names!"
-    if [ $# -ne 5 ]; then
+    echo -e "Customer ADDONS name should be the repo name of github, this is used for deploytool"
+    if [ $# -ne 6 ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly four arguments!"
         exit 2
     fi
@@ -410,12 +416,14 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     #       1 = odoo v8.0
     #       2 = odoo v9.0
     #
+    # Customer ADDONS name --> example: cu_tier
     # Highest Linux Port Number (2^16)-1, or 0-65,535 (the -1 is because port 0 is reserved and unavailable)
 
     # ----- Set Variables
     TARGET_BRANCH=$2
     SUPER_PASSWORD=$3
     DOMAIN_NAME=$5
+    CUADDONSNAME=$6
 
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
 
@@ -430,8 +438,10 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DBLOGFILE="${DBLOGPATH}/${DBNAME}.log"
     DBBACKUPPATH="${DBPATH}/BACKUP"
     DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
-
+    PUSHTODEPLOYPATH="/node_modules/push-to-deploy"
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
+    PUSHTODEPLOYSERVICENAME="PTD_${CUADDONSNAME}"
+    PTDLOGFILE="${DBLOGPATH}/${DBNAME}-pushtodeply.log"
 
     # ----- Basic Checks
 
@@ -635,12 +645,40 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!DOMAIN_NAME!'"${DOMAIN_NAME}"'!g
         s!DBLOGPATH!'"${DBLOGPATH}"'!g
         s!DBPATH!'"${DBPATH}"'!g
+        s!PUSHTODEPLOYLOCATION!'"${CUADDONSNAME}"'!g
+        s!PUSHTODEPLOYPORT!'"8${BASEPORT}"'!g
             }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a $DB_SETUPLOG
     chown root:root ${NGINXCONF}
     chmod ugo=r ${NGINXCONF}
     ln -s ${NGINXCONF}  /etc/nginx/sites-enabled/${DBNAME}-${DOMAIN_NAME}
     service nginx restart
     echo -e "---- Create NGINX config file DONE"
+
+    # ----- setup pushtodeploy and create write init script
+    echo -e "---- Create pushtodeploy config file"
+    PUSHTODEPLOYCONF=${DBPATH}/${DBNAME}-pushtodeploy.yml
+    /bin/sed '{
+        s!PUSHTODEPLOYLOCATION!'"${CUADDONSNAME}"'!g
+        s!PUSHTODEPLOYSERVICENAME!'"${PUSHTODEPLOYSERVICENAME}"'!g
+        s!DBPATH!'"${DBPATH}"'!g
+            }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.yml > ${PUSHTODEPLOYCONF} | tee -a $DB_SETUPLOG
+    chown root:root ${PUSHTODEPLOYCONF}
+    chmod ugo=r ${PUSHTODEPLOYCONF}
+    echo -e "---- Create pushtodeploy init file"
+    PUSHTODEPLOYINIT=${DBPATH}/${DBNAME}-pushtodeploy.init
+    /bin/sed '{
+        s!PUSHTODEPLOYPATH!'"${PUSHTODEPLOYPATH}"'!g
+        s!PUSHTODEPLOYPORT!'"8${BASEPORT}"'!g
+        s!PTDPATH!'"${PUSHTODEPLOYCONF}"'!g
+        s!PTDLOGFILE!'"${PTDLOGFILE}"'!g
+            }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.init > ${PUSHTODEPLOYINIT} | tee -a $DB_SETUPLOG
+    chown root:root ${PUSHTODEPLOYINIT}
+    chmod ugo=r ${PUSHTODEPLOYINIT}
+    ln -s ${PUSHTODEPLOYINIT} /etc/init.d/${PUSHTODEPLOYSERVICENAME}
+    update-rc.d ${PUSHTODEPLOYSERVICENAME} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a $DB_SETUPLOG
+    #service ${PUSHTODEPLOYSERVICENAME} start
+    /etc/init.d/${PUSHTODEPLOYSERVICENAME}
+    echo -e "---- Create PUSHTODEPLOY config file DONE"
 
     # ----- Setup Etherpad-Lite
     echo -e "\n---- Setup Etherpad-Lite"
