@@ -439,10 +439,11 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DBLOGFILE="${DBLOGPATH}/${DBNAME}.log"
     DBBACKUPPATH="${DBPATH}/BACKUP"
     DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
-    PUSHTODEPLOYPATH="/node_modules/push-to-deploy"
+    PUSHTODEPLOYPATH="${INSTANCE_PATH}/node_modules/push-to-deploy"
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
     PUSHTODEPLOYSERVICENAME="PTD_${CUADDONSNAME}"
     PTDLOGFILE="${DBLOGPATH}/${DBNAME}-pushtodeply.log"
+    GITPTDBRANCHNAME="${GITPATH}/${REPONAME}/${CUADDONSNAME}.git"
 
     # ----- Basic Checks
 
@@ -679,6 +680,9 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     update-rc.d ${PUSHTODEPLOYSERVICENAME} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a $DB_SETUPLOG
     #service ${PUSHTODEPLOYSERVICENAME} start
     /etc/init.d/${PUSHTODEPLOYSERVICENAME}
+    echo -e "Cloning Customer Template"
+    #TODO: check if repo exists if not echo manual creation and cloning into addons
+    git clone -b master ${GITPTDBRANCHNAME} ${INSTANCE_PATH}/${DBPATH}/${DBNAME}/addons | tee -a $INSTANCE_SETUPLOG
     echo -e "---- Create PUSHTODEPLOY config file DONE"
 
     # ----- Setup Etherpad-Lite
