@@ -683,7 +683,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     /etc/init.d/${PUSHTODEPLOYSERVICENAME}
     echo -e "Cloning Customer Template"
     #TODO: check if repo exists if not echo manual creation and cloning into addons
-    git clone -b master ${GITPTDBRANCHNAME} ${INSTANCE_PATH}/${DBPATH}/${DBNAME}/addons | tee -a $INSTANCE_SETUPLOG
+    git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/${DBNAME}/addons | tee -a $INSTANCE_SETUPLOG
     echo -e "---- Create PUSHTODEPLOY config file DONE"
 
     # ----- Setup Etherpad-Lite
