@@ -676,11 +676,11 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!PTDLOGFILE!'"${PTDLOGFILE}"'!g
             }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.init > ${PUSHTODEPLOYINIT} | tee -a $DB_SETUPLOG
     chown root:root ${PUSHTODEPLOYINIT}
-    chmod ugo=r ${PUSHTODEPLOYINIT}
-    ln -s ${PUSHTODEPLOYINIT} /etc/init.d/${PUSHTODEPLOYSERVICENAME}
-    update-rc.d ${PUSHTODEPLOYSERVICENAME} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a $DB_SETUPLOG
+    chmod ugo=rx ${PUSHTODEPLOYINIT}
+    ln -s ${PUSHTODEPLOYINIT} /etc/init.d/${PUSHTODEPLOYSERVICENAME}.8${BASEPORT}
+    update-rc.d ${PUSHTODEPLOYSERVICENAME}.8{BASEPORT} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a $DB_SETUPLOG
     #service ${PUSHTODEPLOYSERVICENAME} start
-    /etc/init.d/${PUSHTODEPLOYSERVICENAME}
+    /etc/init.d/${PUSHTODEPLOYSERVICENAME}.8{BASEPORT}
     if git ls-remote ${GITPTDBRANCHNAME} | grep -sw "${GITPTDBRANCHNAME}" 2>&1>/dev/null; then
         echo -e "Cloning Customer Template"
          git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a $INSTANCE_SETUPLOG
