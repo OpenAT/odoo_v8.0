@@ -681,9 +681,14 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     update-rc.d ${PUSHTODEPLOYSERVICENAME} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a $DB_SETUPLOG
     #service ${PUSHTODEPLOYSERVICENAME} start
     /etc/init.d/${PUSHTODEPLOYSERVICENAME}
-    echo -e "Cloning Customer Template"
-    #TODO: check if repo exists if not echo manual creation and cloning into addons
-    git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/${DBNAME}/addons | tee -a $INSTANCE_SETUPLOG
+    if git ls-remote ${GITPTDBRANCHNAME} | grep -sw "${GITPTDBRANCHNAME}" 2>&1>/dev/null; then
+        echo -e "Cloning Customer Template"
+         git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a $INSTANCE_SETUPLOG
+    else
+        echo "WARNING: ${GITPTDBRANCHNAME} does not exists, please create a new repo for this customer and create the webhook for this repo ${GITPTDBRANCHNAME}!"
+        echo "and do manual -- git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons "
+    fi
+    git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a $INSTANCE_SETUPLOG
     echo -e "---- Create PUSHTODEPLOY config file DONE"
 
     # ----- Setup Etherpad-Lite
