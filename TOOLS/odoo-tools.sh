@@ -443,7 +443,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
     PUSHTODEPLOYSERVICENAME="PTD_${CUADDONSNAME}"
     PTDLOGFILE="${DBLOGPATH}/${DBNAME}-pushtodeply.log"
-    GITPTDBRANCHNAME="${GITPATH}/${REPONAME}/${CUADDONSNAME}"
+    GITPTDBRANCHNAME="${GITPATH}/${CUADDONSNAME}.git"
 
     # ----- Basic Checks
 
@@ -551,6 +551,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\$3 SUPER_PASSWORD                 :  $SUPER_PASSWORD" | tee -a $DB_SETUPLOG
     echo -e "\$4 DATABASE_NAME                  :  $4" | tee -a $DB_SETUPLOG
     echo -e "\$5 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a $DB_SETUPLOG
+    echo -e "\$6 CUADDONSNAME                    :  $CUADDONSNAME" | tee -a $DB_SETUPLOG
     echo -e ""
     echo -e "Database Setup Log File           :  $DB_SETUPLOG" | tee -a $DB_SETUPLOG
     echo -e ""
@@ -682,7 +683,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     /etc/init.d/${PUSHTODEPLOYSERVICENAME}
     echo -e "Cloning Customer Template"
     #TODO: check if repo exists if not echo manual creation and cloning into addons
-    git clone -b ${GITPTDBRANCHNAME}.git ${INSTANCE_PATH}/${DBPATH}/${DBNAME}/addons | tee -a $INSTANCE_SETUPLOG
+    git clone -b master ${GITPTDBRANCHNAME} ${INSTANCE_PATH}/${DBPATH}/${DBNAME}/addons | tee -a $INSTANCE_SETUPLOG
     echo -e "---- Create PUSHTODEPLOY config file DONE"
 
     # ----- Setup Etherpad-Lite
