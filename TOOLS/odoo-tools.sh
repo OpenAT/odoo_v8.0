@@ -686,10 +686,10 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     update-rc.d ${PUSHTODEPLOYSERVICENAME}-8${BASEPORT} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a ${DB_SETUPLOG}
     service ${PUSHTODEPLOYSERVICENAME}-8${BASEPORT} start
     #/etc/init.d/${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}
-    if git ls-remote ${GITPTDBRANCHNAME} | grep -sw "${GITPTDBRANCHNAME}" 2>&1>/dev/null; then
+    if [ $(git ls-remote ${GITPTDBRANCHNAME} HEAD) ]; then
         echo -e "Cloning Customer Template"
         git -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
-        chown -R ${DBUSER}:${DBUSER} ${DBPATH}/addons | tee -a ${DB_SETUPLOG}
+        chown -R ${DBUSER}:${DBUSER} ${DBPATH}/addons/ | tee -a ${DB_SETUPLOG}
     else
         echo "WARNING: ${GITPTDBRANCHNAME} does not exists, please create a new repo for this customer and create the webhook for this repo ${GITPTDBRANCHNAME}!"
         echo "and do manual -- git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons "
