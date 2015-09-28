@@ -76,10 +76,10 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Prepare LOG-File:
     SETUP_LOG="${REPO_SETUPPATH}/prepare--`date +%Y-%m-%d__%H-%M`.log"
-    if [ -w "$SETUP_LOG" ] ; then
+    if [ -w "${SETUP_LOG}" ] ; then
         echo -e "Setup log file: ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
     else
-        if  touch $SETUP_LOG 2>&1>/dev/null; then
+        if  touch ${SETUP_LOG} 2>&1>/dev/null; then
             echo -e "Setup log file ist at ${SETUP_LOG}. DO NOT MODIFY OR DELETE!"
         else
             echo -e "ERROR: Could not create log file ${SETUP_LOG}!"; exit 2
@@ -93,18 +93,18 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         locale_set=true
     fi
 
-    if ! egrep -i "LANG=.*UTF-8" /etc/default/locale >> $SETUP_LOG; then
+    if ! egrep -i "LANG=.*UTF-8" /etc/default/locale >> ${SETUP_LOG}; then
         echo 'LANG="en_US.UTF-8"' >> /etc/default/locale
         locale_set=true
     fi
 
-    if ! egrep -i "LANGUAGE=...+" /etc/default/locale >> $SETUP_LOG; then
+    if ! egrep -i "LANGUAGE=...+" /etc/default/locale >> ${SETUP_LOG}; then
         echo 'LANGUAGE="en_US.UTF-8"' >> /etc/default/locale
         locale_set=true
     fi
-    locale-gen en_US.UTF-8 >> $SETUP_LOG
-    locale-gen de_AT.UTF-8 >> $SETUP_LOG
-    update-locale >> $SETUP_LOG
+    locale-gen en_US.UTF-8 >> ${SETUP_LOG}
+    locale-gen de_AT.UTF-8 >> ${SETUP_LOG}
+    update-locale >> ${SETUP_LOG}
     if [ "$locale_set" = true ]; then
         echo "ERROR: Wrong locale settings (NOT UTF8)! Please logout completely, login and try again!"
         exit 3
@@ -113,45 +113,45 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Update Server
     echo -e "\n----- Update Server"
     #sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
-    apt-get update >> $SETUP_LOG
-    apt-get upgrade -y >> $SETUP_LOG
+    apt-get update >> ${SETUP_LOG}
+    apt-get upgrade -y >> ${SETUP_LOG}
     echo -e "----- Update Server Done"
 
     # ----- Install Basic Packages
     echo -e "\n----- Install Basic Packages"
     apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev build-essential \
-        gcc mc bzr lptools make nodejs nodejs-dev nodejs-legacy pkg-config npm -y >> $SETUP_LOG
+        gcc mc bzr lptools make nodejs nodejs-dev nodejs-legacy pkg-config npm -y >> ${SETUP_LOG}
     echo -e "----- Install Basic Packages Done"
 
     # ----- Install postgresql
     echo -e "\n----- Install postgresql"
-    apt-get install postgresql postgresql-server-dev-9.3 libpq-dev -y >> $SETUP_LOG
+    apt-get install postgresql postgresql-server-dev-9.3 libpq-dev -y >> ${SETUP_LOG}
     update-rc.d -f postgresql remove
-    update-rc.d postgresql start 19 2 3 5 . stop 81 0 1 4 6 . >> $SETUP_LOG
-    service postgresql restart | tee -a $SETUP_LOG
+    update-rc.d postgresql start 19 2 3 5 . stop 81 0 1 4 6 . >> ${SETUP_LOG}
+    service postgresql restart | tee -a ${SETUP_LOG}
     echo -e "----- Install postgresql Done"
 
     # ----- Install nginx
     echo -e "\n----- Install nginx"
-    apt-get remove apache2 apache2-mpm-event apache2-mpm-prefork apache2-mpm-worker -y >> $SETUP_LOG
-    apt-get install nginx -y >> $SETUP_LOG
+    apt-get remove apache2 apache2-mpm-event apache2-mpm-prefork apache2-mpm-worker -y >> ${SETUP_LOG}
+    apt-get install nginx -y >> ${SETUP_LOG}
     update-rc.d -f nginx remove
-    update-rc.d nginx start 20 2 3 5 . stop 80 0 1 4 6 . >> $SETUP_LOG
-    service nginx restart | tee -a $SETUP_LOG
+    update-rc.d nginx start 20 2 3 5 . stop 80 0 1 4 6 . >> ${SETUP_LOG}
+    service nginx restart | tee -a ${SETUP_LOG}
     echo -e "----- Install nginx Done"
 
     # ----- Install push-to-deploy
     echo -e "\n----- Install pushtodeploy node"
-    npm install push-to-deploy -y >> $SETUP_LOG
+    npm install push-to-deploy -y >> ${SETUP_LOG}
     echo -e "----- Install pushtodeploy Done"
 
     # ----- Install Python Packages
     echo -e "\n----- Install Python Apt Packages"
     apt-get install libldap2-dev libsasl2-dev python-pip python-virtualenv python-dev python-software-properties python-pychart \
-        python-genshi python-pyhyphen python-ldap -y >> $SETUP_LOG
-    pip install pyserial >> $SETUP_LOG
-    pip install qrcode >> $SETUP_LOG
-    pip install --pre pyusb >> $SETUP_LOG
+        python-genshi python-pyhyphen python-ldap -y >> ${SETUP_LOG}
+    pip install pyserial >> ${SETUP_LOG}
+    pip install qrcode >> ${SETUP_LOG}
+    pip install --pre pyusb >> ${SETUP_LOG}
     echo -e "\n----- Install Python Apt Packages DONE"
 
     # ----- Install Wkhtmltopdf 0.12.1
@@ -159,17 +159,17 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     if wkhtmltopdf -V | grep "wkhtmltopdf.*12.*" 2>&1>/dev/null; then
       echo -e "\nWkhtmltopdf 0.12.1 seems to be installed! Skipping installation!\n"
     else
-        apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> $SETUP_LOG
-        apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> $SETUP_LOG
+        apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> ${SETUP_LOG}
+        apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> ${SETUP_LOG}
         ## curl -L to follow mirror redirect from sourceforge.net (eg. kaz.sourceforge.net...)
         cd ${REPO_SETUPPATH}
-        #wget http://sourceforge.net/projects/wkhtmltopdf/files/archive/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
-        wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
-        dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb >> $SETUP_LOG
-        cp /usr/local/bin/wkhtmltopdf /usr/bin >> $SETUP_LOG
-        cp /usr/local/bin/wkhtmltoimage /usr/bin >> $SETUP_LOG
-        apt-get install flashplugin-nonfree -y >> $SETUP_LOG
-        pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> $SETUP_LOG
+        #wget http://sourceforge.net/projects/wkhtmltopdf/files/archive/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> ${SETUP_LOG}
+        wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> ${SETUP_LOG}
+        dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb >> ${SETUP_LOG}
+        cp /usr/local/bin/wkhtmltopdf /usr/bin >> ${SETUP_LOG}
+        cp /usr/local/bin/wkhtmltoimage /usr/bin >> ${SETUP_LOG}
+        apt-get install flashplugin-nonfree -y >> ${SETUP_LOG}
+        pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> ${SETUP_LOG}
     fi
     echo -e "\n----- Install Wkhtmltopdf 0.12.1 DONE"
 
@@ -177,25 +177,25 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "\n----- Install python libs from requirements.txt"
     wget -O - ${GITRAW}/TOOLS/requirements.txt | grep -v '.*#' > ${REPO_SETUPPATH}/requirements.txt
     while read line; do
-        if pip install ${line} >> $SETUP_LOG; then
+        if pip install ${line} >> ${SETUP_LOG}; then
             echo -e "Installed: ${line}"
         else
-            echo -e "\n\nWARNING Install FAILED: ${line} !\n\n" | tee -a $SETUP_LOG
+            echo -e "\n\nWARNING Install FAILED: ${line} !\n\n" | tee -a ${SETUP_LOG}
         fi
-        if pip freeze | grep ${line} >> $SETUP_LOG; then
+        if pip freeze | grep ${line} >> ${SETUP_LOG}; then
             echo -e "PackageOK: ${line} "
         else
-            echo -e "\n\nWARNING: Package ${line} missing!\n\n" | tee -a $SETUP_LOG
+            echo -e "\n\nWARNING: Package ${line} missing!\n\n" | tee -a ${SETUP_LOG}
         fi
     done < ${REPO_SETUPPATH}/requirements.txt
     echo -e "----- Install python libs from requirements.txt Done"
 
     # ----- Make sure Pil is used not Pillow
     echo -e "\n----- Make sure Pil is used and not Pillow"
-    apt-get remove pil pillow -y >> $SETUP_LOG
+    apt-get remove pil pillow -y >> ${SETUP_LOG}
     pip uninstall pil
     pip uninstall pillow
-    apt-get install libjpeg-dev libfreetype6-dev zlib1g-dev libtiff4 libtiff4-dev python-libtiff -y >> $SETUP_LOG
+    apt-get install libjpeg-dev libfreetype6-dev zlib1g-dev libtiff4 libtiff4-dev python-libtiff -y >> ${SETUP_LOG}
     pip install Pillow==2.5.1 --upgrade
 
     # ----- Install Packages for AerooReports
@@ -206,10 +206,10 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     apt-get install ure uno-libs3 unoconv graphviz ghostscript\
                     libreoffice-core libreoffice-common libreoffice-base libreoffice-base-core \
                     libreoffice-draw libreoffice-calc libreoffice-writer libreoffice-impress \
-                    python-cupshelpers hyphen-de hyphen-en-us -y >> $SETUP_LOG
+                    python-cupshelpers hyphen-de hyphen-en-us -y >> ${SETUP_LOG}
     echo -e "\n\nInstall Aeroolib"
     if pip freeze | grep aeroolib ; then
-        echo -e "\n\nWARNING: Aeroolib seems to be already installed!" | tee -a $SETUP_LOG
+        echo -e "\n\nWARNING: Aeroolib seems to be already installed!" | tee -a ${SETUP_LOG}
         echo -e "Please upgrade manually if needed!"
         echo -e "Aeroolib has to be at least aeroolib==1.2.0 to work with ${REPONAME}\n\n"
     else
@@ -217,22 +217,22 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
             echo -e "Do not clone aeroolib from github since directory ${REPO_SETUPPATH}/aeroolib exists ."
         else
             echo -e "Clone aeroolib from github."
-            git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${REPO_SETUPPATH}/aeroolib >> $SETUP_LOG
+            git clone --depth 1 --single-branch https://github.com/aeroo/aeroolib.git ${REPO_SETUPPATH}/aeroolib >> ${SETUP_LOG}
         fi
-        cd ${REPO_SETUPPATH}/aeroolib >> $SETUP_LOG
-        python ${REPO_SETUPPATH}/aeroolib/setup.py install | tee -a $SETUP_LOG
+        cd ${REPO_SETUPPATH}/aeroolib >> ${SETUP_LOG}
+        python ${REPO_SETUPPATH}/aeroolib/setup.py install | tee -a ${SETUP_LOG}
         if pip freeze | grep aeroolib ;  then
             echo -e "\nAeroolib is successfully installed!\n"
         else
             echo -e "\nWARNING: Could not install aeroolib\n"
         fi
-        cd ${REPO_SETUPPATH} >> $SETUP_LOG
+        cd ${REPO_SETUPPATH} >> ${SETUP_LOG}
         echo -e "\nInstall Aeroo LibreOffice Service to init.d as service aeroo"
         wget -O - ${GITRAW}/TOOLS/aeroo.init > ${REPO_SETUPPATH}/aeroo.init
-        chmod ugo=rx ${REPO_SETUPPATH}/aeroo.init >> $SETUP_LOG
-        ln -s ${REPO_SETUPPATH}/aeroo.init /etc/init.d/aeroo >> $SETUP_LOG
+        chmod ugo=rx ${REPO_SETUPPATH}/aeroo.init >> ${SETUP_LOG}
+        ln -s ${REPO_SETUPPATH}/aeroo.init /etc/init.d/aeroo >> ${SETUP_LOG}
         update-rc.d -f aeroo remove
-        update-rc.d aeroo start 20 2 3 5 . stop 80 0 1 4 6 . >> $SETUP_LOG
+        update-rc.d aeroo start 20 2 3 5 . stop 80 0 1 4 6 . >> ${SETUP_LOG}
         service aeroo stop
         service aeroo start
     fi
@@ -240,26 +240,26 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Install Packages for Etherpad Lite
     echo -e "\n----- Install Packages for Etherpad Lite"
-    apt-get install abiword -y >> $SETUP_LOG
+    apt-get install abiword -y >> ${SETUP_LOG}
     echo -e "----- Install Packages for Etherpad Lite Done"
 
     # ----- Install npm and Less compiler needed by Odoo 8 Website - added from https://gist.github.com/rm-jamotion/d61bc6525f5b76245b50
     echo -e "\n----- Install less compiler"
     hash -r
-    #curl -L https://npmjs.org/install.sh | sh >> $SETUP_LOG # will not work with etherpad-lite
-    npm install less >> $SETUP_LOG
+    #curl -L https://npmjs.org/install.sh | sh >> ${SETUP_LOG} # will not work with etherpad-lite
+    npm install less >> ${SETUP_LOG}
     echo -e "----- Install nodejs and less compiler DONE"
 
     # ----- Install packages for owncloud
     echo -e "\n----- Install packages for owncloud"
-    apt-get install php5-fpm -y >> $SETUP_LOG
+    apt-get install php5-fpm -y >> ${SETUP_LOG}
     apt-get install php5-cgi php5-pgsql php5-gd php5-curl php5-intl php5-mcrypt php5-ldap php5-gmp php5-imagick \
-                    libav-tools php5-readline -y >> $SETUP_LOG
+                    libav-tools php5-readline -y >> ${SETUP_LOG}
     # --- Make sure PHP-FPM is listening on unix socket and not on IP!
     if /bin/grep -q "listen = 127.0.0.1:9000" ${FPMCONFIGPATH} ; then
         sed -i "s|listen = 127.0.0.1:9000|listen = /var/run/php5-fpm.sock|g" ${FPMCONFIGPATH}
     fi
-    update-rc.d -f apache2 disable >> $SETUP_LOG
+    update-rc.d -f apache2 disable >> ${SETUP_LOG}
     echo -e "\n----- Install packages for done"
 
 
@@ -314,14 +314,14 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
 
     # ----- Allow the user to check all arguments:
     echo -e ""
-    echo -e "\$1 Script Mode                    :  $SCRIPT_MODE" | tee -a $INSTANCE_SETUPLOG
-    echo -e "\$2 Target Branch                  :  $TARGET_BRANCH" | tee -a $INSTANCE_SETUPLOG
+    echo -e "\$1 Script Mode                    :  $SCRIPT_MODE" | tee -a ${INSTANCE_SETUPLOG}
+    echo -e "\$2 Target Branch                  :  $TARGET_BRANCH" | tee -a ${INSTANCE_SETUPLOG}
     echo -e ""
-    echo -e "Instance Setuplog File            :  $INSTANCE_SETUPLOG" | tee -a $INSTANCE_SETUPLOG
+    echo -e "Instance Setuplog File            :  ${INSTANCE_SETUPLOG}" | tee -a ${INSTANCE_SETUPLOG}
     echo -e ""
-    echo -e "Instance Branch Name              :  $TARGET_BRANCH" | tee -a $INSTANCE_SETUPLOG
-    echo -e "Instance Base Directory           :  $INSTANCE_PATH" | tee -a $INSTANCE_SETUPLOG
-    echo -e "Instance LINUX User               :  $TARGET_BRANCH" | tee -a $INSTANCE_SETUPLOG
+    echo -e "Instance Branch Name              :  $TARGET_BRANCH" | tee -a ${INSTANCE_SETUPLOG}
+    echo -e "Instance Base Directory           :  $INSTANCE_PATH" | tee -a ${INSTANCE_SETUPLOG}
+    echo -e "Instance LINUX User               :  $TARGET_BRANCH" | tee -a ${INSTANCE_SETUPLOG}
     echo -e ""
     echo -e "Would you like to setup a new odoo instance with this settings? ( Y/N ): "; read answer
     if [ "${answer}" != "Y" ]; then
@@ -339,10 +339,10 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ----- Clone the Github Repo (Directory created here first!)
     echo -e "\n---- Clone the Github Repo ${REPONAME}"
     git clone -b master --recurse-submodules \
-        ${SOURCE_REPO} ${INSTANCE_PATH} | tee -a $INSTANCE_SETUPLOG
-    cd ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
-    git branch ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
-    git checkout ${TARGET_BRANCH} >> $INSTANCE_SETUPLOG
+        ${SOURCE_REPO} ${INSTANCE_PATH} | tee -a ${INSTANCE_SETUPLOG}
+    cd ${INSTANCE_PATH} >> ${INSTANCE_SETUPLOG}
+    git branch ${TARGET_BRANCH} >> ${INSTANCE_SETUPLOG}
+    git checkout ${TARGET_BRANCH} >> ${INSTANCE_SETUPLOG}
     if [ ! -d "${INSTANCE_PATH}/odoo/addons" ]; then
         echo -e "\nERROR: Cloning the github repo failed!\n"; exit 2
     fi
@@ -363,11 +363,11 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
 
     # ----- Setup the Linux User and Group
     echo -e "\n----- Create Instance Linux User and Group: ${TARGET_BRANCH}"
-    useradd -m -s /bin/bash ${TARGET_BRANCH} | tee -a $INSTANCE_SETUPLOG
+    useradd -m -s /bin/bash ${TARGET_BRANCH} | tee -a ${INSTANCE_SETUPLOG}
 
     # ----- Set Linux Rights
-    chown -R ${TARGET_BRANCH}:${TARGET_BRANCH} ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
-    chmod 755 ${INSTANCE_PATH} >> $INSTANCE_SETUPLOG
+    chown -R ${TARGET_BRANCH}:${TARGET_BRANCH} ${INSTANCE_PATH} >> ${INSTANCE_SETUPLOG}
+    chmod 755 ${INSTANCE_PATH} >> ${INSTANCE_SETUPLOG}
 
     echo -e "-------------------------------------------------------------------------"
     echo -e " $MODESETUP DONE"
@@ -470,7 +470,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 
     # ----- Setup the Linux User and Group and create it's Home Directory
     echo -e "\n----- Create Instance Linux User and Group: ${DBUSER}"
-    useradd -m -d ${DBPATH} -s /bin/bash -U -G ${TARGET_BRANCH} -p $(echo "${LINUXPW}" | openssl passwd -1 -stdin) ${DBUSER} | tee -a $INSTANCE_SETUPLOG
+    useradd -m -d ${DBPATH} -s /bin/bash -U -G ${TARGET_BRANCH} -p $(echo "${LINUXPW}" | openssl passwd -1 -stdin) ${DBUSER} | tee -a ${INSTANCE_SETUPLOG}
 
     # create sudoers file
     echo "${DBUSER} ALL=(root) NOPASSWD: /usr/bin/service ${DBNAME} restart, /usr/bin/service ${DBNAME} stop, /usr/bin/service ${DBNAME} start" > ${DBPATH}/${DBUSER}.sudo
@@ -519,10 +519,10 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     fi
 
     # ----- Set Linux Rights
-    chown -R ${DBUSER}:${DBUSER} ${DBPATH} >> $DB_SETUPLOG
-    chmod 755 ${DBPATH} >> $DB_SETUPLOG
-    chown -R ${DBUSER}:${DBUSER} ${DBLOGPATH} >> $DB_SETUPLOG
-    chmod 777 ${DBLOGPATH} >> $DB_SETUPLOG
+    chown -R ${DBUSER}:${DBUSER} ${DBPATH} >> ${DB_SETUPLOG}
+    chmod 755 ${DBPATH} >> ${DB_SETUPLOG}
+    chown -R ${DBUSER}:${DBUSER} ${DBLOGPATH} >> ${DB_SETUPLOG}
+    chmod 777 ${DBLOGPATH} >> ${DB_SETUPLOG}
 
     # ---- Read (or set) and increment BASEPORT
     COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
@@ -547,24 +547,24 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 
     # ----- Allow the user to check all arguments:
     echo -e ""
-    echo -e "\$1 Script Mode                    :  $SCRIPT_MODE" | tee -a $DB_SETUPLOG
-    echo -e "\$2 TARGET_BRANCH                  :  $TARGET_BRANCH" | tee -a $DB_SETUPLOG
-    echo -e "\$3 SUPER_PASSWORD                 :  $SUPER_PASSWORD" | tee -a $DB_SETUPLOG
-    echo -e "\$4 DATABASE_NAME                  :  $4" | tee -a $DB_SETUPLOG
-    echo -e "\$5 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a $DB_SETUPLOG
-    echo -e "\$6 CUADDONSNAME                    :  $CUADDONSNAME" | tee -a $DB_SETUPLOG
+    echo -e "\$1 Script Mode                    :  $SCRIPT_MODE" | tee -a ${DB_SETUPLOG}
+    echo -e "\$2 TARGET_BRANCH                  :  $TARGET_BRANCH" | tee -a ${DB_SETUPLOG}
+    echo -e "\$3 SUPER_PASSWORD                 :  $SUPER_PASSWORD" | tee -a ${DB_SETUPLOG}
+    echo -e "\$4 DATABASE_NAME                  :  $4" | tee -a ${DB_SETUPLOG}
+    echo -e "\$5 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a ${DB_SETUPLOG}
+    echo -e "\$6 CUADDONSNAME                    :  $CUADDONSNAME" | tee -a ${DB_SETUPLOG}
     echo -e ""
-    echo -e "Database Setup Log File           :  $DB_SETUPLOG" | tee -a $DB_SETUPLOG
+    echo -e "Database Setup Log File           :  ${DB_SETUPLOG}" | tee -a ${DB_SETUPLOG}
     echo -e ""
-    echo -e "Database FINAL Name               :  $DBNAME" | tee -a $DB_SETUPLOG
-    echo -e "Database Directory                :  $DBPATH" | tee -a $DB_SETUPLOG
-    echo -e "Database Logfile                  :  $DBLOGFILE" | tee -a $DB_SETUPLOG
-    echo -e "Database Baseport                 :  $BASEPORT" | tee -a $DB_SETUPLOG
-    echo -e "Database Database User Name       :  $DBUSER" | tee -a $DB_SETUPLOG
-    echo -e "Database Database User Password   :  $DBPW" | tee -a $DB_SETUPLOG
-    echo -e "Database LINUX User               :  $DBUSER" | tee -a $DB_SETUPLOG
-    echo -e "Database LINUX User Password      :  $LINUXPW" | tee -a $DB_SETUPLOG
-    echo -e "Database Etherpad SESSION KEY     :  $ETHERPADKEY" | tee -a $DB_SETUPLOG
+    echo -e "Database FINAL Name               :  $DBNAME" | tee -a ${DB_SETUPLOG}
+    echo -e "Database Directory                :  $DBPATH" | tee -a ${DB_SETUPLOG}
+    echo -e "Database Logfile                  :  $DBLOGFILE" | tee -a ${DB_SETUPLOG}
+    echo -e "Database Baseport                 :  $BASEPORT" | tee -a ${DB_SETUPLOG}
+    echo -e "Database Database User Name       :  $DBUSER" | tee -a ${DB_SETUPLOG}
+    echo -e "Database Database User Password   :  $DBPW" | tee -a ${DB_SETUPLOG}
+    echo -e "Database LINUX User               :  $DBUSER" | tee -a ${DB_SETUPLOG}
+    echo -e "Database LINUX User Password      :  $LINUXPW" | tee -a ${DB_SETUPLOG}
+    echo -e "Database Etherpad SESSION KEY     :  $ETHERPADKEY" | tee -a ${DB_SETUPLOG}
     echo -e ""
     echo -e "ATTENTION: The password for the admin user of the new database will be \"adminpw\"!\n"
     echo -e "Would you like to setup a new odoo database ${DBNAME} at ${DBPATH} with this settings?"
@@ -589,7 +589,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     # ----- Create Database User
     echo -e "\n---- Create postgresql role $DBUSER"
     sudo su - postgres -c \
-        'psql -a -e -c "CREATE ROLE '${DBUSER}' WITH NOSUPERUSER CREATEDB LOGIN PASSWORD '\'${DBPW}\''"' | tee -a $DB_SETUPLOG
+        'psql -a -e -c "CREATE ROLE '${DBUSER}' WITH NOSUPERUSER CREATEDB LOGIN PASSWORD '\'${DBPW}\''"' | tee -a ${DB_SETUPLOG}
 
     # ----- Create server.conf
     DBCONF=${DBPATH}/${DBNAME}.conf
@@ -605,7 +605,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!'"longpolling_port = 8072"'!'"longpolling_port = ${BASEPORT}72"'!g
         s!'"xmlrpc_port = 8069"'!'"xmlrpc_port = ${BASEPORT}69"'!g
         s!'"xmlrpcs_port = 8071"'!'"xmlrpcs_port = ${BASEPORT}71"'!g
-        }' ${INSTANCE_PATH}/TOOLS/server.conf > ${DBCONF} | tee -a $DB_SETUPLOG
+        }' ${INSTANCE_PATH}/TOOLS/server.conf > ${DBCONF} | tee -a ${DB_SETUPLOG}
     chown root:root ${DBCONF}
     chmod ugo=r ${DBCONF}
 
@@ -618,27 +618,27 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!'"CONFIGFILE="'!'"CONFIGFILE=${DBCONF}"'!g
         s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-c ${DBCONF} -d ${DBNAME} --db-filter=^${DBNAME}$\""'!g
         s!DBNAME!'"$DBNAME"'!g
-        }' ${INSTANCE_PATH}/TOOLS/server.init > ${DBINIT} | tee -a $DB_SETUPLOG
+        }' ${INSTANCE_PATH}/TOOLS/server.init > ${DBINIT} | tee -a ${DB_SETUPLOG}
     chown root:root ${DBINIT}
     chmod ugo=rx ${DBINIT}
-    ln -s ${DBINIT} /etc/init.d/${DBNAME} | tee -a $DB_SETUPLOG
-    update-rc.d ${DBNAME} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a $DB_SETUPLOG
-    service ${DBNAME} start | tee -a $DB_SETUPLOG
+    ln -s ${DBINIT} /etc/init.d/${DBNAME} | tee -a ${DB_SETUPLOG}
+    update-rc.d ${DBNAME} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a ${DB_SETUPLOG}
+    service ${DBNAME} start | tee -a ${DB_SETUPLOG}
     echo -e "Wait 8s for service ${DBNAME} to start..."
     sleep 8
 
     # ----- Create a new Database
     echo -e "\n----- Create Database ${DBNAME}"
     chmod 775 ${INSTANCE_PATH}/TOOLS/db-tools.py
-    if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT}69 -s $SUPER_PASSWORD newdb -d $DBNAME -p adminpw ; then
-        echo -e "Database created!" | tee -a $DB_SETUPLOG
+    if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT}69 -s ${SUPER_PASSWORD} newdb -d ${DBNAME} -p adminpw ; then
+        echo -e "Database created!" | tee -a ${DB_SETUPLOG}
     else
-        echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" | tee -a $DB_SETUPLOG
+        echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" | tee -a ${DB_SETUPLOG}
     fi
 
     # ----- Link Log Folder
     echo -e "\n---- Link ${DBLOGPATH} to ${DBPATH}/LOG"
-    ln -s ${DBLOGPATH} ${DBPATH}/LOG | tee -a $DB_SETUPLOG
+    ln -s ${DBLOGPATH} ${DBPATH}/LOG | tee -a ${DB_SETUPLOG}
 
     # ----- Setup nginx
     echo -e "---- Create NGINX config file"
@@ -653,7 +653,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!DBPATH!'"${DBPATH}"'!g
         s!PUSHTODEPLOYLOCATION!'"${CUADDONSNAME}"'!g
         s!PUSHTODEPLOYPORT!'"8${BASEPORT}"'!g
-            }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a $DB_SETUPLOG
+            }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a ${DB_SETUPLOG}
     chown root:root ${NGINXCONF}
     chmod ugo=r ${NGINXCONF}
     ln -s ${NGINXCONF}  /etc/nginx/sites-enabled/${DBNAME}-${DOMAIN_NAME}
@@ -667,7 +667,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!PUSHTODEPLOYLOCATION!'"${CUADDONSNAME}"'!g
         s!INSTANZNAME!'"${DBNAME}"'!g
         s!DBPATH!'"${DBPATH}"'!g
-            }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.yml > ${PUSHTODEPLOYCONF} | tee -a $DB_SETUPLOG
+            }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.yml > ${PUSHTODEPLOYCONF} | tee -a ${DB_SETUPLOG}
     chown root:root ${PUSHTODEPLOYCONF}
     chmod ugo=r ${PUSHTODEPLOYCONF}
     echo -e "---- Create pushtodeploy init file"
@@ -679,22 +679,22 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!'"CONFIGFILE="'!'"CONFIGFILE=${PUSHTODEPLOYCONF}"'!g
         s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p 8${BASEPORT} ${PUSHTODEPLOYCONF}\""'!g
         s!LOGFILE=!'"LOGFILE=${PTDLOGFILE}"'!g
-            }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.init > ${PUSHTODEPLOYINIT} | tee -a $DB_SETUPLOG
+            }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.init > ${PUSHTODEPLOYINIT} | tee -a ${DB_SETUPLOG}
     chown root:root ${PUSHTODEPLOYINIT}
     chmod ugo=rx ${PUSHTODEPLOYINIT}
     ln -s ${PUSHTODEPLOYINIT} /etc/init.d/${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}
-    update-rc.d ${PUSHTODEPLOYSERVICENAME}-8${BASEPORT} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a $DB_SETUPLOG
+    update-rc.d ${PUSHTODEPLOYSERVICENAME}-8${BASEPORT} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a ${DB_SETUPLOG}
     service ${PUSHTODEPLOYSERVICENAME}-8${BASEPORT} start
     #/etc/init.d/${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}
     if git ls-remote ${GITPTDBRANCHNAME} | grep -sw "${GITPTDBRANCHNAME}" 2>&1>/dev/null; then
         echo -e "Cloning Customer Template"
-        git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a $INSTANCE_SETUPLOG
-        chown -R ${DBUSER}:${DBUSER} ${DBPATH}/addons | tee -a $DB_SETUPLOG
+        git -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
+        chown -R ${DBUSER}:${DBUSER} ${DBPATH}/addons | tee -a ${DB_SETUPLOG}
     else
         echo "WARNING: ${GITPTDBRANCHNAME} does not exists, please create a new repo for this customer and create the webhook for this repo ${GITPTDBRANCHNAME}!"
         echo "and do manual -- git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons "
     fi
-    git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a $INSTANCE_SETUPLOG
+    git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
     echo -e "---- Create PUSHTODEPLOY config file DONE"
 
     # ----- Setup Etherpad-Lite
@@ -707,16 +707,16 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     PADUSER=${DBUSER}_pad
     PADPW=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 8 | head -1`
     # clone etherpad-lite stable branch (=master) from github
-    git clone -b master https://github.com/ether/etherpad-lite.git ${PADPATH} | tee -a $DB_SETUPLOG
-    chown -R ${DBUSER}:${DBUSER} ${PADPATH} | tee -a $DB_SETUPLOG
+    git clone -b master https://github.com/ether/etherpad-lite.git ${PADPATH} | tee -a ${DB_SETUPLOG}
+    chown -R ${DBUSER}:${DBUSER} ${PADPATH} | tee -a ${DB_SETUPLOG}
     echo -e "\n---- Create etherpad-lite db role $PADUSER"
     sudo su - postgres -c \
-        'psql -a -e -c "CREATE ROLE '${PADUSER}' WITH NOSUPERUSER LOGIN PASSWORD '\'${PADPW}\''"' | tee -a $DB_SETUPLOG
+        'psql -a -e -c "CREATE ROLE '${PADUSER}' WITH NOSUPERUSER LOGIN PASSWORD '\'${PADPW}\''"' | tee -a ${DB_SETUPLOG}
     # Create the owncloud database (utf8)
     # Create the etherpad database (utf8)
     echo -e "Create DB for etherpad-lite: ${PADDB} Owner: ${PADUSER}"
     sudo su - postgres -c \
-        'psql -a -e -c "CREATE DATABASE '${PADDB}' WITH OWNER '${PADUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
+        'psql -a -e -c "CREATE DATABASE '${PADDB}' WITH OWNER '${PADUSER}' ENCODING '\'UTF8\''" ' | tee -a ${DB_SETUPLOG}
     #
     # etherpad-lite CONFIG file
     echo -e "Create etherpad config file"
@@ -729,7 +729,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!PADPW!'"$PADPW"'!g
         s!ETHERPADKEY!'"$ETHERPADKEY"'!g
         s!PADLOG!'"$PADLOG"'!g
-        }' ${INSTANCE_PATH}/TOOLS/etherpad.conf > ${PADCONF} | tee -a $DB_SETUPLOG
+        }' ${INSTANCE_PATH}/TOOLS/etherpad.conf > ${PADCONF} | tee -a ${DB_SETUPLOG}
     chown root:root ${PADCONF}
     chmod ugo=r ${PADCONF}
     #
@@ -740,11 +740,11 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!PADPATH!'"$PADPATH"'!g
         s!DBNAME!'"$DBNAME"'!g
         s!PADCONF!'"$PADCONF"'!g
-        }' ${INSTANCE_PATH}/TOOLS/etherpad.init > ${PADINIT} | tee -a $DB_SETUPLOG
+        }' ${INSTANCE_PATH}/TOOLS/etherpad.init > ${PADINIT} | tee -a ${DB_SETUPLOG}
     chown root:root ${PADINIT}
     chmod ugo=rx ${PADINIT}
-    ln -s ${PADINIT} /etc/init.d/${DBNAME}-pad | tee -a $DB_SETUPLOG
-    update-rc.d ${DBNAME}-pad start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a $DB_SETUPLOG
+    ln -s ${PADINIT} /etc/init.d/${DBNAME}-pad | tee -a ${DB_SETUPLOG}
+    update-rc.d ${DBNAME}-pad start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a ${DB_SETUPLOG}
     service ${DBNAME}-pad start
     echo -e "---- Setup etherpad-Lite DONE"
 
@@ -758,18 +758,18 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     cd ${DBPATH}
     wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2 -O ${DBPATH}/owncloud-7.0.2.tar.bz2
     tar -xjf ${DBPATH}/owncloud-7.0.2.tar.bz2 -C ${DBPATH}
-    mkdir ${OWNCLOUDPATH}/data | tee -a $DB_SETUPLOG
-    chown -R ${DBUSER}:${DBUSER} ${OWNCLOUDPATH} | tee -a $DB_SETUPLOG
-    chown -R www-data:www-data ${OWNCLOUDPATH}/config/ ${OWNCLOUDPATH}/apps/ ${OWNCLOUDPATH}/data/ | tee -a $DB_SETUPLOG
+    mkdir ${OWNCLOUDPATH}/data | tee -a ${DB_SETUPLOG}
+    chown -R ${DBUSER}:${DBUSER} ${OWNCLOUDPATH} | tee -a ${DB_SETUPLOG}
+    chown -R www-data:www-data ${OWNCLOUDPATH}/config/ ${OWNCLOUDPATH}/apps/ ${OWNCLOUDPATH}/data/ | tee -a ${DB_SETUPLOG}
     # Create owncloud db user
     echo -e "\n---- Create owncloud db role: $CLOUDUSER"
     sudo su - postgres -c \
-        'psql -a -e -c "CREATE ROLE '${CLOUDUSER}' WITH NOSUPERUSER LOGIN PASSWORD '\'${CLOUDPW}\''"' | tee -a $DB_SETUPLOG
+        'psql -a -e -c "CREATE ROLE '${CLOUDUSER}' WITH NOSUPERUSER LOGIN PASSWORD '\'${CLOUDPW}\''"' | tee -a ${DB_SETUPLOG}
     # Create the owncloud database (utf8)
-    echo -e "\n---- Create owncloud DB: $CLOUDDB"
+    echo -e "\n---- Create owncloud DB: ${CLOUDDB}"
     echo -e "Create DB for owncloud: ${CLOUDDB} Owner: ${CLOUDUSER}"
     sudo su - postgres -c \
-        'psql -a -e -c "CREATE DATABASE '${CLOUDDB}' WITH OWNER '${CLOUDUSER}' ENCODING '\'UTF8\''" ' | tee -a $DB_SETUPLOG
+        'psql -a -e -c "CREATE DATABASE '${CLOUDDB}' WITH OWNER '${CLOUDUSER}' ENCODING '\'UTF8\''" ' | tee -a ${DB_SETUPLOG}
     #
     # ----- Configure owncloud
     OWNCLOUDCONFIGFILE="${DBPATH}/${CLOUDDB}-autoconfig.php"
@@ -823,10 +823,10 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!DBBACKUPPATH!'"$DBBACKUPPATH"'!g
         s!BACKUPFILE!'"$DBBACKUPPATH/$DBNAME"'!g
         s!BACKUPTYPE!'"odoo-backup-zip"'!g
-        }' ${INSTANCE_PATH}/TOOLS/backup.sh > ${DBBACKUPSCRIPT} | tee -a $DB_SETUPLOG
+        }' ${INSTANCE_PATH}/TOOLS/backup.sh > ${DBBACKUPSCRIPT} | tee -a ${DB_SETUPLOG}
     chown root:root ${DBBACKUPSCRIPT}
     chmod ugo=rx ${DBBACKUPSCRIPT}
-    ln -s ${DBBACKUPSCRIPT} /etc/cron.daily/${DBNAME}-backup | tee -a $DB_SETUPLOG
+    ln -s ${DBBACKUPSCRIPT} /etc/cron.daily/${DBNAME}-backup | tee -a ${DB_SETUPLOG}
 
     # ----- Create backup script for PAD and Setup cron job for backup script
     PADDBBACKUPSCRIPT="${DBPATH}/${PADDB}-backup-pad.sh"
@@ -839,10 +839,10 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!DBBACKUPPATH!'"$DBBACKUPPATH"'!g
         s!BACKUPFILE!'"$DBBACKUPPATH/$PADDB"'!g
         s!BACKUPTYPE!'"pad-backup-sql"'!g
-        }' ${INSTANCE_PATH}/TOOLS/backup.sh > ${PADDBBACKUPSCRIPT} | tee -a $DB_SETUPLOG
+        }' ${INSTANCE_PATH}/TOOLS/backup.sh > ${PADDBBACKUPSCRIPT} | tee -a ${DB_SETUPLOG}
     chown root:root ${PADDBBACKUPSCRIPT}
     chmod ugo=rx ${PADDBBACKUPSCRIPT}
-    ln -s ${PADDBBACKUPSCRIPT} /etc/cron.daily/${PADDB}-backup-pad | tee -a $DB_SETUPLOG
+    ln -s ${PADDBBACKUPSCRIPT} /etc/cron.daily/${PADDB}-backup-pad | tee -a ${DB_SETUPLOG}
 
     # ----- Create backup script for OWNCLOUD and Setup cron job for backup script
     CLOUDDBBACKUPSCRIPT="${DBPATH}/${CLOUDDB}-backup-owncloud.sh"
@@ -851,15 +851,15 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!BASEPORT!'"$BASEPORT"'!g
         s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
         s!INSTANCE_PATH!'"$INSTANCE_PATH"'!g
-        s!DBNAME!'"$CLOUDDB"'!g
+        s!DBNAME!'"${CLOUDDB}"'!g
         s!DBBACKUPPATH!'"$DBBACKUPPATH"'!g
-        s!BACKUPFILE!'"$DBBACKUPPATH/$CLOUDDB"'!g
+        s!BACKUPFILE!'"$DBBACKUPPATH/${CLOUDDB}"'!g
         s!BACKUPTYPE!'"owncloud-backup-sql"'!g
         s!DBPATH!'"${DBPATH}"'!g
-        }' ${INSTANCE_PATH}/TOOLS/backup.sh > ${CLOUDDBBACKUPSCRIPT} | tee -a $DB_SETUPLOG
+        }' ${INSTANCE_PATH}/TOOLS/backup.sh > ${CLOUDDBBACKUPSCRIPT} | tee -a ${DB_SETUPLOG}
     chown root:root ${CLOUDDBBACKUPSCRIPT}
     chmod ugo=rx ${CLOUDDBBACKUPSCRIPT}
-    ln -s ${CLOUDDBBACKUPSCRIPT} /etc/cron.daily/${CLOUDDB}-backup-owncloud | tee -a $DB_SETUPLOG
+    ln -s ${CLOUDDBBACKUPSCRIPT} /etc/cron.daily/${CLOUDDB}-backup-owncloud | tee -a ${DB_SETUPLOG}
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODENEWDB DONE"
