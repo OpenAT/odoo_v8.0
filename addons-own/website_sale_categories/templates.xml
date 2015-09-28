@@ -1,37 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data>
-    <!-- Recursive Category Navigation for Trees with a root category set -->
-    <template id="categories_recursive_extended" name="Category list">
-      <li t-att-class="'active cat%s' % int(c.id or 0) if c.id == int(category or 0) else 'cat%s' % int(c.id or 0)">
-          <a t-att-href="keep('/shop/category/' + slug(c), category=0)" t-field="c.name"></a>
-          <ul t-if="c.child_id" class="nav nav-pills nav-stacked nav-hierarchy">
-              <t t-foreach="c.child_id" t-as="c">
-                  <t t-if="not c.cat_root_id.cat_root and not c.cat_hide">
-                    <t t-call="website_sale_categories.categories_recursive_extended"/>
-                  </t>
-              </t>
-          </ul>
-      </li>
-    </template>
 
-    <template id="categories_recursive" name="Category list">
-        <li t-att-class="'active cat%s' % int(c.id or 0) if c.id == int(category or 0) else 'cat%s' % int(c.id or 0)">
-        <!--<li t-att-class="'active' if c.id == int(category or 0) else ''">-->
-            <a t-att-href="keep('/shop/category/' + slug(c), category=0)" t-field="c.name"></a>
-            <ul t-if="c.child_id" class="nav nav-pills nav-stacked nav-hierarchy">
-                <t t-foreach="c.child_id" t-as="c">
-                    <t t-call="website_sale_categories.categories_recursive"/>
-                </t>
-            </ul>
-        </li>
-    </template>
-
-    <!-- Recursive Category Descriptions - TEXT BLOCK -->
+    <!-- SUBTEMPLATE: Category Descriptions at TOP (Snipped dropping Areas) -->
     <template id="categories_description_text" name="Category Description at Top">
         <!-- Description for Category AND BELOW! -->
         <t t-if="c.id == int(category) or c.cat_desc_showatchilds">
-            <!-- Show Info for logged in users-->
+            <!-- Show Info-Box (for logged in users only) -->
             <t groups="base.group_website_publisher">
                 <section contenteditable="false">
                     <div class="container">
@@ -66,9 +41,10 @@
             </t>
             <div t-field="c.cat_desc" class="oe_structure cat_desc"/>
         </t>
+
     </template>
 
-    <!-- Recursive Category Descriptions BOTTOM - TEXT BLOCK -->
+    <!-- SUBTEMPLATE: Category Descriptions at BOTTOM (Snipped dropping Areas) -->
     <template id="categories_description_text_bottom" name="Category Description at Bottom">
         <!-- Description for Category ONLY! -->
         <t t-if="c.id == int(category)">
@@ -88,7 +64,7 @@
 
         <!-- Description for Category AND BELOW! -->
         <t t-if="c.id == int(category) or c.cat_descbottom_showatchilds">
-            <!-- Show Info for logged in users-->
+            <!-- Show Info-Box (for logged in users only) -->
             <t groups="base.group_website_publisher">
                 <section contenteditable="false">
                     <div class="container">
@@ -110,14 +86,17 @@
 
     </template>
 
-    <!-- Recursive Category Descriptions - Parent Descriptions -->
+    <!-- SUBTEMPLATE: RECURSIVE Category Descriptions at TOP -->
+    <!-- HINT: Calls itself until no more parent categories are left -->
     <template id="categories_recursive_description" name="Category Description at Top">
         <t t-foreach="c.parent_id" t-as="c">
             <t t-call="website_sale_categories.categories_recursive_description"/>
             <t t-call="website_sale_categories.categories_description_text"/>
         </t>
     </template>
-    <!-- Recursive Category Descriptions - Parent Descriptions BOTTOM -->
+
+    <!-- SUBTEMPLATE: RECURSIVE Category Descriptions at BOTTOM -->
+    <!-- HINT: Calls itself until no more parent categories are left -->
     <template id="categories_recursive_description_bottom" name="Category Description at Bottom">
         <t t-call="website_sale_categories.categories_description_text_bottom"/>
         <t t-foreach="c.parent_id" t-as="c">
@@ -126,53 +105,75 @@
     </template>
 
 
-    <!-- Categories Advanced Navigation AND Category Descriptions -->
+    <!-- SUBTEMPLATE: Recursive Category Navigation for Trees WITHOUT a root category set -->
+    <template id="categories_recursive_extended" name="Category list">
+      <li t-att-class="'active cat%s' % int(c.id or 0) if c.id == int(category or 0) else 'cat%s' % int(c.id or 0)">
+          <a t-att-href="keep('/shop/category/' + slug(c), category=0)" t-field="c.name"></a>
+          <!-- Render child categories if any -->
+          <ul t-if="c.child_id" class="nav nav-pills nav-stacked nav-hierarchy">
+              <t t-foreach="c.child_id" t-as="c">
+                  <!-- Render the category if the category ist not a rootcat or its rootcat is the category itself -->
+                  <t t-if="((c.id == rootcat) or (c.cat_root == False)) and (not c.cat_hide)">
+                    <t t-call="website_sale_categories.categories_recursive_extended"/>
+                  </t>
+              </t>
+          </ul>
+      </li>
+    </template>
+
+
+    <!-- TEMPLATE: ADVANCED CATEGORY NAVIGATION and TOP AND BOTTOM CATEGORY DESCRIPTIONS -->
     <template id="products_categories_menu" inherit_id="website_sale.products" active="True" customize_show="True" name="Product Categories Advanced">
 
-        <!-- ToDo add unique class to all categories based on their id -->
-
-        <!-- Categories Advanced Navigation -->
+        <!-- ADVANCED CATEGORY NAVIGATION -->
         <xpath expr="//div[@id='products_grid_before']" position="inside">
 
+            <!-- Check the current category: set cat_hide and hasrootcat
+                 HINT: This is needed since category could be empty (cat0 = All Products)
+            -->
+            <t t-set="start_categories" t-value="categories"/>
             <t t-set="cat_hide" t-value="False" />
-            <t t-set="hasrootcat" t-value="False"/>
+            <t t-set="rootcat" t-value="False"/>
+
             <t t-if="category">
                 <t t-set="cat_hide" t-value="category.cat_hide"/>
-                <!-- Check if the upmost (root) parent category has "is root" set or not (if not it's a normal cat) -->
                 <t t-if="category.cat_root_id.cat_root">
-                    <t t-set="hasrootcat" t-value="True"/>
+                    <t t-set="start_categories" t-value="category.cat_root_id"/>
+                    <t t-set="rootcat" t-value="category.cat_root_id.id"/>
                 </t>
             </t>
 
             <t t-if="not cat_hide">
-              <ul class="cat_menu nav nav-pills nav-stacked">
-                  <t t-if="hasrootcat">
-                      <t t-foreach="category.cat_root_id" t-as="c">
-                          <t t-call="website_sale_categories.categories_recursive"/>
-                      </t>
-                  </t>
-                  <t t-if="not hasrootcat">
-                      <li t-att-class=" 'cat0' if category else 'active cat0' "><a t-att-href="keep('/shop',category=0)">All Products</a></li>
-                      <t t-foreach="categories" t-as="c">
-                          <t t-if="not c.cat_root_id.cat_root and not c.cat_hide">
-                              <t t-call="website_sale_categories.categories_recursive_extended"/>
-                          </t>
-                      </t>
-                  </t>
-              </ul>
+                <ul class="cat_menu nav nav-pills nav-stacked">
+                    <!-- Show "All Products" link if the current category has no root category -->
+                    <t t-if="rootcat == False">
+                        <li t-att-class=" 'cat0' if category else 'active cat0' "><a t-att-href="keep('/shop',category=0)">All Products</a></li>
+                    </t>
+                    <!-- Render categories if any -->
+                    <t t-foreach="start_categories" t-as="c">
+                        <!-- Render the category if the category ist not a rootcat or its rootcat is the category itself -->
+                        <t t-if="((c.id == rootcat) or (c.cat_root == False)) and (not c.cat_hide)">
+                            <t t-call="website_sale_categories.categories_recursive_extended"/>
+                        </t>
+                    </t>
+                </ul>
             </t>
 
         </xpath>
+
         <!-- Categories Advanced Navigation left column -->
         <xpath expr="//div[@id='products_grid_before']" position="attributes">
             <attribute name="class"></attribute>
             <attribute name="t-att-class">'hidden' if cat_hide else 'col-md-3 hidden-xs'</attribute>
         </xpath>
+
         <!-- Categories Advanced Navigation right column -->
         <xpath expr="//div[@id='products_grid']" position="attributes">
             <attribute name="class"></attribute>
             <attribute name="t-att-class">'col-md-12' if cat_hide else 'col-md-9'</attribute>
         </xpath>
+
+        <!-- TOP AND BOTTOM CATEGORY DESCRIPTIONS -->
 
         <!-- Category Descriptions at TOP -->
         <xpath expr="//div[@id='wrap']/div[@class='oe_structure']" position="before">
