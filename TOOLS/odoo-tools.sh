@@ -113,8 +113,8 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Update Server
     echo -e "\n----- Update Server"
     #sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
-    apt-get upgrade -y >> $SETUP_LOG
     apt-get update >> $SETUP_LOG
+    apt-get upgrade -y >> $SETUP_LOG
     echo -e "----- Update Server Done"
 
     # ----- Install Basic Packages
