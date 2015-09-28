@@ -11,6 +11,9 @@
                     <field name="cat_hide"/>
                     <field name="cat_root"/>
                     <field name="cat_root_id" readonly="1"/>
+                    <group colspan="2">
+                        <field name="cat_css_showatchilds"/>
+                    </group>
                 </field>
             </field>
         </record>

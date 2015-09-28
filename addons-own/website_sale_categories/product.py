@@ -29,6 +29,8 @@ from openerp import api, models, fields
 class product_public_category_menu(models.Model):
     _inherit = 'product.public.category'
 
+    cat_css_showatchilds = fields.Text(string="CSS used at this and its Child Categories")
+
     cat_desc_showatchilds = fields.Html(string="Top-Description shown at Child Categories")
     cat_desc = fields.Html(string="Top-Category-Description")
 

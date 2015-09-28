@@ -2,11 +2,15 @@
 <openerp>
 <data>
 
-    <!-- SUBTEMPLATE: Category Descriptions at TOP (Snipped dropping Areas) -->
-    <template id="categories_description_text" name="Category Description at Top">
-        <!-- Description for Category AND BELOW! -->
-        <t t-if="c.id == int(category) or c.cat_desc_showatchilds">
-            <!-- Show Info-Box (for logged in users only) -->
+    <!-- SUBTEMPLATE: RECURSIVE Category Descriptions at TOP Text -->
+    <template id="categories_recursive_description_text" name="Category Description at Top">
+
+        <!-- Custom CSS per Category -->
+        <style t-field="c.cat_css_showatchilds"/>
+
+        <!-- Top Description editable (category is the current category) -->
+        <t t-if="c.id == int(category)">
+            <!-- Info-Box (for logged in users only)-->
             <t groups="base.group_website_publisher">
                 <section contenteditable="false">
                     <div class="container">
@@ -18,87 +22,55 @@
                     </div>
                 </section>
             </t>
-            <t t-if="c.id == int(category)">
-               <div t-field="c.cat_desc_showatchilds" class="oe_structure cat_desc_showatchilds"/>
-            </t>
-            <t t-if="c.id != int(category)">
-               <div t-raw="c.cat_desc_showatchilds" class="oe_structure cat_desc_showatchilds" contenteditable="false"/>
-            </t>
+            <div t-field="c.cat_desc_showatchilds" class="oe_structure cat_desc_showatchilds"/>
         </t>
 
-        <!-- Description for Category ONLY! -->
-        <t t-if="c.id == int(category)">
-            <t groups="base.group_website_publisher">
-                <section contenteditable="false">
-                    <div class="container">
-                        <div class="row" >
-                            <div class="col-md-12">
-                                <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="c.name"/></b> only! (Only shown here!):</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </t>
-            <div t-field="c.cat_desc" class="oe_structure cat_desc"/>
+        <!-- Top Description non-editable (category ist a parent cat so not the actual one) -->
+        <t t-if="c.id != int(category)">
+            <div t-raw="c.cat_desc_showatchilds" class="oe_structure cat_desc_showatchilds" contenteditable="false"/>
         </t>
-
-    </template>
-
-    <!-- SUBTEMPLATE: Category Descriptions at BOTTOM (Snipped dropping Areas) -->
-    <template id="categories_description_text_bottom" name="Category Description at Bottom">
-        <!-- Description for Category ONLY! -->
-        <t t-if="c.id == int(category)">
-            <t groups="base.group_website_publisher">
-                <section contenteditable="false">
-                    <div class="container">
-                        <div class="row" >
-                            <div class="col-md-12">
-                                <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="c.name"/></b> only! (Only shown here!):</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </t>
-            <div t-field="c.cat_descbottom" class="oe_structure cat_descbottom"/>
-        </t>
-
-        <!-- Description for Category AND BELOW! -->
-        <t t-if="c.id == int(category) or c.cat_descbottom_showatchilds">
-            <!-- Show Info-Box (for logged in users only) -->
-            <t groups="base.group_website_publisher">
-                <section contenteditable="false">
-                    <div class="container">
-                        <div class="row" >
-                            <div class="col-md-12">
-                                <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="c.name"/></b> and below! (Will show up on subcategories!):</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </t>
-            <t t-if="c.id == int(category)">
-               <div t-field="c.cat_descbottom_showatchilds" class="oe_structure cat_descbottom_showatchilds"/>
-            </t>
-            <t t-if="c.id != int(category)">
-               <div t-raw="c.cat_descbottom_showatchilds" class="oe_structure cat_descbottom_showatchilds" contenteditable="false"/>
-            </t>
-        </t>
-
     </template>
 
     <!-- SUBTEMPLATE: RECURSIVE Category Descriptions at TOP -->
     <!-- HINT: Calls itself until no more parent categories are left -->
     <template id="categories_recursive_description" name="Category Description at Top">
+
         <t t-foreach="c.parent_id" t-as="c">
+
+            <!-- Render Parent categories description text(s) before this category -->
             <t t-call="website_sale_categories.categories_recursive_description"/>
-            <t t-call="website_sale_categories.categories_description_text"/>
+            <!-- Render the Text -->
+            <t t-call="website_sale_categories.categories_recursive_description_text"/>
+
         </t>
     </template>
 
     <!-- SUBTEMPLATE: RECURSIVE Category Descriptions at BOTTOM -->
     <!-- HINT: Calls itself until no more parent categories are left -->
     <template id="categories_recursive_description_bottom" name="Category Description at Bottom">
-        <t t-call="website_sale_categories.categories_description_text_bottom"/>
+
+        <!-- BOTTOM Description editable (category is the current category) -->
+        <t t-if="c.id == int(category)">
+        <!-- Show Info-Box (for logged in users only) -->
+            <t groups="base.group_website_publisher">
+                <section contenteditable="false">
+                    <div class="container">
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="c.name"/></b> and below! (Will show up on subcategories!):</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+           <div t-field="c.cat_descbottom_showatchilds" class="oe_structure cat_descbottom_showatchilds"/>
+        </t>
+
+        <!-- Bottom Description non-editable (category ist a parent cat so not the actual one) -->
+        <t t-if="c.id != int(category)">
+           <div t-raw="c.cat_descbottom_showatchilds" class="oe_structure cat_descbottom_showatchilds" contenteditable="false"/>
+        </t>
+
         <t t-foreach="c.parent_id" t-as="c">
             <t t-call="website_sale_categories.categories_recursive_description_bottom"/>
         </t>
@@ -175,51 +147,60 @@
 
         <!-- TOP AND BOTTOM CATEGORY DESCRIPTIONS -->
 
-        <!-- Category Descriptions at TOP -->
-        <xpath expr="//div[@id='wrap']/div[@class='oe_structure']" position="before">
-            <t groups="base.group_website_publisher">
-                <section contenteditable="False">
-                    <div class="container">
-                        <div class="row" >
-                            <div class="col-md-12">
-                                <div class="alert alert-info text-center" role="alert"><b>ATTENTION:</b> Content below here is shown on <b>EVERY</b> shop page:</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </t>
-        </xpath>
+        <!-- TOP Category Descriptions -->
         <xpath expr="//div[@id='wrap']/div[@class='oe_structure']" position="after">
             <t t-if="category">
-                <!-- Render descriptions for categories above -->
+
+                <!-- TOP Category-and-Below (recursive) Descriptions -->
                 <t t-foreach="category" t-as="c">
+                    <!-- render all parent category texts first (recursive) -->
                     <t t-call="website_sale_categories.categories_recursive_description"/>
+                    <!-- render the text of the current category -->
+                    <t t-call="website_sale_categories.categories_recursive_description_text"/>
                 </t>
-                <!-- Render category description -->
-                <t t-foreach="category" t-as="c">
-                    <t t-call="website_sale_categories.categories_description_text"/>
+
+                <!-- TOP Category-Only Description -->
+                <!-- Info-Box (for logged in users only) -->
+                <t groups="base.group_website_publisher">
+                    <section contenteditable="false">
+                        <div class="container">
+                            <div class="row" >
+                                <div class="col-md-12">
+                                    <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="category.name"/></b> only! (Only shown here!):</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </t>
+                <!-- Description -->
+                <div t-field="category.cat_desc" class="oe_structure cat_desc"/>
+
             </t>
         </xpath>
 
-        <!-- Category Descriptions at BOTTOM -->
+        <!-- BOTTOM Category Descriptions -->
         <xpath expr="//div[@id='wrap']/div[@class='oe_structure mb32']" position="before">
             <t t-if="category">
-                <!-- Render descriptions for categories above -->
+
+                <!-- BOTTOM Category-Only Description -->
+                <!-- Info-Box (for logged in users only) -->
+                <t groups="base.group_website_publisher">
+                    <section contenteditable="false">
+                        <div class="container">
+                            <div class="row" >
+                                <div class="col-md-12">
+                                    <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="category.name"/></b> only! (Only shown here!):</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </t>
+                <div t-field="category.cat_descbottom" class="oe_structure cat_descbottom"/>
+
+                <!-- BOTTOM Category-and-Below (recursive) Descriptions -->
                 <t t-foreach="category" t-as="c">
                     <t t-call="website_sale_categories.categories_recursive_description_bottom"/>
                 </t>
-            </t>
-            <t groups="base.group_website_publisher">
-                <section contenteditable="False">
-                    <div class="container">
-                        <div class="row" >
-                            <div class="col-md-12">
-                                <div class="alert alert-info text-center" role="alert"><b>ATTENTION:</b> Content below here is shown on <b>EVERY</b> shop page:</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
             </t>
         </xpath>
 
