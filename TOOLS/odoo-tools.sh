@@ -665,7 +665,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     PUSHTODEPLOYCONF=${DBPATH}/${DBNAME}-pushtodeploy.yml
     /bin/sed '{
         s!PUSHTODEPLOYLOCATION!'"${CUADDONSNAME}"'!g
-        s!PUSHTODEPLOYSERVICENAME!'"${PUSHTODEPLOYSERVICENAME}"'!g
+        s!INSTANZNAME!'"${DBNAME}"'!g
         s!DBPATH!'"${DBPATH}"'!g
             }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.yml > ${PUSHTODEPLOYCONF} | tee -a $DB_SETUPLOG
     chown root:root ${PUSHTODEPLOYCONF}
@@ -675,7 +675,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     /bin/sed '{
         s!'"DAEMON="'!'"DAEMON=${PUSHTODEPLOYPATH}/bin/push-to-deploy"'!g
         s!'"USER="'!'"USER=${DBUSER}"'!g
-        s!'"PTDSERVICE"'!'"${PUSHTODEPLOYSERVICENAME}"'!g
+        s!'"PTDSERVICE"'!'"${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}"'!g
         s!'"CONFIGFILE="'!'"CONFIGFILE=${PUSHTODEPLOYCONF}"'!g
         s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p 8${BASEPORT} ${PUSHTODEPLOYCONF}\""'!g
         s!LOGFILE=!'"LOGFILE=${PTDLOGFILE}"'!g
@@ -688,7 +688,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     #/etc/init.d/${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}
     if git ls-remote ${GITPTDBRANCHNAME} | grep -sw "${GITPTDBRANCHNAME}" 2>&1>/dev/null; then
         echo -e "Cloning Customer Template"
-         git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a $INSTANCE_SETUPLOG
+        git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a $INSTANCE_SETUPLOG
+        chown -R ${DBUSER}:${DBUSER} ${DBPATH}/addons | tee -a $DB_SETUPLOG
     else
         echo "WARNING: ${GITPTDBRANCHNAME} does not exists, please create a new repo for this customer and create the webhook for this repo ${GITPTDBRANCHNAME}!"
         echo "and do manual -- git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons "
