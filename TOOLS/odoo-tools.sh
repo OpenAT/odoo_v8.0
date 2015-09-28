@@ -441,7 +441,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
     PUSHTODEPLOYPATH="${REPO_SETUPPATH}/node_modules/push-to-deploy"
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
-    PUSHTODEPLOYSERVICENAME="PTD_${CUADDONSNAME}"
+    PUSHTODEPLOYSERVICENAME="PTD_${CUADDONSNAME}-8${BASEPORT}"
     PTDLOGFILE="${DBLOGPATH}/${DBNAME}-pushtodeply.log"
     GITPTDBRANCHNAME="${GITPATH}/${CUADDONSNAME}.git"
 
