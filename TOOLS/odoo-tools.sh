@@ -670,7 +670,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "---- Create pushtodeploy init file"
     PUSHTODEPLOYINIT=${DBPATH}/${DBNAME}-pushtodeploy.init
     /bin/sed '{
-        s!'"DAEMON="'!'"DAEMON=${PUSHTODEPLOYPATH}/push-to-deploy"'!g
+        s!'"DAEMON="'!'"DAEMON=${PUSHTODEPLOYPATH}/bin/push-to-deploy"'!g
         s!'"USER="'!'"USER=${DBUSER}"'!g
         s!'"PTDSERVICE"'!'"${PUSHTODEPLOYSERVICENAME}"'!g
         s!'"CONFIGFILE="'!'"CONFIGFILE=${PUSHTODEPLOYCONF}"'!g
