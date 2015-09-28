@@ -674,10 +674,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!'"USER="'!'"USER=${DBUSER}"'!g
         s!'"PTDSERVICE"'!'"${PUSHTODEPLOYSERVICENAME}"'!g
         s!'"CONFIGFILE="'!'"CONFIGFILE=${PUSHTODEPLOYCONF}"'!g
-        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p 8${BASEPORT}$\""'!g
-        s!PTDPATH!'"${PUSHTODEPLOYPATH}"'!g
-        s!PUSHTODEPLOYPORT!'"8${BASEPORT}"'!g
-        s!PTDPATH!'"${PUSHTODEPLOYCONF}"'!g
+        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p 8${BASEPORT}\""'!g
         s!PTDLOGFILE!'"${PTDLOGFILE}"'!g
             }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.init > ${PUSHTODEPLOYINIT} | tee -a $DB_SETUPLOG
     chown root:root ${PUSHTODEPLOYINIT}

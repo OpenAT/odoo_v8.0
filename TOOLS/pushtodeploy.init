@@ -13,7 +13,7 @@
 ### END INIT INFO
 
 PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/node/bin:"
-DAEMON=PTDPATH/bin/push-to-deploy
+DAEMON=
 NAME=PTDSERVICE
 DESC=PTDSERVICE
 
