@@ -441,7 +441,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
     PUSHTODEPLOYPATH="${REPO_SETUPPATH}/node_modules/push-to-deploy"
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
-    PUSHTODEPLOYSERVICENAME="PTD_${CUADDONSNAME}-8${BASEPORT}"
+    PUSHTODEPLOYSERVICENAME="PTD_${CUADDONSNAME}"
     PTDLOGFILE="${DBLOGPATH}/${DBNAME}-pushtodeply.log"
     GITPTDBRANCHNAME="${GITPATH}/${CUADDONSNAME}.git"
 
@@ -641,6 +641,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
 
     # ----- Setup nginx
     echo -e "---- Create NGINX config file"
+    touch ${PTDLOGFILE}
+    chown ${DBNAME}: ${PTDLOGFILE}
     NGINXCONF=${DBPATH}/${DBNAME}-nginx.conf
     /bin/sed '{
         s!BASEPORT!'"${BASEPORT}"'!g
@@ -674,8 +676,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!'"USER="'!'"USER=${DBUSER}"'!g
         s!'"PTDSERVICE"'!'"${PUSHTODEPLOYSERVICENAME}"'!g
         s!'"CONFIGFILE="'!'"CONFIGFILE=${PUSHTODEPLOYCONF}"'!g
-        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p 8${BASEPORT}\""'!g
-        s!PTDLOGFILE!'"${PTDLOGFILE}"'!g
+        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p 8${BASEPORT} ${PUSHTODEPLOYCONF}\""'!g
+        s!LOGFILE=!'"LOGFILE=${PTDLOGFILE}"'!g
             }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.init > ${PUSHTODEPLOYINIT} | tee -a $DB_SETUPLOG
     chown root:root ${PUSHTODEPLOYINIT}
     chmod ugo=rx ${PUSHTODEPLOYINIT}

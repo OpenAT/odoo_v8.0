@@ -16,7 +16,7 @@ PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/node/bin
 DAEMON=
 NAME=PTDSERVICE
 DESC=PTDSERVICE
-
+LOGFILE=
 # Specify the user name
 USER=
 
@@ -51,8 +51,7 @@ case "${1}" in
 
                 start-stop-daemon --start --quiet --pidfile ${PIDFILE} \
                         --chuid ${USER} --background --make-pidfile \
-                        --exec ${DAEMON}  -- ${DAEMON_OPTS}
-
+                        --exec ${DAEMON}  -- ${DAEMON_OPTS} >> ${LOGFILE} 2>$1
                 echo "${NAME}."
                 ;;
 
@@ -60,8 +59,7 @@ case "${1}" in
                 echo -n "Stopping ${DESC}: "
 
                 start-stop-daemon --stop --quiet --pidfile ${PIDFILE} \
-                        --oknodo
-
+                        --oknodo >> ${LOGFILE} 2>$1
                 echo "${NAME}."
                 ;;
 
