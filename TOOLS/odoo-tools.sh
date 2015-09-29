@@ -699,7 +699,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         echo "and do manual -- git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons "
     else
         echo -e "repository ${GITPTDBRANCHNAME} exists .... Cloning Customer addons..."
-        git -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
+        git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
     fi
     #git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
     chown -Rf ${DBUSER}:${DBUSER} ${DBPATH}/addons/ | tee -a ${DB_SETUPLOG}
