@@ -677,7 +677,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     #TODO: temporarily switched to root cause it does not work with the DB USER         #s!'"USER="'!'"USER=${DBUSER}"'!g
     /bin/sed '{
         s!'"DAEMON="'!'"DAEMON=${PUSHTODEPLOYPATH}/bin/push-to-deploy"'!g
-        s!'"USER="'!'"USER=root"'!g
+        s!'"USER="'!'"USER=${DBUSER}"'!g
         s!'"PTDSERVICE"'!'"${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}"'!g
         s!'"CONFIGFILE="'!'"CONFIGFILE=${PUSHTODEPLOYCONF}"'!g
         s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p 8${BASEPORT} ${PUSHTODEPLOYCONF}\""'!g
