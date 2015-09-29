@@ -552,7 +552,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\$3 SUPER_PASSWORD                 :  $SUPER_PASSWORD" | tee -a ${DB_SETUPLOG}
     echo -e "\$4 DATABASE_NAME                  :  $4" | tee -a ${DB_SETUPLOG}
     echo -e "\$5 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a ${DB_SETUPLOG}
-    echo -e "\$6 CUADDONSNAME                    :  $CUADDONSNAME" | tee -a ${DB_SETUPLOG}
+    echo -e "\$6 CUADDONSNAME                    : $CUADDONSNAME" | tee -a ${DB_SETUPLOG}
     echo -e ""
     echo -e "Database Setup Log File           :  ${DB_SETUPLOG}" | tee -a ${DB_SETUPLOG}
     echo -e ""
@@ -660,8 +660,9 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     service nginx restart
     echo -e "---- Create NGINX config file DONE"
 
-    # ----- setup pushtodeploy and create write init script
-    echo -e "---- Create pushtodeploy config file"
+    # ----- setup pushtodeploy and create - write init script and create config file
+    echo "starting setup customer addons...."
+    echo -e "---- Create pushtodeploy config file...."
     PUSHTODEPLOYCONF=${DBPATH}/${DBNAME}-pushtodeploy.yml
     /bin/sed '{
         s!PUSHTODEPLOYLOCATION!'"${CUADDONSNAME}"'!g
@@ -670,11 +671,13 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
             }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.yml > ${PUSHTODEPLOYCONF} | tee -a ${DB_SETUPLOG}
     chown root:root ${PUSHTODEPLOYCONF}
     chmod ugo=r ${PUSHTODEPLOYCONF}
-    echo -e "---- Create pushtodeploy init file"
+    echo -e "---- Create PUSHTODEPLOY config file DONE"
+    echo -e "---- Create pushtodeploy init file..."
     PUSHTODEPLOYINIT=${DBPATH}/${DBNAME}-pushtodeploy.init
+    #TODO: temporarily switched to root cause it does not work with the DB USER         #s!'"USER="'!'"USER=${DBUSER}"'!g
     /bin/sed '{
         s!'"DAEMON="'!'"DAEMON=${PUSHTODEPLOYPATH}/bin/push-to-deploy"'!g
-        s!'"USER="'!'"USER=${DBUSER}"'!g
+        s!'"USER="'!'"USER=root"'!g
         s!'"PTDSERVICE"'!'"${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}"'!g
         s!'"CONFIGFILE="'!'"CONFIGFILE=${PUSHTODEPLOYCONF}"'!g
         s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p 8${BASEPORT} ${PUSHTODEPLOYCONF}\""'!g
@@ -682,20 +685,27 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
             }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.init > ${PUSHTODEPLOYINIT} | tee -a ${DB_SETUPLOG}
     chown root:root ${PUSHTODEPLOYINIT}
     chmod ugo=rx ${PUSHTODEPLOYINIT}
+    echo -e "---- Create PUSHTODEPLOY INIT file DONE"
     ln -s ${PUSHTODEPLOYINIT} /etc/init.d/${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}
+    echo "write Startup scripts"
     update-rc.d ${PUSHTODEPLOYSERVICENAME}-8${BASEPORT} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a ${DB_SETUPLOG}
+    echo "starting up push to deploy service"
     service ${PUSHTODEPLOYSERVICENAME}-8${BASEPORT} start
     #/etc/init.d/${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}
-    if [ $(git ls-remote ${GITPTDBRANCHNAME} HEAD) ]; then
-        echo -e "Cloning Customer Template"
+    echo "check if customer remote repository already exists"
+    git ls-remote ${GITPTDBRANCHNAME} HEAD #if this command gets an exit code, it will be written into $? and can be checked
+    echo $?
+    if ! [ $? ]; then
+        echo -e "repository ${GITPTDBRANCHNAME} exists .... Cloning Customer addons..."
         git -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
-        chown -R ${DBUSER}:${DBUSER} ${DBPATH}/addons/ | tee -a ${DB_SETUPLOG}
     else
         echo "WARNING: ${GITPTDBRANCHNAME} does not exists, please create a new repo for this customer and create the webhook for this repo ${GITPTDBRANCHNAME}!"
         echo "and do manual -- git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons "
     fi
-    git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
-    echo -e "---- Create PUSHTODEPLOY config file DONE"
+    #git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
+    chown -R ${DBUSER}:${DBUSER} ${DBPATH}/addons/ | tee -a ${DB_SETUPLOG}
+    echo "finished setup pushtodeploy and create - write init script and create config file DONE"
+
 
     # ----- Setup Etherpad-Lite
     echo -e "\n---- Setup Etherpad-Lite"
