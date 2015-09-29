@@ -51,7 +51,7 @@ case "${1}" in
 
                 start-stop-daemon --start --quiet --pidfile ${PIDFILE} \
                         --chuid ${USER} --background --make-pidfile \
-                        --exec ${DAEMON}  -- ${DAEMON_OPTS} >> ${LOGFILE} 2>$1
+                        --no-close --exec ${DAEMON}  -- ${DAEMON_OPTS} >> ${LOGFILE} 2>$1
                 echo "${NAME}."
                 ;;
 
