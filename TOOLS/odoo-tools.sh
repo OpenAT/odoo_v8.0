@@ -694,16 +694,15 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     #/etc/init.d/${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}
     echo "check if customer remote repository already exists"
     git ls-remote ${GITPTDBRANCHNAME} HEAD #if this command gets an exit code, it will be written into $? and can be checked
-    echo $?
-    if ! [ $? ]; then
-        echo -e "repository ${GITPTDBRANCHNAME} exists .... Cloning Customer addons..."
-        git -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
-    else
+    if (( $? )); then
         echo "WARNING: ${GITPTDBRANCHNAME} does not exists, please create a new repo for this customer and create the webhook for this repo ${GITPTDBRANCHNAME}!"
         echo "and do manual -- git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons "
+    else
+        echo -e "repository ${GITPTDBRANCHNAME} exists .... Cloning Customer addons..."
+        git -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
     fi
     #git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
-    chown -R ${DBUSER}:${DBUSER} ${DBPATH}/addons/ | tee -a ${DB_SETUPLOG}
+    chown -Rf ${DBUSER}:${DBUSER} ${DBPATH}/addons/ | tee -a ${DB_SETUPLOG}
     echo "finished setup pushtodeploy and create - write init script and create config file DONE"
 
 
