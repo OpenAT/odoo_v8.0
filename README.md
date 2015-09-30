@@ -42,6 +42,8 @@ Names will look like on a server following this conventions consider teh followi
     - etherpad setup
     - nginx setup (match url to local db)
     - backup and logrotate cron jobs
+    - create and link customer addons into customers Instance /addons folder
+    - Install push-to-deploy workflow for updating the customer addons
 - ToDo: update an instance to branch master from github
 - ToDo: deploy addon(s) to one or more databases on the local server
 
@@ -67,7 +69,19 @@ odoo-tools.sh prepare
 # USAGE: odoo-tools.sh setup {TARGET_BRANCH}
 odoo-tools.sh setup intdemo 
 
-# 5.) Create a new Database:
+# 5.) Setup a new customer Addons repo in github:
+# USAGE: Manual goto github and create a new repo if not exists already for this customer even we do not use a specific addon
+Goto Gibhub  https://github.com/OpenAT/ click + New Repository give it a name like "cu_herz"
+Than goto the settings of this new repo and create a webhock or click here https://github.com/OpenAT/cu_dev02/settings/hooks
+use payload Url like: http://herzbewegt.demo.datadialog.net/cu_herz --> production would be the customers domain
+content Type: application/x-www-from-urlencoded
+and safe the hoock,
+move on with newdb intallation now
+after your newdb intallation you should see now a green check if you made everything correct
+NOW you can Push your modules into this repo and start developing or already finished before your newdb intallation
+- TODO: maybe we can automate this process too, right now i think it is a good idea to keep this in manual mode, or at least repo creation and hook creation
+
+# 6.) Create a new Database:
 # Start once with no options to see usage (look for newdb)
 odoo-tools.sh newdb <...>
 
