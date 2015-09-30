@@ -71,9 +71,9 @@ odoo-tools.sh setup intdemo
 
 # 5.) Setup a new customer Addons repo in github:
 # USAGE: Manual goto github and create a new repo if not exists already for this customer even we do not use a specific addon
-Goto Gibhub  https://github.com/OpenAT/ click + New Repository give it a name like "cu_herz"
-Than goto the settings of this new repo and create a webhock or click here https://github.com/OpenAT/cu_dev02/settings/hooks
-use payload Url like: http://herzbewegt.demo.datadialog.net/cu_herz --> production would be the customers domain
+Goto Gibhub  https://github.com/OpenAT/ click + New Repository give it a name like "cu_dev01" "cu_herz"
+Than goto the settings of this new repo and create a webhook or click here https://github.com/OpenAT/cu_dev01/settings/hooks
+use payload Url like: http://subdomain.domainname.net/cu_dev01 --> production would be the customers domain
 content Type: application/x-www-from-urlencoded
 and safe the hoock,
 move on with newdb intallation now
