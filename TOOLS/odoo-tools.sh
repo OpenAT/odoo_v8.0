@@ -674,7 +674,6 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "---- Create PUSHTODEPLOY config file DONE"
     echo -e "---- Create pushtodeploy init file..."
     PUSHTODEPLOYINIT=${DBPATH}/${DBNAME}-pushtodeploy.init
-    #TODO: temporarily switched to root cause it does not work with the DB USER         #s!'"USER="'!'"USER=${DBUSER}"'!g
     /bin/sed '{
         s!'"DAEMON="'!'"DAEMON=${PUSHTODEPLOYPATH}/bin/push-to-deploy"'!g
         s!'"USER="'!'"USER=${DBUSER}"'!g
@@ -701,7 +700,6 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         echo -e "repository ${GITPTDBRANCHNAME} exists .... Cloning Customer addons..."
         git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
     fi
-    #git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
     chown -Rf ${DBUSER}:${DBUSER} ${DBPATH}/addons/ | tee -a ${DB_SETUPLOG}
     echo "finished setup pushtodeploy and create - write init script and create config file DONE"
 
