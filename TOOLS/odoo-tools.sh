@@ -138,6 +138,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     update-rc.d -f nginx remove
     update-rc.d nginx start 20 2 3 5 . stop 80 0 1 4 6 . >> ${SETUP_LOG}
     service nginx restart | tee -a ${SETUP_LOG}
+    touch /usr/share/nginx/html/maintenance_aus.html >>$SETUP_LOG
     echo -e "----- Install nginx Done"
 
     # ----- Install push-to-deploy
@@ -368,6 +369,9 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ----- Set Linux Rights
     chown -R ${TARGET_BRANCH}:${TARGET_BRANCH} ${INSTANCE_PATH} >> ${INSTANCE_SETUPLOG}
     chmod 755 ${INSTANCE_PATH} >> ${INSTANCE_SETUPLOG}
+
+    # ----- create webserver maintenance files
+    cp ${INSTANCE_PATH}/TOOLS/503.* /usr/share/nginx/html/ >> $INSTANCE_SETUPLOG
 
     echo -e "-------------------------------------------------------------------------"
     echo -e " $MODESETUP DONE"
@@ -645,17 +649,20 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     touch ${PTDLOGFILE}
     chown ${DBNAME}: ${PTDLOGFILE}
     NGINXCONF=${DBPATH}/${DBNAME}-nginx.conf
+    NGINXDBMAINTENANCEONLYFILE=${DBPATH}/${DBNAME}-maintenance
     /bin/sed '{
         s!BASEPORT!'"${BASEPORT}"'!g
         s!DBNAME!'"${DBNAME}"'!g
         s!DOMAIN_NAME!'"${DOMAIN_NAME}"'!g
         s!DBLOGPATH!'"${DBLOGPATH}"'!g
         s!DBPATH!'"${DBPATH}"'!g
+        s!MAINTENANCEMODE!'"${NGINXDBMAINTENANCEONLYFILE}_ein"'!g
         s!PUSHTODEPLOYLOCATION!'"${CUADDONSNAME}"'!g
         s!PUSHTODEPLOYPORT!'"8${BASEPORT}"'!g
             }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a ${DB_SETUPLOG}
     chown root:root ${NGINXCONF}
     chmod ugo=r ${NGINXCONF}
+        touch ${NGINXDBMAINTENANCEONLYFILE}_aus
     ln -s ${NGINXCONF}  /etc/nginx/sites-enabled/${DBNAME}-${DOMAIN_NAME}
     service nginx restart
     echo -e "---- Create NGINX config file DONE"
@@ -916,6 +923,142 @@ if [ "$SCRIPT_MODE" = "updateinst" ]; then
     echo -e "--------------------------------------------------------------------------------------------------------"
 fi
 
+MAINTENANCEMODE="$ odoo-tools.sh maintenancemode {TARGET_BRANCH} dbname|all enable|disable"
+if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MAINTENANCEMODE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    if [ $# -ne 4 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly two arguments!"
+        exit 2
+    fi
+    TARGET_BRANCH=$2
+    DBNAME=$3
+    OPTION=$4
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    echo "Instanzpfad ${INSTANCE_PATH}"
+    COUNTERFILE=${REPO_SETUPPATH}/${REPONAME}.counter
+    GLOBALMAINTENANCELOG="${REPO_SETUPPATH}/${SCRIPT_MODE}--.log"
+    DBMAINTENANCELOG="${INSTANCE_PATH}/${DBNAME}/$SCRIPT_MODE--${DBNAME}--.log"
+    MAINTENANCEMODESWITCHERON="/usr/share/nginx/html/maintenance_ein"
+    MAINTENANCEMODESWITCHEROFF="/usr/share/nginx/html/maintenance_aus"
+    DBONLYMAINTENANCEMODESWITCHERON="${INSTANCE_PATH}/${DBNAME}/${DBNAME}-maintenance_ein"
+    DBONLYMAINTENANCEMODESWITCHEROFF="${INSTANCE_PATH}/${DBNAME}/${DBNAME}-maintenance_aus"
+    if [ ${OPTION} = "enable" ] || [ ${OPTION} = "disable" ]; then
+        echo "starting maintenancemode check..."
+    else
+        echo -e "ERROR: check your enable disable parameter"
+        exit 2
+    fi
+    # Check if a database with this name already exists (and exit with error if yes)
+    if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
+        echo -e "Database ${DBNAME} exists, starting maintenance mode checks"
+    elif [ ${DBNAME} = "all" ]; then
+        echo -e "All Nginx Instances will be switched into Maintenance mode"
+    else
+        echo -e "check your Databasename, you gave ${DBNAME}, but this seems not to exist, stopping script......"
+        exit 2
+    fi
+    if ! [ -f ${COUNTERFILE} ]; then #no instance installed use different log dir
+        if [ -f ${GLOBALMAINTENANCELOG} ]; then
+            INSTANCE_RUNNING=0
+        else
+            touch ${GLOBALMAINTENANCELOG}
+            INSTANCE_RUNNING=0
+        fi
+    else
+        if [ -f ${DBMAINTENANCELOG} ]; then
+            INSTANCE_RUNNING=1
+        else
+            touch ${DBMAINTENANCELOG}
+            INSTANCE_RUNNING=1
+        fi
+    fi
+    if [ ${INSTANCE_RUNNING} -eq 1 ]; then
+    echo -e "starting maintenance checks..."
+
+            #set Nginx in maintenance mode --> just rename /usr/share/nginx/html/maintenance_aus --> /usr/share/nginx/html/maintenance_ein
+            #a rule in nginx.conf will check if the maintenance file is set or not
+            # enable Maintenance mode
+            if [ ${DBNAME} = "all" ]; then
+                    if [ -f "${MAINTENANCEMODESWITCHEROFF}" ]; then
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "enabling global maintenancemode of nginx..."
+                            mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #check
+                        elif [ ${OPTION} = "disable" ]; then
+                           echo -e "already disabled nothing to do..."
+                           exit 2
+                        fi
+                    elif [ -f "{$MAINTENANCEMODESWITCHERON}" ]; then
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "already enabled nothing to do..."
+                            exit 2
+                        elif [ ${OPTION} = "disable" ]; then
+                           echo -e "disable global maintenancemode of nginx..."
+                            mv $MAINTENANCEMODESWITCHERON $MAINTENANCEMODESWITCHEROFF | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #check
+                        fi
+                    else
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "touching maintenancemode file seems someone deleted this file....."
+                            touch $MAINTENANCEMODESWITCHERON | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                        elif [ ${OPTION} = "disable" ]; then
+                            echo -e "touching maintenancemode file seems someone deleted this file....."
+                            touch $MAINTENANCEMODESWITCHEROFF | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                        fi
+                    fi
+
+            else
+                if [ -e "${DBONLYMAINTENANCEMODESWITCHEROFF}" ]; then
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "enabling ${DBNAME} maintenancemode of nginx..."
+                            mv ${DBONLYMAINTENANCEMODESWITCHEROFF} ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #check
+                        elif [ ${OPTION} = "disable" ]; then
+                           echo -e "already disabled nothing to do..."
+                           exit 2
+                        fi
+                elif [ -f "${DBONLYMAINTENANCEMODESWITCHERON}" ]; then
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "already enabled nothing to do..."
+                            exit 2
+                        elif [ ${OPTION} = "disable" ]; then
+                           echo -e "disable ${DBNAME} maintenancemode of nginx..."
+                            mv ${DBONLYMAINTENANCEMODESWITCHERON} ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #check
+                        fi
+                else
+                        if [ ${OPTION} = "enable" ]; then
+                            echo -e "touching maintenancemode file seems someone deleted this file....."
+                            touch ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                        elif [ ${OPTION} = "disable" ]; then
+                            echo -e "touching maintenancemode file seems someone deleted this file....."
+                            touch ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                        fi
+                fi
+            fi
+            #init 4 also stops
+            echo -e "Stopping nginx...."
+            service nginx stop
+            #ONLY STOPPING NGINX NO INSTANCE OR ANYTHING ELSE init 4 | tee -a $UPDATELOGFILE # stop all running processes postgres, openerp, pads, clouds
+            echo -e "waiting 10 sec for recheck if all instances of nginx are stopped..."
+            sleep 10 #wait for processes to be shut down
+            #its a good idea to restart nginx this time staled processes aso are cleared now ...
+            if [ "$(pgrep nginx)" = "" ]; then
+                service nginx start
+            else
+                echo -e "could not stop everything clean so killing all nginx processes still running .... "
+                killall nginx
+                echo -e "restart nginx ....."
+                service nginx start
+            fi
+    else
+        echo "nothing todo for maintenancemode script, no instance running" >> ${GLOBALMAINTENANCELOG}
+    fi
+    #setzt die jeweilige instanz von Nginx in den maintenance mode oder den ganzen server
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e "MAINTENANCEMODE DONE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    exit 0
+fi
+
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}
 # ---------------------------------------------------------------------------------------
@@ -976,6 +1119,8 @@ echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
 echo -e "TODO: $ odoo-tools.sh dupdb {BRANCH} {SOURCE_SUPER_PASSWORD} {SOURCE_DBNAME} {TARGET_DBNAME} {TARGET_DOMAIN}"
 echo -e "TODO: $MODEUPDATEINST"
+echo -e "$ odoo-tools.sh maintenancemode {all|dbname} {enable|disable}"
+echo -e "$ $MAINTENANCEMODE"
 echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEBACKUP"
 echo -e "TODO: $MODERESTORE"
