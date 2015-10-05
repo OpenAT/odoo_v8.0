@@ -383,9 +383,9 @@ fi
 
 
 # ---------------------------------------------------------------------------------------
-# $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME} {CUADDONSNAME}
+# $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME} {CUADDONSREPONAME}
 # ---------------------------------------------------------------------------------------
-MODENEWDB="odoo-tools.sh newdb       {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {CUADDONSNAME}"
+MODENEWDB="odoo-tools.sh newdb       {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {CUADDONSREPONAME}"
 MODEDUPDB="odoo-tools.sh duplicatedb {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {DATABASE_TEMPLATE}"
 if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
@@ -416,7 +416,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     #
     # New Port Schema:
     # [v][dd][pp]    [v]=Odoo_Version [dd]=Database    [pp]=Instance_Services
-    #  e.g.: 10169 = [1]=odoo_v8.0    [01]=database_01 [69]=port_69
+    #  e.g.: 10169 = [1]=odoo_v8.0    [01]=database_01 [69]=port_69 [08]=PUSHTODELPOY
     # [0]=Odoo Versions:
     #       4 = odoo OLD setups 6or7 old install
     #       1 = odoo v8.0
@@ -429,7 +429,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     TARGET_BRANCH=$2
     SUPER_PASSWORD=$3
     DOMAIN_NAME=$5
-    CUADDONSNAME=$6
+    CUADDONSREPONAME=$6
 
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
 
@@ -446,9 +446,9 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
     PUSHTODEPLOYPATH="${REPO_SETUPPATH}/node_modules/push-to-deploy"
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
-    PUSHTODEPLOYSERVICENAME="PTD_${CUADDONSNAME}"
+    PUSHTODEPLOYSERVICENAME="${DBNAME}_${CUADDONSREPONAME}"
     PTDLOGFILE="${DBLOGPATH}/${DBNAME}-pushtodeply.log"
-    GITPTDBRANCHNAME="${GITPATH}/${CUADDONSNAME}.git"
+    GITPTDBRANCHNAME="${GITPATH}/${CUADDONSREPONAME}.git"
 
     # ----- Basic Checks
 
@@ -556,7 +556,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\$3 SUPER_PASSWORD                 :  $SUPER_PASSWORD" | tee -a ${DB_SETUPLOG}
     echo -e "\$4 DATABASE_NAME                  :  $4" | tee -a ${DB_SETUPLOG}
     echo -e "\$5 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a ${DB_SETUPLOG}
-    echo -e "\$6 CUADDONSNAME                    : $CUADDONSNAME" | tee -a ${DB_SETUPLOG}
+    echo -e "\$6 CUADDONSREPONAME                    : $CUADDONSREPONAME" | tee -a ${DB_SETUPLOG}
     echo -e ""
     echo -e "Database Setup Log File           :  ${DB_SETUPLOG}" | tee -a ${DB_SETUPLOG}
     echo -e ""
@@ -569,6 +569,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "Database LINUX User               :  $DBUSER" | tee -a ${DB_SETUPLOG}
     echo -e "Database LINUX User Password      :  $LINUXPW" | tee -a ${DB_SETUPLOG}
     echo -e "Database Etherpad SESSION KEY     :  $ETHERPADKEY" | tee -a ${DB_SETUPLOG}
+    echo -e "PUSHTODEPLOY Baseport             :  $BASEPORT" | tee -a ${DB_SETUPLOG}
     echo -e ""
     echo -e "ATTENTION: The password for the admin user of the new database will be \"adminpw\"!\n"
     echo -e "Would you like to setup a new odoo database ${DBNAME} at ${DBPATH} with this settings?"
@@ -657,8 +658,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!DBLOGPATH!'"${DBLOGPATH}"'!g
         s!DBPATH!'"${DBPATH}"'!g
         s!MAINTENANCEMODE!'"${NGINXDBMAINTENANCEONLYFILE}_ein"'!g
-        s!PUSHTODEPLOYLOCATION!'"${CUADDONSNAME}"'!g
-        s!PUSHTODEPLOYPORT!'"8${BASEPORT}"'!g
+        s!PUSHTODEPLOYLOCATION!'"${CUADDONSREPONAME}"'!g
+        s!PUSHTODEPLOYPORT!'"${BASEPORT}08"'!g
             }' ${INSTANCE_PATH}/TOOLS/nginx.conf > ${NGINXCONF} | tee -a ${DB_SETUPLOG}
     chown root:root ${NGINXCONF}
     chmod ugo=r ${NGINXCONF}
@@ -672,7 +673,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "---- Create pushtodeploy config file...."
     PUSHTODEPLOYCONF=${DBPATH}/${DBNAME}-pushtodeploy.yml
     /bin/sed '{
-        s!PUSHTODEPLOYLOCATION!'"${CUADDONSNAME}"'!g
+        s!PUSHTODEPLOYLOCATION!'"${CUADDONSREPONAME}"'!g
         s!INSTANZNAME!'"${DBNAME}"'!g
         s!DBPATH!'"${DBPATH}"'!g
             }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.yml > ${PUSHTODEPLOYCONF} | tee -a ${DB_SETUPLOG}
@@ -684,20 +685,20 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     /bin/sed '{
         s!'"DAEMON="'!'"DAEMON=${PUSHTODEPLOYPATH}/bin/push-to-deploy"'!g
         s!'"USER="'!'"USER=${DBUSER}"'!g
-        s!'"PTDSERVICE"'!'"${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}"'!g
+        s!'"PTDSERVICE"'!'"${PUSHTODEPLOYSERVICENAME}-${BASEPORT}08"'!g
         s!'"CONFIGFILE="'!'"CONFIGFILE=${PUSHTODEPLOYCONF}"'!g
-        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p 8${BASEPORT} ${PUSHTODEPLOYCONF}\""'!g
+        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p ${BASEPORT}08 ${PUSHTODEPLOYCONF}\""'!g
         s!LOGFILE=!'"LOGFILE=${PTDLOGFILE}"'!g
             }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.init > ${PUSHTODEPLOYINIT} | tee -a ${DB_SETUPLOG}
     chown root:root ${PUSHTODEPLOYINIT}
     chmod ugo=rx ${PUSHTODEPLOYINIT}
     echo -e "---- Create PUSHTODEPLOY INIT file DONE"
-    ln -s ${PUSHTODEPLOYINIT} /etc/init.d/${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}
+    ln -s ${PUSHTODEPLOYINIT} /etc/init.d/${PUSHTODEPLOYSERVICENAME}-${BASEPORT}08
     echo "write Startup scripts"
-    update-rc.d ${PUSHTODEPLOYSERVICENAME}-8${BASEPORT} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a ${DB_SETUPLOG}
+    update-rc.d ${PUSHTODEPLOYSERVICENAME}-${BASEPORT}08 start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a ${DB_SETUPLOG}
     echo "starting up push to deploy service"
-    service ${PUSHTODEPLOYSERVICENAME}-8${BASEPORT} start
-    #/etc/init.d/${PUSHTODEPLOYSERVICENAME}-8${BASEPORT}
+    service ${PUSHTODEPLOYSERVICENAME}-${BASEPORT}08 start
+    #/etc/init.d/${PUSHTODEPLOYSERVICENAME}-${BASEPORT}08
     echo "check if customer remote repository already exists"
     git ls-remote ${GITPTDBRANCHNAME} HEAD #if this command gets an exit code, it will be written into $? and can be checked
     if (( $? )); then
@@ -1117,7 +1118,7 @@ echo -e "$ odoo-tools.sh {prepare|setup|newdb|dupdb|deploy|backup|restore}\n"
 echo -e "$ $MODEPREPARE"
 echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
-echo -e "TODO: $ odoo-tools.sh dupdb {BRANCH} {SOURCE_SUPER_PASSWORD} {SOURCE_DBNAME} {TARGET_DBNAME} {TARGET_DOMAIN}"
+echo -e "TODO: $ odoo-tools.sh dupdb {BRANCH} {SOURCE_SUPER_PASSWORD} {SOURCE_DBNAME} {TARGET_DBNAME} {TARGET_DOMAIN} {CUADDONSREPONAME}"
 echo -e "TODO: $MODEUPDATEINST"
 echo -e "$ odoo-tools.sh maintenancemode {all|dbname} {enable|disable}"
 echo -e "$ $MAINTENANCEMODE"
