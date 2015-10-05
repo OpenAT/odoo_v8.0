@@ -1,0 +1,88 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:             pushtodeployworkflow
+# Required-Start:       $remote_fs $syslog $postgresql $nginx
+# Required-Stop:        $remote_fs $syslog $postgresql $nginx
+# Should-Start:         $network
+# Should-Stop:          $network
+# Default-Start:        2 3 4 5
+# Default-Stop:         0 1 6
+# Short-Description:    pushtodeploy
+# Description:          pushtodpeploy is a a workflow to autodeploy changes from github into a running working instance .
+### END INIT INFO
+
+PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/node/bin:"
+DAEMON=
+NAME=PTDSERVICE
+DESC=PTDSERVICE
+LOGFILE=
+# Specify the user name
+USER=
+
+# Specify an alternate server config file
+CONFIGFILE=
+
+# pidfile
+PIDFILE=/var/run/$NAME.pid
+
+# Additional options that are passed to the Daemon.
+DAEMON_OPTS=
+
+echo "Daemon: $DAEMON"
+echo "Config: $CONFIGFILE"
+
+
+[ -x $DAEMON ] || exit 0
+[ -f $CONFIGFILE ] || exit 0
+
+checkpid() {
+    [ -f $PIDFILE ] || return 1
+    pid=`cat $PIDFILE`
+    [ -d /proc/$pid ] && return 0
+    return 1
+}
+
+echo "PIDFILE CHECK DONE"
+
+case "${1}" in
+        start)
+                echo -n "Starting ${DESC}: "
+
+                start-stop-daemon --start --quiet --pidfile ${PIDFILE} \
+                        --chuid ${USER} --background --make-pidfile \
+                        --no-close --exec ${DAEMON}  -- ${DAEMON_OPTS} >> ${LOGFILE} 2>$1
+                echo "${NAME}."
+                ;;
+
+        stop)
+                echo -n "Stopping ${DESC}: "
+
+                start-stop-daemon --stop --quiet --pidfile ${PIDFILE} \
+                        --oknodo >> ${LOGFILE} 2>$1
+                echo "${NAME}."
+                ;;
+
+        restart|force-reload)
+                echo -n "Restarting ${DESC}: "
+
+                start-stop-daemon --stop --quiet --pidfile ${PIDFILE} \
+                        --oknodo
+
+                sleep 1
+
+                start-stop-daemon --start --quiet --pidfile ${PIDFILE} \
+                        --chuid ${USER} --background --make-pidfile \
+                        --exec ${DAEMON} -- ${DAEMON_OPTS}
+
+                echo "${NAME}."
+                ;;
+
+        *)
+                N=/etc/init.d/${NAME}
+                echo "Usage: ${NAME} {start|stop|restart|force-reload}" >&2
+                exit 1
+                ;;
+esac
+
+exit 0
