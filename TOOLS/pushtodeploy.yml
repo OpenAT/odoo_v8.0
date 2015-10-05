@@ -4,8 +4,8 @@ OpenAT/PUSHTODEPLOYLOCATION/push/heads/master:
     cd DBPATH/addons &&
     git fetch origin &&
     git checkout --force {{commit}}
-  - echo "Restarting Instance " &&
-    service INSTANZNAME restart
+#  - echo "Restarting Instance " &&
+#    service INSTANZNAME restart
 
 # On a new tag, run LIVE deployment.
 OpenAT/PUSHTODEPLOYLOCATION/push/tags/*:
@@ -13,5 +13,5 @@ OpenAT/PUSHTODEPLOYLOCATION/push/tags/*:
     cd DBPATH/addons &&
     git fetch origin &&
     git checkout --force {{tag}}
-  - echo "Restarting INSTANCE" &&
-    service INSTANZNAME restart
+#  - echo "Restarting INSTANCE" &&
+#    service INSTANZNAME restart
