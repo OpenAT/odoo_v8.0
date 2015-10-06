@@ -12,15 +12,17 @@
         <t t-if="c.id == int(category)">
             <!-- Info-Box (for logged in users only)-->
             <t groups="base.group_website_publisher">
-                <section contenteditable="false">
-                    <div class="container">
-                        <div class="row" >
-                            <div class="col-md-12">
-                                <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="c.name"/></b> and below! (Will show up on subcategories!):</div>
+                <div class="oe_structure" contenteditable="false">
+                    <section>
+                        <div class="container">
+                            <div class="row" >
+                                <div class="col-md-12">
+                                    <div class="alert alert-info text-center clearfix" role="alert" style="padding: 3px 0;">Edit description for category <b><t t-raw="c.name"/></b> and below! (Will show up on subcategories!):</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                </div>
             </t>
             <div t-field="c.cat_desc_showatchilds" class="oe_structure cat_desc_showatchilds"/>
         </t>
@@ -36,11 +38,12 @@
     <template id="categories_recursive_description" name="Category Description at Top">
 
         <t t-foreach="c.parent_id" t-as="c">
-
-            <!-- Render Parent categories description text(s) before this category -->
-            <t t-call="website_sale_categories.categories_recursive_description"/>
-            <!-- Render the Text -->
-            <t t-call="website_sale_categories.categories_recursive_description_text"/>
+            <t t-if="cat_root_id == c.cat_root_id.id">
+                <!-- Render Parent categories description text(s) before this category -->
+                <t t-call="website_sale_categories.categories_recursive_description"/>
+                <!-- Render the Text -->
+                <t t-call="website_sale_categories.categories_recursive_description_text"/>
+            </t>
 
         </t>
     </template>
@@ -53,15 +56,17 @@
         <t t-if="c.id == int(category)">
         <!-- Show Info-Box (for logged in users only) -->
             <t groups="base.group_website_publisher">
-                <section contenteditable="false">
-                    <div class="container">
-                        <div class="row" >
-                            <div class="col-md-12">
-                                <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="c.name"/></b> and below! (Will show up on subcategories!):</div>
+                <div class="oe_structure" contenteditable="false">
+                    <section>
+                        <div class="container">
+                            <div class="row" >
+                                <div class="col-md-12">
+                                    <div class="alert alert-info text-center" role="alert" style="margin: 46px 0 12px 0; padding: 3px 0;">Edit description for category <b><t t-raw="c.name"/></b> and below! (Will show up on subcategories!):</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                </div>
             </t>
            <div t-field="c.cat_descbottom_showatchilds" class="oe_structure cat_descbottom_showatchilds"/>
         </t>
@@ -72,7 +77,9 @@
         </t>
 
         <t t-foreach="c.parent_id" t-as="c">
-            <t t-call="website_sale_categories.categories_recursive_description_bottom"/>
+            <t t-if="cat_root_id == c.cat_root_id.id">
+                <t t-call="website_sale_categories.categories_recursive_description_bottom"/>
+            </t>
         </t>
     </template>
 
@@ -145,11 +152,16 @@
             <attribute name="t-att-class">'col-md-12' if cat_hide else 'col-md-9'</attribute>
         </xpath>
 
+        <!-- REMOVE TEMPLATE SNIPPET DROPPING AREAS -->
+        <xpath expr="//div[@id='wrap']/div[@class='oe_structure']" position="replace"><div></div></xpath>
+        <xpath expr="//div[@id='wrap']/div[@class='oe_structure mb32']" position="replace"><div></div></xpath>
+
         <!-- TOP AND BOTTOM CATEGORY DESCRIPTIONS -->
 
         <!-- TOP Category Descriptions -->
-        <xpath expr="//div[@id='wrap']/div[@class='oe_structure']" position="after">
+        <xpath expr="//div[@id='wrap']/div[@class='container oe_website_sale']" position="before">
             <t t-if="category">
+                <t t-set="cat_root_id" t-value="category.cat_root_id.id"/>
 
                 <!-- TOP Category-and-Below (recursive) Descriptions -->
                 <t t-foreach="category" t-as="c">
@@ -162,15 +174,17 @@
                 <!-- TOP Category-Only Description -->
                 <!-- Info-Box (for logged in users only) -->
                 <t groups="base.group_website_publisher">
-                    <section contenteditable="false">
-                        <div class="container">
-                            <div class="row" >
-                                <div class="col-md-12">
-                                    <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="category.name"/></b> only! (Only shown here!):</div>
+                    <div class="oe_structure" contenteditable="false">
+                        <section>
+                            <div class="container">
+                                <div class="row" >
+                                    <div class="col-md-12">
+                                        <div class="alert alert-info text-center" role="alert" style="margin: 46px 0 12px 0; padding: 3px 0;">Edit description for category <b><t t-raw="category.name"/></b> only! (Only shown here!):</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    </div>
                 </t>
                 <!-- Description -->
                 <div t-field="category.cat_desc" class="oe_structure cat_desc"/>
@@ -179,21 +193,24 @@
         </xpath>
 
         <!-- BOTTOM Category Descriptions -->
-        <xpath expr="//div[@id='wrap']/div[@class='oe_structure mb32']" position="before">
+        <xpath expr="//div[@id='wrap']/div[@class='container oe_website_sale']" position="after">
             <t t-if="category">
+                <t t-set="cat_root_id" t-value="category.cat_root_id.id"/>
 
                 <!-- BOTTOM Category-Only Description -->
                 <!-- Info-Box (for logged in users only) -->
                 <t groups="base.group_website_publisher">
-                    <section contenteditable="false">
-                        <div class="container">
-                            <div class="row" >
-                                <div class="col-md-12">
-                                    <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Description for category <b><t t-raw="category.name"/></b> only! (Only shown here!):</div>
+                    <div class="oe_structure" contenteditable="false">
+                        <section>
+                            <div class="container">
+                                <div class="row" >
+                                    <div class="col-md-12">
+                                        <div class="alert alert-info text-center" role="alert" style="padding: 3px 0;">Edit description for category <b><t t-raw="category.name"/></b> only! (Only shown here!):</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    </div>
                 </t>
                 <div t-field="category.cat_descbottom" class="oe_structure cat_descbottom"/>
 

@@ -39,30 +39,46 @@ class product_public_category_menu(models.Model):
 
     cat_hide = fields.Boolean(string="Hide Category from Navigation")
     cat_root = fields.Boolean(string="Start Navigation from this Category")
-    # Topmost parten category -
-    # if any cat_root categories are found in the tree use the topmost category with cat_root=true ans stop there
-    cat_root_id = fields.Many2one(compute='_compute_root',
-                                  comodel_name='product.public.category',
-                                  string='Topmost Root Category')
+    # Topmost parent category:
+    # Store the nearest parent category in the field cat_root_id  that has cat_root=True or, if no parent category has
+    # cat_root set to True, set the topmost parent category for cat_root_id. Use the current category for cat_root_id if
+    # no parent category is available or the current category has cat_root set to True.
+    # HINT: This field is used in the category qweb-template to render the categories as well as for products shown at
+    #       each category (domain filter in main.py)
+    cat_root_id = fields.Many2one(comodel_name='product.public.category',
+                                  string='Nearest Root Category or UpMost Parent')
 
-    #@api.depends('name', 'cat_root')
+
+    # Recalculate the cat_root_id
     @api.multi
-    def _compute_root(self):
-        # find the highest parent with cat_root = True (or self if self has cat_root=True and no higher cat_root exits)
-        # or just the topmost parent if no category with cat_root exists (or self if no parent exists)
-        for record in self:
+    def write(self, vals):
+        # Write the changes (to the environment cache?) first
+        res = super(product_public_category_menu, self).write(vals)
 
-            cat = record
-            rootcat = False
+        # If parent_id or cat_root are changed calculate the cat_root_id field
+        if 'parent_id' in vals or 'cat_root' in vals and self.ensure_one():
+
+            # Calculate the cat_root_id of the current category
+            cat = self
             while True:
-                if cat.cat_root:
-                    rootcat = cat
-                if cat.parent_id:
-                    cat = cat.parent_id
-                else:
+                if cat.cat_root or not cat.parent_id:
+                    self.cat_root_id = cat.id
                     break
+                else:
+                    cat = cat.parent_id
 
-            if rootcat:
-                record.cat_root_id = rootcat
-            else:
-                record.cat_root_id = cat
+            # Calculate the cat_root_id of the child categories (if any)
+            categories = self.env['product.public.category'].search(['&',
+                                                                     ('id', 'child_of', int(self.id)),
+                                                                     ('id', 'not in', self.ids)])
+            for child_cat in categories:
+                cat = child_cat
+                while True:
+                    if cat.cat_root or not cat.parent_id:
+                        if cat.ids:
+                            child_cat.cat_root_id = cat.id
+                        break
+                    else:
+                        cat = cat.parent_id
+
+        return res
