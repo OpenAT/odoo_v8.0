@@ -27,7 +27,7 @@ class website_sale_donate(website_sale):
     # PRODUCT PAGE: Extend the product page render request to include price_donate and payment_interval
     # so we have the same settings for arbitrary price and payment interval as already set by the user in the so line
     # Todo: Would need to update the Java Script of Website_sale to select the correct product variante if it
-    # Todo:     is already in the current sales order (like i do it for price_donate and payment_interval)
+    #       is already in the current sales order (like i do it for price_donate and payment_interval)
     # /shop/product/<model("product.template"):product>
     @http.route()
     def product(self, product, category='', search='', **kwargs):
@@ -84,12 +84,21 @@ class website_sale_donate(website_sale):
         cartpage.qcontext['keep'] = QueryURL(attrib=request.httprequest.args.getlist('attrib'))
         return cartpage
 
-    # SIMPLE CHECKOUT
+    # SIMPLE CHECKOUT:
+    # Add an alternative route for products to directly add them to the shopping cart and DIRECTLY go to the checkout
+    # This is useful if you want to create buttons to directly pay / donate for a product
+    # HINT: We have to use product.product because otherwise we could not directly check out product variants AND
+    #       _cart_update expects an product.product id anyway
+    @http.route(['/shop/simplecheckout/<model("product.product"):product>',
+                 '/shop/simple_checkout/<model("product.product"):product>'],
+                auth="public", website=True)
+    def simple_checkout(self, product, **kw):
+        kw.update(simple_checkout=True)
+        return self.cart_update(product, **kw)
+
     # SHOPPING CART UPDATE
     # /shop/cart/update
-    @http.route(['/shop/cart/update',
-                 '/shop/simplecheckout/<model("product.product"):product>'
-                 ])
+    @http.route(['/shop/cart/update'])
     def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
         cr, uid, context = request.cr, request.uid, request.context
 
@@ -110,14 +119,14 @@ class website_sale_donate(website_sale):
             return request.redirect('/shop/product/%s?&warnings=%s' % (product.product_tmpl_id.id, warnings))
 
         # Check Payment Interval
-        # INFO: This is only needed if product are directly added to cart on shop pages (product listings)
+        # INFO: This is only needed if products are directly added to cart on shop pages (product listings)
         if 'payment_interval_id' not in kw:
             if product.payment_interval_ids:
                 kw['payment_interval_id'] = product.payment_interval_ids[0].id
 
         # Call Super
         # INFO: Pass kw to _cart_update to transfer all post variables to _cart_update
-        # This is needed to get the Value of the arbitrary price from the input field
+        #       This is needed to get the Value of the arbitrary price from the input field
         request.website.sale_get_order(force_create=1, context=context)._cart_update(product_id=int(product_id),
                                                                                      add_qty=float(add_qty),
                                                                                      set_qty=float(set_qty),
@@ -125,7 +134,8 @@ class website_sale_donate(website_sale):
                                                                                      **kw)
 
         # If simple_checkout is set for the product redirect directly to checkout or confirm_order
-        if product.simple_checkout:
+        if product.simple_checkout or kw.get('simple_checkout'):
+            kw.pop('simple_checkout', None)
             if kw.get('email') and kw.get('name') and kw.get('shipping_id'):
                 return request.redirect('/shop/confirm_order' + '?' + request.httprequest.query_string)
             return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
