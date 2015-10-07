@@ -1059,12 +1059,12 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     exit 0
 fi
 
-UPDATETRANSLATION="$ odoo-tools.sh updatetranslation {LANGUAGE} {BRANCH} {TARGET_DBNAME} {MODULNAME} {CUADDONSREPONAME}"
+UPDATETRANSLATION="$ odoo-tools.sh updatetranslation {LANGUAGE} {BRANCH} {TARGET_DBNAME} {MODULNAME} {WEBSITETEMPLATEMODUL}"
 if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $UPDATETRANSLATION"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ne 5 ]; then
+    if [ $# -ne 6 ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly five arguments!"
         exit 2
     fi
@@ -1072,7 +1072,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     LANG=$2
     DBNAME=$4
     MODULNAME=$5
-    CUADDONSREPONAME=$6 # this tranlsation should be loaded as last to make sure all others are overwritten with this latest customer specific translations
+    WEBSITETEMPLATEMODUL=$6 # this tranlsation should be loaded as last to make sure all others are overwritten with this latest customer specific translations
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     echo "Instanzpfad ${INSTANCE_PATH}"
     DATABASECONFIGFILE=${INSTANCE_PATH}/${DBNAME}/${DBNAME}.conf
