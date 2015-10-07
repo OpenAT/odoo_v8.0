@@ -985,7 +985,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
                     if [ -f "${MAINTENANCEMODESWITCHEROFF}" ]; then
                         if [ ${OPTION} = "enable" ]; then
                             echo -e "enabling global maintenancemode of nginx..."
-                            mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #check
+                            mv ${MAINTENANCEMODESWITCHEROFF} ${MAINTENANCEMODESWITCHERON} | tee -a ${GLOBALMAINTENANCELOG}  #check
                         elif [ ${OPTION} = "disable" ]; then
                            echo -e "already disabled nothing to do..."
                            exit 2
@@ -996,15 +996,15 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
                             exit 2
                         elif [ ${OPTION} = "disable" ]; then
                            echo -e "disable global maintenancemode of nginx..."
-                            mv $MAINTENANCEMODESWITCHERON $MAINTENANCEMODESWITCHEROFF | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #check
+                            mv ${MAINTENANCEMODESWITCHERON} ${MAINTENANCEMODESWITCHEROFF} | tee -a ${GLOBALMAINTENANCELOG}  #check
                         fi
                     else
                         if [ ${OPTION} = "enable" ]; then
                             echo -e "touching maintenancemode file seems someone deleted this file....."
-                            touch $MAINTENANCEMODESWITCHERON | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                            touch ${MAINTENANCEMODESWITCHERON} | tee -a ${GLOBALMAINTENANCELOG}  #if file exists error occures but status is now correct
                         elif [ ${OPTION} = "disable" ]; then
                             echo -e "touching maintenancemode file seems someone deleted this file....."
-                            touch $MAINTENANCEMODESWITCHEROFF | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                            touch ${MAINTENANCEMODESWITCHEROFF} | tee -a ${GLOBALMAINTENANCELOG}  #if file exists error occures but status is now correct
                         fi
                     fi
 
@@ -1012,7 +1012,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
                 if [ -e "${DBONLYMAINTENANCEMODESWITCHEROFF}" ]; then
                         if [ ${OPTION} = "enable" ]; then
                             echo -e "enabling ${DBNAME} maintenancemode of nginx..."
-                            mv ${DBONLYMAINTENANCEMODESWITCHEROFF} ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #check
+                            mv ${DBONLYMAINTENANCEMODESWITCHEROFF} ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG}  #check
                         elif [ ${OPTION} = "disable" ]; then
                            echo -e "already disabled nothing to do..."
                            exit 2
@@ -1023,15 +1023,15 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
                             exit 2
                         elif [ ${OPTION} = "disable" ]; then
                            echo -e "disable ${DBNAME} maintenancemode of nginx..."
-                            mv ${DBONLYMAINTENANCEMODESWITCHERON} ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #check
+                            mv ${DBONLYMAINTENANCEMODESWITCHERON} ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG}  #check
                         fi
                 else
                         if [ ${OPTION} = "enable" ]; then
                             echo -e "touching maintenancemode file seems someone deleted this file....."
-                            touch ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                            touch ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG}  #if file exists error occures but status is now correct
                         elif [ ${OPTION} = "disable" ]; then
                             echo -e "touching maintenancemode file seems someone deleted this file....."
-                            touch ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                            touch ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} #if file exists error occures but status is now correct
                         fi
                 fi
             fi
