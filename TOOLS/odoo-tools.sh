@@ -1102,6 +1102,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         if [ ${MODULNAME} = "all" ]; then
             echo "Updateing only ${LANG} in all customer modules"
             FILES=$(find ${INSTANCE_PATH}/DBNAME/addons -name ${SINGLELANGUAGE}.po)
+            echo ${FILES}
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
