@@ -1085,7 +1085,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
-                ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite
+                sudo su - ${DBNAME} -c \
+                " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite"
             done
         else
             echo "update all languages available in ${MODULNAME} only"
@@ -1093,7 +1094,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
-                ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite
+                sudo su - ${DBNAME} -c \
+                 " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite"
             done
         fi
     else
@@ -1106,7 +1108,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
-                ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite
+                sudo su - ${DBNAME} -c \
+                " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite"
             done
         else
             echo "update only ${LANG} in ${MODULNAME} only"
@@ -1114,7 +1117,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
-                sudo su ${DBNAME} ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite
+                sudo su ${DBNAME} -c \
+                " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite"
             done
     fi
 
