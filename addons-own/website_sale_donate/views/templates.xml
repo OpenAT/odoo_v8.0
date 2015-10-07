@@ -7,7 +7,7 @@
             <xpath expr="." position="inside">
                 <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_donate.css'/>
                 <!-- INFO: jquery validate is loaded in website_tools -->
-                <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_product_price_form_validate.js"></script>
+                <!-- DISABLED just prepared: <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_product_price_form_validate.js"></script>-->
                 <!-- DISABLED just prepared: <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_contact_form_validate.js"></script> -->
             </xpath>
         </template>

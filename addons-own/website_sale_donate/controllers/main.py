@@ -95,10 +95,18 @@ class website_sale_donate(website_sale):
 
         product = request.registry['product.product'].browse(cr, SUPERUSER_ID, int(product_id), context=context)
 
-        # Check price_donate_min (in case java script fails)
+        # Validate (donation) Price
+        warnings = None
         price = kw.get('price_donate') or product.list_price or product.price
-        if product.price_donate_min and float(product.price_donate_min) > float(price):
-            warnings = _('Value must be higher or equal to %s.' % float(product.price_donate_min))
+        # HINT: If price_donate is not a valid number it will be empty and so the product.list_price is used!
+        #       Therefore the try statement is not really needed (but kept for safety).
+        try:
+            if product.price_donate_min and float(product.price_donate_min) > float(price):
+                warnings = _('Value must be higher or equal to %s.' % float(product.price_donate_min))
+        except ValueError:
+            warnings = _('Value must be a valid Number.')
+            pass
+        if warnings:
             return request.redirect('/shop/product/%s?&warnings=%s' % (product.product_tmpl_id.id, warnings))
 
         # Check Payment Interval
