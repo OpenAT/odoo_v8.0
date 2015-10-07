@@ -1082,7 +1082,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     if [ ${LANG} = "all" ]; then
         if [ ${MODULNAME} = "all" ]; then
             echo "update all languages available in all customer modules"
-            FILES=$(find ${INSTANCE_PATH}/DBNAME/addons -name *.po)
+            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons -name *.po)
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
@@ -1090,7 +1090,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             done
         else
             echo "update all languages available in ${MODULNAME} only"
-            FILES=$(find ${INSTANCE_PATH}/DBNAME/addons/${MODULNAME} -name *.po)
+            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${MODULNAME} -name *.po)
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
@@ -1102,7 +1102,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "this is the single language: ${SINGLELANGUAGE}"
         if [ ${MODULNAME} = "all" ]; then
             echo "Updateing only ${LANG} in all customer modules"
-            FILES=$(find ${INSTANCE_PATH}/DBNAME/addons -name ${SINGLELANGUAGE}.po)
+            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons -name ${SINGLELANGUAGE}.po)
             echo ${FILES}
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
@@ -1111,7 +1111,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             done
         else
             echo "update only ${LANG} in ${MODULNAME} only"
-            FILES=$(find ${INSTANCE_PATH}/DBNAME/addons/${MODULNAME} -name ${SINGLELANGUAGE}.po)
+            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${MODULNAME} -name ${SINGLELANGUAGE}.po)
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
