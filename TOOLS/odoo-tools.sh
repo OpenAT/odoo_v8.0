@@ -23,8 +23,8 @@ SCRIPTPATH=$(cd ${0%/*} && pwd -P)
 
 # ----- Check UBUNTU Version:
 source /etc/lsb-release
-if [ $DISTRIB_ID = "Ubuntu" ] && [ $DISTRIB_RELEASE = "14.04" ] ; then
-    echo -e "OS Version: $DISTRIB_ID $DISTRIB_RELEASE"
+if [ ${DISTRIB_ID} = "Ubuntu" ] && [ ${DISTRIB_RELEASE} = "14.04" ] ; then
+    echo -e "OS Version: ${DISTRIB_ID} ${DISTRIB_RELEASE}"
 else
     echo -e "ERROR: This Script only works on Ubuntu 14.04!"; exit 2
 fi
@@ -138,7 +138,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     update-rc.d -f nginx remove
     update-rc.d nginx start 20 2 3 5 . stop 80 0 1 4 6 . >> ${SETUP_LOG}
     service nginx restart | tee -a ${SETUP_LOG}
-    touch /usr/share/nginx/html/maintenance_aus.html >>$SETUP_LOG
+    touch /usr/share/nginx/html/maintenance_aus.html >> ${SETUP_LOG}
     echo -e "----- Install nginx Done"
 
     # ----- Install push-to-deploy
@@ -371,7 +371,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     chmod 755 ${INSTANCE_PATH} >> ${INSTANCE_SETUPLOG}
 
     # ----- create webserver maintenance files
-    cp ${INSTANCE_PATH}/TOOLS/503.* /usr/share/nginx/html/ >> $INSTANCE_SETUPLOG
+    cp ${INSTANCE_PATH}/TOOLS/503.* /usr/share/nginx/html/ >> ${INSTANCE_SETUPLOG}
 
     echo -e "-------------------------------------------------------------------------"
     echo -e " $MODESETUP DONE"
@@ -556,7 +556,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\$3 SUPER_PASSWORD                 :  $SUPER_PASSWORD" | tee -a ${DB_SETUPLOG}
     echo -e "\$4 DATABASE_NAME                  :  $4" | tee -a ${DB_SETUPLOG}
     echo -e "\$5 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a ${DB_SETUPLOG}
-    echo -e "\$6 CUADDONSREPONAME                    : $CUADDONSREPONAME" | tee -a ${DB_SETUPLOG}
+    echo -e "\$6 CUADDONSREPONAME               :  $CUADDONSREPONAME" | tee -a ${DB_SETUPLOG}
     echo -e ""
     echo -e "Database Setup Log File           :  ${DB_SETUPLOG}" | tee -a ${DB_SETUPLOG}
     echo -e ""
@@ -664,7 +664,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     chown root:root ${NGINXCONF}
     chmod ugo=r ${NGINXCONF}
         touch ${NGINXDBMAINTENANCEONLYFILE}_aus
-    ln -s ${NGINXCONF}  /etc/nginx/sites-enabled/${DBNAME}-${DOMAIN_NAME}
+    ln -s ${NGINXCONF} /etc/nginx/sites-enabled/${DBNAME}-${DOMAIN_NAME}
     service nginx restart
     echo -e "---- Create NGINX config file DONE"
 
@@ -1116,6 +1116,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
                 echo "Processing $f file..."
                 ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite
             done
+        fi
     fi
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
