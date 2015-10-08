@@ -1060,29 +1060,38 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     exit 0
 fi
 
-UPDATETRANSLATION="$ odoo-tools.sh updatetranslation {LANGUAGE} {BRANCH} {TARGET_DBNAME} {MODULNAME} {WEBSITETEMPLATEMODUL}"
+UPDATETRANSLATION="$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE} {MODULNAME} {UPDATETYPE} {WEBSITETEMPLATEMODUL}"
 if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $UPDATETRANSLATION"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ne 6 ]; then
+    if [ $# -ne 8 ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly five arguments!"
         exit 2
     fi
-    TARGET_BRANCH=$3
-    LANG=$2
-    DBNAME=$4
+    TARGET_BRANCH=$2
+    DBNAME=$3
+    LANG=$4
     MODULNAME=$5
-    WEBSITETEMPLATEMODUL=$6 # this tranlsation should be loaded as last to make sure all others are overwritten with this latest customer specific translations
+    UPDATETYPE=$6
+    WEBSITETEMPLATEMODUL=$7 # this tranlsation should be loaded as last to make sure all others are overwritten with this latest customer specific translations
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     echo "Instanzpfad ${INSTANCE_PATH}"
     DATABASECONFIGFILE=${INSTANCE_PATH}/${DBNAME}/${DBNAME}.conf
+    if [ ${UPDATETYPE} = "addonsownloaded" ]; then
+        LANGUPDATEWORKINGPATH=${INSTANCE_PATH}/addons-loaded
+    elif [ ${UPDATETYPE} = "cuaddonsonly" ]; then
+        LANGUPDATEWORKINGPATH=${INSTANCE_PATH}/${DBNAME}/addons
+    else
+        echo "!!! WRONG UPDATETYPE PARAMETER aboring, check your parameters again ......"
+        exit 2
+    fi
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
     if [ ${LANG} = "all" ]; then
         if [ ${MODULNAME} = "all" ]; then
             echo "update all languages available in all customer modules"
-            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons -name *.po)
+            FILES=$(find ${LANGUPDATEWORKINGPATH} -name *.po)
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
@@ -1091,7 +1100,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             done
         else
             echo "update all languages available in ${MODULNAME} only"
-            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${MODULNAME} -name *.po)
+            FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name *.po)
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
@@ -1104,7 +1113,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "this is the single language: ${SINGLELANGUAGE}"
         if [ ${MODULNAME} = "all" ]; then
             echo "Updateing only ${LANG} in all customer modules"
-            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons -name ${SINGLELANGUAGE}.po)
+            FILES=$(find ${LANGUPDATEWORKINGPATH}/addons -name ${SINGLELANGUAGE}.po)
             echo ${FILES}
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
@@ -1114,7 +1123,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             done
         else
             echo "update only ${LANG} in ${MODULNAME} only"
-            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${MODULNAME} -name ${SINGLELANGUAGE}.po)
+            FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${SINGLELANGUAGE}.po)
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
@@ -1123,7 +1132,43 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             done
         fi
     fi
-
+    if ! [ WEBSITETEMPLATEMODUL = "none" ]; then # make sure that the customers websitetemplate addon modul is loaded latest with all its specific translations
+        if [ ${LANG} = "all" ]; then
+            echo "update all languages available in all customer modules"
+            if [ -n FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${WEBSITETEMPLATEMODUL} -name *.po) ]; then
+                echo "module ${WEBSITETEMPLATEMODUL} not found check your parameters...."
+                echo "Service will not start automatically"
+                exit 2
+            fi
+            echo ${FILES}
+            for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
+            do
+                echo "Processing $f file..."
+                sudo su - ${DBNAME} -c \
+                " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite"
+            done
+        else
+            SINGLELANGUAGE=${LANG%_*} #get only first part of Language before underline
+            echo "this is the single language: ${SINGLELANGUAGE}"
+            if [ -n FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${WEBSITETEMPLATEMODUL} -name ${SINGLELANGUAGE}.po) ]; then
+                echo "module ${WEBSITETEMPLATEMODUL} not found or no language files in there check your parameters...."
+                echo "Service will not start automatically"
+                exit 2
+            fi
+            echo "Updateing only ${LANG} in customer WEBSITEADDON MODULE"
+                echo ${FILES}
+                for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
+                do
+                    echo "Processing $f file..."
+                    sudo su - ${DBNAME} -c \
+                    " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l $LANG --i18n-import=${f} --i18n-overwrite"
+                done
+        fi
+    else
+        echo "no customer specific updates done....."
+    fi
+    echo "Starting up Database again...."
+    service ${DBNAME} start
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e "UPDATETRANSLATION DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
@@ -1192,7 +1237,7 @@ echo -e "TODO: $ odoo-tools.sh dupdb {BRANCH} {SOURCE_SUPER_PASSWORD} {SOURCE_DB
 echo -e "TODO: $MODEUPDATEINST"
 echo -e "$ odoo-tools.sh maintenancemode {all|dbname} {enable|disable}"
 echo -e "$ $MAINTENANCEMODE"
-echo -e "$ odoo-tools.sh updatetranslation {LANGUAGE,de_DE|all} {BRANCH} {TARGET_DBNAME} {MODULNAME,modulname|all} {CUADDONSREPONAME}"
+echo -e "$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE,de_DE|all} {MODULNAME,modulname|all} {UPDATETYPE,addonsownloaded|cuaddonsonly} {WEBSITETEMPLATEMODUL,website_pfot|none}"
 echo -e "$ $MAINTENANCEMODE"
 echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEBACKUP"
