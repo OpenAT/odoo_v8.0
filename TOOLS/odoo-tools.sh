@@ -1113,7 +1113,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "this is the single language: ${SINGLELANGUAGE}"
         if [ ${MODULNAME} = "all" ]; then
             echo "Updateing only ${LANG} in all customer modules"
-            FILES=$(find ${LANGUPDATEWORKINGPATH}/addons -name ${SINGLELANGUAGE}.po)
+            FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${SINGLELANGUAGE}.po)
             echo ${FILES}
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
