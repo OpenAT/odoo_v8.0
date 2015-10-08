@@ -1092,6 +1092,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         if [ ${MODULNAME} = "all" ]; then
             echo "update all languages available in all customer modules"
             FILES=$(find ${LANGUPDATEWORKINGPATH} -name *.po)
+            echo ${FILES}
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
@@ -1101,6 +1102,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         else
             echo "update all languages available in ${MODULNAME} only"
             FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name *.po)
+            echo ${FILES}
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
@@ -1124,6 +1126,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         else
             echo "update only ${LANG} in ${MODULNAME} only"
             FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${SINGLELANGUAGE}.po)
+            echo ${FILES}
             for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
             do
                 echo "Processing $f file..."
@@ -1132,7 +1135,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             done
         fi
     fi
-    if ! [ WEBSITETEMPLATEMODUL = "none" ]; then # make sure that the customers websitetemplate addon modul is loaded latest with all its specific translations
+    if ! [ ${WEBSITETEMPLATEMODUL} = "none" ]; then # make sure that the customers websitetemplate addon modul is loaded latest with all its specific translations
         if [ ${LANG} = "all" ]; then
             echo "update all languages available in all customer modules"
             if ! [ -n FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${WEBSITETEMPLATEMODUL} -name *.po) ]; then
