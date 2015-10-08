@@ -1079,7 +1079,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo "Instanzpfad ${INSTANCE_PATH}"
     DATABASECONFIGFILE=${INSTANCE_PATH}/${DBNAME}/${DBNAME}.conf
     if [ ${UPDATETYPE} = "addonsownloaded" ]; then
-        LANGUPDATEWORKINGPATH=${INSTANCE_PATH}/addons-loaded
+        LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-loaded"
     elif [ ${UPDATETYPE} = "cuaddonsonly" ]; then
         LANGUPDATEWORKINGPATH=${INSTANCE_PATH}/${DBNAME}/addons
     else
