@@ -1087,7 +1087,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         exit 2
     fi
     echo "enabling maintenance mode of customer Instance...."
-    sh -c $0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable
+    sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
     if [ ${LANG} = "all" ]; then
@@ -1166,8 +1166,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     fi
     echo "Starting up Database again...."
     service ${DBNAME} start
-    echo "enabling maintenance mode of customer Instance...."
-    sh -c $0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable
+    echo "disable maintenance mode of customer Instance...."
+    echo sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable"
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e "UPDATETRANSLATION DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
