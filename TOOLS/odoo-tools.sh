@@ -1135,7 +1135,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     if ! [ WEBSITETEMPLATEMODUL = "none" ]; then # make sure that the customers websitetemplate addon modul is loaded latest with all its specific translations
         if [ ${LANG} = "all" ]; then
             echo "update all languages available in all customer modules"
-            if [ -n FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${WEBSITETEMPLATEMODUL} -name *.po) ]; then
+            if ! [ -n FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${WEBSITETEMPLATEMODUL} -name *.po) ]; then
                 echo "module ${WEBSITETEMPLATEMODUL} not found check your parameters...."
                 echo "Service will not start automatically"
                 exit 2
@@ -1150,7 +1150,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         else
             SINGLELANGUAGE=${LANG%_*} #get only first part of Language before underline
             echo "this is the single language: ${SINGLELANGUAGE}"
-            if [ -n FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${WEBSITETEMPLATEMODUL} -name ${SINGLELANGUAGE}.po) ]; then
+            if ! [ -n FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${WEBSITETEMPLATEMODUL} -name ${SINGLELANGUAGE}.po) ]; then
                 echo "module ${WEBSITETEMPLATEMODUL} not found or no language files in there check your parameters...."
                 echo "Service will not start automatically"
                 exit 2
