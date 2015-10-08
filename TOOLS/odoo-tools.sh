@@ -1162,10 +1162,10 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     else
         echo "no customer specific updates done....."
     fi
-    echo "Starting up Database again...."
+    echo "Starting up Database ...."
     service ${DBNAME} start
     echo "disable maintenance mode of customer Instance...."
-    echo sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable"
+    sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable"
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e "UPDATETRANSLATION DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
