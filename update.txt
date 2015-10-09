@@ -19,3 +19,5 @@ https://github.com/OpenAT/odoo_v8.0/commit/280257314d00fc525b8919a8b811aaf2e5bee
 odoo-start.py -i website_sale_categories
 https://github.com/OpenAT/odoo_v8.0/commit/62841c0adfc8b7d38d6b9a8ce83013570471b6a8
 odoo-start.py -u website_sale_donate
+https://github.com/OpenAT/odoo_v8.0/commit/4b0cacf5a817d12e842c7edbf11d81477db9f4c6
+odoo-start.py -u all

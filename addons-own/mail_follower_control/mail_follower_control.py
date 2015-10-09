@@ -40,12 +40,16 @@ class res_partner(osv.Model):
 
         """
         notify_pids = []
+        user = self.pool.get('res.users').browse(cr, uid, uid)
         for partner in self.browse(cr, uid, ids):
             # Do not send to partners without email address defined
             if not partner.email:
                 continue
             # Partner does not want to receive any emails
             if partner.notify_email == 'none':
+                continue
+            # Exclude own partner
+            if partner.email == user.email:
                 continue
             notify_pids.append(partner.id)
         return notify_pids
