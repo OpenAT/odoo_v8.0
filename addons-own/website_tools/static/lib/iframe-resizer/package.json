@@ -1,0 +1,88 @@
+{
+  "name": "iframe-resizer",
+  "version": "3.4.2",
+  "homepage": "https://github.com/davidjbradshaw/iframe-resizer",
+  "authors": [
+    "David J. Bradshaw <dave@bradshaw.net>"
+  ],
+  "maintainers": [
+    {
+      "name": "David J. Bradshaw",
+      "email": "dave@bradshaw.net"
+    }
+  ],
+  "description": "Keep same and cross domain iFrames sized to their content with support for window/content resizing, and multiple iFrames.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidjbradshaw/iframe-resizer.git"
+  },
+  "github": "https://github.com/davidjbradshaw/iframe-resizer",
+  "dependencies": {},
+  "categories": [
+    "UI",
+    "Utilities"
+  ],
+  "devDependencies": {
+    "grunt": "0.4.x",
+    "grunt-bump": "0.0.x",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-compress": "0.5.x",
+    "grunt-contrib-copy": "^0.8.1",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-qunit": "0.3.0",
+    "grunt-contrib-uglify": "0.9.x",
+    "grunt-contrib-watch": "~0.5.2",
+    "grunt-jsonlint": "1.0.x",
+    "grunt-karma": "^0.12.0",
+    "grunt-karma-coveralls": "^2.5.4",
+    "grunt-shell": "0.6.x",
+    "jasmine": "^2.3.2",
+    "jasmine-core": "^2.3.4",
+    "jasmine-jquery": "^2.1.0",
+    "jit-grunt": "0.3.x",
+    "jquery": "^2.1.4",
+    "karma": "^0.13.9",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-coverage": "^0.5.1",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-jasmine": "^0.3.6",
+    "karma-jasmine-jquery": "^0.1.1",
+    "karma-logcapture-reporter": "0.0.1",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "karma-requirejs": "^0.2.2",
+    "karma-safari-launcher": "^0.1.1",
+    "karma-verbose-summary-reporter": "0.0.1",
+    "load-grunt-tasks": "~0.1.0",
+    "phantomjs": "^1.9.18",
+    "requirejs": "^2.1.20",
+    "time-grunt": "0.x.x"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install && grunt",
+    "test": "grunt travis"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "license": "MIT",
+  "keywords": [
+    "CrossDomain",
+    "Cross-Domain",
+    "iFrame",
+    "Resizing",
+    "Resizer",
+    "postMessage",
+    "autoheight",
+    "auto-height",
+    "iframe-auto-height",
+    "height-iframe",
+    "heightiframe",
+    "width",
+    "mutationObserver",
+    "RWD",
+    "responsiveiframes",
+    "responsive-iframes",
+    "jquery-plugin"
+  ]
+}

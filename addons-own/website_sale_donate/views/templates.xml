@@ -328,10 +328,10 @@
                                             <div class="col-sm-9" t-if="not product.hide_categories">
                                                 <ol class="breadcrumb">
                                                     <li>
-                                                      <t t-if="request.session['last_shop_page']">
+                                                      <t t-if="request.session.get('last_shop_page', None)">
                                                           <a t-att-href="request.session['last_shop_page']">Back</a>
                                                       </t>
-                                                      <t t-if="not request.session['last_shop_page']">
+                                                      <t t-if="not request.session.get('last_shop_page', None)">
                                                           <a href="/" onclick="history.go(-1); return false;">Back</a>
                                                       </t>
                                                     </li>
@@ -513,10 +513,10 @@
 
                     <!-- Back and Forward Buttons -->
                     <div class="text-left small_cart_buttons">
-                          <t t-if="request.session['last_shop_page']">
+                          <t t-if="request.session.get('last_shop_page', None)">
                               <a t-att-href="request.session['last_shop_page']" class="btn btn-default">Back</a>
                           </t>
-                          <t t-if="not request.session['last_shop_page']">
+                          <t t-if="not request.session.get('last_shop_page', None)">
                               <a href="/" onclick="history.go(-1); return false;" class="btn btn-default">Back</a>
                           </t>
                           <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line" class="btn btn-primary pull-right mb32" href="/shop/checkout">Checkout</a>

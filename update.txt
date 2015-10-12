@@ -21,3 +21,5 @@ https://github.com/OpenAT/odoo_v8.0/commit/62841c0adfc8b7d38d6b9a8ce83013570471b
 odoo-start.py -u website_sale_donate
 https://github.com/OpenAT/odoo_v8.0/commit/4b0cacf5a817d12e842c7edbf11d81477db9f4c6
 odoo-start.py -u all
+https://github.com/OpenAT/odoo_v8.0/commit/0abcbc819e8d219d7f757a76ab5c91c351d8ab07
+odoo-start.py -i website_sale_donate, -u base_config
