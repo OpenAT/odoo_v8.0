@@ -1060,7 +1060,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
 fi
 
 UPDATETRANSLATION="$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE} {MODULNAME} {UPDATETYPE} {LASTLOADED}"
-                                                                                        "{MODULNAME,modulname|odoo|own|customer|all} {LASTLOADED,website_pfot|none}"
+                                                                                        #"{MODULNAME,modulname|odoo|own|customer|all} {LASTLOADED,website_pfot|none}"
 if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $UPDATETRANSLATION"
