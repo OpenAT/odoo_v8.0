@@ -1066,7 +1066,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $UPDATETRANSLATION"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ne 7 ]; then
+    if [ $# -ne 6 ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly seven arguments!"
         exit 2
     fi
