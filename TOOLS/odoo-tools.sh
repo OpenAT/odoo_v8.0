@@ -1079,14 +1079,14 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     echo "Instanzpfad ${INSTANCE_PATH}"
     DATABASECONFIGFILE=${INSTANCE_PATH}/${DBNAME}/${DBNAME}.conf
-    if [ ${UPDATETYPE} = "addonsownloaded" ]; then
-        LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-loaded"
-    elif [ ${UPDATETYPE} = "cuaddonsonly" ]; then
-        LANGUPDATEWORKINGPATH=${INSTANCE_PATH}/${DBNAME}/addons
-    else
-        echo "!!! WRONG UPDATETYPE PARAMETER aboring, check your parameters again ......"
-        exit 2
-    fi
+    #if [ ${UPDATETYPE} = "addonsownloaded" ]; then
+    #    LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-loaded"
+    #elif [ ${UPDATETYPE} = "cuaddonsonly" ]; then
+    #    LANGUPDATEWORKINGPATH=${INSTANCE_PATH}/${DBNAME}/addons
+    #else
+    #    echo "!!! WRONG UPDATETYPE PARAMETER aboring, check your parameters again ......"
+    #    exit 2
+    #fi
     echo "enabling maintenance mode of customer Instance...."
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
