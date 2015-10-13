@@ -1060,7 +1060,8 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     exit 0
 fi
 
-UPDATETRANSLATION="$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE} {MODULNAME} {UPDATETYPE} {WEBSITETEMPLATEMODUL}"
+UPDATETRANSLATION="$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE} {MODULNAME} {UPDATETYPE} {LASTLOADED}"
+                                                                                        "{MODULNAME,modulname|odoo|own|customer|all} {LASTLOADED,website_pfot|none}"
 if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $UPDATETRANSLATION"
@@ -1071,6 +1072,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     fi
     TARGET_BRANCH=$2
     DBNAME=$3
+    DBUSER=${DBNAME}
     LANG=$4
     MODULNAME=$5
     UPDATETYPE=$6
@@ -1088,9 +1090,17 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     fi
     echo "enabling maintenance mode of customer Instance...."
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
+    #TODO: Backup
+    #TODO: GET ISNTALLED LANGUAGES
+         INSTALLEDLANG=$(su - postgres -c \
+           "psql -U ${DBUSER} ${DBNAME} select iso_code, * from res_lang")
+
+        # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
+    echo ${INSTALLEDLANG}
+    exit 2
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
-    if [ ${LANG} = "all" ]; then
+    if [ ${LANG} = "all" ]; then # TODO: ACHTUNG CHECK BEI DOPPEL BELEGUNGEN mitgabe der SPRACHE CHECKEN ch_FR.po
         if [ ${MODULNAME} = "all" ]; then
             echo "update all languages available in all customer modules"
             FILES=$(find ${LANGUPDATEWORKINGPATH} -name *.po)
@@ -1236,7 +1246,7 @@ echo -e "TODO: $ odoo-tools.sh dupdb {BRANCH} {SOURCE_SUPER_PASSWORD} {SOURCE_DB
 echo -e "TODO: $MODEUPDATEINST"
 echo -e "$ odoo-tools.sh maintenancemode {all|dbname} {enable|disable}"
 echo -e "$ $MAINTENANCEMODE"
-echo -e "$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE,de_DE|all} {MODULNAME,modulname|all} {UPDATETYPE,addonsownloaded|cuaddonsonly} {WEBSITETEMPLATEMODUL,website_pfot|none}"
+echo -e "$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE,de_DE|all} {MODULNAME,modulname|odooaddons|addonsownloaded|cuaddonsonly|all} {LASTLOADED,website_pfot|none}"
 echo -e "$ $UPDATETRANSLATION"
 echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEBACKUP"
