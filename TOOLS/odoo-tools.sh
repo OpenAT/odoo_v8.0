@@ -1096,6 +1096,10 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT iso_code from res_lang'")
         # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
     echo ${INSTALLEDLANG}
+    for entry in ${INSTALLEDLANG}
+    do
+        echo ${entry}
+    done
     exit 2
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
