@@ -1092,7 +1092,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
-         INSTALLEDLANG=$(su - postgres -c "psql -c -U ${DBUSER} ${DBNAME} 'SELECT iso_code, * from res_lang'")
+         INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT iso_code, * from res_lang'")
 
         # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
     echo ${INSTALLEDLANG}
