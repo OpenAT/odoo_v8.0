@@ -1093,7 +1093,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
          #INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT iso_code, * from res_lang'")
-        INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT iso_code from res_lang'")
+        INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'")
         # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
     echo ${INSTALLEDLANG}
     for entry in ${INSTALLEDLANG}
