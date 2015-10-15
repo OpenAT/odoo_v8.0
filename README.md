@@ -105,7 +105,7 @@ A maximum of 99 Instances are possible for all installed branches!
 **5.1) Create a new Github-Repository** manually for the custom-addons-folder of the new instance:
 -  **Create a new Github-Repository** hosting the custom-addons of the instance:
     -  Where: https://github.com/OpenAT/
-    -  Name: **cu_{DATABASE_NAME}* e.g.: cu_dadi (DATABASE_NAME should be the customer number e.g.: ahch or dadi)
+    -  Name: **cu_{DATABASE_NAME}** e.g.: cu_dadi (DATABASE_NAME should be the customer number e.g.: ahch or dadi)
 - **Create a webhook** in the repository settings (https://github.com/OpenAT/cu_ahch/settings/hooks)
     - Payload Url: e.g.: ahch.datadialog.net/cu_ahch
     - Content Type: application/x-www-from-urlencoded
