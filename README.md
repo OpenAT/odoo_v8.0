@@ -12,8 +12,8 @@ intdadirle, exthof) or development branches (setuptools, fix1234) that will be m
 ### Branch Names
 - **freename** e.g.: *setuptools*  = Local Development branches that will be merged into master (deleted after merge)
 - **fix[ISSUE Number]** e.g.: *fix1234*  = Developments related to Github Issues (deleted after merge)
-- **int[customer id]** e.g.: *intdemo* = Production Instances hosted on our servers (our servers - also hosted ones)
-- **ext[customer id]** e.g.: *exthof* = Production Instances hosted on external servers (no control/payment from our side)
+- **int[customer id]** e.g.: *intdemo* = Production Instances hosted on our servers (our servers - also our hosted ones e.g.: at abaton)
+- **ext[customer id]** e.g.: *exthof* = Production Instances hosted on customer servers (no control/payment for this servers from our side)
 
 #### Examples of Branch Names on github:
 - master (default stable branch)
@@ -27,7 +27,7 @@ intdadirle, exthof) or development branches (setuptools, fix1234) that will be m
 ### Branch Updates (Deployment) for the odoo codebase:
 The flow of fast-forward-branch-updates is always: master -> intdadi -> intdadirl1 - intdadirl2
 Ext branches are normally not included in the update cycle.
-Therefore and to make FF possible no merges or **commits are ever done directly in any "int" or "ext" branches**
+Therefore and to make FF possible no merges or **commits are never done directly in any "int" or "ext" branches**
 Where int marks a server we pay (our own server) for and ext marks a server the custommer pays for (custommer server).
 
 
