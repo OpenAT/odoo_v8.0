@@ -1098,6 +1098,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         exit 2
     else
         temp_path=$(find ${INSTANCE_PATH}/ -name ${MODULNAME} | grep -v "addons-archiv")
+        echo "temp path: ${temp_path}"
         temp_path=$(dirname ${temp_path})
         if [ ${temp_path} ]; then
             echo "writing module path ${temp_path} ..."
