@@ -119,8 +119,8 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
 
     # ----- Install Basic Packages
     echo -e "\n----- Install Basic Packages"
-    apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev build-essential \
-        gcc mc bzr lptools make nodejs nodejs-dev nodejs-legacy pkg-config npm -y >> ${SETUP_LOG}
+    apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev libxslt1-dev \
+        build-essential gcc mc bzr lptools make nodejs nodejs-dev nodejs-legacy pkg-config npm gdebi -y >> ${SETUP_LOG}
     echo -e "----- Install Basic Packages Done"
 
     # ----- Install postgresql
@@ -142,7 +142,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "----- Install nginx Done"
 
     # ----- Install push-to-deploy
-    echo -e "\n----- Install pushtodeploy node"
+    echo -e "\n----- Install pushtodeploy"
     npm install push-to-deploy -y >> ${SETUP_LOG}
     echo -e "----- Install pushtodeploy Done"
 
@@ -156,23 +156,29 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "\n----- Install Python Apt Packages DONE"
 
     # ----- Install Wkhtmltopdf 0.12.1
-    echo -e "\n----- Install Wkhtmltopdf 0.12.1"
-    if wkhtmltopdf -V | grep "wkhtmltopdf.*12.*" 2>&1>/dev/null; then
-      echo -e "\nWkhtmltopdf 0.12.1 seems to be installed! Skipping installation!\n"
+    echo -e "\n----- Install Wkhtmltopdf 0.12.2.1"
+    if wkhtmltopdf -V | grep "wkhtmltopdf.*12.2.*" 2>&1>/dev/null; then
+      echo -e "\nWkhtmltopdf 0.12.2.x seems to be installed! Skipping installation!\n"
     else
-        apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 -y >> ${SETUP_LOG}
+        apt-get install libjpeg-dev libjpeg8-dev libtiff5-dev vflib3-dev pngtools libpng3 gdebi -y >> ${SETUP_LOG}
         apt-get install xvfb xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic -y >> ${SETUP_LOG}
-        ## curl -L to follow mirror redirect from sourceforge.net (eg. kaz.sourceforge.net...)
+
         cd ${REPO_SETUPPATH}
-        #wget http://sourceforge.net/projects/wkhtmltopdf/files/archive/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> ${SETUP_LOG}
-        wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> ${SETUP_LOG}
-        dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb >> ${SETUP_LOG}
-        cp /usr/local/bin/wkhtmltopdf /usr/bin >> ${SETUP_LOG}
-        cp /usr/local/bin/wkhtmltoimage /usr/bin >> ${SETUP_LOG}
+        #wget http://download.gna.org/wkhtmltopdf/0.12/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb >> ${SETUP_LOG}
+        #dpkg -i wkhtmltox-0.12.1_linux-trusty-amd64.deb >> ${SETUP_LOG}
+        #cp /usr/local/bin/wkhtmltopdf /usr/bin >> ${SETUP_LOG}
+        #cp /usr/local/bin/wkhtmltoimage /usr/bin >> ${SETUP_LOG}
+
+        wget http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
+        gdebi -n wkhtmltox-0.12.2.1_linux-trusty-amd64.deb >> ${SETUP_LOG}
+        rm wkhtmltox-0.12.2.1_linux-trusty-amd64.deb >> ${SETUP_LOG}
+        ln -s /usr/local/bin/wkhtmltopdf /usr/bin/
+        ln -s /usr/local/bin/wkhtmltoimage /usr/bin/
+
         apt-get install flashplugin-nonfree -y >> ${SETUP_LOG}
         pip install git+https://github.com/qoda/python-wkhtmltopdf.git >> ${SETUP_LOG}
     fi
-    echo -e "\n----- Install Wkhtmltopdf 0.12.1 DONE"
+    echo -e "\n----- Install Wkhtmltopdf 0.12.2.1 DONE"
 
     # ----- Install python libs from requirements.txt
     echo -e "\n----- Install python libs from requirements.txt"
@@ -244,12 +250,11 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     apt-get install abiword -y >> ${SETUP_LOG}
     echo -e "----- Install Packages for Etherpad Lite Done"
 
-    # ----- Install npm and Less compiler needed by Odoo 8 Website - added from https://gist.github.com/rm-jamotion/d61bc6525f5b76245b50
+    # ----- Less compiler needed by Odoo 8 Website - added from https://gist.github.com/rm-jamotion/d61bc6525f5b76245b50
     echo -e "\n----- Install less compiler"
     hash -r
-    #curl -L https://npmjs.org/install.sh | sh >> ${SETUP_LOG} # will not work with etherpad-lite
-    npm install less >> ${SETUP_LOG}
-    echo -e "----- Install nodejs and less compiler DONE"
+    npm install -g less less-plugin-clean-css -y && ln -s /usr/bin/nodejs /usr/bin/node >> ${SETUP_LOG}
+    echo -e "----- Install less compiler DONE"
 
     # ----- Install packages for owncloud
     echo -e "\n----- Install packages for owncloud"
@@ -261,7 +266,15 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
         sed -i "s|listen = 127.0.0.1:9000|listen = /var/run/php5-fpm.sock|g" ${FPMCONFIGPATH}
     fi
     update-rc.d -f apache2 disable >> ${SETUP_LOG}
-    echo -e "\n----- Install packages for done"
+    echo -e "\n----- Install packages for owncloud done"
+
+    # ----- GEO IP DB for odoo 8
+    echo -e "\n----- Install GEO-IP-DB"
+    wget -N http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+    gunzip GeoLiteCity.dat.gz >> ${SETUP_LOG}
+    mkdir /usr/share/GeoIP/ >> ${SETUP_LOG}
+    mv GeoLiteCity.dat /usr/share/GeoIP/ >> ${SETUP_LOG}
+    echo -e "----- Install GEO-IP-DB DONE"
 
 
     # ---- Todo: Harden linux server
@@ -383,53 +396,39 @@ fi
 
 
 # ---------------------------------------------------------------------------------------
-# $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME} {CUADDONSREPONAME}
+# $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME} [CUADDONSREPONAME]
 # ---------------------------------------------------------------------------------------
-MODENEWDB="odoo-tools.sh newdb       {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {CUADDONSREPONAME}"
+MODENEWDB="odoo-tools.sh newdb       {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} [CUADDONSREPONAME]"
 MODEDUPDB="odoo-tools.sh duplicatedb {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {DATABASE_TEMPLATE}"
 if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODENEWDB"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    echo -e "DATABASE_NAME should be something like: hof, hof01, db01, erp, test or demo!"
-    echo -e "So customer_id (e.g.: hof) or keyword depending on the instance! Do not use \"_\" in db names!"
-    echo -e "Customer ADDONS name should be the repo name of github, this is used for deploytool"
-    if [ $# -ne 6 ]; then
-        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly four arguments!"
+    echo -e "DATABASE_NAME MUST BE the unique customer number E.g.: pfot, ahch, dadi, ... "
+    echo -e "DATABASE_NAME will be used for the default domains! E.g. for ahch:"
+    echo -e "    ahch.datadialog.net aswidget.ahch.datadialog.net cloud.ahch.datadialog.net pad.ahch.datadialog.net"
+    echo -e "CUADDONSREPONAME is OPTIONAL! for the name of the custom-addons github repository! E.g.: cu_ahch"
+    echo -e "                 Will use \"cu_{DATABASE_NAME}\" if not given!"
+    echo -e "                 THIS PARAMETER IS OPTIONAL AND SHOULD NOT BE USED!"
+    echo -e "ATTENTION: Make sure the github repository for the custom_addons already exists!"
+    echo -e "ATTENTION: Make sure at least the default domains (see above) are already set up!"
+    if [ $# -lt 5 ]; then
+        echo -e "ERROR: \"setup-toosl.sh ${SCRIPT_MODE}\" needs a minimum of five arguments! \n       ${MODENEWDB}"
         exit 2
     fi
 
-    # INFO:
-    #
-    # Variable Names:
-    # If it is a path usw no trailing "/" and use PATH in the variable_name:
-    # So variables without PATH can be anything including files e.g. DB_SETUPLOG
-    #
-    # Conventions:
-    # Use $REPOID (o8) for odoo_v8.0 in DBNAME to identify corresponding Repo in case other repos (_v7.0) are installed
-    # on this server too. o8_ is used because postgres user- and db-names should only contain a-z 0-9 and _
-    #
-    # One repo can only be installed once on a server (but with many instances)
-    #
-    # max 99 Databases are allowed for all databases of all instances of one repo on this server because of port limit
-    # see BASEPORT later down
-    #
-    # New Port Schema:
-    # [v][dd][pp]    [v]=Odoo_Version [dd]=Database    [pp]=Instance_Services
-    #  e.g.: 10169 = [1]=odoo_v8.0    [01]=database_01 [69]=port_69 [08]=PUSHTODELPOY
-    # [0]=Odoo Versions:
-    #       4 = odoo OLD setups 6or7 old install
-    #       1 = odoo v8.0
-    #       2 = odoo v9.0
-    #
-    # Customer ADDONS name --> example: cu_tier
-    # Highest Linux Port Number (2^16)-1, or 0-65,535 (the -1 is because port 0 is reserved and unavailable)
+    # CONVENTIONS:
+    # !!! Please read the TOOLS/README.md !!!
 
     # ----- Set Variables
     TARGET_BRANCH=$2
     SUPER_PASSWORD=$3
     DOMAIN_NAME=$5
-    CUADDONSREPONAME=$6
+    if $6; then
+        CUADDONSREPONAME=$6
+    else
+        CUADDONSREPONAME="cu_$4"
+    fi
 
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
 
@@ -556,7 +555,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\$3 SUPER_PASSWORD                 :  $SUPER_PASSWORD" | tee -a ${DB_SETUPLOG}
     echo -e "\$4 DATABASE_NAME                  :  $4" | tee -a ${DB_SETUPLOG}
     echo -e "\$5 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a ${DB_SETUPLOG}
-    echo -e "\$6 CUADDONSREPONAME                    : $CUADDONSREPONAME" | tee -a ${DB_SETUPLOG}
+    echo -e "\$6 CUADDONSREPONAME               : $CUADDONSREPONAME" | tee -a ${DB_SETUPLOG}
     echo -e ""
     echo -e "Database Setup Log File           :  ${DB_SETUPLOG}" | tee -a ${DB_SETUPLOG}
     echo -e ""
@@ -902,8 +901,8 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh updateinst  {TARGET_BRANCH}
 # ---------------------------------------------------------------------------------------
-MODEUPDATEINST="$ odoo-tools.sh updateinst  {TARGET_BRANCH}"
-if [ "$SCRIPT_MODE" = "updateinst" ]; then
+MODEUPDATEINST="$ odoo-tools.sh update  {TARGET_BRANCH}"
+if [ "$SCRIPT_MODE" = "update" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEUPDATEINST"
     echo -e "--------------------------------------------------------------------------------------------------------"
@@ -1118,9 +1117,8 @@ echo -e "$ odoo-tools.sh {prepare|setup|newdb|dupdb|deploy|backup|restore}\n"
 echo -e "$ $MODEPREPARE"
 echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
-echo -e "TODO: $ odoo-tools.sh dupdb {BRANCH} {SOURCE_SUPER_PASSWORD} {SOURCE_DBNAME} {TARGET_DBNAME} {TARGET_DOMAIN} {CUADDONSREPONAME}"
+echo -e "TODO: $MODEDUPDB"
 echo -e "TODO: $MODEUPDATEINST"
-echo -e "$ odoo-tools.sh maintenancemode {all|dbname} {enable|disable}"
 echo -e "$ $MAINTENANCEMODE"
 echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEBACKUP"

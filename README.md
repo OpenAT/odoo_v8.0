@@ -1,94 +1,130 @@
-# odoo_v8.0
-This repo is used for production for odoo v8 installations. It is also the place where we develop our own addons for
-odoo. The *master* branch of this repo is always a deployable production ready branch. All branch names (=Instances) 
-uploaded here have to follow this examples:
+# odoo_v8.0 Code Base
+This repository is used as a codebase for odoo v8.0 and the related setup tools (odoo-tools.sh). 
+The *master* branch of this repo is always a deploy-able production ready branch. 
 
-- **fix[ISSUE Number]** e.g.: *fix1234*  = FIXES, Developments, Updates - (Make github Issue first!)
-- **int[customer id]** e.g.: *intdemo* = Production Instances hosted on our servers
-- **ext[customer id]** e.g.: *exthof* = Production Instances hosted on external servers
+## CONVENTIONS
 
-If they do not follow this conventions they are considered to be test branches. To get a better idea how final Database
-Names will look like on a server following this conventions consider teh following examples. REPO (o8) and BRANCH 
-(= Instance Name) will be automatically added by odoo-tools.sh!
+### Branches:
+The default latest stable branch is called master.
+The other branches in the github repository are either production branches starting with "int" or "ext" (intdadi,
+intdadirle, exthof) or development branches (setuptools, fix1234) that will be merged back into the master branch.
 
-#### Examples of full Database Names: 
+### Branch Names
+- **freename** e.g.: *setuptools*  = Local Development branches that will be merged into master (deleted after merge)
+- **fix[ISSUE Number]** e.g.: *fix1234*  = Developments related to Github Issues (deleted after merge)
+- **int[customer id]** e.g.: *intdemo* = Production Instances hosted on our servers (our servers - also hosted ones)
+- **ext[customer id]** e.g.: *exthof* = Production Instances hosted on external servers (no control/payment from our side)
 
-**[REPO]_[BRANCH]_[DATABASE]**
+#### Examples of Branch Names on github:
+- master (default stable branch)
+- intdadi
+- intdadirl1
+- intdevel
+- exthofe
+- fix1234 (deleted after merge)
+- setuptools (deleted after merge)
 
-- o8_exthof_hof
-- o8_exthof_schulung
-- o8_exthof_demo
-- o8_intnpodemos_demo
-- o8_intnpodemos_pfo
-- o8_intnpodemos_pfo
-- o8_intope_erp
-- o8_intdad_web
+### Branch Updates (Deployment) for the odoo codebase:
+The flow of fast-forward-branch-updates is always: master -> intdadi -> intdadirl1 - intdadirl2
+Ext branches are normally not included in the update cycle.
+Therefore and to make FF possible no merges or **commits are ever done directly in any "int" or "ext" branches**
+Where int marks a server we pay (our own server) for and ext marks a server the custommer pays for (custommer server).
 
 
 ## GOALS
 
-#### Better version and update handling
-- updated requirements.txt to install with pip install -r /path/to/requirements.txt
-- all third party addons as well as odoo itself are linked as submodules
+#### One Codebase (github repository) for all instances
+- The branch determines the release (master=latest -> intdadi -> intdadirl1)
+- All third party addons as well as odoo itself are linked as submodules and therefore tied with a specific commit
 
-#### Simple setup through odoo-tools.sh
+#### Simple setup and maintenance through odoo-tools.sh
 **odoo-tools.sh** is a simple setup script that is able to
-- prepare an ubuntu 14.04 LTS server for odoo
-- setup new instances of odoo on the local server
-- create new databases for a local instance with setup of:
+- **prepare** an ubuntu 14.04 LTS server to run odoo v8 (libs, tools, settings)
+- **setup**/download the odoo code base for odoo v8 from github
+- **newdb** create a new odoo instance:
+    - linux user
+    - database creation
     - postgres user
     - server.conf und server.init
-    - database creation
-    - etherpad setup
-    - nginx setup (match url to local db)
+    - etherpad
+    - owncloud
+    - nginx setup (match urls to instance via vhosts) and setup default URLs e.g.: ahch.datadialog.net, aswidget.ahch.datadialog.net, cloud.ahch.datadialog.net, pad.ahch.datadialog.net
     - backup and logrotate cron jobs
-    - create and link customer addons into customers Instance /addons folder
-    - Install push-to-deploy workflow for updating the customer addons
-- ToDo: update an instance to branch master from github
+    - create and link custom-addons githup repository into the instance addons folder
+    - Install push-to-deploy workflow for updating the custom addons folder
+- **duplicatedb** duplicate an instance (TODO!)
+- **update** one or all instances to the latest master branch (TODO!)
+    - clone the server (VMWare)
+    - create new snapshot on the clone
+    - backup instances on the clone
+    - Try the update(s) on the clone (one by one) and if it all worked:
+    - Do the Updates on the production machine
+- **maintenancemode** set one or all instances into maintenance mode (not reachable from the outside)
+- **backup** one or all instances
+- **restore** one or all instances (TODO!)
 - ToDo: deploy addon(s) to one or more databases on the local server
 
-Also there is a tool called **db-tools.sh** to backup and restore local databases.
+**HINT:** **db-tools.sh** is used by odoo-tools.sh to backup and restore the database and data-dir of an instance.
 
 
 ## SETUP
 This setup process will only work on a fresh install of Ubuntu 14.04 LTS. Make sure timezone is correct and the server
 has internet access!
 
-```bash
-# 1.) Be Root ;)
-sudo su
 
-# 2.) get odoo-tools.sh
+### 1.) Be Root ;)
+```bash
+ssh yourname@yourserver
+sudo su
+```
+
+### 2.) get odoo-tools.sh
+```bash
 wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/odoo-tools.sh > odoo-tools.sh
 chmod 755 odoo-tools.sh
-
-# 3.) Prepare the Ubuntu Server (reboot after finish is recommended)
-odoo-tools.sh prepare
-
-# 4.) Setup a new instance:
-# USAGE: odoo-tools.sh setup {TARGET_BRANCH}
-odoo-tools.sh setup intdemo 
-
-# 5.) Setup a new customer Addons repo in github:
-# USAGE: Manual goto github and create a new repo if not exists already for this customer even we do not use a specific addon
-Goto Gibhub  https://github.com/OpenAT/ click + New Repository give it a name like "cu_dev01" "cu_herz"
-Than goto the settings of this new repo and create a webhook or click here https://github.com/OpenAT/cu_dev01/settings/hooks
-use payload Url like: http://subdomain.domainname.net/cu_dev01 --> production would be the customers domain
-content Type: application/x-www-from-urlencoded
-and safe the hoock,
-move on with newdb intallation now
-after your newdb intallation you should see now a green check if you made everything correct
-NOW you can Push your modules into this repo and start developing or already finished before your newdb intallation
-- TODO: maybe we can automate this process too, right now i think it is a good idea to keep this in manual mode, or at least repo creation and hook creation
-
-# 6.) Create a new Database:
-# Start once with no options to see usage (look for newdb)
-odoo-tools.sh newdb <...>
-
-#For Production Instances ONLY!: you should immediately push your new branch to github!
-# HINT: Dont worry *.conf *.log and *.init files and database directories o8_*/ are in .gitignore !
-git push origin YOURBRANCH
 ```
+
+### 3.) Prepare the Ubuntu Server
+```bash
+odoo-tools.sh prepare
+```
+**Reboot the server!**
+
+### 4.) Setup the odoo_v8.0 codebase (=branch):
+```bash
+# USAGE: odoo-tools.sh setup {TARGET_BRANCH}
+odoo-tools.sh setup intdadi
+```
+This will create a new folder in **/opt/odoo_v8.0** called **intdadi**.
+
+**HINT:** You can run **multiple branches on the same server!** All the branches will use and increment the same 
+counter-file for the Database-Port therefore no port collisions can happen between Instances of different branches! 
+A maximum of 99 Instances are possible for all installed branches!
+
+### 5.) Create a new Instance:
+**5.1) Create a new Github-Repository** manually for the custom addons folder of the new instance first:
+- https://github.com/OpenAT/ -> New Repository: Name = "cu_{DATABASE_NAME}" (DATABASE_NAME should be the customer number e.g.: ahch)
+- Create a webhook in the repository settings (https://github.com/OpenAT/cu_ahch/settings/hooks)
+    - Payload Url: e.g.: ahch.datadialog.net/cu_ahch
+    - Content Type: application/x-www-from-urlencoded
+
+**5.2) Create the Default DNS-Entries for the new instance:**
+- dadi.datadialog.net, \*.dadi.datadialog.net
+
+**5.3) Install the new Instance:**
+```bash
+# usage: odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} [CUADDONSREPONAME]
+odoo-tools.sh newdb intdadi admin dadi www.datadialog.net
+```
+- Test/open the new instance
+- Install addon base_config
+
+**5.4) Save the installation summary in keepass!!!**
+
+**5.5) Add the instance to the monitoring service**
+
+**5.6) Ask the customer to set the correct DNS entries:
+www.datadialog.net, aswidget.www.datadialog.net, pad.www.datadialog.net, cloud.www.datadialog.net
 
 
 ## DEVELOPMENT
@@ -145,7 +181,7 @@ git submodule update --rebase --remote --recursive
 
 ## UPDATE OF AN INSTANCE (and its DBs)
 
-This is for now only a placeholder but will describe the update process of a customer instance. Keep tuned ;)
+This is for now only a placeholder but will describe the update process of a customer instance.
 ```bash
 
 # Update Master
@@ -167,7 +203,7 @@ git checkout master
 git pull
 git submodule update --remote --rebase --recursive
 git commit -am "[UPDATE] all submodules updated"
-# then you have to push master branch back to origin/master
+git push master
 ```
 
 ## DOCUMENTATION
