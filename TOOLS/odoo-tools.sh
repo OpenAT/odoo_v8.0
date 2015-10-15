@@ -1166,11 +1166,12 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             echo "Updateing only ${LANG} in ${MODULNAME}"
             for iso in ${INSTALLEDLANG}
             do
-            echo "comparre iso: ${iso} with LANG ${LANG} paramater "
+            echo "compare iso: ${iso} with LANG ${LANG} paramater "
             if [ ${iso} = ${LANG} ]; then
                 echo "processing ${iso} language..."
+                echo "langpath: ${LANGUPDATEWORKINGPATH}"
                 FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po)
-                echo ${FILES}
+                echo "files: ${FILES}"
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file..."
