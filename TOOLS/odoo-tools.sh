@@ -1174,9 +1174,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file..."
-                    realpath=$(readlink ${f})
                     sudo su - ${DBNAME} -c \
-                    " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${iso} --i18n-import=${realpath} --i18n-overwrite"
+                    " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${iso} --i18n-import=${f} --i18n-overwrite"
                 done
             else
                 echo "ignoring Installed language ${iso}..."
