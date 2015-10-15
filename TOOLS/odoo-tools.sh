@@ -1092,8 +1092,14 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "update all modules languages not supported right now"
         exit 2
     else
-        echo "!!! WRONG UPDATETYPE PARAMETER aboring, check your parameters again ......"
-        exit 2
+        temp_path=$(find ${INSTANCE_PATH}/ -name ${MODULNAME} | grep -v "addons-archiv")
+        temp_path=$(dirname ${temp_path})
+        if [ ${temp_path} ]; then
+            echo "writing module path ${temp_path} ..."
+            LANGUPDATEWORKINGPATH=${temp_path}
+        else
+            echo "this module does not exist"
+        fi
     fi
     echo "enabling maintenance mode of customer Instance...."
     #call this script recursive with another option
