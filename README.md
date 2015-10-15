@@ -27,7 +27,7 @@ intdadirle, exthof) or development branches (setuptools, fix1234) that will be m
 ### Branch Updates (Deployment) for the odoo codebase:
 The flow of fast-forward-branch-updates is always: master -> intdadi -> intdadirl1 - intdadirl2
 Ext branches are normally not included in the update cycle.
-Therefore and to make FF possible no merges or **commits are never done directly in any "int" or "ext" branches**
+Therefore and to make FF possible **merges or commits are never done directly in any "int" or "ext" branches**
 Where int marks a server we pay (our own server) for and ext marks a server the custommer pays for (custommer server).
 
 
