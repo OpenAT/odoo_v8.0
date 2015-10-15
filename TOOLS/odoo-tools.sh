@@ -1171,7 +1171,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             if [ ${iso} = ${LANG} ]; then
                 echo "processing ${iso} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po |xargs readlink -f grep ${area})
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po |xargs readlink -f | grep ${area})
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file..."
