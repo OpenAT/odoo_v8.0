@@ -1082,12 +1082,16 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     DATABASECONFIGFILE=${INSTANCE_PATH}/${DBNAME}/${DBNAME}.conf
     if [ ${MODULNAME} = "own" ]; then
         LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-loaded" # -L because of links
+        area="addons-own"
     elif [ ${MODULNAME} = "third" ]; then
         LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-loaded" # -L because of links
+        area="addons-thirdparty"
     elif [ ${MODULNAME} = "odoo" ]; then
         LANGUPDATEWORKINGPATH=${INSTANCE_PATH}/addons
+        area="odoo/addons"
     elif [ ${MODULNAME} = "customer" ]; then
         LANGUPDATEWORKINGPATH=${INSTANCE_PATH}/${DBNAME}/addons
+        area="${DBNAME}/addons"
     elif [ ${MODULNAME} = "all" ]; then
         echo "update all modules languages not supported right now"
         exit 2
@@ -1141,7 +1145,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
                 for iso in ${INSTALLEDLANG}
                 do
                 echo "processing ${iso} language ..."
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po)
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po  | grep -v "addons-archiv" ${area})
                     for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                     do
                         echo "Processing $f file..."
@@ -1188,7 +1192,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
                 for iso in ${INSTALLEDLANG}
                 do
                 echo "processing ${iso} ..."
-                FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${iso}.po)
+                FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${iso}.po | grep -v "addons-archiv" ${area})
                 echo ${FILES}
                     for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                     do
