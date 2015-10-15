@@ -1114,11 +1114,6 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
          #INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT iso_code, * from res_lang'")
         INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'")
         # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
-    echo "installedlang ${INSTALLEDLANG}"
-    for entry in ${INSTALLEDLANG}
-    do
-        echo ${entry}
-    done
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
     if [ ${LANG} = "all" ]; then
@@ -1160,6 +1155,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             #TODO: wenn die sprache nicht all ist --> könnte ich vorher checken ob die sprache installiert ist und diese vergleichen
         echo "check if language exists..."
         langexists=$(echo ${INSTALLEDLANG[@]} |grep -o ${LANG} | wc -w)
+        echo "langexists: ${langexists}"
         if ! [ ${langexists} ]; then
             echo "language does not exist..."
             exit 2
@@ -1170,6 +1166,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             echo "Updateing only ${LANG} in ${MODULNAME}"
             for iso in ${INSTALLEDLANG}
             do
+            echo "comparre iso: ${iso} with LANG ${LANG} paramater "
             if [ ${iso} = ${LANG} ]; then
                 echo "processing ${iso} language..."
                 FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po)
