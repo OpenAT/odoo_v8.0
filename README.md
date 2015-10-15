@@ -102,9 +102,11 @@ counter-file for the Database-Port therefore no port collisions can happen betwe
 A maximum of 99 Instances are possible for all installed branches!
 
 ### 5.) Create a new Instance:
-**5.1) Create a new Github-Repository** manually for the custom addons folder of the new instance first:
-- https://github.com/OpenAT/ -> New Repository: Name = "cu_{DATABASE_NAME}" (DATABASE_NAME should be the customer number e.g.: ahch)
-- Create a webhook in the repository settings (https://github.com/OpenAT/cu_ahch/settings/hooks)
+**5.1) Create a new Github-Repository** manually for the custom-addons-folder of the new instance:
+-  **Create a new Github-Repository** hosting the custom-addons of the instance:
+    -  Where: https://github.com/OpenAT/
+    -  Name: **cu_{DATABASE_NAME}* e.g.: cu_dadi (DATABASE_NAME should be the customer number e.g.: ahch or dadi)
+- **Create a webhook** in the repository settings (https://github.com/OpenAT/cu_ahch/settings/hooks)
     - Payload Url: e.g.: ahch.datadialog.net/cu_ahch
     - Content Type: application/x-www-from-urlencoded
 
@@ -123,7 +125,7 @@ odoo-tools.sh newdb intdadi admin dadi www.datadialog.net
 
 **5.5) Add the instance to the monitoring service**
 
-**5.6) Ask the customer to set the correct DNS entries:
+**5.6) Ask the customer to set the correct DNS entries:**
 www.datadialog.net, aswidget.www.datadialog.net, pad.www.datadialog.net, cloud.www.datadialog.net
 
 
