@@ -1123,7 +1123,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             for iso in ${INSTALLEDLANG}
             do
             echo "processing ${iso} language ..."
-            FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po)
+            FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po |xargs readlink -f | grep ${area})
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file..."
@@ -1142,7 +1142,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
                 for iso in ${INSTALLEDLANG}
                 do
                 echo "processing ${iso} language ..."
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po  | grep -v "addons-archiv" ${area})
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po | grep -v "addons-archiv" ${area})
                     for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                     do
                         echo "Processing $f file..."
@@ -1165,6 +1165,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #echo "this is the single language: ${SINGLELANGUAGE}"
         if ! [ ${MODULNAME} = "all" ]; then
             echo "Updateing only ${LANG} in ${MODULNAME}"
+            echo "${INSTALLEDLANG}"
             for iso in ${INSTALLEDLANG}
             do
             echo "compare iso: ${iso} with LANG ${LANG} paramater "
