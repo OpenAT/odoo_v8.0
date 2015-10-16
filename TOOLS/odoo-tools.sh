@@ -1112,11 +1112,14 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
-        declare -a INSTALLEDLANG
+        #declare -a INSTALLEDLANG
         #INSTALLEDLANG=( $(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'") )
         #INSTALLEDLANG=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
         #declare -a INSTALLEDPOFILE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'")
-        su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ignore INSTALLEDPOFILE ; do
+        su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ignore INSTALLEDPOFILE ; do
+        #su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ; do
+        #echo "LOCALE: ${INSTALLEDLANG[0]} ISOPO: ${INSTALLEDPOFILE[0]}"
+
         echo "LOCALE: ${INSTALLEDLANG} ISOPO: ${INSTALLEDPOFILE}"
         done
         #for test in ${INSTALLEDLANG[0]}
