@@ -1190,9 +1190,9 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             do
             i=0
             echo "variable i: ${i}"
-            localecode=${!INSTALLEDPOFILE[${i}]}
+            localecode=${!INSTALLEDPOFILE[${iso}]}
             echo "localecode: ${localecode}"
-            echo "compare iso: ${iso} with LANG ${LANG} paramater "
+            echo "compare iso: ${INSTALLEDLANG[${iso}]} with LANG: ${LANG} paramater "
             if [ ${iso} = ${LANG} ]; then
                 echo "processing ${iso} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
