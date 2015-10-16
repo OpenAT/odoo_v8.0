@@ -1121,15 +1121,15 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "printf"
         printf '%s\n' "${INSTALLEDLANG[@]}"
         echo "awk"
-        echo ${INSTALLEDLANG} | awk 'NR == 1'
+        echo=$(echo ${INSTALLEDLANG} | awk -F'|' '{print $1}')
         echo "test ende"
-        OIFS=$IFS;
+        OIFS=${IFS};
         IFS="|";
         for ((i=0; i<${#INSTALLEDLANG[@]}; ++i));
         do
-            echo ${#INSTALLEDLANG[@]}
-            echo "entry ${i}: ${INSTALLEDLANG[$i]}";
+            echo "entry ${i}: $(echo ${INSTALLEDLANG} | awk -F'|' '{print $i}')";
         done
+        ${IFS}=${OIFS}
         exit 2
         #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
         # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
