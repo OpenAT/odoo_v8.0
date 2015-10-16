@@ -1112,7 +1112,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
         #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT code, * from res_lang'")
-        declare -A INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
+        INSTALLEDLANG=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
 
         #echo "zweidimensional: ${INSTALLEDLANG}"
         echo "ARRAYLINE: ${INSTALLEDLANG[1]]}"
@@ -1122,13 +1122,13 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "awk"
         echo=$(echo ${INSTALLEDLANG} | awk -F'|' '{print $1}')
         echo "test ende"
-        OIFS=${IFS};
+        OIFS=${IFS}
         IFS="|";
         for ((i=0; i<${#INSTALLEDLANG[@]}; ++i));
         do
             echo "entry ${i}: $(echo ${INSTALLEDLANG} | awk -F'|' '{print $i}')";
         done
-        ${IFS}=${OIFS}
+        IFS=${OIFS}
         exit 2
         #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
         # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
