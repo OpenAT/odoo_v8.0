@@ -1115,7 +1115,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
          #INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT iso_code, * from res_lang'")
         INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
         #echo "zweidimensional: ${INSTALLEDLANG}"
-        echo "${INSTALLEDLANG:0:1}"
+        echo "${!INSTALLEDLANG[0]:0:1]}"
 
         #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
         # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
