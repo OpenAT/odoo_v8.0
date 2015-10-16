@@ -1111,9 +1111,9 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
-        INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
+        declare -a INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
         #INSTALLEDLANG=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
-        INSTALLEDPOFILE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'")
+        declare -a INSTALLEDPOFILE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'")
         #echo "zweidimensional: ${INSTALLEDLANG}"
         #echo "ARRAYLINE: ${INSTALLEDLANG[1]]}"
         #echo $(echo ${INSTALLEDLANG} | sed -n '1p')
@@ -1189,7 +1189,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             do
             i=0
             echo "variable i: ${i}"
-            localecode=${INSTALLEDPOFILE[${i}]}
+            localecode=${INSTALLEDPOFILE[$i]}
             echo "localecode: ${localecode}"
             echo "compare iso: ${iso} with LANG ${LANG} paramater "
             if [ ${iso} = ${LANG} ]; then
