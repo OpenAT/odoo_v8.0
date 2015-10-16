@@ -1118,7 +1118,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ; do
         echo "LOCALE: ${INSTALLEDLANG[0]} ISOPO: ${INSTALLEDLANG[2]}"
         done
-        for test in ${INSTALLEDLANG}
+        for test in ${INSTALLEDLANG[0]}
         do
             echo "entry: ${test}"
         done
