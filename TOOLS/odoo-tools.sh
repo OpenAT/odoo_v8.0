@@ -1113,7 +1113,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
          #INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT iso_code, * from res_lang'")
-        INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
+        declare -A INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
         #echo "zweidimensional: ${INSTALLEDLANG}"
         echo "ARRAY: ${!INSTALLEDLANG[0]:0:1]}"
 
