@@ -1117,7 +1117,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "ARRAYLINE: ${INSTALLEDLANG[1]:0:1]}"
         echo $(echo ${INSTALLEDLANG} | sed -n '1p')
         echo "printf"
-        printf '%s\n' "${INSTALLEDLANG[@]}"
+        printf '%s\n' "${INSTALLEDLANG[1]:0:1}"
         echo "test ende"
         exit 2
         #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
