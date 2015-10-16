@@ -1112,13 +1112,15 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
-         #INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT iso_code, * from res_lang'")
+        #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT code, * from res_lang'")
         INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
         #echo "zweidimensional: ${INSTALLEDLANG}"
         echo "ARRAYLINE: ${INSTALLEDLANG[1]:0:1]}"
         echo $(echo ${INSTALLEDLANG} | sed -n '1p')
         echo "printf"
         printf '%s\n' "${INSTALLEDLANG[1]:0:1}"
+        echo "awk"
+        awk -v lineNum=1 '{if (NR == lineNum) {print $0}}' ${INSTALLEDLANG[@]}
         echo "test ende"
         exit 2
         #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
