@@ -1112,7 +1112,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
-        INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT code, * from res_lang'")
+        INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT code from res_lang'")
         #INSTALLEDLANG=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
         INSTALLEDPOFILE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'")
         #echo "zweidimensional: ${INSTALLEDLANG}"
@@ -1131,7 +1131,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #    echo "entry ${i}: $(echo ${INSTALLEDLANG} | awk -F'|' '{print $i}')";
         #done
         #IFS=${OIFS}
-        exit 2
+
         #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
         # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
     echo "stopping ${DBNAME} ..."
