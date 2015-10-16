@@ -1183,13 +1183,13 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #echo "this is the single language: ${SINGLELANGUAGE}"
         if ! [ ${MODULNAME} = "all" ]; then
             echo "Updateing only ${LANG} in ${MODULNAME}"
-            echo "installedlang:\n ${INSTALLEDLANG}"
-            echo "installedpofile:\n ${INSTALLEDPOFILE}"
-            for iso in ${!INSTALLEDLANG[*]}
+            echo -e "installedlang:\n ${INSTALLEDLANG}"
+            echo -e "installedpofile:\n ${INSTALLEDPOFILE}"
+            for iso in ${INSTALLEDLANG}
             do
             i=0
             echo "variable i: ${i}"
-            localecode=${!INSTALLEDPOFILE[${iso}]}
+            localecode=${INSTALLEDPOFILE[$iso]}
             echo "localecode: ${localecode}"
             echo "compare iso: ${INSTALLEDLANG[$iso]} with LANG: ${LANG} paramater "
             if [ ${iso} = ${LANG} ]; then
