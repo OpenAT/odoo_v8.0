@@ -1174,22 +1174,22 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             #TODO: wenn die sprache nicht all ist --> könnte ich vorher checken ob die sprache installiert ist und diese vergleichen
         echo "check if language exists..."
         langexists=$(echo ${INSTALLEDLANG[@]} |grep -o ${LANG} | wc -w)
-        echo "langexists: ${langexists}"
         if ! [ ${langexists} ]; then
             echo "language does not exist..."
             exit 2
         fi
+        echo "langexists: ${langexists}"
         #SINGLELANGUAGE=${LANG%_*} #get only first part of Language before underline
         #echo "this is the single language: ${SINGLELANGUAGE}"
         if ! [ ${MODULNAME} = "all" ]; then
             echo "Updateing only ${LANG} in ${MODULNAME}"
             echo "installedlang: ${INSTALLEDLANG}"
             echo "installedpofile: ${INSTALLEDPOFILE}"
-            for iso in ${INSTALLEDLANG[@]}
+            for iso in ${!INSTALLEDLANG[*]}
             do
             i=0
             echo "variable i: ${i}"
-            localecode=${INSTALLEDPOFILE[$i]}
+            localecode=${!INSTALLEDPOFILE[${i}]}
             echo "localecode: ${localecode}"
             echo "compare iso: ${iso} with LANG ${LANG} paramater "
             if [ ${iso} = ${LANG} ]; then
@@ -1205,7 +1205,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             else
                 echo "ignoring Installed language ${iso}..."
             fi
-            i+=1
+            let "i++"
             done
         else
             echo "update in all Modules ${LANG} ..."
