@@ -1117,6 +1117,11 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ; do
         echo "LOCALE: ${INSTALLEDLANG[0]} ISOPO: ${INSTALLEDLANG[2]}"
         done
+        for each in ${INSTALLEDLANG[@]}
+        do
+            echo "entry: ${each}"
+        done
+        echo "${INSTALLEDLANG[0]}}"
         exit 2
         #echo "zweidimensional: ${INSTALLEDLANG}"
         #echo "ARRAYLINE: ${INSTALLEDLANG[1]]}"
@@ -1186,14 +1191,11 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #SINGLELANGUAGE=${LANG%_*} #get only first part of Language before underline
         #echo "this is the single language: ${SINGLELANGUAGE}"
         if ! [ ${MODULNAME} = "all" ]; then
-            echo "Updateing only ${LANG} in ${MODULNAME}"
-            echo -e "installedlang:\n ${INSTALLEDLANG}"
-            echo -e "installedpofile:\n ${INSTALLEDPOFILE}"
-            for iso in ${INSTALLEDLANG}
+            for iso in ${INSTALLEDLANG[0]}
             do
             i=0
             echo "variable i: ${i}"
-            localecode=${INSTALLEDPOFILE[$iso]}
+            localecode=${INSTALLEDLANG[2]}
             echo "localecode: ${localecode}"
             echo "compare iso: ${INSTALLEDLANG[$iso]} with LANG: ${LANG} paramater "
             if [ ${iso} = ${LANG} ]; then
