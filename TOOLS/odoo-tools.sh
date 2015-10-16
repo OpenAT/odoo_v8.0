@@ -1115,7 +1115,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT code, * from res_lang'")
         INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
         #echo "zweidimensional: ${INSTALLEDLANG}"
-        echo "ARRAYLINE: ${INSTALLEDLANG[@]:0:1]}"
+        echo "ARRAYLINE: ${INSTALLEDLANG[1]:0:1]}"
         echo $(echo ${INSTALLEDLANG} | sed -n '1p')
         echo "printf"
         printf '%s\n' "${INSTALLEDLANG[@]}"
