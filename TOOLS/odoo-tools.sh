@@ -1115,8 +1115,9 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #INSTALLEDLANG=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
         #declare -a INSTALLEDPOFILE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'")
         su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ; do
-        echo "LOCALE: ${INSTALLEDLANG[0]} ISOPO: ${INSTALLEDLANG[1]}"
+        echo "LOCALE: ${INSTALLEDLANG[0]} ISOPO: ${INSTALLEDLANG[0]}"
         done
+        exit 2
         #echo "zweidimensional: ${INSTALLEDLANG}"
         #echo "ARRAYLINE: ${INSTALLEDLANG[1]]}"
         #echo $(echo ${INSTALLEDLANG} | sed -n '1p')
