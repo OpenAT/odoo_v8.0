@@ -1183,17 +1183,17 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #echo "this is the single language: ${SINGLELANGUAGE}"
         if ! [ ${MODULNAME} = "all" ]; then
             echo "Updateing only ${LANG} in ${MODULNAME}"
-            echo "installedlang: ${INSTALLEDLANG}"
-            echo "installedpofile: ${INSTALLEDPOFILE}"
+            echo "installedlang:\n ${INSTALLEDLANG}"
+            echo "installedpofile:\n ${INSTALLEDPOFILE}"
             for iso in ${!INSTALLEDLANG[*]}
             do
             i=0
             echo "variable i: ${i}"
             localecode=${!INSTALLEDPOFILE[${iso}]}
             echo "localecode: ${localecode}"
-            echo "compare iso: ${INSTALLEDLANG[${iso}]} with LANG: ${LANG} paramater "
+            echo "compare iso: ${INSTALLEDLANG[$iso]} with LANG: ${LANG} paramater "
             if [ ${iso} = ${LANG} ]; then
-                echo "processing ${iso} language..."
+                echo "processing ${INSTALLEDLANG[$iso]} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
                 FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${localecode}.po |xargs readlink -f | grep ${area})
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
@@ -1203,7 +1203,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
                     " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${iso} --i18n-import=${f} --i18n-overwrite"
                 done
             else
-                echo "ignoring Installed language ${iso}..."
+                echo "ignoring Installed language ${INSTALLEDLANG[$iso]}..."
             fi
             let "i++"
             done
