@@ -1115,7 +1115,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #INSTALLEDLANG=( $(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'") )
         #INSTALLEDLANG=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
         #declare -a INSTALLEDPOFILE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'")
-        su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ignore INSTALLEDPOFILE ; do
+        su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ignore INSTALLEDPOFILE
+        do
         #su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ; do
         #echo "LOCALE: ${INSTALLEDLANG[0]} ISOPO: ${INSTALLEDPOFILE[0]}"
 
