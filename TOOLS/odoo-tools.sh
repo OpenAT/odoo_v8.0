@@ -1111,9 +1111,9 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
-        #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT code, * from res_lang'")
-        INSTALLEDLANG=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
-
+        INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT code, * from res_lang'")
+        #INSTALLEDLANG=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
+        INSTALLEDPOFILE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'")
         #echo "zweidimensional: ${INSTALLEDLANG}"
         echo "ARRAYLINE: ${INSTALLEDLANG[1]]}"
         echo $(echo ${INSTALLEDLANG} | sed -n '1p')
@@ -1121,14 +1121,15 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         printf '%s\n' "${INSTALLEDLANG[@]}"
         echo "awk"
         echo=$(echo ${INSTALLEDLANG} | awk -F'|' '{print $1}')
+
         echo "test ende"
-        OIFS=${IFS}
-        IFS="|";
-        for ((i=0; i<${#INSTALLEDLANG[@]}; ++i));
-        do
-            echo "entry ${i}: $(echo ${INSTALLEDLANG} | awk -F'|' '{print $i}')";
-        done
-        IFS=${OIFS}
+        #OIFS=${IFS}
+        #IFS="|";
+        #for ((i=0; i<${#INSTALLEDLANG[@]}; ++i));
+        #do
+        #    echo "entry ${i}: $(echo ${INSTALLEDLANG} | awk -F'|' '{print $i}')";
+        #done
+        #IFS=${OIFS}
         exit 2
         #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
         # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
@@ -1183,13 +1184,16 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         if ! [ ${MODULNAME} = "all" ]; then
             echo "Updateing only ${LANG} in ${MODULNAME}"
             echo "${INSTALLEDLANG}"
-            for iso in ${INSTALLEDLANG}
+            for iso in ${INSTALLEDLANG[@]}
             do
+            i=0
+            echo ${i}
+            localecode=${INSTALLEDPOFILE[${i}]}
             echo "compare iso: ${iso} with LANG ${LANG} paramater "
             if [ ${iso} = ${LANG} ]; then
                 echo "processing ${iso} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po |xargs readlink -f | grep ${area})
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${localecode}.po |xargs readlink -f | grep ${area})
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file..."
@@ -1199,6 +1203,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             else
                 echo "ignoring Installed language ${iso}..."
             fi
+            i+=1
             done
         else
             echo "update in all Modules ${LANG} ..."
