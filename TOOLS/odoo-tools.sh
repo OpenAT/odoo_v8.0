@@ -1111,18 +1111,18 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
-        INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -c 'SELECT code from res_lang'")
+        INSTALLEDLANG=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
         #INSTALLEDLANG=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
         INSTALLEDPOFILE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'")
         #echo "zweidimensional: ${INSTALLEDLANG}"
-        echo "ARRAYLINE: ${INSTALLEDLANG[1]]}"
-        echo $(echo ${INSTALLEDLANG} | sed -n '1p')
-        echo "printf"
-        printf '%s\n' "${INSTALLEDLANG[@]}"
-        echo "awk"
-        echo=$(echo ${INSTALLEDLANG} | awk -F'|' '{print $1}')
+        #echo "ARRAYLINE: ${INSTALLEDLANG[1]]}"
+        #echo $(echo ${INSTALLEDLANG} | sed -n '1p')
+        #echo "printf"
+        #printf '%s\n' "${INSTALLEDLANG[@]}"
+        #echo "awk"
+        #echo=$(echo ${INSTALLEDLANG} | awk -F'|' '{print $1}')
 
-        echo "test ende"
+        #echo "test ende"
         #OIFS=${IFS}
         #IFS="|";
         #for ((i=0; i<${#INSTALLEDLANG[@]}; ++i));
@@ -1183,12 +1183,14 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #echo "this is the single language: ${SINGLELANGUAGE}"
         if ! [ ${MODULNAME} = "all" ]; then
             echo "Updateing only ${LANG} in ${MODULNAME}"
-            echo "${INSTALLEDLANG}"
+            echo "installedlang: ${INSTALLEDLANG}"
+            echo "installedpofile: ${INSTALLEDPOFILE}"
             for iso in ${INSTALLEDLANG[@]}
             do
             i=0
-            echo ${i}
+            echo "variable i: ${i}"
             localecode=${INSTALLEDPOFILE[${i}]}
+            echo "localecode: ${localecode}"
             echo "compare iso: ${iso} with LANG ${LANG} paramater "
             if [ ${iso} = ${LANG} ]; then
                 echo "processing ${iso} language..."
