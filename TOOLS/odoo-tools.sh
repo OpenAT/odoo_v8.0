@@ -1122,9 +1122,9 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             echo SECONDCOLUM: ${INSTALLEDPOFILE}
         done
         length=${#INSTALLEDLANG[@]}
+        echo -e "SECOND TRY\n"
         for (( i=0; i<${length}; i++ ));
         do
-            echo -e "SECOND TRY\n"
             echo "iso: ${INSTALLEDLANG[$i]} locale: ${INSTALLEDPOFILE[$i]}"
         done
         exit 2
