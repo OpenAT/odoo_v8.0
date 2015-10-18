@@ -1166,7 +1166,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             if [ ${INSTALLEDLANG} = ${LANG} ]; then
                 echo "processing ${INSTALLEDLANG} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink | grep ${area})
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area})
                 if ! [ ${FILES} ]; then
                     echo "no languages files found, aborting ..."
                     exit 2
