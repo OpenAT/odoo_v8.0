@@ -1166,7 +1166,11 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             if [ ${INSTALLEDLANG} = ${LANG} ]; then
                 echo "processing ${INSTALLEDLANG} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area})
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink | grep ${area})
+                if ! [ ${FILES} ]; then
+                    echo "no languages files found, aborting ..."
+                    exit 2
+                fi
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file......."
