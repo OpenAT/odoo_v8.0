@@ -1117,7 +1117,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
     do
     if [ ${INSTALLEDLANG} = "en_US" ]; then
-        ${INSTALLEDPOFILE} = "en"
+        ${INSTALLEDPOFILE}="en"
     fi
     if [ ${LANG} = "all" ]; then
         if ! [ ${MODULNAME} = "all" ]; then
