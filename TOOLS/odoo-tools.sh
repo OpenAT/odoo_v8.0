@@ -1116,20 +1116,20 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     service ${DBNAME} stop
     su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
     do
+    if [ ${INSTALLEDLANG} = "en_US" ]; then
+        ${INSTALLEDPOFILE} = "en"
+    fi
     if [ ${LANG} = "all" ]; then
         if ! [ ${MODULNAME} = "all" ]; then
             echo "update all languages in ${MODULNAME}"
-            for iso in ${INSTALLEDLANG}
-            do
-            echo "processing ${iso} language ..."
-            FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po |xargs readlink -f | grep ${area})
+            echo "processing ${INSTALLEDLANG} language ..."
+            FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area})
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file..."
                     sudo su - ${DBNAME} -c \
-                    " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${iso} --i18n-import=${f} --i18n-overwrite"
+                    " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
                 done
-            done
         else
             echo "update all languages available available in all areas of odoo, thirdparty, own and customer addons"
             #TODO: create array with ALL Possible addons paths anf compare them
@@ -1138,17 +1138,14 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             LANGUPDATEWORKINGPATH=( "${INSTANCE_PATH}/addons" "-L ${INSTANCE_PATH}/addons-loaded" "-L ${INSTANCE_PATH}/addons-loaded" "${INSTANCE_PATH}/${DBNAME}/addons" )
             for pathitem in ${LANGUPDATEWORKINGPATH[@]}
             do
-                for iso in ${INSTALLEDLANG}
-                do
                 echo "processing ${iso} language ..."
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${iso}.po | grep -v "addons-archiv" ${area})
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | grep -v "addons-archiv" ${area})
                     for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                     do
                         echo "Processing $f file..."
                         sudo su - ${DBNAME} -c \
-                         " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${iso} --i18n-import=${f} --i18n-overwrite"
+                         " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
                     done
-                done
             done
         fi
     else #specific language
@@ -1183,36 +1180,31 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             for pathitem in ${LANGUPDATEWORKINGPATH[@]}
             do
             echo "processing ${LANGUPDATEWORKINGPATH}..."
-                for iso in ${INSTALLEDLANG}
-                do
                 echo "processing ${iso} ..."
-                FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${iso}.po | grep -v "addons-archiv" ${area})
+                FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${INSTALLEDPOFILE}.po | grep -v "addons-archiv" ${area})
                 echo ${FILES}
                     for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                     do
                         echo "Processing $f file..."
                         sudo su ${DBNAME} -c \
-                        " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${iso} --i18n-import=${f} --i18n-overwrite"
+                        " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
                     done
-                done
             done
         fi
     fi
+    ### LAST LOADED AREA
     if ! [ ${LASTLOADED} = "none" ]; then # make sure that the customers websitetemplate addon modul is loaded latest with all its specific translations
         if [ ${LANG} = "all" ]; then
             echo "update all languages in ${LASTLOADED} addon"
-            for iso in ${INSTALLEDLANG}
-            do
             echo "processing ${iso} ..."
-            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${LASTLOADED} -name ${iso}.po)
+            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${LASTLOADED} -name ${INSTALLEDPOFILE}.po)
             echo ${FILES}
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file..."
                     sudo su - ${DBNAME} -c \
-                 " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${iso} --i18n-import=${f} --i18n-overwrite"
+                 " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
                 done
-            done
         else
             echo "update ${LANG} language in ${LASTLOADED} addon"
             langexists=$(echo ${INSTALLEDLANG[@]} |grep -o ${LANG} | wc -w)
@@ -1222,23 +1214,20 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             fi
             #SINGLELANGUAGE=${LANG%_*} #get only first part of Language before underline
             #echo "this is the single language: ${SINGLELANGUAGE}"
-            for iso in ${INSTALLEDLANG}
-            do
-                if [ ${iso} = ${LANG} ]; then
-                    echo "Processing ${iso} ..."
-                    FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${LASTLOADED} -name ${iso}.po)
+                if [ ${INSTALLEDLANG} = ${LANG} ]; then
+                    echo "Processing ${INSTALLEDPOFILE} ..."
+                    FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${LASTLOADED} -name ${INSTALLEDPOFILE}.po)
                     echo "Updateing only ${LANG} in ${LASTLOADED}"
                         echo ${FILES}
                         for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                         do
                             echo "Processing $f file..."
                             sudo su - ${DBNAME} -c \
-                            " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${iso} --i18n-import=${f} --i18n-overwrite"
+                            " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
                         done
                 else
-                    echo "ignoring Installed language ${iso}..."
+                    echo "ignoring Installed language ${INSTALLEDLANG}..."
                 fi
-            done
         fi
     else
         echo "no customer specific updates done....."
