@@ -1112,53 +1112,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
-        #declare -a INSTALLEDLANG
-        #INSTALLEDLANG=( $(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'") )
-        #INSTALLEDLANG=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT code, iso_code from res_lang'")
-        #declare -a INSTALLEDPOFILE
-        #INSTALLEDPOFILE=( $(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT iso_code from res_lang'") )
-        su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
-        do
-            echo FIRSTCOLUM : ${INSTALLEDLANG}
-            echo SECONDCOLUM: ${INSTALLEDPOFILE}
-            length=${#INSTALLEDLANG[@]}
-            echo -e "SECOND TRY\n"
-            for (( i=0; i<${length}; i++ ));
-            do
-                echo "iso: ${INSTALLEDLANG[$i]} locale: ${INSTALLEDPOFILE[$i]}"
-            done
-        done
-        exit 2
-        #su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ; do
-        #echo "LOCALE: ${INSTALLEDLANG[0]} ISOPO: ${INSTALLEDLANG[2]}"
-
-        #echo "LOCALE: ${INSTALLEDLANG} ISOPO: ${INSTALLEDPOFILE}"
-        #done
-        #for test in ${INSTALLEDLANG[0]}
-        #do
-        #    echo "entry: ${test}"
-        #done
-        #echo "${INSTALLEDLANG[0]}"
-        #exit 2
-        #echo "zweidimensional: ${INSTALLEDLANG}"
-        #echo "ARRAYLINE: ${INSTALLEDLANG[1]]}"
-        #echo $(echo ${INSTALLEDLANG} | sed -n '1p')
-        #echo "printf"
-        #printf '%s\n' "${INSTALLEDLANG[@]}"
-        #echo "awk"
-        #echo=$(echo ${INSTALLEDLANG} | awk -F'|' '{print $1}')
-
-        #echo "test ende"
-        #OIFS=${IFS}
-        #IFS="|";
-        #for ((i=0; i<${#INSTALLEDLANG[@]}; ++i));
-        #do
-        #    echo "entry ${i}: $(echo ${INSTALLEDLANG} | awk -F'|' '{print $i}')";
-        #done
-        #IFS=${OIFS}
-
-        #INSTALLEDLOCALE=$(su - postgres -c "psql -d ${DBNAME} -t -c 'SELECT code from res_lang'")
-        # psql -U o8_ptd_ptd5 o8_ptd_ptd5 -c "select iso_code from res_lang"
+    su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
+    do
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
     if [ ${LANG} = "all" ]; then
@@ -1208,28 +1163,20 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #SINGLELANGUAGE=${LANG%_*} #get only first part of Language before underline
         #echo "this is the single language: ${SINGLELANGUAGE}"
         if ! [ ${MODULNAME} = "all" ]; then
-            for iso in ${INSTALLEDLANG[0]}
-            do
-            i=0
-            echo "variable i: ${i}"
-            localecode=${INSTALLEDLANG[2]}
-            echo "localecode: ${localecode}"
             echo "compare iso: ${INSTALLEDLANG[$iso]} with LANG: ${LANG} paramater "
-            if [ ${iso} = ${LANG} ]; then
-                echo "processing ${INSTALLEDLANG[$iso]} language..."
+            if [ ${INSTALLEDLANG} = ${LANG} ]; then
+                echo "processing ${INSTALLEDLANG} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${localecode}.po |xargs readlink -f | grep ${area})
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area})
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file..."
                     sudo su - ${DBNAME} -c \
-                    " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${iso} --i18n-import=${f} --i18n-overwrite"
+                    " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
                 done
             else
-                echo "ignoring Installed language ${INSTALLEDLANG[$iso]}..."
+                echo "ignoring Installed language ${INSTALLEDLANG}..."
             fi
-            let "i++"
-            done
         else
             echo "update in all Modules ${LANG} ..."
             LANGUPDATEWORKINGPATH=( "${INSTANCE_PATH}/addons" "-L ${INSTANCE_PATH}/addons-loaded" "-L ${INSTANCE_PATH}/addons-loaded" "${INSTANCE_PATH}/${DBNAME}/addons" )
@@ -1296,6 +1243,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     else
         echo "no customer specific updates done....."
     fi
+    done #while end
     echo "Starting up Database ...."
     service ${DBNAME} start
     echo "disable maintenance mode of customer Instance...."
