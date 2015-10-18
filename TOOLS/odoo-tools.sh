@@ -1113,9 +1113,11 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     #TODO: GET ISNTALLED LANGUAGES
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
+    INSTALLEDMODULES=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c 'SELECT name from ir_module_module where state='installed''")
+    echo ${INSTALLEDMODULES}
     su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
     do
-    if [ ${INSTALLEDLANG} = "en_US" ]; then
+    if [ "${INSTALLEDLANG}" == "en_US" ]; then
         INSTALLEDPOFILE="en"
     fi
     if [ ${LANG} = "all" ]; then
@@ -1160,7 +1162,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #echo "this is the single language: ${SINGLELANGUAGE}"
         if ! [ ${MODULNAME} = "all" ]; then
             echo "compare iso: ${INSTALLEDLANG} with LANG: ${LANG} paramater ${INSTALLEDPOFILE} "
-            if [ ${INSTALLEDLANG} = ${LANG} ]; then
+            if [ "${INSTALLEDLANG}" = "${LANG}" ]; then
                 echo "processing ${INSTALLEDLANG} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
                 FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area})
