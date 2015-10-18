@@ -1120,12 +1120,12 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         do
             echo FIRSTCOLUM : ${INSTALLEDLANG}
             echo SECONDCOLUM: ${INSTALLEDPOFILE}
-        done
-        length=${#INSTALLEDLANG[@]}
-        echo -e "SECOND TRY\n"
-        for (( i=0; i<${length}; i++ ));
-        do
-            echo "iso: ${INSTALLEDLANG[$i]} locale: ${INSTALLEDPOFILE[$i]}"
+            length=${#INSTALLEDLANG[@]}
+            echo -e "SECOND TRY\n"
+            for (( i=0; i<${length}; i++ ));
+            do
+                echo "iso: ${INSTALLEDLANG[$i]} locale: ${INSTALLEDPOFILE[$i]}"
+            done
         done
         exit 2
         #su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -a INSTALLEDLANG ; do
