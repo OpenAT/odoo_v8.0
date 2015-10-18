@@ -1111,10 +1111,10 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
     #TODO: GET ISNTALLED LANGUAGES
-    su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
-    do
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
+    su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
+    do
     if [ ${LANG} = "all" ]; then
         if ! [ ${MODULNAME} = "all" ]; then
             echo "update all languages in ${MODULNAME}"
