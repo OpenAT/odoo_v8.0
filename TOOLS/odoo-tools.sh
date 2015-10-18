@@ -1163,19 +1163,19 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         #SINGLELANGUAGE=${LANG%_*} #get only first part of Language before underline
         #echo "this is the single language: ${SINGLELANGUAGE}"
         if ! [ ${MODULNAME} = "all" ]; then
-            echo "compare iso: ${INSTALLEDLANG[$iso]} with LANG: ${LANG} paramater "
+            echo "compare iso: ${INSTALLEDLANG} with LANG: ${LANG} paramater ${INSTALLEDPOFILE} "
             if [ ${INSTALLEDLANG} = ${LANG} ]; then
                 echo "processing ${INSTALLEDLANG} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
                 FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area})
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
-                    echo "Processing $f file..."
+                    echo "Processing $f file......."
                     sudo su - ${DBNAME} -c \
                     " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
                 done
             else
-                echo "ignoring Installed language ${INSTALLEDLANG}..."
+                echo "ignoring Installed language ${INSTALLEDLANG}....."
             fi
         else
             echo "update in all Modules ${LANG} ..."
