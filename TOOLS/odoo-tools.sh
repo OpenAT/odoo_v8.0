@@ -1096,9 +1096,9 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "update all modules languages not supported right now"
         exit 2
     else
-        temp_path=$(find ${INSTANCE_PATH}/ -name ${MODULNAME} | grep -v "addons-archiv")
+        temp_path=$(find ${INSTANCE_PATH}/odoo/addons -name ${MODULNAME} | grep -v "addons-archiv")
         echo "temp path: ${temp_path}"
-        temp_path=$(dirname ${temp_path})
+        #temp_path=$(dirname ${temp_path})
         if [ ${temp_path} ]; then
             echo "writing module path ${temp_path} ..."
             LANGUPDATEWORKINGPATH=${temp_path}
