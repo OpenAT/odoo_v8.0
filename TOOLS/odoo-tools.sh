@@ -1115,7 +1115,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
     #INSTALLEDMODULES=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"")
-    su - postgres -c "psql -A -t -q -c -d o8_intdadi_dev1 -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"">${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES # this will work
+    su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"">${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES # this will work
     #echo ${INSTALLEDMODULES}
     su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
     do
