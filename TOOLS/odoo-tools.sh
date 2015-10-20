@@ -1096,7 +1096,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "update all modules languages not supported right now"
         exit 2
     else
-        temp_path=$(find ${INSTANCE_PATH} -name ${MODULNAME} | egrep -v '(addons-archiv,addons-loaded)')
+        temp_path=$(find ${INSTANCE_PATH} -name ${MODULNAME} | egrep -v '(addons-archiv|addons-loaded)' | xargs dirname)
         echo "temp path: ${temp_path}"
         #temp_path=$(dirname ${temp_path})
         if ! [ "x${temp_path}" == "x" ]; then
@@ -1143,7 +1143,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             for pathitem in ${LANGUPDATEWORKINGPATH[@]}
             do
                 echo "processing ${INSTALLEDLANG} language ..."
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded,addons-archiv)'| grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv)'| grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
                     for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                     do
                         echo "Processing $f file..."
@@ -1170,7 +1170,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
                 echo "processing ${INSTALLEDLANG} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
                 #FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded,addons-archiv)' ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv)' | grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file......."
@@ -1188,7 +1188,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             do
             echo "processing ${LANGUPDATEWORKINGPATH}..."
                 echo "processing ${INSTALLEDLANG} ..."
-                FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded,addons-archiv)' ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+                FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv)' |grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
                 #FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${INSTALLEDPOFILE}.po | grep -v "addons-archiv" ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
                 echo ${FILES}
                     for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
