@@ -1100,7 +1100,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         temp_path=$(find ${INSTANCE_PATH} -name ${MODULNAME} | grep --exclude={addons-archiv,addons-loaded})
         echo "temp path: ${temp_path}"
         #temp_path=$(dirname ${temp_path})
-        if [ -z ${temp_path} ]; then
+        if [ "x${temp_path}" == "x" ]; then
             echo "writing module path ${temp_path} ..."
             LANGUPDATEWORKINGPATH=${temp_path}
         else
