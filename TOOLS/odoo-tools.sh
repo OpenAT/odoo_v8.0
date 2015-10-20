@@ -1114,8 +1114,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     #TODO: GET ISNTALLED LANGUAGES
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
-    #INSTALLEDMODULES=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"")
-    su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"">${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES # this will work
+    INSTALLEDMODULES=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"")
+    #su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"">${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES # this will work
     #echo ${INSTALLEDMODULES}
     su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
     do
@@ -1169,7 +1169,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             if [ "${INSTALLEDLANG}" = "${LANG}" ]; then
                 echo "processing ${INSTALLEDLANG} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area} | grep -F ${INSTALLEDMODULES})# ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file......."
