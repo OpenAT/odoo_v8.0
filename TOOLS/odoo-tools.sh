@@ -1082,10 +1082,10 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo "Instanzpfad: ${INSTANCE_PATH}"
     DATABASECONFIGFILE=${INSTANCE_PATH}/${DBNAME}/${DBNAME}.conf
     if [ ${MODULNAME} = "own" ]; then
-        LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-loaded" # -L because of links
+        LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-own" # -L because of links
         area="addons-own"
     elif [ ${MODULNAME} = "third" ]; then
-        LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-loaded" # -L because of links
+        LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-third" # -L because of links
         area="addons-thirdparty"
     elif [ ${MODULNAME} = "odoo" ]; then
         LANGUPDATEWORKINGPATH=${INSTANCE_PATH}/addons
@@ -1097,7 +1097,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "update all modules languages not supported right now"
         exit 2
     else
-        temp_path=$(find ${INSTANCE_PATH} -name ${MODULNAME} | grep -v "addons-archiv")
+        temp_path=$(find ${INSTANCE_PATH} -name ${MODULNAME} | grep --exclude={addons-archiv,addons-loaded})
         echo "temp path: ${temp_path}"
         #temp_path=$(dirname ${temp_path})
         if [ -z ${temp_path} ]; then
@@ -1114,8 +1114,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     #TODO: GET ISNTALLED LANGUAGES
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
-    INSTALLEDMODULES=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"")
-    #su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"">${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES # this will work
+    #INSTALLEDMODULES=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"")
+    su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"">${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES # this will work
     #echo ${INSTALLEDMODULES}
     su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
     do
@@ -1126,7 +1126,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         if ! [ ${MODULNAME} = "all" ]; then
             echo "update all languages in ${MODULNAME}"
             echo "processing ${INSTALLEDLANG} language ..."
-            FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+            #FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+            FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file..."
@@ -1169,7 +1170,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             if [ "${INSTALLEDLANG}" = "${LANG}" ]; then
                 echo "processing ${INSTALLEDLANG} language..."
                 echo "langpath: ${LANGUPDATEWORKINGPATH}"
-                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area} | grep -F ${INSTALLEDMODULES})# ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+                #FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
+                FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | grep --exclude={addons-archiv,addons-loaded} ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                 do
                     echo "Processing $f file......."
@@ -1187,7 +1189,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             do
             echo "processing ${LANGUPDATEWORKINGPATH}..."
                 echo "processing ${INSTALLEDLANG} ..."
-                FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${INSTALLEDPOFILE}.po | grep -v "addons-archiv" ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+                FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${INSTALLEDPOFILE}.po | grep --exclude={addons-archiv,addons-loaded} ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+                #FILES=$(find ${LANGUPDATEWORKINGPATH}/${MODULNAME} -name ${INSTALLEDPOFILE}.po | grep -v "addons-archiv" ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
                 echo ${FILES}
                     for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
                     do
