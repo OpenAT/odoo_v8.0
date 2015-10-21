@@ -1065,6 +1065,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $UPDATETRANSLATION"
     echo -e "--------------------------------------------------------------------------------------------------------"
+    echo "arguments#: $#"
     if [[ "$#" -ge 5 ]]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes minimum of five arguments!"
         exit 2
