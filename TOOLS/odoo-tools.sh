@@ -1068,12 +1068,15 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly seven arguments!"
         exit 2
     fi
+    #THIS function Updates languages in a Specific Odoo Instance, gets the installed languages and installs depending on your parameters the sepcific things
+    #considering only "already installed module" gets language update, and it consider the special cases from res_lang table that en_US has no po iso code set
+    #considering that LANG CODE is different to PO ISO CODE and reads the res_lang table to get all infos
+    #considering only installed modules and reads ir_module_module of status "installed" only for example loaded only modules are not considered cause status is "uninstalled"
     TARGET_BRANCH=$2
     DBNAME=$3
     DBUSER=${DBNAME}
     LANG=$4
     MODULNAME=$5
-    LASTLOADED="none"
     if [ $6 ]; then
         LASTLOADED=$6 # this tranlsation should be loaded as last to make sure all others are overwritten with this latest customer specific translations
     fi
@@ -1099,7 +1102,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         temp_path=$(find ${INSTANCE_PATH} -name ${MODULNAME} | egrep -v '(addons-archiv|addons-loaded)' | xargs dirname)
         echo "temp path: ${temp_path}"
         #temp_path=$(dirname ${temp_path})
-        if ! [ "x${temp_path}" == "x" ]; then
+        if ! [ "x${temp_path}" == "x" ]; then #if nothing is found and variable is empty shel crashes thats, first argument cannot be empty so compare at least x as a string if temp_path is empty
             echo "writing module path ${temp_path} ..."
             LANGUPDATEWORKINGPATH=${temp_path}
         else
@@ -1110,7 +1113,6 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     #call this script recursive with another option
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     #TODO: Backup
-    #TODO: GET ISNTALLED LANGUAGES
     echo "stopping ${DBNAME} ..."
     service ${DBNAME} stop
     #INSTALLEDMODULES=$(su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"")
@@ -1154,7 +1156,6 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             done
         fi
     else #specific language
-            #TODO: wenn die sprache nicht all ist --> könnte ich vorher checken ob die sprache installiert ist und diese vergleichen
         echo "check if language exists..."
         langexists=$(echo ${INSTALLEDLANG[@]} |grep -o ${LANG} | wc -w)
         if ! [ ${langexists} ]; then
@@ -1201,19 +1202,32 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             done
     fi
     ### LAST LOADED AREA
-    if ! [ ${LASTLOADED} = "none" ]; then # make sure that the customers websitetemplate addon modul is loaded latest with all its specific translations
+    if ! [[ "x${LASTLOADED}" == "x" ]]; then # make sure that the customers websitetemplate addon modul is loaded latest with all its specific translations
+    LANGUPDATEWORKINGPATH=${INSTANCE_PATH}#special case, specific module can be anywhere in the path not only in customers addons folder
         if [ ${LANG} = "all" ]; then
+            echo "you specified a module as last loaded, processing ......"
             echo "update all languages in ${LASTLOADED} addon"
             echo "processing ${INSTALLEDLANG} ..."
-            FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${LASTLOADED} -name ${INSTALLEDPOFILE}.po | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+            #FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${LASTLOADED} -name ${INSTALLEDPOFILE}.po | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+            #make sure not searching in customers specific addons folders
+            FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv|${DBNAME}/addons)' | grep ${LASTLOADED} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
             echo ${FILES}
-                for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
-                do
-                    echo "Processing $f file..."
-                    #automatically stops after loading no --stop-after-init needed
-                    sudo su - ${DBNAME} -c \
+            for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
+            do
+                echo "Processing $f file in global folders..."
+                #automatically stops after loading no --stop-after-init needed
+                sudo su - ${DBNAME} -c \
+             " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
+            done
+            #search only in customers addons folder of this instance
+            FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | grep {${DBNAME}/addons} | grep ${LASTLOADED}| grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+            for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
+            do
+                echo "Processing $f file in customers specific folder..."
+                #automatically stops after loading no --stop-after-init needed
+                sudo su - ${DBNAME} -c \
                  " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
-                done
+            done
         else
             echo "update ${LANG} language in ${LASTLOADED} addon"
             langexists=$(echo ${INSTALLEDLANG[@]} |grep -o ${LANG} | wc -w)
@@ -1225,7 +1239,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             #echo "this is the single language: ${SINGLELANGUAGE}"
                 if [ ${INSTALLEDLANG} = ${LANG} ]; then
                     echo "Processing ${INSTALLEDPOFILE} ..."
-                    FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${LASTLOADED} -name ${INSTALLEDPOFILE}.po | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+                    #FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${LASTLOADED} -name ${INSTALLEDPOFILE}.po | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+                    FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv|${DBNAME}/addons)' | grep ${LASTLOADED} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
                     echo "Updateing only ${LANG} in ${LASTLOADED}"
                         echo ${FILES}
                         for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
@@ -1235,12 +1250,21 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
                             sudo su - ${DBNAME} -c \
                             " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
                         done
+                        #search only in customers addons folder of this instance
+                        FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | grep {${DBNAME}/addons} | grep ${LASTLOADED} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
+                        for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
+                        do
+                            echo "Processing $f file in customers specific folder..."
+                            #automatically stops after loading no --stop-after-init needed
+                            sudo su - ${DBNAME} -c \
+                             " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} -l ${INSTALLEDLANG} --i18n-import=${f} --i18n-overwrite"
+                        done
                 else
                     echo "ignoring Installed language ${INSTALLEDLANG}..."
                 fi
         fi
     else
-        echo "no customer specific updates done....."
+        echo "no explicit last loaded module has been specified, do nothing for lastloaded option....."
     fi
     done #while end
     echo "Starting up Database ...."
