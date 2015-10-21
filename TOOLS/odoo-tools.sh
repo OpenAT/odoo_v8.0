@@ -1082,11 +1082,11 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo "Instanzpfad: ${INSTANCE_PATH}"
     DATABASECONFIGFILE=${INSTANCE_PATH}/${DBNAME}/${DBNAME}.conf
     if [ ${MODULNAME} = "own" ]; then
-        LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-own" # -L because of links
+        LANGUPDATEWORKINGPATH="${INSTANCE_PATH}/addons-own" # -L because of links
         area="addons-own"
         SINGLEMODULE="FALSE"
     elif [ ${MODULNAME} = "third" ]; then
-        LANGUPDATEWORKINGPATH="-L ${INSTANCE_PATH}/addons-third" # -L because of links
+        LANGUPDATEWORKINGPATH="${INSTANCE_PATH}/addons-thirdparty" # -L because of links
         area="addons-thirdparty"
         SINGLEMODULE="FALSE"
     elif [ ${MODULNAME} = "odoo" ]; then
