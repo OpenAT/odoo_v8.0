@@ -1202,7 +1202,15 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
                     done
             done
     fi
+    done #while end
     ### LAST LOADED AREA
+    su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"">${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES # this will work
+    #echo ${INSTALLEDMODULES}
+    su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
+    do
+    if [ "${INSTALLEDLANG}" == "en_US" ]; then
+        INSTALLEDPOFILE="en"
+    fi
     if ! [[ "x${LASTLOADED}" == "x" ]]; then # make sure that the customers websitetemplate addon modul is loaded latest with all its specific translations
     LANGUPDATEWORKINGPATH=${INSTANCE_PATH} #special case, specific module can be anywhere in the path not only in customers addons folder
         if [ ${LANG} = "all" ]; then
@@ -1238,7 +1246,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             fi
             #SINGLELANGUAGE=${LANG%_*} #get only first part of Language before underline
             #echo "this is the single language: ${SINGLELANGUAGE}"
-                if [ ${INSTALLEDLANG} = ${LANG} ]; then
+                if [ "${INSTALLEDLANG}" = "${LANG}" ]; then
                     echo "Processing ${INSTALLEDPOFILE} ..."
                     #FILES=$(find ${INSTANCE_PATH}/${DBNAME}/addons/${LASTLOADED} -name ${INSTALLEDPOFILE}.po | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
                     FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv|${DBNAME}/addons)' | grep ${LASTLOADED} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
