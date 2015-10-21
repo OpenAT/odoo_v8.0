@@ -1204,7 +1204,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     fi
     ### LAST LOADED AREA
     if ! [[ "x${LASTLOADED}" == "x" ]]; then # make sure that the customers websitetemplate addon modul is loaded latest with all its specific translations
-    LANGUPDATEWORKINGPATH=${INSTANCE_PATH}#special case, specific module can be anywhere in the path not only in customers addons folder
+    LANGUPDATEWORKINGPATH=${INSTANCE_PATH} #special case, specific module can be anywhere in the path not only in customers addons folder
         if [ ${LANG} = "all" ]; then
             echo "you specified a module as last loaded, processing ......"
             echo "update all languages in ${LASTLOADED} addon"
