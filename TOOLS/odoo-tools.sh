@@ -1135,7 +1135,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             echo "processing ${INSTALLEDLANG} language ..."
             #FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po |xargs readlink -f | grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
             #FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | grep ${area} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES)
-            if [${SINGLEMODULE} == "TRUE" ]; then
+            if [[ ${SINGLEMODULE} == "TRUE" ]]; then
                 FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv)' | grep ${MODULNAME} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
             else
                 FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv)' | grep "${area}" | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
