@@ -1138,6 +1138,10 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             if [[ ${SINGLEMODULE} == "TRUE" ]]; then
                 FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv)' | grep ${MODULNAME} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
             else
+                echo "pfad: ${LANGUPDATEWORKINGPATH}"
+                echo "sprache: ${INSTALLEDLANG}"
+                echo "pofile: ${INSTALLEDPOFILE}"
+                echo "area: ${area}"
                 FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv)' | grep "${area}" | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
             fi
                 for f in ${FILES} #cycle all addons in addons-loaded and check langfile and path
