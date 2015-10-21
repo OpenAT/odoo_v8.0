@@ -1064,8 +1064,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $UPDATETRANSLATION"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ge 5 ]; then
-        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly seven arguments!"
+    if [[ "$#" -ge 5 ]]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes minimum of five arguments!"
         exit 2
     fi
     #THIS function Updates languages in a Specific Odoo Instance, gets the installed languages and installs depending on your parameters the sepcific things
