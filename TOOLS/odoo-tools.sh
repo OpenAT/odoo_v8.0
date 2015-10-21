@@ -1191,7 +1191,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
                 if [ "${INSTALLEDLANG}" = "${LANG}" ]; then
                     echo "processing ${INSTALLEDLANG} language..."
                     echo "langpath: ${LANGUPDATEWORKINGPATH}"
-                    if [${SINGLEMODULE} == "TRUE" ]; then
+                    if [[ "${SINGLEMODULE}" == "TRUE" ]]; then
                         FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv)' | grep ${MODULNAME} | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
                     else
                         FILES=$(find ${LANGUPDATEWORKINGPATH} -name ${INSTALLEDPOFILE}.po | egrep -v '(addons-loaded|addons-archiv)' | grep "${area}" | grep -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES) #${INSTALLEDMODULES}
