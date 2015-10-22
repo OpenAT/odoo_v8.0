@@ -1104,7 +1104,6 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "update all modules languages not supported right now"
         LANGUPDATEWORKINGPATH=${INSTANCE_PATH}
         SINGLEMODULE="FALSE"
-        exit 2
     else
         #if ! [[ "${MODULNAME}" == "own" || "${MODULNAME}" == "third" || "${MODULNAME}" == "odoo" "${MODULNAME}" == "customer" ]]; then
         SINGLEMODULE="TRUE"
@@ -1244,6 +1243,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     fi
     done #while end
     ### LAST LOADED AREA
+    echo "--------- LASTLOADED AREA ----------"
     su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"">${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES # this will work
     #echo ${INSTALLEDMODULES}
     su - postgres -c "psql -d ${DBNAME} --field-separator ' ' -t -c 'SELECT code, iso_code from res_lang'" | while read -r INSTALLEDLANG ignore INSTALLEDPOFILE
