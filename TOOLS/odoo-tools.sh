@@ -901,7 +901,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh updateinst  {TARGET_BRANCH}
 # ---------------------------------------------------------------------------------------
-MODEUPDATEINST="$ odoo-tools.sh update \t{TARGET_BRANCH}"
+MODEUPDATEINST="odoo-tools.sh update \t{TARGET_BRANCH}"
 if [ "$SCRIPT_MODE" = "update" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEUPDATEINST"
@@ -1366,7 +1366,7 @@ echo -e "$ $MODENEWDB"
 echo -e "$ $MAINTENANCEMODE"
 echo -e "$ $UPDATETRANSLATION"
 echo -e "----------------- TODOs ----------------"
-echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
+echo -e "TODO: odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEDUPDB"
 echo -e "TODO: $MODEUPDATEINST"
 echo -e "TODO: $MODEBACKUP"
