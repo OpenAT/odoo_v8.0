@@ -1069,11 +1069,11 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes minimum of five arguments!"
         exit 2
     fi
-    #THIS function Updates languages in a Specific Odoo Instance, gets the installed languages and installs depending on your parameters the sepcific things
-    #considering only "already installed module" gets language update, and it consider the special cases from res_lang table that en_US has no po iso code set
-    #considering that LANG CODE is different to PO ISO CODE and reads the res_lang table to get all infos
-    #considering only installed modules and reads ir_module_module of status "installed" only for example loaded only modules are not considered cause status is "uninstalled"
-    #if there is time write this function in better code, i changed the behavior more times so its bad written
+    #THIS function Updates languages in a Specific Odoo Instance, gets the installed languages and reloads depending on your parameters the sepcific language file of the given modul or area
+    #considering: only "already installed module" gets language update, and it consider the special cases from res_lang table that en_US has no po iso code set so for englich en.po is used
+    #considering: that LANG CODE is different to PO ISO CODE and reads the res_lang table to get all infos correctly to handle language files
+    #considering: info, installed modules --> reads ir_module_module of status "installed" only for example loaded only modules are not considered cause status is "uninstalled"
+    #if there is time write this function in better code, i changed the behavior more times so its bad written code
     TARGET_BRANCH=$2
     DBNAME=$3
     DBUSER=${DBNAME}
