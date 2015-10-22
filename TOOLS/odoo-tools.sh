@@ -1059,7 +1059,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     exit 0
 fi
 
-UPDATETRANSLATION="odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE} {MODULNAME} [LASTLOADED]"
+UPDATETRANSLATION="odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {isocode|all} {modulname|odoo|third|own|customer|all} [modulname]"
 if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $UPDATETRANSLATION"
@@ -1359,19 +1359,16 @@ fi
 # Script HELP
 # ---------------------------------------------------------
 echo -e "\n----- SCRIPT USAGE -----"
-echo -e "$ odoo-tools.sh {prepare|setup|newdb|dupdb|deploy|backup|restore}\n"
+echo -e "$ odoo-tools.sh {prepare|setup|newdb|dupdb|deploy|backup|restore|updatetranslation|maintennancemode}\n"
 echo -e "$ $MODEPREPARE"
 echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
-echo -e "\n"
+echo -e "$ $MAINTENANCEMODE"
+echo -e "$ $UPDATETRANSLATION"
+echo -e "----------------- TODOs ----------------"
+echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEDUPDB"
 echo -e "TODO: $MODEUPDATEINST"
-echo -e "\n"
-echo -e "$ odoo-tools.sh maintenancemode {TARGET_BRANCH} {dbname|all} {enable|disable}"
-echo -e "$ $MAINTENANCEMODE\n"
-echo -e "$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {isocode|all} {modulname|odoo|third|own|customer|all} [modulname]"
-echo -e "$ $UPDATETRANSLATION\n"
-echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEBACKUP"
 echo -e "TODO: $MODERESTORE"
 echo -e "------------------------\n"
