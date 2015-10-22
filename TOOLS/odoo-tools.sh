@@ -23,8 +23,8 @@ SCRIPTPATH=$(cd ${0%/*} && pwd -P)
 
 # ----- Check UBUNTU Version:
 source /etc/lsb-release
-if [ $DISTRIB_ID = "Ubuntu" ] && [ $DISTRIB_RELEASE = "14.04" ] ; then
-    echo -e "OS Version: $DISTRIB_ID $DISTRIB_RELEASE"
+if [ ${DISTRIB_ID} = "Ubuntu" ] && [ ${DISTRIB_RELEASE} = "14.04" ] ; then
+    echo -e "OS Version: ${DISTRIB_ID} ${DISTRIB_RELEASE}"
 else
     echo -e "ERROR: This Script only works on Ubuntu 14.04!"; exit 2
 fi
@@ -384,7 +384,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     chmod 755 ${INSTANCE_PATH} >> ${INSTANCE_SETUPLOG}
 
     # ----- create webserver maintenance files
-    cp ${INSTANCE_PATH}/TOOLS/503.* /usr/share/nginx/html/ >> $INSTANCE_SETUPLOG
+    cp ${INSTANCE_PATH}/TOOLS/503.* /usr/share/nginx/html/ >> ${INSTANCE_SETUPLOG}
 
     echo -e "-------------------------------------------------------------------------"
     echo -e " $MODESETUP DONE"
@@ -923,7 +923,7 @@ if [ "$SCRIPT_MODE" = "update" ]; then
     echo -e "--------------------------------------------------------------------------------------------------------"
 fi
 
-MAINTENANCEMODE="$ odoo-tools.sh maintenancemode {TARGET_BRANCH} dbname|all enable|disable"
+MAINTENANCEMODE="odoo-tools.sh maintenancemode {TARGET_BRANCH} dbname|all enable|disable"
 if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MAINTENANCEMODE"
@@ -995,7 +995,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
                             exit 2
                         elif [ ${OPTION} = "disable" ]; then
                            echo -e "disable global maintenancemode of nginx..."
-                            mv ${MAINTENANCEMODESWITCHERON} ${MAINTENANCEMODESWITCHEROFF} | tee -a ${GLOBALMAINTENANCELOG}  #check
+                            mv ${MAINTENANCEMODESWITCHERON} ${MAINTENANCEMODESWITCHEROFF} | tee -a ${GLOBALMAINTENANCELOG} #check
                         fi
                     else
                         if [ ${OPTION} = "enable" ]; then
@@ -1059,7 +1059,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     exit 0
 fi
 
-UPDATETRANSLATION="$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE} {MODULNAME} [LASTLOADED]"
+UPDATETRANSLATION="odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE} {MODULNAME} [LASTLOADED]"
 if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $UPDATETRANSLATION"
@@ -1300,7 +1300,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo "disable maintenance mode of customer Instance...."
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable" #recursice call this script with special parameter
     echo -e "\n--------------------------------------------------------------------------------------------------------"
-    echo -e "UPDATETRANSLATION DONE"
+    echo -e "$UPDATETRANSLATION DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
     exit 0
 fi
@@ -1308,7 +1308,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="$ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
+MODEBACKUP="odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
@@ -1331,7 +1331,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}
 # ---------------------------------------------------------------------------------------
-MODERESTORE="$ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}"
+MODERESTORE="odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}"
 if [ "$SCRIPT_MODE" = "restore" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODERESTORE"
@@ -1363,11 +1363,14 @@ echo -e "$ odoo-tools.sh {prepare|setup|newdb|dupdb|deploy|backup|restore}\n"
 echo -e "$ $MODEPREPARE"
 echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
+echo -e "\n"
 echo -e "TODO: $MODEDUPDB"
 echo -e "TODO: $MODEUPDATEINST"
-echo -e "$ $MAINTENANCEMODE"
-echo -e "$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {LANGUAGE,de_DE|all} {MODULNAME,modulname|odoo|third|own|customer|all} [LASTLOADED,modulname|none]"
-echo -e "$ $UPDATETRANSLATION"
+echo -e "\n"
+echo -e "$ odoo-tools.sh maintenancemode {TARGET_BRANCH} {dbname|all} {enable|disable}"
+echo -e "$ $MAINTENANCEMODE\n"
+echo -e "$ odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {isocode|all} {modulname|odoo|third|own|customer|all} [modulname]"
+echo -e "$ $UPDATETRANSLATION\n"
 echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEBACKUP"
 echo -e "TODO: $MODERESTORE"
