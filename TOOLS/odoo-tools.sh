@@ -292,7 +292,7 @@ fi
 # -----------------------------------------------------------------------
 # $ odoo-tools.sh setup {TARGET_BRANCH}
 # -----------------------------------------------------------------------
-MODESETUP="odoo-tools.sh setup \t\t{TARGET_BRANCH}"
+MODESETUP="odoo-tools.sh setup \t\t {TARGET_BRANCH}"
 if [ "$SCRIPT_MODE" = "setup" ]; then
     echo -e "\n-----------------------------------------------------------------------"
     echo -e "$MODESETUP"
@@ -398,7 +398,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME} [CUADDONSREPONAME]
 # ---------------------------------------------------------------------------------------
-MODENEWDB="odoo-tools.sh newdb \t\t{TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} [CUADDONSREPONAME]"
+MODENEWDB="odoo-tools.sh newdb \t\t {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} [CUADDONSREPONAME]"
 MODEDUPDB="odoo-tools.sh duplicatedb {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {DATABASE_TEMPLATE}"
 if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
@@ -923,7 +923,7 @@ if [ "$SCRIPT_MODE" = "update" ]; then
     echo -e "--------------------------------------------------------------------------------------------------------"
 fi
 
-MAINTENANCEMODE="odoo-tools.sh maintenancemode {TARGET_BRANCH} dbname|all enable|disable"
+MAINTENANCEMODE="odoo-tools.sh maintenancemode  {TARGET_BRANCH} dbname|all enable|disable"
 if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MAINTENANCEMODE"
@@ -1059,7 +1059,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     exit 0
 fi
 
-UPDATETRANSLATION="odoo-tools.sh updatetranslation {BRANCH} {TARGET_DBNAME} {isocode|all} {modulname|odoo|third|own|customer|all} [modulname]"
+UPDATETRANSLATION="odoo-tools.sh updatetranslation {TARGET_BRANCH} {DATABASE_NAME} {isocode|all} {modulname|odoo|third|own|customer|all} [modulname]"
 if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $UPDATETRANSLATION"
