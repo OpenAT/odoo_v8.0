@@ -64,7 +64,7 @@ chmod 755 ${REPOPATH}
 # ---------------------------------------------------------
 # $ odoo-tools.sh PREPARE
 # ---------------------------------------------------------
-MODEPREPARE="odoo-tools.sh prepare \t\t\t"
+MODEPREPARE="odoo-tools.sh prepare \t\t"
 if [ "$SCRIPT_MODE" = "prepare" ]; then
     echo -e "\n-----------------------------------------------------------------------"
     echo -e " $MODEPREPARE"
@@ -292,7 +292,7 @@ fi
 # -----------------------------------------------------------------------
 # $ odoo-tools.sh setup {TARGET_BRANCH}
 # -----------------------------------------------------------------------
-MODESETUP="odoo-tools.sh setup \t\t\t{TARGET_BRANCH}"
+MODESETUP="odoo-tools.sh setup \t\t{TARGET_BRANCH}"
 if [ "$SCRIPT_MODE" = "setup" ]; then
     echo -e "\n-----------------------------------------------------------------------"
     echo -e "$MODESETUP"
@@ -398,8 +398,8 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DOMAIN_NAME} {DATABASE_NAME} [CUADDONSREPONAME]
 # ---------------------------------------------------------------------------------------
-MODENEWDB="odoo-tools.sh newdb \t\t\t{TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} [CUADDONSREPONAME]"
-MODEDUPDB="odoo-tools.sh duplicatedb \t{TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {DATABASE_TEMPLATE}"
+MODENEWDB="odoo-tools.sh newdb \t\t{TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} [CUADDONSREPONAME]"
+MODEDUPDB="odoo-tools.sh duplicatedb {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} {DATABASE_TEMPLATE}"
 if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODENEWDB"
@@ -901,7 +901,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh updateinst  {TARGET_BRANCH}
 # ---------------------------------------------------------------------------------------
-MODEUPDATEINST="$ odoo-tools.sh update \t\t\t{TARGET_BRANCH}"
+MODEUPDATEINST="$ odoo-tools.sh update \t{TARGET_BRANCH}"
 if [ "$SCRIPT_MODE" = "update" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEUPDATEINST"
@@ -1308,7 +1308,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup \t\t{TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
+MODEBACKUP="odoo-tools.sh backup \t{TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
@@ -1331,7 +1331,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}
 # ---------------------------------------------------------------------------------------
-MODERESTORE="odoo-tools.sh restore \t\t{TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}"
+MODERESTORE="odoo-tools.sh restore \t{TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}"
 if [ "$SCRIPT_MODE" = "restore" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODERESTORE"
