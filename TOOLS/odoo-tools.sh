@@ -113,15 +113,30 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Update Server
     echo -e "\n----- Update Server"
     #sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+    rm -rf /var/lib/apt/lists/*
     apt-get update >> ${SETUP_LOG}
     apt-get upgrade -y >> ${SETUP_LOG}
     echo -e "----- Update Server Done"
 
+    # ----- Prepare for specific package updates and add personal package repos
+    apt-get remove --purge -y node nodejs nodejs-dev nodejs-legacy npm
+    apt-get autoremove -y
+    curl -sL https://deb.nodesource.com/setup | sudo bash -
+    apt-get update
+
     # ----- Install Basic Packages
     echo -e "\n----- Install Basic Packages"
     apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev libxslt1-dev \
-        build-essential gcc mc bzr lptools make nodejs nodejs-dev nodejs-legacy pkg-config npm gdebi -y >> ${SETUP_LOG}
+        build-essential gcc mc bzr lptools make pkg-config nodejs gdebi -y >> ${SETUP_LOG}
     echo -e "----- Install Basic Packages Done"
+
+    # ----- Less compiler needed by Odoo 8 Website -
+    #       INFO: https://gist.github.com/rm-jamotion/d61bc6525f5b76245b50
+    echo -e "\n----- Install less compiler"
+    hash -r
+    npm install -g less less-plugin-clean-css >> ${SETUP_LOG}
+    ln -s /usr/bin/nodejs /usr/bin/node >> ${SETUP_LOG}
+    echo -e "----- Install less compiler DONE"
 
     # ----- Install postgresql
     echo -e "\n----- Install postgresql"
@@ -250,11 +265,6 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     apt-get install abiword -y >> ${SETUP_LOG}
     echo -e "----- Install Packages for Etherpad Lite Done"
 
-    # ----- Less compiler needed by Odoo 8 Website - added from https://gist.github.com/rm-jamotion/d61bc6525f5b76245b50
-    echo -e "\n----- Install less compiler"
-    hash -r
-    npm install -g less less-plugin-clean-css -y && ln -s /usr/bin/nodejs /usr/bin/node >> ${SETUP_LOG}
-    echo -e "----- Install less compiler DONE"
 
     # ----- Install packages for owncloud
     echo -e "\n----- Install packages for owncloud"
