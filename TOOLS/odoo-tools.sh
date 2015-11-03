@@ -23,8 +23,8 @@ SCRIPTPATH=$(cd ${0%/*} && pwd -P)
 
 # ----- Check UBUNTU Version:
 source /etc/lsb-release
-if [ $DISTRIB_ID = "Ubuntu" ] && [ $DISTRIB_RELEASE = "14.04" ] ; then
-    echo -e "OS Version: $DISTRIB_ID $DISTRIB_RELEASE"
+if [ ${DISTRIB_ID} = "Ubuntu" ] && [ ${DISTRIB_RELEASE} = "14.04" ] ; then
+    echo -e "OS Version: ${DISTRIB_ID} ${DISTRIB_RELEASE}"
 else
     echo -e "ERROR: This Script only works on Ubuntu 14.04!"; exit 2
 fi
@@ -320,7 +320,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     # ----- Check if the TARGET_BRANCH already exists
     if git ls-remote ${SOURCE_REPO} | grep -sw "${TARGET_BRANCH}" 2>&1>/dev/null; then
         echo "WARNING: ${TARGET_BRANCH} already exists in ${REPONAME}!";
-    fi    
+    fi
 
     # ----- Create Instance Log File for SETUP
     INSTANCE_SETUPLOG="${REPO_SETUPPATH}/${SCRIPT_MODE}--${TARGET_BRANCH}--`date +%Y-%m-%d__%H-%M`.log"
@@ -394,7 +394,7 @@ if [ "$SCRIPT_MODE" = "setup" ]; then
     chmod 755 ${INSTANCE_PATH} >> ${INSTANCE_SETUPLOG}
 
     # ----- create webserver maintenance files
-    cp ${INSTANCE_PATH}/TOOLS/503.* /usr/share/nginx/html/ >> $INSTANCE_SETUPLOG
+    cp ${INSTANCE_PATH}/TOOLS/503.* /usr/share/nginx/html/ >> ${INSTANCE_SETUPLOG}
 
     echo -e "-------------------------------------------------------------------------"
     echo -e " $MODESETUP DONE"
@@ -911,7 +911,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh updateinst  {TARGET_BRANCH}
 # ---------------------------------------------------------------------------------------
-MODEUPDATEINST="$ odoo-tools.sh update  {TARGET_BRANCH}"
+MODEUPDATEINST="odoo-tools.sh update {TARGET_BRANCH}"
 if [ "$SCRIPT_MODE" = "update" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEUPDATEINST"
@@ -933,7 +933,7 @@ if [ "$SCRIPT_MODE" = "update" ]; then
     echo -e "--------------------------------------------------------------------------------------------------------"
 fi
 
-MAINTENANCEMODE="$ odoo-tools.sh maintenancemode {TARGET_BRANCH} dbname|all enable|disable"
+MAINTENANCEMODE="odoo-tools.sh maintenancemode {TARGET_BRANCH} dbname|all enable|disable"
 if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MAINTENANCEMODE"
@@ -994,7 +994,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
                     if [ -f "${MAINTENANCEMODESWITCHEROFF}" ]; then
                         if [ ${OPTION} = "enable" ]; then
                             echo -e "enabling global maintenancemode of nginx..."
-                            mv $MAINTENANCEMODESWITCHEROFF $MAINTENANCEMODESWITCHERON | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #check
+                            mv ${MAINTENANCEMODESWITCHEROFF} ${MAINTENANCEMODESWITCHERON} | tee -a ${GLOBALMAINTENANCELOG} #check
                         elif [ ${OPTION} = "disable" ]; then
                            echo -e "already disabled nothing to do..."
                            exit 2
@@ -1005,15 +1005,15 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
                             exit 2
                         elif [ ${OPTION} = "disable" ]; then
                            echo -e "disable global maintenancemode of nginx..."
-                            mv $MAINTENANCEMODESWITCHERON $MAINTENANCEMODESWITCHEROFF | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #check
+                            mv ${MAINTENANCEMODESWITCHERON} ${MAINTENANCEMODESWITCHEROFF} | tee -a ${GLOBALMAINTENANCELOG} #check
                         fi
                     else
                         if [ ${OPTION} = "enable" ]; then
                             echo -e "touching maintenancemode file seems someone deleted this file....."
-                            touch $MAINTENANCEMODESWITCHERON | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                            touch ${MAINTENANCEMODESWITCHERON} | tee -a ${GLOBALMAINTENANCELOG} #if file exists error occures but status is now correct
                         elif [ ${OPTION} = "disable" ]; then
                             echo -e "touching maintenancemode file seems someone deleted this file....."
-                            touch $MAINTENANCEMODESWITCHEROFF | tee -a ${GLOBALMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                            touch ${MAINTENANCEMODESWITCHEROFF} | tee -a ${GLOBALMAINTENANCELOG} #if file exists error occures but status is now correct
                         fi
                     fi
 
@@ -1021,7 +1021,7 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
                 if [ -e "${DBONLYMAINTENANCEMODESWITCHEROFF}" ]; then
                         if [ ${OPTION} = "enable" ]; then
                             echo -e "enabling ${DBNAME} maintenancemode of nginx..."
-                            mv ${DBONLYMAINTENANCEMODESWITCHEROFF} ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #check
+                            mv ${DBONLYMAINTENANCEMODESWITCHEROFF} ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG} #check
                         elif [ ${OPTION} = "disable" ]; then
                            echo -e "already disabled nothing to do..."
                            exit 2
@@ -1032,15 +1032,15 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
                             exit 2
                         elif [ ${OPTION} = "disable" ]; then
                            echo -e "disable ${DBNAME} maintenancemode of nginx..."
-                            mv ${DBONLYMAINTENANCEMODESWITCHERON} ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #check
+                            mv ${DBONLYMAINTENANCEMODESWITCHERON} ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} #check
                         fi
                 else
                         if [ ${OPTION} = "enable" ]; then
                             echo -e "touching maintenancemode file seems someone deleted this file....."
-                            touch ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                            touch ${DBONLYMAINTENANCEMODESWITCHERON} | tee -a ${DBMAINTENANCELOG} #if file exists error occures but status is now correct
                         elif [ ${OPTION} = "disable" ]; then
                             echo -e "touching maintenancemode file seems someone deleted this file....."
-                            touch ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} ${UPDATELOGFILE} #if file exists error occures but status is now correct
+                            touch ${DBONLYMAINTENANCEMODESWITCHEROFF} | tee -a ${DBMAINTENANCELOG} #if file exists error occures but status is now correct
                         fi
                 fi
             fi
@@ -1069,10 +1069,170 @@ if [ "$SCRIPT_MODE" = "maintenancemode" ]; then
     exit 0
 fi
 
+UPDATETRANSLATION="odoo-tools.sh updatetranslation {TARGET_BRANCH} {DATABASE_NAME} {isocode|all} {modulname|odoo|third|own|customer|all}"
+if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $UPDATETRANSLATION"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    echo "arguments#: $#"
+    if ! [ $# -ge 4 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes minimum of 4 arguments!"
+        exit 2
+    fi
+    # THIS function Updates languages in a Specific Odoo Instance, gets the installed languages and reloads depending on
+    # your parameters the sepcific language file of the given modul or area
+    # considering: only "already installed module" gets language update, and it consider the special cases from res_lang
+    # table that en_US has no po iso code set so for englich en.po is used
+    # considering: that LANG CODE is different to PO ISO CODE and reads the res_lang table to get all infos correctly to
+    # handle language files
+    # considering: info, installed modules --> reads ir_module_module of status "installed" only for example loaded only
+    # modules are not considered cause status is "uninstalled"
+    # if there is time write this function in better code, i changed the behavior more times so its bad written code
+
+    # -------- BASIC Definitions BEGIN ---------
+
+    TARGET_BRANCH=$2
+    DBNAME=$3
+    DBUSER=${DBNAME}
+    LANG=$4
+    MODULNAME=$5
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    DATABASECONFIGFILE=${INSTANCE_PATH}/${DBNAME}/${DBNAME}.conf
+    SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+    BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+    TMPFILENAME=${INSTANCE_PATH}/${DBNAME}/BACKUP1/templang_${DBNAME}
+    # ------------------------------------------ BASIC Definitions END ------------------------------------------------
+
+    # ------------------------------------------ PREPARATIONS 4 - 5 BEGIN ---------------------------------------------
+    echo "Start Preparations of Language and Module Lists...."
+
+    # get the list of addonpaths
+    declare -a MODULPATHS=("${INSTANCE_PATH}/odoo/addons" "${INSTANCE_PATH}/addons-thirdparty" "${INSTANCE_PATH}/addons-own" \
+                            "${INSTANCE_PATH}/${DBNAME}/addons" "${INSTANCE_PATH}/${DBNAME}/addons/*_config")
+
+    # ATTENTION: This IS a generic solutions since the IFS delimiter NULL is used :)
+    # HINT: Sice we use a save NULL as the delimiter between fields we have to use read -d '' for all fields but the
+    #       last one of one record. The last field in the record will havae a newline after it and therefore starts the
+    #       next loop of the while cycle
+    # HINT: We do NOT use "IFS= read ..." since IFS= would prevent trimming of leading and trainling whitespace and
+    #       even this seems desired it gave unexpected results together with read!
+
+    # get the list of installed languages
+    declare -A INSTALLEDLANG=( )
+    declare -A LANGUAGES=( )
+    echo "Read Languages from Database..."
+    while read -r -d '' code && read -r iso_code
+    do
+        INSTALLEDLANG[${code}]=${iso_code}
+    done < <(su - postgres -c "psql -w -t -q -c -d ${DBNAME} --no-align --field-separator-zero --single-transaction \
+                            --set AUTOCOMMIT=off --set  ON_ERROR_STOP=on -t -c $\"SELECT code, iso_code from res_lang\"")
+
+    # HINT: We do not need to check if key en_US exists since this is the default language therefore must be installed
+    # and set the en iso code for the po file parameter
+    INSTALLEDLANG[en_US]=en
+
+    if [ "${LANG}" == "all" ]; then
+        #copy array
+        for i in ${!INSTALLEDLANG[@]}; do
+            LANGUAGES[$i]=${INSTALLEDLANG[$i]}
+        done
+    elif [ -n "${INSTALLEDLANG[${LANG}]}" ]; then
+        LANGUAGES[$LANG]=${INSTALLEDLANG[${LANG}]}
+    else
+        echo "ERROR: No language found, stopping script..."
+        EXIT 2
+    fi
+    # get the list of installed module, use file instead of array, because of faster handling of MODULES
+    echo "Read installed modules from Database..."
+    su - postgres -c "psql -A -t -q -c -d ${DBNAME} -t -c \"SELECT name FROM ir_module_module WHERE state = 'installed'\"" \
+                     >${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES
+    # do find and sorting same time to safe one loop throught, all addons already in ROW because of iterating through
+    # the MODULPATHS List above which is in a row as we like it
+    chmod 755 ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES
+    sed -e 's/$/\/i18n/' -i ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES
+    if [ ${MODULNAME} = "all" ]; then
+        for item in ${MODULPATHS[@]}; do
+            ADDONS+=$(find ${item} -type d -name "i18n"| grep -w -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES | xargs dirname)
+        done
+    elif [ ${MODULNAME} = "third" ]; then
+        ADDONS=$(find ${INSTANCE_PATH}/addons-thirdparty -type d -name "i18n"| grep -w -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES | xargs dirname)
+    elif [ ${MODULNAME} = "own" ]; then
+        ADDONS=$(find ${INSTANCE_PATH}/addons-own -type d -name "i18n"|  grep -w -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES | xargs dirname)
+    elif [ ${MODULNAME} = "custom" ]; then
+        ADDONS=$(find ${INSTANCE_PATH}/${DBNAME}/addons -type d -name "i18n"| egrep -v '(*_config)' | grep -w -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES | xargs dirname)
+        ADDONS+=$(find ${INSTANCE_PATH}/${DBNAME}/addons/*_config -type d -name "i18n" | grep -w -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES | xargs dirname)
+    elif [ ${MODULNAME} = "odoo" ]; then
+        ADDONS=$(find ${INSTANCE_PATH}/odoo/addons -type d -name "i18n"| grep -w -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES | xargs dirname)
+    else
+       for item in ${MODULPATHS[@]}; do
+            ADDONS+=$(find ${item} -type d -name ${MODULNAME} | grep -w i18n | grep -w -f ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES | xargs dirname)
+        done
+    fi
+    # EXIT if no Module has been found
+    # if nothing is found and variable is empty shel crashes, first argument cannot be empty, so compare at least x as
+    # a string if nothing was found
+    if [ "x${ADDONS}" == "x" ]; then
+        echo "ERROR: Module does not exist"
+        exit 2
+    fi
+    # ------------------------------------------ PREPARATIONS 4 - 5 - 6 END -------------------------------------------
+    echo "Starting update..."
+    # ------------------------------------------ ADMIN PREPREPARATIONS 1 - 2 - 3 BEGIN --------------------------------
+    # Switches 1 2 3 to this place because the exit states would leave the System shut off, so no need to shut the
+    # System off while preparation nothing is happening to the system while preparations
+    echo "Enabling maintenance mode of ${DBNAME} instance...."
+    # Calling this script recursive with another option for maintenance mode
+    sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
+    echo "Create, temp database backup ${DBNAME} before update..."
+    ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_before.zip
+    # TODO: change this recursive call odoo_tools.sh later or use only pgdump for this temp backup
+    #sudo - postgres ${DBNAME} > ${TMPFILENAME}_before.sql
+    echo "Stopping odoo of instance ${DBNAME} ..."
+    service ${DBNAME} stop
+    # ------------------------------------------ ADMIN PREPARATIONS 1 - 2 - 3 END -------------------------------------
+
+    # ------------------------------------------ UPDATE 7 BEGIN -------------------------------------------------------
+    for addon in ${ADDONS}; do
+        for code in ${!LANGUAGES[@]}; do
+            if [ -f ${addon}/i18n/${LANGUAGES[${code}]}.po ]; then
+                echo -e "\t\tUpdate translation for LANG: $code with pofile: ${LANGUAGES[${code}]}.po in module ${addon}"
+                sudo su - ${DBNAME} -c " ${INSTANCE_PATH}/odoo/openerp-server -c ${DATABASECONFIGFILE} -d ${DBNAME} \
+                                        -l ${code} --i18n-import=${addon}/i18n/${LANGUAGES[${code}]}.po --i18n-overwrite"
+            fi
+        done
+    done
+
+    # ------------------------------------------ UPDATE 7 BEGIN ---------------------------------------------------------
+
+    # ------------------------------------------ ADMIN POST PREPARATION 8 - 9 - 10 BEGIN -----------------------------------------
+
+    echo "Temporary backup of Database ${DBNAME} after udpate..."
+    ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_after.zip
+    # TODO: change this recursive call odoo_tools.sh later or use only pgdump for this temp backup
+    #sudo - postgres ${DBNAME} > ${TMPFILENAME}_before.sql
+    echo "Starting up Database ...."
+    service ${DBNAME} start
+    #remove temp INSTALLED ADDON LIST NOT NEEDED and is overriten everytime
+    rm ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES
+    echo "Disable maintenance mode of customer Instance ..."
+    sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable" #recursice call this script with special parameter
+    echo -e "\t\t!!!!! ATTENTION !!!!!"
+    echo -e "\n \t\t PLEASE DELETE ${TMPFILENAME}_after.zip"
+    echo -e "and ${TMPFILENAME}_before.zip if everything went well"
+    echo -e "\t\t OR USE IT FOR RESTORE"
+
+    # ------------------------------------------- ADMIN POST PREPARATION END ------------------------------------------
+
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e "$UPDATETRANSLATION DONE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    exit 0
+fi
+
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="$ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
@@ -1095,7 +1255,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}
 # ---------------------------------------------------------------------------------------
-MODERESTORE="$ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}"
+MODERESTORE="odoo-tools.sh restore {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}"
 if [ "$SCRIPT_MODE" = "restore" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODERESTORE"
@@ -1123,14 +1283,16 @@ fi
 # Script HELP
 # ---------------------------------------------------------
 echo -e "\n----- SCRIPT USAGE -----"
-echo -e "$ odoo-tools.sh {prepare|setup|newdb|dupdb|deploy|backup|restore}\n"
+echo -e "$ odoo-tools.sh {prepare|setup|newdb|dupdb|deploy|backup|restore|updatetranslation|maintennancemode}\n"
 echo -e "$ $MODEPREPARE"
 echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
+echo -e "$ $MAINTENANCEMODE"
+echo -e "$ $UPDATETRANSLATION"
+echo -e "----------------- TODOs ----------------"
+echo -e "TODO: odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEDUPDB"
 echo -e "TODO: $MODEUPDATEINST"
-echo -e "$ $MAINTENANCEMODE"
-echo -e "TODO: $ odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEBACKUP"
 echo -e "TODO: $MODERESTORE"
 echo -e "------------------------\n"
