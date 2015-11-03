@@ -21,6 +21,7 @@
 
 from openerp import tools
 from openerp import api, models, fields
+from openerp import SUPERUSER_ID
 
 
 # Extend the Product Public Category model with two new fields:
@@ -47,6 +48,16 @@ class product_public_category_menu(models.Model):
     #       each category (domain filter in main.py)
     cat_root_id = fields.Many2one(comodel_name='product.public.category',
                                   string='Nearest Root Category or UpMost Parent')
+
+    # Update the field cat_root_id at addon installation or update
+    # Todo: Test if this works at install time too an not just at addon update
+    def init(self, cr, context=None):
+        print "INIT OF website_sale_categories"
+        allcats = self.search(cr, SUPERUSER_ID, [])
+        for catid in allcats:
+            cat = self.browse(cr, SUPERUSER_ID, catid)
+            # parent_id will trigger the recalculation of cat_root_id in the write method
+            cat.write({"parent_id": cat.parent_id.id or None})
 
 
     # Recalculate the cat_root_id
