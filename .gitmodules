@@ -65,3 +65,7 @@
 	path = addons-thirdparty/oca/margin-analysis
 	url = https://github.com/OCA/margin-analysis.git
 	branch = 8.0
+[submodule "odoo"]
+	path = odoo
+	url = https://github.com/OCA/OCB.git
+	branch = 8.0
