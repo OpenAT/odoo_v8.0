@@ -1,21 +1,17 @@
-[submodule "odoo"]
-	path = odoo
-	url = https://github.com/odoo/odoo.git
-	branch = 8.0
 [submodule "addons-thirdparty/server-tools"]
-	path = addons-thirdparty/server-tools
+	path = addons-thirdparty/oca/server-tools
 	url = https://github.com/OCA/server-tools.git
 	branch = 8.0
 [submodule "addons-thirdparty/web"]
-	path = addons-thirdparty/web
+	path = addons-thirdparty/oca/web
 	url = https://github.com/OCA/web.git
 	branch = 8.0
 [submodule "addons-thirdparty/partner-contact"]
-	path = addons-thirdparty/partner-contact
+	path = addons-thirdparty/oca/partner-contact
 	url = https://github.com/OCA/partner-contact.git
 	branch = 8.0
 [submodule "addons-thirdparty/project-service"]
-	path = addons-thirdparty/project-service
+	path = addons-thirdparty/oca/project-service
 	url = https://github.com/OCA/project-service.git
 	branch = 8.0
 [submodule "addons-thirdparty/aeroolib"]
@@ -35,7 +31,7 @@
 	url = https://github.com/acsone/acsone-addons.git
 	branch = 8.0
 [submodule "addons-thirdparty/website"]
-	path = addons-thirdparty/website
+	path = addons-thirdparty/oca/website
 	url = https://github.com/OCA/website.git
 	branch = 8.0
 [submodule "yelizariev"]
@@ -45,4 +41,31 @@
 [submodule "addons-thirdparty/yelizariev-website-addons"]
 	path = addons-thirdparty/yelizariev-website-addons
 	url = https://github.com/yelizariev/website-addons.git
+	branch = 8.0
+[submodule "addons-thirdparty/oca/social"]
+	path = addons-thirdparty/oca/social
+	url = https://github.com/OCA/social.git
+[submodule "addons-thirdparty/oca/sale-workflow"]
+	path = addons-thirdparty/oca/sale-workflow
+	url = https://github.com/OCA/sale-workflow.git
+	branch = 8.0
+[submodule "addons-thirdparty/oca/account-closing"]
+	path = addons-thirdparty/oca/account-closing
+	url = https://github.com/OCA/account-closing.git
+	branch = 8.0
+[submodule "addons-thirdparty/oca/hr"]
+	path = addons-thirdparty/oca/hr
+	url = https://github.com/OCA/hr.git
+	branch = 8.0
+[submodule "addons-thirdparty/oca/project"]
+	path = addons-thirdparty/oca/project
+	url = https://github.com/OCA/project.git
+	branch = 8.0
+[submodule "addons-thirdparty/oca/margin-analysis"]
+	path = addons-thirdparty/oca/margin-analysis
+	url = https://github.com/OCA/margin-analysis.git
+	branch = 8.0
+[submodule "odoo"]
+	path = odoo
+	url = https://github.com/OCA/OCB.git
 	branch = 8.0
