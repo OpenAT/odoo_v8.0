@@ -211,6 +211,10 @@
                                     <field name="module_website_as_widget" class="oe_inline" />
                                     <label for="module_website_as_widget" />
                                 </div>
+                                <div>
+                                    <field name="module_website_tools" class="oe_inline" />
+                                    <label for="module_website_tools" />
+                                </div>
                             </div>
                         </div>
                     </group>

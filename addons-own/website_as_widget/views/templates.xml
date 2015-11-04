@@ -6,8 +6,8 @@
 <template id="assets_frontend" inherit_id="website.assets_frontend" name="assets_frontend website_as_widget">
     <xpath expr="." position="inside">
         <t t-if="request.session.get('aswidget', False) is True">
-        <link rel='stylesheet' href='/website_as_widget/static/src/css/website_as_widget.css'/>
-        <script type="text/javascript" src="/website_tools/static/lib/iframe-resizer/js/iframeResizer.contentWindow.min.js"></script>
+            <link rel='stylesheet' href='/website_as_widget/static/src/css/website_as_widget.css'/>
+            <script type="text/javascript" src="/website_tools/static/lib/iframe-resizer/js/iframeResizer.contentWindow.min.js"></script>
         </t>
     </xpath>
 </template>
