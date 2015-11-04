@@ -136,8 +136,10 @@ class base_config_settings(osv.osv_memory):
                                                          help='calendar as log for meeting minutes'),
         'module_calendar_log_project': fields.boolean('calendar_log_project -- extend the calendar to use it as a log for work logs',
                                                          help='use the calendar as a simple work log. log work hours to projects or tasks'),
-        'module_website_as_widget': fields.boolean('website_as_widget -- hide header and footer',
+        'module_website_as_widget': fields.boolean('website_as_widget -- hide header and footer (THEME INCOMPATIBLE)',
                                                          help='use aswidget in the url of the webpage or call it with route aswidget'),
+        'module_website_tools': fields.boolean('website_tools -- Basic JS libs and css fixes',
+                                                         help='Library to avoid double loading of java libs and css'),
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)
         'module_web_ckeditor4': fields.boolean('web_ckeditor4 -- DEPRECATED! CKeditor4 for any html/text field in the odoo backend!',
