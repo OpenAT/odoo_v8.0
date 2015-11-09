@@ -434,7 +434,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     TARGET_BRANCH=$2
     SUPER_PASSWORD=$3
     DOMAIN_NAME=$5
-    if $6; then
+    if [ -z "$6" ]; then
         CUADDONSREPONAME=$6
     else
         CUADDONSREPONAME="cu_$4"
