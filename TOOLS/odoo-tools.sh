@@ -656,6 +656,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     NGINXDBMAINTENANCEONLYFILE=${DBPATH}/${DBNAME}-maintenance
     /bin/sed '{
         s!BASEPORT!'"${BASEPORT}"'!g
+        s!DATABASE_NAME!'"$4"'!g
         s!DBNAME!'"${DBNAME}"'!g
         s!DOMAIN_NAME!'"${DOMAIN_NAME}"'!g
         s!DBLOGPATH!'"${DBLOGPATH}"'!g
