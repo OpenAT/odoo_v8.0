@@ -456,7 +456,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     PUSHTODEPLOYPATH="${REPO_SETUPPATH}/node_modules/push-to-deploy"
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
     PUSHTODEPLOYSERVICENAME="${DBNAME}_${CUADDONSREPONAME}"
-    PTDLOGFILE="${DBLOGPATH}/${DBNAME}-pushtodeply.log"
+    PTDLOGFILE="${DBLOGPATH}/${DBNAME}-pushtodeploy.log"
     GITPTDBRANCHNAME="${GITPATH}/${CUADDONSREPONAME}.git"
 
     # ----- Basic Checks
