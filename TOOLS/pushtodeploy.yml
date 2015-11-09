@@ -1,9 +1,9 @@
 # On a new master commit, run STAGE deployment.
-OpenAT/PUSHTODEPLOYLOCATION/push/heads/master:
-  - echo "Running STAGE deployment (checkout out {{commit}})" &&
-    cd DBPATH/addons &&
-    git fetch origin &&
-    git checkout --force {{commit}}
+#OpenAT/PUSHTODEPLOYLOCATION/push/heads/master:
+#  - echo "Running STAGE deployment (checkout out {{commit}})" &&
+#    cd DBPATH/addons &&
+#    git fetch origin &&
+#    git checkout --force {{commit}}
 #  - echo "Restarting Instance " &&
 #    service INSTANZNAME restart
 
