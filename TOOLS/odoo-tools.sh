@@ -414,12 +414,12 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODENEWDB"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    echo -e "DATABASE_NAME MUST BE the unique customer number E.g.: pfot, ahch, dadi, ... "
+    echo -e "!!! DATABASE_NAME MUST BE the unique customer number E.g.: pfot, ahch, dadi, ... !!!"
     echo -e "DATABASE_NAME will be used for the default domains! E.g. for ahch:"
     echo -e "    ahch.datadialog.net aswidget.ahch.datadialog.net cloud.ahch.datadialog.net pad.ahch.datadialog.net"
     echo -e "CUADDONSREPONAME is OPTIONAL! for the name of the custom-addons github repository! E.g.: cu_ahch"
     echo -e "                 Will use \"cu_{DATABASE_NAME}\" if not given!"
-    echo -e "                 THIS PARAMETER IS OPTIONAL AND SHOULD NOT BE USED!"
+    echo -e "                 THIS PARAMETER IS SET AUTOMATICALLY AND SHOULD NOT BE SET MANUALLY!"
     echo -e "ATTENTION: Make sure the github repository for the custom_addons already exists!"
     echo -e "ATTENTION: Make sure at least the default domains (see above) are already set up!"
     if [ $# -lt 5 ]; then
@@ -453,11 +453,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DBLOGFILE="${DBLOGPATH}/${DBNAME}.log"
     DBBACKUPPATH="${DBPATH}/BACKUP"
     DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
-    PUSHTODEPLOYPATH="${REPO_SETUPPATH}/node_modules/push-to-deploy"
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
-    PUSHTODEPLOYSERVICENAME="${DBNAME}_${CUADDONSREPONAME}"
-    PTDLOGFILE="${DBLOGPATH}/${DBNAME}-pushtodeploy.log"
-    GITPTDBRANCHNAME="${GITPATH}/${CUADDONSREPONAME}.git"
 
     # ----- Basic Checks
 
@@ -565,7 +561,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "\$3 SUPER_PASSWORD                 :  $SUPER_PASSWORD" | tee -a ${DB_SETUPLOG}
     echo -e "\$4 DATABASE_NAME                  :  $4" | tee -a ${DB_SETUPLOG}
     echo -e "\$5 DOMAIN_NAME                    :  $DOMAIN_NAME" | tee -a ${DB_SETUPLOG}
-    echo -e "\$6 CUADDONSREPONAME               : $CUADDONSREPONAME" | tee -a ${DB_SETUPLOG}
+    echo -e "\$6 CUADDONSREPONAME               :  $CUADDONSREPONAME" | tee -a ${DB_SETUPLOG}
     echo -e ""
     echo -e "Database Setup Log File           :  ${DB_SETUPLOG}" | tee -a ${DB_SETUPLOG}
     echo -e ""
@@ -655,9 +651,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     ln -s ${DBLOGPATH} ${DBPATH}/LOG | tee -a ${DB_SETUPLOG}
 
     # ----- Setup nginx
-    echo -e "---- Create NGINX config file"
-    touch ${PTDLOGFILE}
-    chown ${DBNAME}: ${PTDLOGFILE}
+    echo -e "\n---- Create NGINX config file"
     NGINXCONF=${DBPATH}/${DBNAME}-nginx.conf
     NGINXDBMAINTENANCEONLYFILE=${DBPATH}/${DBNAME}-maintenance
     /bin/sed '{
@@ -677,49 +671,50 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     service nginx restart
     echo -e "---- Create NGINX config file DONE"
 
-    # ----- setup pushtodeploy and create - write init script and create config file
-    echo "starting setup customer addons...."
-    echo -e "---- Create pushtodeploy config file...."
-    PUSHTODEPLOYCONF=${DBPATH}/${DBNAME}-pushtodeploy.yml
+    # ----- Setup push-to-deploy for addons folder (for cu_* customer-addons repos in github)
+    echo -e "\n---- Setup of push-to-deploy service for customer-addons folder"
+    PTD_BINARYPATH="${REPO_SETUPPATH}/node_modules/push-to-deploy/bin/push-to-deploy"
+    PTD_SERVICENAME="${DBNAME}-pushtodeploy"
+    PTD_INITFILE="${DBPATH}/${PTD_SERVICENAME}.init"
+    PTD_CONFFILE="${DBPATH}/${PTD_SERVICENAME}.yml"
+    PTD_LOGFILE="${DBLOGPATH}/${PTD_SERVICENAME}.log"
+    PTD_GITBRANCH="${GITPATH}/${CUADDONSREPONAME}.git"
+    echo -e "Create push-to-deploy config file."
     /bin/sed '{
         s!PUSHTODEPLOYLOCATION!'"${CUADDONSREPONAME}"'!g
         s!INSTANZNAME!'"${DBNAME}"'!g
         s!DBPATH!'"${DBPATH}"'!g
-            }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.yml > ${PUSHTODEPLOYCONF} | tee -a ${DB_SETUPLOG}
-    chown root:root ${PUSHTODEPLOYCONF}
-    chmod ugo=r ${PUSHTODEPLOYCONF}
-    echo -e "---- Create PUSHTODEPLOY config file DONE"
-    echo -e "---- Create pushtodeploy init file..."
-    PUSHTODEPLOYINIT=${DBPATH}/${DBNAME}-pushtodeploy.init
+            }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.yml > ${PTD_CONFFILE} | tee -a ${DB_SETUPLOG}
+    chown root:root ${PTD_CONFFILE}
+    chmod ugo=r ${PTD_CONFFILE}
+    echo -e "Create push-to-deploy config file. DONE"
+    echo -e "Create and start push-to-deploy init service"
     /bin/sed '{
-        s!'"DAEMON="'!'"DAEMON=${PUSHTODEPLOYPATH}/bin/push-to-deploy"'!g
+        s!'"DAEMON="'!'"DAEMON=${PTD_BINARYPATH}"'!g
         s!'"USER="'!'"USER=${DBUSER}"'!g
-        s!'"PTDSERVICE"'!'"${PUSHTODEPLOYSERVICENAME}-${BASEPORT}08"'!g
-        s!'"CONFIGFILE="'!'"CONFIGFILE=${PUSHTODEPLOYCONF}"'!g
-        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p ${BASEPORT}08 ${PUSHTODEPLOYCONF}\""'!g
-        s!LOGFILE=!'"LOGFILE=${PTDLOGFILE}"'!g
-            }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.init > ${PUSHTODEPLOYINIT} | tee -a ${DB_SETUPLOG}
-    chown root:root ${PUSHTODEPLOYINIT}
-    chmod ugo=rx ${PUSHTODEPLOYINIT}
-    echo -e "---- Create PUSHTODEPLOY INIT file DONE"
-    ln -s ${PUSHTODEPLOYINIT} /etc/init.d/${PUSHTODEPLOYSERVICENAME}-${BASEPORT}08
-    echo "write Startup scripts"
-    update-rc.d ${PUSHTODEPLOYSERVICENAME}-${BASEPORT}08 start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a ${DB_SETUPLOG}
-    echo "starting up push to deploy service"
-    service ${PUSHTODEPLOYSERVICENAME}-${BASEPORT}08 start
-    #/etc/init.d/${PUSHTODEPLOYSERVICENAME}-${BASEPORT}08
-    echo "check if customer remote repository already exists"
-    git ls-remote ${GITPTDBRANCHNAME} HEAD #if this command gets an exit code, it will be written into $? and can be checked
+        s!'"PTDSERVICE"'!'"${PTD_SERVICENAME}"'!g
+        s!'"CONFIGFILE="'!'"CONFIGFILE=${PTD_CONFFILE}"'!g
+        s!'"DAEMON_OPTS="'!'"DAEMON_OPTS=\"-p ${BASEPORT}08 ${PTD_CONFFILE}\""'!g
+        s!LOGFILE=!'"LOGFILE=${PTD_LOGFILE}"'!g
+            }' ${INSTANCE_PATH}/TOOLS/pushtodeploy.init > ${PTD_INITFILE} | tee -a ${DB_SETUPLOG}
+    chown root:root ${PTD_INITFILE}
+    chmod ugo=rx ${PTD_INITFILE}
+    ln -s ${PTD_INITFILE} /etc/init.d/${PTD_SERVICENAME}
+    update-rc.d ${PTD_SERVICENAME} start 20 2 3 5 . stop 80 0 1 4 6 . | tee -a ${DB_SETUPLOG}
+    service ${PTD_SERVICENAME} start
+    echo -e "Create and start of push-to-deploy init service DONE"
+    echo -e "Clone the customer addons github repo ${CUADDONSREPONAME} to ${DBPATH}/addons"
+    git ls-remote ${PTD_GITBRANCH} HEAD #if this command gets an exit code, it will be written into $? and can be checked
     if (( $? )); then
-        echo "WARNING: ${GITPTDBRANCHNAME} does not exists, please create a new repo for this customer and create the webhook for this repo ${GITPTDBRANCHNAME}!"
-        echo "and do manual -- git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons "
+        echo "WARNING: ${PTD_GITBRANCH} does not exists, please create a new repo for this customer and create the webhook for this repo ${PTD_GITBRANCH}!"
+        echo "and do manually:\n git clone -b master ${PTD_GITBRANCH} ${DBPATH}/addons \n"
     else
-        echo -e "repository ${GITPTDBRANCHNAME} exists .... Cloning Customer addons..."
-        git clone -b master ${GITPTDBRANCHNAME} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
+        echo -e "repository ${PTD_GITBRANCH} exists .... Cloning Customer addons..."
+        git clone -b master ${PTD_GITBRANCH} ${DBPATH}/addons | tee -a ${INSTANCE_SETUPLOG}
     fi
     chown -Rf ${DBUSER}:${DBUSER} ${DBPATH}/addons/ | tee -a ${DB_SETUPLOG}
-    echo "finished setup pushtodeploy and create - write init script and create config file DONE"
-
+    echo -e "Clone the customer addons github repo ${CUADDONSREPONAME} to ${DBPATH}/addons DONE"
+    echo -e "---- Setup of push-to-deploy service for customer-addons folder DONE"
 
     # ----- Setup Etherpad-Lite
     echo -e "\n---- Setup Etherpad-Lite"
@@ -778,7 +773,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     CLOUDDB=${DBNAME}_cloud
     CLOUDUSER=${DBUSER}_cloud
     CLOUDPW=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 8 | head -1`
-    # download owncloud and create directory owncloud with tar
+    # Download owncloud and create directory owncloud with tar
     cd ${DBPATH}
     wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2 -O ${DBPATH}/owncloud-7.0.2.tar.bz2
     tar -xjf ${DBPATH}/owncloud-7.0.2.tar.bz2 -C ${DBPATH}
@@ -786,18 +781,15 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     chown -R ${DBUSER}:${DBUSER} ${OWNCLOUDPATH} | tee -a ${DB_SETUPLOG}
     chown -R www-data:www-data ${OWNCLOUDPATH}/config/ ${OWNCLOUDPATH}/apps/ ${OWNCLOUDPATH}/data/ | tee -a ${DB_SETUPLOG}
     # Create owncloud db user
-    echo -e "\n---- Create owncloud db role: $CLOUDUSER"
+    echo -e "\nCreate owncloud db role: $CLOUDUSER"
     sudo su - postgres -c \
         'psql -a -e -c "CREATE ROLE '${CLOUDUSER}' WITH NOSUPERUSER LOGIN PASSWORD '\'${CLOUDPW}\''"' | tee -a ${DB_SETUPLOG}
     # Create the owncloud database (utf8)
-    echo -e "\n---- Create owncloud DB: ${CLOUDDB}"
-    echo -e "Create DB for owncloud: ${CLOUDDB} Owner: ${CLOUDUSER}"
+    echo -e "Create db for owncloud: ${CLOUDDB} Owner: ${CLOUDUSER}"
     sudo su - postgres -c \
         'psql -a -e -c "CREATE DATABASE '${CLOUDDB}' WITH OWNER '${CLOUDUSER}' ENCODING '\'UTF8\''" ' | tee -a ${DB_SETUPLOG}
-    #
-    # ----- Configure owncloud
     OWNCLOUDCONFIGFILE="${DBPATH}/${CLOUDDB}-autoconfig.php"
-    echo -e "Create Configuration for owncloud and link it to owncloud config dir"
+    echo -e "Create configuration for owncloud and link it to owncloud config dir"
     echo "<?php" >> ${OWNCLOUDCONFIGFILE}
     echo     '$AUTOCONFIG = array (' >> ${OWNCLOUDCONFIGFILE}
     echo      "'dbtype' => 'pgsql'," >> ${OWNCLOUDCONFIGFILE}
@@ -817,13 +809,13 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo     "'adminlogin' => 'cloudadmin'," >> ${OWNCLOUDCONFIGFILE}
     echo     "'adminpass' => 'cloudadmin#1'," >> ${OWNCLOUDCONFIGFILE}
     echo     ");" >> ${OWNCLOUDCONFIGFILE}
-#    ${OWNCLOUDCONFIGFILE} | tee -a /tmp/test.log
     ln -s ${OWNCLOUDCONFIGFILE} ${OWNCLOUDPATH}/config/autoconfig.php
     chown root:root ${OWNCLOUDCONFIGFILE}
     chmod ugo=rx ${OWNCLOUDCONFIGFILE}
     echo -e "---- Setup owncloud DONE"
 
     # ----- Setup cron Logrotate for all Logfiles
+    echo -e "\n---- Setup logrotate"
     DBLOGROT="${DBPATH}/${DBNAME}-logrotate.conf"
     echo -e "${DBLOGPATH}/*.log" > ${DBLOGROT}
     echo -e "{"                  >> ${DBLOGROT}
@@ -835,10 +827,11 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     echo -e "   delaycompress"   >> ${DBLOGROT}
     echo -e "}"                  >> ${DBLOGROT}
     ln -s ${DBLOGROT} /etc/logrotate.d/${DBNAME}
+    echo -e "---- Setup logrotate DONE"
 
-    # ----- Create backup script and Setup cron job for backup script
+    # ----- Create database backup script and link it to cron daily
     DBBACKUPSCRIPT="${DBPATH}/${DBNAME}-backup.sh"
-    echo -e "Create database backup script and link to cron daily"
+    echo -e "\n---- Create database backup script and link it to cron daily"
     /bin/sed '{
         s!BASEPORT!'"$BASEPORT"'!g
         s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
@@ -852,9 +845,9 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     chmod ugo=rx ${DBBACKUPSCRIPT}
     ln -s ${DBBACKUPSCRIPT} /etc/cron.daily/${DBNAME}-backup | tee -a ${DB_SETUPLOG}
 
-    # ----- Create backup script for PAD and Setup cron job for backup script
+    # ----- Create etherpad-lite database backup script and link it to cron daily
     PADDBBACKUPSCRIPT="${DBPATH}/${PADDB}-backup-pad.sh"
-    echo -e "Create PAD database backup script and link to cron daily"
+    echo -e "\n---- Create etherpad-lite database backup script and link it to cron daily"
     /bin/sed '{
         s!BASEPORT!'"$BASEPORT"'!g
         s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
@@ -868,9 +861,9 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     chmod ugo=rx ${PADDBBACKUPSCRIPT}
     ln -s ${PADDBBACKUPSCRIPT} /etc/cron.daily/${PADDB}-backup-pad | tee -a ${DB_SETUPLOG}
 
-    # ----- Create backup script for OWNCLOUD and Setup cron job for backup script
+    # ----- Create owncloud backup script and link it to cron daily
     CLOUDDBBACKUPSCRIPT="${DBPATH}/${CLOUDDB}-backup-owncloud.sh"
-    echo -e "Create PAD database backup script and link to cron daily"
+    echo -e "\n---- Create owncloud backup script and link it to cron daily"
     /bin/sed '{
         s!BASEPORT!'"$BASEPORT"'!g
         s!SUPER_PASSWORD!'"$SUPER_PASSWORD"'!g
