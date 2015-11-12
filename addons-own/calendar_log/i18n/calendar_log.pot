@@ -52,20 +52,12 @@ msgstr ""
 msgid "Do not send invitation e-mails!"
 msgstr ""
 
-#. module: calendar_log
-#: help:calendar.event,expense_allowance:0
-msgid "Eligible for expense refund!"
-msgstr ""
 
 #. module: calendar_log
 #: view:calendar.event:calendar_log.view_calendar_event_tree_calendar_log
 msgid "Expense"
 msgstr ""
 
-#. module: calendar_log
-#: field:calendar.event,expense_allowance:0
-msgid "Expense Allowance"
-msgstr ""
 
 #. module: calendar_log
 #: field:calendar.event.category,id:0

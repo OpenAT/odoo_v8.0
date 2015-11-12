@@ -31,7 +31,6 @@
                     <field name="opportunity_id"/>
                 </xpath>
                 <xpath expr="//field[@name='location']" position="after">
-                    <field name="expense_allowance"/>
                     <field name="odometer_start"/>
                     <field name="odometer_finish"/>
                 </xpath>
@@ -59,9 +58,6 @@
                         <field name="category_id"/>
                     </h1>
                 </xpath>
-                <xpath expr="//field[@name='location']" position="after">
-                    <field name="expense_allowance"/>
-                </xpath>
                 <xpath expr="//form[@string='Meetings']/group" position="after">
                         <label for="description"/>
                         <field name="description"/>
@@ -81,7 +77,6 @@
                     <field name="category_id"/>
                     <field name="phonecall_id"/>
                     <field name="opportunity_id"/>
-                    <field name="expense_allowance"/>
                     <field name="meeting_minutes"/>
                     <field name="allday"/>
                     <field name="mainpartner_id"/>
@@ -109,7 +104,6 @@
             <field name="inherit_id" ref="calendar.view_calendar_event_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="before">
-                    <field name="expense_allowance" string="Expense"/>
                     <field name="category_id"/>
                 </xpath>
                 <xpath expr="//field[@name='start_date']" position="attributes">
