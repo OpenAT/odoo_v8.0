@@ -46,6 +46,7 @@ class product_public_category_menu(models.Model):
     # no parent category is available or the current category has cat_root set to True.
     # HINT: This field is used in the category qweb-template to render the categories as well as for products shown at
     #       each category (domain filter in main.py)
+    # ATTENTION: Hidden categories are treated like root categories even if root_cat is not set!
     cat_root_id = fields.Many2one(comodel_name='product.public.category',
                                   string='Nearest Root Category or UpMost Parent')
 
@@ -56,23 +57,27 @@ class product_public_category_menu(models.Model):
         allcats = self.search(cr, SUPERUSER_ID, [])
         for catid in allcats:
             cat = self.browse(cr, SUPERUSER_ID, catid)
-            # parent_id will trigger the recalculation of cat_root_id in the write method
+            # To set the parent_id will trigger the recalculation of cat_root_id in the write method
             cat.write({"parent_id": cat.parent_id.id or None})
 
 
     # Recalculate the cat_root_id
     @api.multi
     def write(self, vals):
-        # Write the changes (to the environment cache?) first
+        # Write the changes (to the environment cache?) first!
+        # ATTENTION: Hidden categories are treated like root categories!
+        if 'cat_hide' in vals and self.ensure_one():
+            if vals['cat_hide']:
+                vals['cat_root'] = True
         res = super(product_public_category_menu, self).write(vals)
 
-        # If parent_id or cat_root are changed calculate the cat_root_id field
-        if 'parent_id' in vals or 'cat_root' in vals and self.ensure_one():
+        # If parent_id or cat_root or cat_hide are changed calculate the cat_root_id field
+        if 'parent_id' in vals or 'cat_root' in vals or 'cat_hide' in vals and self.ensure_one():
 
             # Calculate the cat_root_id of the current category
             cat = self
             while True:
-                if cat.cat_root or not cat.parent_id:
+                if cat.cat_root or cat.cat_hide or not cat.parent_id:
                     self.cat_root_id = cat.id
                     break
                 else:
@@ -85,7 +90,7 @@ class product_public_category_menu(models.Model):
             for child_cat in categories:
                 cat = child_cat
                 while True:
-                    if cat.cat_root or not cat.parent_id:
+                    if cat.cat_root or cat.cat_hide or not cat.parent_id:
                         if cat.ids:
                             child_cat.cat_root_id = cat.id
                         break

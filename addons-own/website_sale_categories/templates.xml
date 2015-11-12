@@ -92,7 +92,7 @@
           <ul t-if="c.child_id" class="nav nav-pills nav-stacked nav-hierarchy">
               <t t-foreach="c.child_id" t-as="c">
                   <!-- Render the category if the category ist not a rootcat or its rootcat is the category itself -->
-                  <t t-if="((c.id == rootcat) or (c.cat_root == False)) and (not c.cat_hide)">
+                  <t t-if="((c.id == rootcatid) or (c.cat_root == False)) and (not c.cat_hide)">
                     <t t-call="website_sale_categories.categories_recursive_extended"/>
                   </t>
               </t>
@@ -111,29 +111,42 @@
             -->
             <t t-set="start_categories" t-value="categories"/>
             <t t-set="cat_hide" t-value="False" />
-            <t t-set="rootcat" t-value="False"/>
+            <t t-set="rootcatid" t-value="False"/>
 
+            <!-- Check if a category is currently selected -->
             <t t-if="category">
                 <t t-set="cat_hide" t-value="category.cat_hide"/>
-                <t t-if="category.cat_root_id.cat_root">
+
+                <!-- Check if the topmost category is a real root category (and not just the topmost parent) -->
+                <!-- ATTENTION: Hidden categories are treated like root categories even if root_cat is not set! -->
+                <t t-if="category.cat_root_id.cat_root or category.cat_root_id.cat_hide">
+                    <!-- Set the start_categories to the root category -->
                     <t t-set="start_categories" t-value="category.cat_root_id"/>
-                    <t t-set="rootcat" t-value="category.cat_root_id.id"/>
+                    <!-- If a rootcat is hidden and has child ids we start at the child_ids instead of the root cat -->
+                     <t t-if="category.cat_root_id.cat_hide and category.cat_root_id.child_id">
+                         <t t-set="start_categories" t-value="category.cat_root_id.child_id"/>
+                         <t t-set="cat_hide" t-value="False"/>
+                     </t>
+                    <!-- Store the id of the root cat -->
+                    <t t-set="rootcatid" t-value="category.cat_root_id.id"/>
                 </t>
+
             </t>
         </xpath>
 
         <!-- ADVANCED CATEGORY NAVIGATION -->
         <xpath expr="//div[@id='products_grid_before']" position="inside">
+            <!-- Render the category menu only if the current category is not hidden and the current category is not the root category -->
             <t t-if="not cat_hide">
                 <ul class="cat_menu nav nav-pills nav-stacked">
                     <!-- Show "All Products" link if the current category has no root category -->
-                    <t t-if="rootcat == False">
+                    <t t-if="rootcatid == False">
                         <li t-att-class=" 'cat0' if category else 'active cat0' "><a t-att-href="keep('/shop',category=0)">All Products</a></li>
                     </t>
                     <!-- Render categories if any -->
                     <t t-foreach="start_categories" t-as="c">
                         <!-- Render the category if the category ist not a rootcat or its rootcat is the category itself -->
-                        <t t-if="((c.id == rootcat) or (c.cat_root == False)) and (not c.cat_hide)">
+                        <t t-if="((c.id == rootcatid) or (c.cat_root == False)) and (not c.cat_hide)">
                             <t t-call="website_sale_categories.categories_recursive_extended"/>
                         </t>
                     </t>
