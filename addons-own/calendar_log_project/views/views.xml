@@ -9,18 +9,31 @@
             <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='duration']" position="after">
-                    <div style=" margin-top: 1em; color: grey; font-size: 10px"></div>
-                    <div style=" margin-top: 1em; color: grey; font-size: 10px">
-                        The tasks depends on the project!
-                        Clear the project first if you want to search for all tasks!
-                    </div>
+
                     <field name="project_id"/>
+                    <div style=" margin-bottom: 1em; color: grey; font-size: 10px" colspan="2">
+                        The tasks depends on the project!
+                        Clear the project if you want to search for all tasks!
+                    </div>
                     <field name="task_id"/>
                     <field name="is_worklog"/>
+                    <div style=" margin-bottom: 1em; color: grey; font-size: 10px" colspan="2">
+                        If ticked a worklog entry is automatically created for this meeting!
+                        Always change the meeting to change the worklog entry!
+                    </div>
                 </xpath>
                 <xpath expr="//label[@for='description']" position="before">
-                        <label for="worklog_text" attrs="{'invisible': ['|', ('is_worklog','=',False), '&amp;', ('project_id','=',False), ('task_id','=',False)]}"/>
-                        <field name="worklog_text" style=" margin-bottom: 1em;" attrs="{'invisible': ['|', ('is_worklog','=',False), '&amp;', ('project_id','=',False), ('task_id','=',False)]}"/>
+                        <label for="worklog_text"/>
+                        <div style=" margin-top: 1em; color: grey; font-size: 10px">
+                            If "Is Worklog" is ticked this text will be used for the work log entry.
+                            If left empty the meeting title will be used for the worklog entry!
+                        </div>
+                        <field name="worklog_text" style=" margin-bottom: 1em;"/>
+                </xpath>
+                <xpath expr="//label[@for='description']" position="after">
+                        <div style=" margin-top: 1em; color: grey; font-size: 10px">
+                            This text will be used for invitation emails and therefore may be visible to customers!
+                        </div>
                 </xpath>
             </field>
         </record>
@@ -57,11 +70,13 @@
                     <field name="task_id"/>
                     <field name="worklog_text"/>
                 </xpath>
+                <xpath expr="//filter[@name='message_unread']" position="after">
+                    <separator/>
+                    <filter name="is_worklog" string="Is Worklog"  domain="[('is_worklog','=',True)]"/>
+                    <filter name="is_not_worklog" string="Is Not Worklog"  domain="[('is_worklog','=',False)]"/>
+                    <separator/>
+                </xpath>
                 <xpath expr="//filter[@string='Privacy']" position="after">
-                    <filter string="Is Worklog"  domain="['is_worklog','=',True]"/>
-                    <separator/>
-                    <filter string="Is Not Worklog"  domain="['is_worklog','=',False]"/>
-                    <separator/>
                     <filter string="Project"  domain="[]" context="{'group_by':'project_id'}"/>
                     <filter string="Task"  domain="[]" context="{'group_by':'task_id'}"/>
                 </xpath>
@@ -77,6 +92,18 @@
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="project_id"/>
                     <field name="task_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- INHERIT: CALENDAR CATEGORY TREE VIEW: Add is_worklog -->
+        <record id="view_calendar_event_category_tree_log_project" model="ir.ui.view">
+            <field name="name">Meeting Categories Tree</field>
+            <field name="model">calendar.event.category</field>
+            <field name="inherit_id" ref="calendar_category.view_calendar_event_category_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="is_worklog"/>
                 </xpath>
             </field>
         </record>

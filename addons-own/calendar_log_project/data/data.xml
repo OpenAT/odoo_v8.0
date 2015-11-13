@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- HINT: The ID reference "id=" must contain maximum one dot.
+                   They are used to refer to an other modules ID, in the form: module.record_id"
+        -->
+        <record model="calendar.event.category" id="calendar_category.category_generalactivity">
+            <field name="is_worklog" eval="True"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_generalactivity_expense">
+            <field name="is_worklog" eval="True"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_generalactivity_abroad">
+            <field name="is_worklog" eval="True"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_generalactivity_abroadexpense">
+            <field name="is_worklog" eval="True"/>
+        </record>
+
+        <record model="calendar.event.category" id="calendar_category.category_customermeeting">
+            <field name="is_worklog" eval="True"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_customermeeting_expense">
+            <field name="is_worklog" eval="True"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_customermeeting_abroad">
+            <field name="is_worklog" eval="True"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_customermeeting_abroadexpense">
+            <field name="is_worklog" eval="True"/>
+        </record>
+
+        <record model="calendar.event.category" id="calendar_category.category_trip">
+            <field name="is_worklog" eval="False"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_trip_expense">
+            <field name="is_worklog" eval="False"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_trip_abroad">
+            <field name="is_worklog" eval="False"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_trip_abroadexpense">
+            <field name="is_worklog" eval="False"/>
+        </record>
+
+        <record model="calendar.event.category" id="calendar_category.category_overnightstay">
+            <field name="is_worklog" eval="False"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_overnightstay_expense">
+            <field name="is_worklog" eval="False"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_overnightstay_abroad">
+            <field name="is_worklog" eval="False"/>
+        </record>
+        <record model="calendar.event.category" id="calendar_category.category_overnightstay_abroadexpense">
+            <field name="is_worklog" eval="False"/>
+        </record>
+
+    </data>
+</openerp>

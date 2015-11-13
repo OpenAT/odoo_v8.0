@@ -23,6 +23,7 @@ Use the calender as a simple work log.
     ],
     'installable': True,
     'data': [
+        'data/data.xml',
         'views/views.xml',
     ],
 }

@@ -1,0 +1,102 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* calendar_log_project
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-11-13 09:30+0000\n"
+"PO-Revision-Date: 2015-11-13 09:30+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: calendar_log_project
+#: model:ir.model,name:calendar_log_project.model_calendar_event
+msgid "Calendar Event"
+msgstr "Kalenderereignis"
+
+#. module: calendar_log_project
+#: help:calendar.event,is_worklog:0
+msgid "Create a Work-Log Entry"
+msgstr "Arbeitsaufzeichnung erstellen"
+
+#. module: calendar_log_project
+#: help:calendar.event.category,is_worklog:0
+msgid "Default Is Worklog setting for meetings with this category"
+msgstr "Standard \"Ist Arbeitsaufzeichung\" Einstellung für diese Kategorie"
+
+#. module: calendar_log_project
+#: field:calendar.event,analytic_time_id:0
+msgid "HR Analytic Timesheet ID"
+msgstr ""
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
+msgid "If \"Is Worklog\" is ticked this text will be used for the work log entry.\n"
+"                            If left empty the meeting title will be used for the worklog entry!"
+msgstr "Wenn \"Ist Arbeitsaufzeichung\" angehakt ist wird dieser Text für die Zeiterfassung verwendet.\n"
+"                            Ist dieses Feld leer so wird der Meeting-Betreff verwendet!"
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
+msgid "If ticked a worklog entry is automatically created for this meeting!\n"
+"                        Always change the meeting to change the worklog entry!"
+msgstr "Wenn angehakt wird automatisch ein Eintrag in der Zeiterfassung für dieses Metting erstellt.\n"
+"                        Bei Änderungen bitte immer das Meeting ändern und nicht direkt den Eintrag in der Zeiterfassung!"
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_log_project_search
+msgid "Is Not Worklog"
+msgstr "Ist keine Arbeitsauzeichnung"
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_log_project_search
+#: field:calendar.event,is_worklog:0
+#: field:calendar.event.category,is_worklog:0
+msgid "Is Worklog"
+msgstr "Ist Arbeitsaufzeichnung"
+
+#. module: calendar_log_project
+#: model:ir.model,name:calendar_log_project.model_calendar_event_category
+msgid "Meeting Category"
+msgstr "Meeting Kategorie"
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_log_project_search
+#: field:calendar.event,project_id:0
+msgid "Project"
+msgstr "Projekt"
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_log_project_search
+#: field:calendar.event,task_id:0
+msgid "Task"
+msgstr "Aufgabe"
+
+#. module: calendar_log_project
+#: field:calendar.event,task_work_id:0
+msgid "Task Worklog ID"
+msgstr ""
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
+msgid "The tasks depends on the project!\n"
+"                        Clear the project if you want to search for all tasks!"
+msgstr "Die verfügbaren Aufgaben hängen vom Projekt ab!\n"
+"                        Bitte leeren sie das Projektfeld wenn sie aus allen Aufgaben wählen möchten!"
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
+msgid "This text will be used for invitation emails and therefore may be visible to customers!"
+msgstr "Dieser Text wird für eventuelle Einladungs E-Mails verwendet und könnte daher für den Kudnen sichtbar sein!"
+
+#. module: calendar_log_project
+#: field:calendar.event,worklog_text:0
+msgid "Work-Log"
+msgstr "Arbeitsaufzeichnung"
+

@@ -26,7 +26,7 @@ msgstr "Teilnehmer Information"
 #: view:calendar.event:calendar_log.view_calendar_log_search
 #: field:calendar.event,category_id:0
 msgid "Category"
-msgstr "Kategorie"
+msgstr "Kategorie (für die Spesenabrechnung)"
 
 #. module: calendar_log
 #: view:calendar.event:calendar_log.view_calendar_event_form_calendar_log
@@ -38,10 +38,6 @@ msgstr "Keine Einladungs-E-Mails versenden"
 msgid "Do not send invitation e-mails!"
 msgstr "Keine Einladungs-E-Mails versenden"
 
-#. module: calendar_log
-#: help:calendar.event,expense_allowance:0
-msgid "Eligible for expense refund!"
-msgstr "Wird in der Diätenabrechung berücksichtigt!"
 
 #. module: calendar_log
 #: model:ir.model,name:calendar_log.model_calendar_event
@@ -58,10 +54,6 @@ msgstr "Events"
 msgid "Expense"
 msgstr "Ausgabe"
 
-#. module: calendar_log
-#: field:calendar.event,expense_allowance:0
-msgid "Expense Allowance"
-msgstr "Diäten berechtigt"
 
 #. module: calendar_log
 #: field:calendar.event,meeting_minutes:0

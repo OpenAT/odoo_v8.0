@@ -31,7 +31,6 @@
                     <field name="opportunity_id"/>
                 </xpath>
                 <xpath expr="//field[@name='location']" position="after">
-                    <field name="expense_allowance"/>
                     <field name="odometer_start"/>
                     <field name="odometer_finish"/>
                 </xpath>
@@ -55,12 +54,13 @@
             <field name="arch" type="xml">
                 <xpath expr="//label[@for='name']" position="before">
                     <label for="category_id" string="Category" class="oe_edit_only"/>
-                    <h1 style="padding-bottom: 1em;">
+                    <h1>
                         <field name="category_id"/>
                     </h1>
-                </xpath>
-                <xpath expr="//field[@name='location']" position="after">
-                    <field name="expense_allowance"/>
+                    <label for="mainpartner_id" string="Category" class="oe_edit_only"/>
+                    <h2 style="padding-bottom: 1em;">
+                        <field name="mainpartner_id"/>
+                    </h2>
                 </xpath>
                 <xpath expr="//form[@string='Meetings']/group" position="after">
                         <label for="description"/>
@@ -81,7 +81,6 @@
                     <field name="category_id"/>
                     <field name="phonecall_id"/>
                     <field name="opportunity_id"/>
-                    <field name="expense_allowance"/>
                     <field name="meeting_minutes"/>
                     <field name="allday"/>
                     <field name="mainpartner_id"/>
@@ -109,7 +108,6 @@
             <field name="inherit_id" ref="calendar.view_calendar_event_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="before">
-                    <field name="expense_allowance" string="Expense"/>
                     <field name="category_id"/>
                 </xpath>
                 <xpath expr="//field[@name='start_date']" position="attributes">
@@ -122,6 +120,7 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//field[@name='name']" position="after">
+                    <field name="mainpartner_id"/>
                     <field name="meeting_minutes"/>
                 </xpath>
             </field>
