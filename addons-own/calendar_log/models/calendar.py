@@ -2,7 +2,8 @@
 
 from openerp import tools, api
 from openerp.fields import Many2one, Boolean, Integer, Text
-from openerp.osv import fields, osv
+from openerp.osv import osv
+
 
 
 class calendar_event(osv.osv):
@@ -15,7 +16,7 @@ class calendar_event(osv.osv):
 
     @api.model
     def _get_category(self):
-        category = self.env.ref("calendar_category.category_internalmeeting", raise_if_not_found=False)
+        category = self.env.ref("calendar_category.category_generalactivity", raise_if_not_found=False)
         if not category:
             category = self.env['calendar.event.category'].search([], limit=1, order='id')
         return category

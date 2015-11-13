@@ -1,25 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data noupdate="1">
+
+        <record model="calendar.event.category" id="category_generalactivity">
+            <field name="name">GENERAL ACTIVITY</field>
+        </record>
+        <record model="calendar.event.category" id="category_generalactivity_expense">
+            <field name="name">GENERAL ACTIVITY > Expense Entitled</field>
+        </record>
+        <record model="calendar.event.category" id="category_generalactivity_abroad">
+            <field name="name">GENERAL ACTIVITY > Abroad</field>
+        </record>
+        <record model="calendar.event.category" id="category_generalactivity_abroadexpense">
+            <field name="name">GENERAL ACTIVITY > Abroad > Expense Entitled</field>
+        </record>
                 
         <record model="calendar.event.category" id="category_customermeeting">
-            <field name="name">Customer Meeting</field>
+            <field name="name">CUSTOMER MEETING</field>
         </record>
-
-        <record model="calendar.event.category" id="category_internalmeeting">
-            <field name="name">Internal Meeting</field>
+        <record model="calendar.event.category" id="category_customermeeting_expense">
+            <field name="name">CUSTOMER MEETING > Expense Entitled</field>
         </record>
+        <record model="calendar.event.category" id="category_customermeeting_abroad">
+            <field name="name">CUSTOMER MEETING > Abroad</field>
+        </record>
+        <record model="calendar.event.category" id="category_customermeeting_abroadexpense">
+            <field name="name">CUSTOMER MEETING > Abroad > Expense Entitled</field>
+        </record>        
 
         <record model="calendar.event.category" id="category_trip">
-            <field name="name">Trip</field>
+            <field name="name">TRIP</field>
+        </record>
+        <record model="calendar.event.category" id="category_trip_expense">
+            <field name="name">TRIP > Expense Entitled</field>
+        </record>
+        <record model="calendar.event.category" id="category_trip_abroad">
+            <field name="name">TRIP > Abroad</field>
+        </record>
+        <record model="calendar.event.category" id="category_trip_abroadexpense">
+            <field name="name">TRIP > Abroad > Expense Entitled</field>
         </record>
 
-        <record model="calendar.event.category" id="category_worklog">
-            <field name="name">Work Log</field>
+        <record model="calendar.event.category" id="category_overnightstay">
+            <field name="name">OVERNIGHT STAY</field>
         </record>
-
-        <record model="calendar.event.category" id="category_private">
-            <field name="name">Private Appointment</field>
+        <record model="calendar.event.category" id="category_overnightstay_expense">
+            <field name="name">OVERNIGHT STAY > Expense Entitled</field>
+        </record>
+        <record model="calendar.event.category" id="category_overnightstay_abroad">
+            <field name="name">OVERNIGHT STAY > Abroad</field>
+        </record>
+        <record model="calendar.event.category" id="category_overnightstay_abroadexpense">
+            <field name="name">OVERNIGHT STAY > Abroad > Expense Entitled</field>
         </record>
 
     </data>

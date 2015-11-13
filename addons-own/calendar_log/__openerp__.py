@@ -23,5 +23,6 @@ Use the calender as a simple log. E.g. for meetings minutes or as a work log.
     'installable': True,
     'data': [
         'views/views.xml',
+        'views/wizard.xml',
     ],
 }

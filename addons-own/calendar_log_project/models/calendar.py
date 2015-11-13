@@ -4,6 +4,13 @@ from openerp import tools, api
 from openerp.fields import Many2one, Boolean, Char, Text
 from openerp.osv import fields, osv
 
+class calendar_event_category(osv.osv):
+    _inherit = 'calendar.event.category'
+
+    is_worklog = Boolean(string='Is Worklog',
+                         help='Default Is Worklog setting for meetings with this category',
+                         default=False)
+
 
 class calendar_event(osv.osv):
     _inherit = 'calendar.event'
@@ -15,6 +22,10 @@ class calendar_event(osv.osv):
     task_work_id = Many2one('project.task.work', string='Task Worklog ID')
     analytic_time_id = Many2one('hr.analytic.timesheet', string='HR Analytic Timesheet ID')
 
+    @api.onchange('category_id')
+    def _set_worklog(self):
+        if self.category_id:
+            self.is_worklog = self.category_id.is_worklog
 
     @api.onchange('task_id')
     def _set_project(self):
@@ -53,12 +64,9 @@ class calendar_event(osv.osv):
 
     @api.multi
     def write(self, values):
-        print 'Test'
-
         res = super(calendar_event, self).write(values)
 
         if res and self.ensure_one():
-
             # Create or Update related hr.analytic.timesheet entries
             if self.is_worklog and (self.task_id or self.project_id):
                 if self.task_id:
@@ -80,7 +88,6 @@ class calendar_event(osv.osv):
                     # UPDATE (Worklog exists - relinks to new task if changed)
                     else:
                         self.task_work_id.write(values_worklog)
-
                 elif self.project_id:
                     # Get the Values for hr.analytic.timesheet
                     time_obj = self.env['hr.analytic.timesheet']

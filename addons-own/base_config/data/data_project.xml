@@ -10,6 +10,9 @@
                    uninstall and reinstall base_config if you need to update these records after base_config was
                    installed.
         -->
+        <!-- HINT: The ID reference "id=" must contain maximum one dot.
+                   They are used to refer to an other modules ID, in the form: module.record_id"
+        -->
         <record id="project.project_tt_analysis" model="project.task.type">
             <field name="sequence">511</field>
             <!--<field name="name">Analysis</field>-->

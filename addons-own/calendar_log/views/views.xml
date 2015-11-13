@@ -54,9 +54,13 @@
             <field name="arch" type="xml">
                 <xpath expr="//label[@for='name']" position="before">
                     <label for="category_id" string="Category" class="oe_edit_only"/>
-                    <h1 style="padding-bottom: 1em;">
+                    <h1>
                         <field name="category_id"/>
                     </h1>
+                    <label for="mainpartner_id" string="Category" class="oe_edit_only"/>
+                    <h2 style="padding-bottom: 1em;">
+                        <field name="mainpartner_id"/>
+                    </h2>
                 </xpath>
                 <xpath expr="//form[@string='Meetings']/group" position="after">
                         <label for="description"/>
@@ -116,6 +120,7 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//field[@name='name']" position="after">
+                    <field name="mainpartner_id"/>
                     <field name="meeting_minutes"/>
                 </xpath>
             </field>

@@ -26,3 +26,7 @@ odoo-start.py -i website_sale_donate, -u base_config
 https://github.com/OpenAT/odoo_v8.0/commit/362a1235a67aea9145f9d080a882a6fb01138a16
 odoo-start.py -u base_config,website_tools
 git submodule sync
+c9f3bbb4a1c71f841eee0f6e7ffb7b9f1d931aba
+odoo-start.py -i calendar_category
+odoo-start.py -u calendar_log,calendar_log_project
+i18n de_DE calendar_category,calendar_log,calendar_log_project
