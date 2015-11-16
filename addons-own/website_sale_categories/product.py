@@ -64,37 +64,40 @@ class product_public_category_menu(models.Model):
     # Recalculate the cat_root_id
     @api.multi
     def write(self, vals):
-        # Write the changes (to the environment cache?) first!
-        # ATTENTION: Hidden categories are treated like root categories!
-        if 'cat_hide' in vals and self.ensure_one():
+
+
+        # Ensure that hidden categories are also root categories
+        if 'cat_hide' in vals:
             if vals['cat_hide']:
                 vals['cat_root'] = True
+
+        # Write the changes (to the environment cache?) first!
         res = super(product_public_category_menu, self).write(vals)
 
-        # If parent_id or cat_root or cat_hide are changed calculate the cat_root_id field
-        if 'parent_id' in vals or 'cat_root' in vals or 'cat_hide' in vals and self.ensure_one():
+        for category in self:
+            if 'parent_id' in vals or 'cat_root' in vals or 'cat_hide' in vals:
 
-            # Calculate the cat_root_id of the current category
-            cat = self
-            while True:
-                if cat.cat_root or cat.cat_hide or not cat.parent_id:
-                    self.cat_root_id = cat.id
-                    break
-                else:
-                    cat = cat.parent_id
-
-            # Calculate the cat_root_id of the child categories (if any)
-            categories = self.env['product.public.category'].search(['&',
-                                                                     ('id', 'child_of', int(self.id)),
-                                                                     ('id', 'not in', self.ids)])
-            for child_cat in categories:
-                cat = child_cat
+                # Calculate the cat_root_id of the current category
+                cat = category
                 while True:
                     if cat.cat_root or cat.cat_hide or not cat.parent_id:
-                        if cat.ids:
-                            child_cat.cat_root_id = cat.id
+                        category.cat_root_id = cat.id
                         break
                     else:
                         cat = cat.parent_id
+
+                # Calculate the cat_root_id for the child categories (if any)
+                categories = self.env['product.public.category'].search(['&',
+                                                                         ('id', 'child_of', int(self.id)),
+                                                                         ('id', 'not in', self.ids)])
+                for child_cat in categories:
+                    cat = child_cat
+                    while True:
+                        if cat.cat_root or cat.cat_hide or not cat.parent_id:
+                            if cat.ids:
+                                child_cat.cat_root_id = cat.id
+                            break
+                        else:
+                            cat = cat.parent_id
 
         return res
