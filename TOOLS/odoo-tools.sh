@@ -1191,9 +1191,6 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     echo "Create, temp database backup ${DBNAME} before update..."
     sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
-    #${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_before.zip
-    # TODO: change this recursive call odoo_tools.sh later or use only pgdump for this temp backup
-    #sudo - postgres ${DBNAME} > ${TMPFILENAME}_before.sql
     echo "Stopping odoo of instance ${DBNAME} ..."
     service ${DBNAME} stop
     # ------------------------------------------ ADMIN PREPARATIONS 1 - 2 - 3 END -------------------------------------
@@ -1213,21 +1210,17 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
 
     # ------------------------------------------ ADMIN POST PREPARATION 8 - 9 - 10 BEGIN -----------------------------------------
 
-    echo "Temporary backup of Database ${DBNAME} after udpate..."
-    sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
-    #${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_after.zip
-    # TODO: change this recursive call odoo_tools.sh later or use only pgdump for this temp backup
-    #sudo - postgres ${DBNAME} > ${TMPFILENAME}_before.sql
     echo "Starting up Database ...."
     service ${DBNAME} start
+    echo "Temporary backup of Database ${DBNAME} after udpate..."
+    sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
     #remove temp INSTALLED ADDON LIST NOT NEEDED and is overriten everytime
     rm ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES
     echo "Disable maintenance mode of customer Instance ..."
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable" #recursice call this script with special parameter
     echo -e "\t\t!!!!! ATTENTION !!!!!"
-    echo -e "\n \t\t PLEASE DELETE ${TMPFILENAME}_after.zip"
-    echo -e "and ${TMPFILENAME}_before.zip if everything went well"
-    echo -e "\t\t OR USE IT FOR RESTORE"
+    echo -e "\n \t\t temporary backup files has been created IS-BACKUP--${DBNAME}--date.zip"
+    echo -e "\t\t DELETE OR USE IT FOR RESTORE"
 
     # ------------------------------------------- ADMIN POST PREPARATION END ------------------------------------------
 
