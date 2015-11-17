@@ -1212,6 +1212,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
 
     echo "Starting up Database ...."
     service ${DBNAME} start
+    sleep 10
     echo "Temporary backup of Database ${DBNAME} after udpate..."
     sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
     #remove temp INSTALLED ADDON LIST NOT NEEDED and is overriten everytime
