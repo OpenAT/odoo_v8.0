@@ -127,7 +127,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install Basic Packages
     echo -e "\n----- Install Basic Packages"
     apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev libxslt1-dev \
-        build-essential gcc mc bzr lptools make pkg-config nodejs gdebi -y >> ${SETUP_LOG}
+        build-essential gcc mc bzr lptools make pkg-config nodejs gdebi nfs-common -y >> ${SETUP_LOG}
     echo -e "----- Install Basic Packages Done"
 
     # ----- Less compiler needed by Odoo 8 Website -
@@ -454,6 +454,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DBBACKUPPATH="${DBPATH}/BACKUP"
     DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
+    QNAPUSERNAME="admin"
+    QNAPBACKUPSERVER="192.168.37.100"
 
     # ----- Basic Checks
 
@@ -493,9 +495,19 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         echo -e "ERROR: ${DBPATH} could not be created!"; exit 2
     fi
 
-    # ----- Create BACKUP directory
+    # ----- Create BACKUP directory and mount remote Backup location and Write fstab
     if  mkdir ${DBBACKUPPATH} 2>&1>/dev/null; then
         echo -e "Database BACKUP Directory ${DBBACKUPPATH} created."
+        read -p "Do you you want to create a remote BACKUP location at external Storage ${QNAPBACKUPSERVER} ? otherwise local dir is used. To continue: <y/N>" prompt
+        if [[ ${prompt} =~ [yY](es)* ]]; then
+            echo "creating remote BACKUP location and mount into ${DBBACKUPPATH}"
+            ssh ${QNAPUSERNAME}@${QNAPBACKUPSERVER} "mkdir -p /share/BACKUP-FCOM/${DBNAME}"
+            chown -Rf ${DBNAME}: ${DBBACKUPPATH}
+            mount -t nfs ${QNAPBACKUPSERVER}:/BACKUP-FCOM/${DBNAME} ${DBBACKUPPATH}
+            echo -e "${QNAPBACKUPSERVER}:/BACKUP-FCOM/${DBNAME}\t${DBBACKUPPATH}\tnfs\tdefaults,noatime 0 0" >> /etc/fstab
+        else
+            echo "remote directory creation ignored"
+        fi
     else
         echo -e "ERROR: Could not create directory ${DBBACKUPPATH}!"; exit 2
     fi
