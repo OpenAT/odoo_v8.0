@@ -1258,7 +1258,6 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         echo -e "check your Databasename, you gave ${DBNAME}, but this seems not to exist, stopping script......"
         exit 2
     fi
-
     if [ ${DBNAME} = "all" ]; then
         DATABASE_RUNNING=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
         for i in "${DATABASE_RUNNING[@]}"
@@ -1279,14 +1278,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/IS-BACKUP--${DATABASE_RUNNING}--`date +%Y-%m-%d__%H-%M`.zip
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING} -f ${BACKUPFILENAME})
-
     fi
-
-    # TODO: check or create INSTANCE/DATABASE/BACKUP folder
-    # Todo: CD to BACKUP folder
-    # Todo: create backup with dbname--DATE.zip with DATE in Format 2014-12-30--24-59
-
-
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
