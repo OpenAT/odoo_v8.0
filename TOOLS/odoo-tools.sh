@@ -1190,7 +1190,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     # Calling this script recursive with another option for maintenance mode
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     echo "Create, temp database backup ${DBNAME} before update..."
-    ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_before.zip
+    sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
+    #${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_before.zip
     # TODO: change this recursive call odoo_tools.sh later or use only pgdump for this temp backup
     #sudo - postgres ${DBNAME} > ${TMPFILENAME}_before.sql
     echo "Stopping odoo of instance ${DBNAME} ..."
@@ -1213,7 +1214,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     # ------------------------------------------ ADMIN POST PREPARATION 8 - 9 - 10 BEGIN -----------------------------------------
 
     echo "Temporary backup of Database ${DBNAME} after udpate..."
-    ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_after.zip
+    sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
+    #${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_after.zip
     # TODO: change this recursive call odoo_tools.sh later or use only pgdump for this temp backup
     #sudo - postgres ${DBNAME} > ${TMPFILENAME}_before.sql
     echo "Starting up Database ...."
