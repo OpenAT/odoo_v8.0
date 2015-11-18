@@ -1232,9 +1232,9 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
 fi
 
 # ---------------------------------------------------------------------------------------
-# $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME}
+# $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} [TYPE]
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME}"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME} [TYPE]"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
@@ -1243,9 +1243,13 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly three arguments!"
         exit 2
     fi
+    TYPE=$4
     DBNAME=$3
     TARGET_BRANCH=$2
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    if [ "x${TYPE}" == "x" ]; then
+        TYPE="zip"
+    fi
     echo "INSTANCE_PATH --> ${INSTANCE_PATH}"
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command if with ssh connection to esx erver directly check if the VM is running on this machine
     # Todo: or find a way of acting from Virtual center server this has access to the whole cluster
@@ -1269,7 +1273,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
             echo "backup all Databases, while now backing up ${DBNAME} ...."
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME})
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME} -t ${TYPE})
         done
     else
             DATABASE_RUNNING=${DBNAME}
@@ -1277,7 +1281,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/IS-BACKUP--${DATABASE_RUNNING}--`date +%Y-%m-%d__%H-%M`.zip
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING} -f ${BACKUPFILENAME})
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING} -f ${BACKUPFILENAME} -t ${TYPE})
     fi
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP DONE"
@@ -1321,10 +1325,10 @@ echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
 echo -e "$ $MAINTENANCEMODE"
 echo -e "$ $UPDATETRANSLATION"
+echo -e "$ $MODEBACKUP"
 echo -e "----------------- TODOs ----------------"
 echo -e "TODO: odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEDUPDB"
 echo -e "TODO: $MODEUPDATEINST"
-echo -e "TODO: $MODEBACKUP"
 echo -e "TODO: $MODERESTORE"
 echo -e "------------------------\n"
