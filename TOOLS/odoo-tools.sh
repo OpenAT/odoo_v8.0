@@ -1232,9 +1232,9 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
 fi
 
 # ---------------------------------------------------------------------------------------
-# $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} [TYPE]
+# $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} #  [TYPE]
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME} [TYPE]"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME}" #  [TYPE]"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
@@ -1247,9 +1247,9 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     DBNAME=$3
     TARGET_BRANCH=$2
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
-    if [ "x${TYPE}" == "x" ]; then
-        TYPE="zip"
-    fi
+    #if [ "x${TYPE}" == "x" ]; then
+    #    TYPE="zip"
+    #fi
     echo "INSTANCE_PATH --> ${INSTANCE_PATH}"
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command if with ssh connection to esx erver directly check if the VM is running on this machine
     # Todo: or find a way of acting from Virtual center server this has access to the whole cluster
