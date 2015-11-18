@@ -1239,7 +1239,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ge 3 ]; then
+    if ! [ $# -ge 3 ]; then
         echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly three arguments!"
         exit 2
     fi
