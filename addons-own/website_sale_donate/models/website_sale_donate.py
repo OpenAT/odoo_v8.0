@@ -2,7 +2,7 @@
 __author__ = 'mkarrer'
 
 from openerp import SUPERUSER_ID
-from openerp import tools
+from openerp import tools, api
 from openerp.osv import osv, orm, fields
 from openerp.tools.translate import _
 import openerp.addons.decimal_precision as dp
@@ -109,6 +109,7 @@ class product_template(osv.Model):
         'hide_price': fields.boolean('Hide Price in Shop overview Pages'),
         'hide_quantity': fields.boolean('Hide Product-Quantity-Selector in CP'),
         'simple_checkout': fields.boolean('Simple Checkout'),
+        'variants_as_list': fields.boolean('Show Variants as a List of Products'),
         'price_donate': fields.boolean('Arbitrary Price'),
         'price_donate_min': fields.integer(string='Minimum Arbitrary Price'),
         'payment_interval_ids': fields.many2many('product.payment_interval', string='Payment Intervals'),
@@ -155,12 +156,33 @@ class product_template(osv.Model):
             help="Small-sized image of the product. It is automatically "\
                  "resized as a 64x64px image, with aspect ratio preserved. "\
                  "Use this field anywhere a small image is required."),
+        'product_page_template': fields.selection([('website_sale.product', 'Default Layout'),
+                                                   ('website_sale_donate.ppt_donate', 'Donation Layout'),
+                                                   ('website_sale_donate.ppt_ahch', 'AHCH Layout')],
+                                                  string="Product Page Template")
     }
     _defaults = {
         'price_donate_min': 0,
         'parallax_speed': 'slow',
         'hide_quantity': True,
+        'product_page_template': 'website_sale_donate.ppt_donate',
     }
+
+    def init(self, cr, context=None):
+        # HINT: Since we use the old API search does not return a recordset therefore we need browse too
+        products = self.browse(cr, SUPERUSER_ID, self.search(cr, SUPERUSER_ID, []))
+        for product in products:
+            if not product.product_page_template:
+                product.write({"product_page_template": 'website_sale_donate.ppt_donate'})
+
+
+    class product_template_onchange(osv.osv):
+        _inherit = 'product.template'
+
+        @api.onchange('price_donate')
+        def _set_hide_quantity(self):
+            if self.price_donate:
+                self.hide_quantity = True
 
 
 # Extend sale.order.line to be able to store price_donate and payment interval information

@@ -14,12 +14,14 @@
                             DONATION SETTINGS
                         </h3>
                         <group string="Donate Options" colspan="2">
+                            <field name="product_page_template"/>
                             <field name="simple_checkout"/>
                             <p colspan="2" style="margin-top: 6px; margin-right: 25%; margin-bottom: 18px; font-size: 12px; color: grey;">
                                 If "Simple Checkout" is Enabled the "Donate" button(s) will directly jump to
                                 the User-Information-Form instead of the Donation-Cart-Overview-Page.
                                 (Adds "simplecheckout" to the URL of the Button: http://shop/simplecheckout/... )
                             </p>
+                            <field name="variants_as_list"/>
                             <field name="hide_price"/>
                             <field name="price_donate"/>
                             <field name="price_donate_min"/>

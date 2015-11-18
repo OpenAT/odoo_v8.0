@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- SHOPPING CART: payment interval, quantity controls -->
+        <template id="wsd_cart_extended" inherit_id="website_sale.cart" name="Product-Cart Extensions">
+            <!-- Add payment interval as text under the product price -->
+            <xpath expr="//table[@id='cart_products']//td[@name='price']" position="inside">
+                <t t-if="line.payment_interval_id">
+                    <div class="small">(<t t-esc="line.payment_interval_id.name"/>)</div>
+                </t>
+            </xpath>
+            <!-- Do not show Sales order line text in shopping cart! (Because of two bugs: Bug 1: False if none Bug2: english language) -->
+            <xpath expr="//table[@id='cart_products']//div[@class='text-muted']" position="replace">
+                    <div class="hidden"></div>
+                    <!--<t t-if="'\n'.join(line.name.splitlines()[1:]) != 'False'">-->
+                        <!--<div class="text-muted" t-esc="'\n'.join(line.name.splitlines()[1:])"/>-->
+                    <!--</t>-->
+            </xpath>
+            <!-- Change the product quantity controls (oe_website_spinner) to only show "-" if hide_quantity set -->
+            <xpath expr="//table[@id='cart_products']//div[@class='input-group oe_website_spinner']" position="replace">
+                <div class="input-group oe_website_spinner">
+                  <span class="input-group-addon" t-att-style="'width: 100%; padding: 9px 12px 9px 36px;' if line.product_id.hide_quantity else ''">
+                      <a t-attf-href="#" class="mb8 js_add_cart_json" data-no-instant="">
+                          <i class="fa fa-minus"></i>
+                      </a>
+                  </span>
+                  <input type="text"
+                      t-att-class="'js_quantity form-control' if line.product_id.hide_quantity == False else 'hidden js_quantity form-control'"
+                      t-att-data-line-id="line.id"
+                      t-att-data-product-id="line.product_id.id"
+                      t-att-value="int(line.product_uom_qty)"/>
+                  <span class="input-group-addon">
+                      <a t-attf-href="#"
+                         t-att-class="'mb8 float_left js_add_cart_json' if line.product_id.hide_quantity == False else 'hidden mb8 float_left js_add_cart_json'"
+                         data-no-instant="">
+                          <i class="fa fa-plus"></i>
+                      </a>
+                  </span>
+                </div>
+            </xpath>
+            <!-- Hide list price in shopping cart if price_donate true WARNING XPATH NOT WORKING IN PRODUCTIONS SERVERS ?!?
+            <xpath expr="//del[@t-field='line.product_id.lst_price']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'text-danger hidden' if line.product_id.price_donate else 'text-danger'</attribute>
+            </xpath>
+            -->
+        </template>
+
+        <!-- SHOPPING CART: Better Back Button -->
+        <template id="wsd_continue_shopping" inherit_id="website_sale.continue_shopping" customize_show="True" active="True" name="Back_to_Shop Button">
+            <xpath expr="//a[@href='/shop']" position="replace">
+                <!-- Back Button -->
+                <t t-if="request.session['last_page']">
+                    <a id="back_to_shop" t-att-href="request.session['last_page']" class="btn btn-default">Back</a>
+                </t>
+                <t t-if="not request.session['last_page']">
+                    <a id="back_to_page" href="/" class="btn btn-default">Back</a>
+                </t>
+            </xpath>
+        </template>
+
+
+        <!-- CHECKOUT: honor the mandatory fields AND hide Tax and Total -->
+        <template id="wsd_checkout" inherit_id="website_sale.checkout" name="Checkout Manadtory Fields">
+            <xpath expr="//form[@action='/shop/confirm_order']" position="attributes">
+                <attribute name="id">wsd_checkout</attribute>
+            </xpath>
+
+            <!-- BILLING -->
+            <!-- INFO: contact_name wurde zweimal vergeben daher dieser haessliche fix -->
+            <xpath expr="//label[@for='contact_name']" position="replace">
+                <t></t>
+            </xpath>
+            <xpath expr="//label[@for='contact_name']" position="replace">
+                <t></t>
+            </xpath>
+            <xpath expr="//input[@name='name']" position="before">
+                <label t-att-class="'control-label mandatory text-danger f-name' if website.name_mandatory_bill else 'control-label f-name'" for="name">Name</label>
+            </xpath>
+            <xpath expr="//input[@name='email']" position="before">
+                <label t-att-class="'control-label mandatory text-danger f-email' if website.email_mandatory_bill else 'control-label f-email'" for="email">Email</label>
+            </xpath>
+
+            <xpath expr="//label[@for='street2']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-street2' if website.street2_mandatory_bill else 'control-label f-street2'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='city']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-city' if website.city_mandatory_bill else 'control-label f-city'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='country_id']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-country_id' if website.country_id_mandatory_bill else 'control-label f-country_id'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='phone']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-phone' if website.phone_mandatory_bill else 'control-label f-phone'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='street']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-street' if website.street_mandatory_bill else 'control-label f-street'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='state_id']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-state_id' if website.state_id_mandatory_bill else 'control-label f-state_id'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='vat']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-vat' if website.vat_mandatory_bill else 'control-label f-vat'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='zip']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-zip' if website.zip_mandatory_bill else 'control-label f-zip'</attribute>
+            </xpath>
+
+            <!-- SHIPPING -->
+            <xpath expr="//label[@for='shipping_name']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_name' if website.name_mandatory_ship else 'control-label f-shipping_name'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='shipping_phone']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_phone' if website.phone_mandatory_ship else 'control-label f-shipping_phone'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='shipping_street']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_street' if website.street_mandatory_ship else 'control-label f-shipping_street'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='shipping_city']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_city' if website.city_mandatory_ship else 'control-label f-shipping_city'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='shipping_zip']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_zip' if website.zip_mandatory_ship else 'control-label f-shipping_zip'</attribute>
+            </xpath>
+            <xpath expr="//label[@for='shipping_country_id']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_country_id' if website.country_id_mandatory_ship else 'control-label f-shipping_country_id'</attribute>
+            </xpath>
+
+            <!-- Set default Country if not already selected -->
+            <xpath expr="//option[@t-att-value='country.id']" position="replace">
+                <!--<attribute name="t-att-selected">'True' if country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == 'AT')</attribute>-->
+                <option t-att-value="country.id" t-att-selected="'True' if (country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == website.country_default_value.code)) else ''"><t t-esc="country.name"/></option>
+            </xpath>
+
+            <xpath expr="//label[@for='shipping_state_id']" position="attributes">
+                <attribute name="style"></attribute>
+                <attribute name="t-att-style">'' if website.state_id_mandatory_ship else 'font-weight: normal'</attribute>
+            </xpath>
+
+             <!-- Show Small cart on right side -->
+            <xpath expr="//div[@class='col-lg-offset-1 col-lg-3 col-md-3 text-muted']" position="replace">
+                <div class="col-lg-offset-1 col-lg-3 col-md-3 text-muted">
+                    <div class="row">
+                        <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+                        <t t-call="website_sale_donate.small_cart_header"/>
+                        <t t-call="website_sale_donate.small_cart" />
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+
+        <!-- CONFIRMATION: Headline appears on separate line -->
+        <template id="wsd_product_item" inherit_id="website_sale.confirmation" name="Confirmation Free Heading">
+            <xpath expr="//ul[@class='wizard pull-right']" position="after">
+                <div class="clearfix mb32"></div>
+            </xpath>
+        </template>
+
+        <!-- WEBSITE CUSTOM OPTION: PAYMENT: Hide Delivery Selector -->
+        <template id="hide_delivery_selector" inherit_id="website_sale_delivery.payment_delivery" active="True" customize_show="True" name="Hide Delivery Selector">
+            <xpath expr="//div[@id='delivery_carrier']" position="attributes">
+                <attribute name="class">hidden</attribute>
+            </xpath>
+        </template>
+
+        <!-- WEBSITE CUSTOM OPTION: CHECKOUT: Hide Shipping Address Selector -->
+        <template id="hide_shipping_address" inherit_id="website_sale.checkout" active="True" customize_show="True" name="Hide Shipping Address">
+            <xpath expr="//div[@class='form-group col-lg-12']" position="attributes">
+                <attribute name="class">form-group col-lg-12 hidden</attribute>
+            </xpath>
+            <xpath expr="//div[@class='js_shipping row mb16']" position="attributes">
+                <attribute name="class">js_shipping row mb16 hidden</attribute>
+            </xpath>
+        </template>
+
+        <!-- WEBSITE CUSTOM OPTION: PAYMENT: Hide Shipping address at right column -->
+        <template id="hide_shipping_address_payment" inherit_id="website_sale.payment" active="True" customize_show="True" name="Hide Shipping Address">
+            <xpath expr="//div[@id='right_column']//t" position="replace">
+                <div></div>
+            </xpath>
+        </template>
+
+        <!-- WEBSITE CUSTOM OPTION: PAYMENT: use small_cart -->
+        <template id="wsd_payment_small_cart" inherit_id="website_sale.payment" active="True" customize_show="True" name="Use Small Cart">
+            <xpath expr="//table[@id='cart_products']" position="replace">
+                <t t-call="website_sale_donate.small_cart_header"/>
+                <t t-call="website_sale_donate.small_cart"/>
+            </xpath>
+            <xpath expr="//t[@t-call='website_sale.total']" position="replace">
+                <t></t>
+            </xpath>
+        </template>
+
+        <!-- PAYMENT: Hide Acquirer with recurring_transactions=False if -->
+        <template id="hide_acquierer_if_no_recurring" inherit_id="website_sale.payment" name="Hide Acquirers if not enabled for recurring transactions">
+
+            <!-- Add payment interval as text under the product price -->
+            <xpath expr="//table[@id='cart_products']//span[@t-field='line.price_unit']" position="after">
+                <t t-if="line.payment_interval_id">
+                    <div class="small">(<t t-esc="line.payment_interval_id.name"/>)</div>
+                </t>
+            </xpath>
+
+            <!-- Only show correct Acquirers -->
+            <xpath expr="//label[@t-if='acquirer.button']" position="attributes">
+                <attribute name="t-if">acquirer.button and ((website_sale_order.has_recurring and acquirer.recurring_transactions) or (not website_sale_order.has_recurring))</attribute>
+            </xpath>
+
+            <!-- Add the custom image if available -->
+            <xpath expr="//img[@class='media-object']" position="attributes">
+                <attribute name="t-if">not acquirer.acquirer_icon</attribute>
+            </xpath>
+            <xpath expr="//img[@class='media-object']" position="after">
+                <t t-if="acquirer.acquirer_icon">
+                    <span  t-field="acquirer.acquirer_icon" t-field-options='{"widget": "image", "class": "media-object", "style": "max-width: 200px; display: inline-block;"}'/>
+                </t>
+            </xpath>
+
+        </template>
+
+
+    </data>
+</openerp>

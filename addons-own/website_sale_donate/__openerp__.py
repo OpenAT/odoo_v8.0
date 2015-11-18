@@ -21,11 +21,11 @@
 ##############################################################################
 
 {
-    'name': "FRSTC Spendenshop",
+    'name': "FCOM Spendenshop",
+    'version': '1.1',
     # Make sure this translation file is loaded last:
     # also you should start the server once with --i18n-overwrite to make sure latest translations are loaded from files
-    'sequence': 550,
-    'summary': """Shoperweiterungen für FRSTC""",
+    'summary': """Shoperweiterungen für Fundraising Studio Community""",
     'description': """
 
 Anpassungen des Online-Shops für NPOs
@@ -83,6 +83,14 @@ Anpassungen des Online-Shops für NPOs
         'data/data.xml',
         'security/ir.model.access.csv',
         'views/templates.xml',
+        'views/templates_10_small_cart.xml',
+        'views/templates_20_crowdfunding.xml',
+        'views/templates_30_product_listings.xml',
+        'views/templates_40_product_page.xml',
+        'views/templates_50_ppt_subtemplates.xml',
+        'views/templates_51_ppt_donate.xml',
+        'views/templates_52_ppt_ahch.xml',
+        'views/templates_60_checkout_steps.xml',
         'views/views.xml',
         'views/res_config.xml',
     ],

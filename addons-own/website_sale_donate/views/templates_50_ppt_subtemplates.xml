@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- ========================================= -->
+        <!-- SUB TEMPLATES FOR PRODUCT PAGE TEMPLATES: -->
+        <!-- ========================================= -->
+
+        <!-- SUBTEMPLATE: categories_search_publish bar -->
+        <template id="categories_search_publish" name="Categories, Search and Publish-Button Bar">
+            <div class="row">
+                <div class="col-sm-9" t-if="not product.hide_categories">
+                    <ol class="breadcrumb">
+                        <li>
+                          <t t-if="request.session.get('last_shop_page', None)">
+                              <a t-att-href="request.session['last_shop_page']">Back</a>
+                          </t>
+                          <t t-if="not request.session.get('last_shop_page', None)">
+                              <a href="/" onclick="history.go(-1); return false;">Back</a>
+                          </t>
+                        </li>
+                        <li t-if="category"><a t-att-href="keep('/shop/category/%s' % slug(category), category=0)" t-field="category.name"/></li>
+                        <li class="active"><span t-field="product.name"/></li>
+                    </ol>
+                </div>
+                <div class="col-sm-3" t-if="not product.hide_search">
+                  <t t-call="website_sale.search"><t t-set="search_class">pull-right</t></t>
+                </div>
+                <div class="col-sm-12" groups="base.group_sale_manager">
+                    <t t-call="website.publish_management">
+                      <t t-set="object" t-value="product"/>
+                      <t t-set="publish_edit" t-value="True"/>
+                      <t t-set="action" t-value="'product.product_template_action'"/>
+                    </t>
+                </div>
+            </div>
+        </template>
+
+        <!-- SUBTEMPLATE: warningsbox -->
+        <template id="warningsbox" name="Warnings Box">
+            <t t-if="warnings">
+                <div class="row">
+                    <div class="col-sm-16">
+                        <div t-esc="warnings" class="alert alert-danger" role="alert"/>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- SUBTEMPLATE CHECKOUT BOX (Add to cart box): checkoutbox -->
+        <template id="checkoutbox" name="Checkout Box">
+            <div class="panel panel-default">
+                <div class="panel-body text-center">
+
+                    <!-- Product Name -->
+                    <t t-if="not hide_name"><h1 itemprop="name" class="mt8 text-muted" t-field="product.name">Product Name</h1></t>
+                    <span itemprop="url" style="display:none;" t-esc="'/shop/product/%s' % slug(product)"/>
+
+                    <!-- Product Image -->
+                    <t t-if="not hide_image"><p t-field="product.image_square" t-field-options='{"widget": "image", "class": "img-circle", "alt-field": "name"}'/></t>
+
+                    <!-- Product Sales Text: description_sale -->
+                    <t t-if="product.description_sale and not hide_salesdesc">
+                        <div id="description_sale">
+                            <p t-field="product.description_sale" class="text-muted"/>
+                        </div>
+                    </t>
+
+                    <!-- Crowd Funding Info -->
+                    <t t-if="product.funding_goal">
+                        <div class="crowdfunding">
+                            <t t-if="not hide_fundingtextincp">
+                                <p class="text-muted">We have reached</p>
+                                <h1 class="text-primary"><t t-esc="product.funding_reached"/>%</h1>
+                                <p class="text-muted">
+                                    <t t-call="website_sale_donate.funding_text"/>
+                                </p>
+                            </t>
+                            <t t-if="not hide_fundingbarincp"><t t-call="website_sale_donate.funding_bar"/></t>
+                        </div>
+                    </t>
+
+                    <!-- Add to Cart Form -->
+                    <form t-att-action="keep('/shop/cart/update')" class="js_add_cart_variants" method="POST">
+                        <div class="js_product">
+
+                            <!-- Product Variants -->
+                            <t t-placeholder="select">
+                                <!-- Show Attribute Selectors (from website_sale.product) -->
+                                <t t-if="not product.variants_as_list">
+                                    <input type="hidden" class="product_id" name="product_id"
+                                           t-att-value="int(product.product_variant_ids[0]) if len(product.product_variant_ids) == 1 else '0'"/>
+                                    <t t-call="website_sale.variants">
+                                        <t t-set="ul_class" t-value="'nav-stacked'"/>
+                                    </t>
+                                </t>
+                                <!-- Show all Product Variants as a List (from website_sale.product_variants)-->
+                                <t t-if="product.variants_as_list">
+                                    <input type="hidden" t-if="len(product.product_variant_ids) == 1" name="product_id"
+                                           t-att-value="product.product_variant_ids[0].id"/>
+                                    <t t-if="len(product.product_variant_ids) &gt; 1">
+                                        <label label-default="label-default" class="radio"
+                                               t-foreach="product.product_variant_ids" t-as="variant_id">
+                                            <input type="radio" name="product_id" class="js_product_change"
+                                                   t-att-checked="'checked' if variant_id_index == 0 else ''"
+                                                   t-att-value="variant_id.id"
+                                                   t-att-data-lst_price="variant_id.lst_price"
+                                                   t-att-data-price="variant_id.price"/>
+                                            <!--<span t-esc="variant_id.name_get()[0][1]"/>-->
+                                            <t t-foreach="variant_id.attribute_value_ids" t-as="attrib">
+                                                <span><t t-esc="attrib.name"/> </span>
+                                            </t>
+                                            <span class="text-muted" t-if="variant_id.default_code">(<t t-esc="variant_id.default_code"/>) </span>
+                                            <span class="badge" t-if="variant_id.price_extra">
+                                                <t t-esc="variant_id.price_extra > 0 and '+' or ''"/>
+                                                <span t-field="variant_id.price_extra" style="white-space: nowrap;"
+                                                      t-field-options='{
+                                                "widget": "monetary",
+                                                "from_currency": "product.company_id.currency_id",
+                                                "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+                                              }'/>
+                                            </span>
+                                        </label>
+                                    </t>
+                                </t>
+                            </t>
+
+                            <!-- Price -->
+                            <t t-call="website_sale.product_price"/>
+
+                            <!-- Product not available message -->
+                            <p t-if="len(product.product_variant_ids) > 1"
+                               class="css_not_available_msg bg-danger"
+                               style="padding: 15px;">Product not available
+                            </p>
+
+                            <!-- Show Warnings -->
+                            <t t-if="warnings">
+                                <div t-esc="warnings" class="alert alert-danger" role="alert"/>
+                            </t>
+
+                            <!-- Product Quantity Selector -->
+                            <t t-call="website_sale_donate.product_quantity_selector"/>
+
+                            <!-- Add to Cart Button -->
+                            <a id="add_to_cart" class="btn btn-primary btn-xl mt16 js_check_product a-submit" href="#">
+                                <t t-if="product.simple_checkout">Donate Now!</t>
+                                <t t-if="not product.simple_checkout">Add to Cart</t>
+                            </a>
+
+                            <!-- payment interval radio boxes -->
+                            <t t-if="product.payment_interval_ids">
+                                <h4 class="text-left" style="padding: 0 1em;">
+                                    <hr style="margin: 0; margin-top: 1.5em;" />
+                                    <small class="text-muted">How frequent would you like to donate this amount:</small>
+                                    <div class="form-group text-left">
+                                        <div class="radio" t-foreach="product.payment_interval_ids" t-as="payint">
+                                            <label>
+                                                <input type="radio" name="payment_interval_id"  t-att-value="payint.id" t-att-checked="'checked' if payint.id == payment_interval_id else ''"/>
+                                                <t t-esc="payint.name"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </h4>
+                            </t>
+
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Panel Footer -->
+                <div class="panel-footer" t-if="not product.hide_panelfooter">
+                    <p class="text-muted">
+                        30-day money-back guarantee
+                        <br/>
+                        Free Shipping in U.S.
+                        <br/>
+                        Buy now, get in 2 days
+                    </p>
+                </div>
+
+            </div>
+        </template>
+
+
+        <!-- SUBTEMPLATE: checkoutbox_small_cart -->
+        <template id="checkoutbox_small_cart" name="Small Cart for Checkoutbox">
+            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+            <t t-if="website_sale_order and website_sale_order.website_order_line">
+                <!-- Small Cart Header -->
+                <t t-call="website_sale_donate.small_cart_header"/>
+
+                <!-- Small Cart -->
+                <t t-call="website_sale_donate.small_cart"/>
+
+                <!-- Back and Forward Buttons -->
+                <div class="text-left small_cart_buttons">
+                      <t t-if="request.session.get('last_shop_page', None)">
+                          <a t-att-href="request.session['last_shop_page']" class="btn btn-default">Back</a>
+                      </t>
+                      <t t-if="not request.session.get('last_shop_page', None)">
+                          <a href="/" onclick="history.go(-1); return false;" class="btn btn-default">Back</a>
+                      </t>
+                      <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line" class="btn btn-primary pull-right mb32" href="/shop/checkout">Checkout</a>
+                </div>
+                <div class="clearfix"/>
+            </t>
+        </template>
+
+        <!-- SUBTEMPLATE: recommended_products -->
+        <template id="recommended_products" name="Recommended Products">
+            <div class="container mt32" t-if="product.alternative_product_ids">
+                <h3>Suggested alternatives:</h3>
+                <div class='row mt16' style="">
+                    <t t-foreach="product.alternative_product_ids" t-as="product">
+                        <div class='col-md-2 thumbnail'
+                             style='width: 170px; height:130px; float:left; display:inline; margin-right: 10px;'>
+                            <div class='mt16 text-center'>
+                                <span t-field="product.image_small"
+                                      t-field-options='{"widget": "image", "class": "img-rounded shadow" }'/>
+                                <h5>
+                                    <a t-attf-href="/shop/product/#{ slug(product) }" style="display: block">
+                                        <span t-field='product.name' style="display: block"/>
+                                    </a>
+                                </h5>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </template>
+
+        <!-- SUBTEMPLATE: product_comment -->
+        <template id="product_comment" name="Discussion">
+            <hr class="mb32"/>
+            <section class="container">
+                <div class="row col-md-10 col-md-offset-1">
+                    <div class="text-muted">
+                        <h3 class="fa fa-comment-o">
+                            <a id="comments">
+                                <t t-if="len(product.website_message_ids) &lt;= 1" ><t t-esc="len(product.website_message_ids)"/> comment</t>
+                                <t t-if="len(product.website_message_ids) > 1"><t t-esc="len(product.website_message_ids)"/> comments</t>
+                            </a>
+                        </h3>
+                    </div>
+                    <ul class="media-list" id="comments-list"  t-if="product.website_message_ids">
+                        <li t-foreach="product.website_message_ids" t-as="message" class="media">
+                            <div class="media-body oe_msg">
+                                <img class="media-object pull-left oe_msg_avatar" t-att-src="website.image_url(message.author_id, 'image_small')" style="width: 50px; margin-right: 10px;"/>
+                                <div class="media-body oe_msg_content">
+                                    <t t-call="website.publish_short">
+                                        <t t-set="object" t-value="message"/>
+                                    </t>
+                                    <h5 class="media-heading">
+                                        <span t-field="message.author_id"/> <small>on <span t-field="message.date"/></small>
+                                    </h5>
+                                    <div t-field="message.body"/>
+                                    <div>
+                                        <div class="oe_msg_attachment" t-foreach='message.attachment_ids' t-as='attachment'>
+                                            <a t-att-href="'/mail/download_attachment?model=mail.message&amp;id='+str(message.id)+'&amp;method=download_attachment&amp;attachment_id='+str(attachment.id)" target="_blank">
+                                                <t t-if="attachment.file_type_icon == 'webimage'">
+                                                    <img t-att-src="'/web/binary/image?model=ir.attachment&amp;field=datas&amp;id=' + str(attachment.id) + '&amp;resize=100,80'"
+                                                        class='oe_attachment_embedded'></img>
+                                                </t>
+                                                <t t-if="attachment.file_type_icon != 'webimage'">
+                                                    <img t-att-src="'/mail/static/src/img/mimetypes/' + attachment.file_type + '.png'"
+                                                        class='oe_attachment_webimage'></img>
+                                                </t>
+                                                <div class='oe_attachment_name'><t t-raw='attachment.name' /></div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="css_editable_mode_hidden">
+                        <form id="comment" t-attf-action="/shop/product/comment/#{product.id}" method="POST">
+                            <img class="img pull-left img-rounded" t-att-src="website.image_url(user_id.partner_id, 'image_small')" style="width: 50px; margin-right: 10px;"/>
+                            <div class="pull-left mb32" style="width: 75%%">
+                                <textarea rows="3" name="comment" class="form-control" placeholder="Write a comment..."></textarea>
+                                <a class="btn btn-primary mt8 a-submit">Post</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </template>
+
+    </data>
+</openerp>
