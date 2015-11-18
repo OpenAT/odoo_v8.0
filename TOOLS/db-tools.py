@@ -36,6 +36,7 @@ def dupdb(args):
 # service/db.py:   def exp_dump(db_name):
 def backup(args):
     with open(args.filedump, 'w') as f:
+#        f.write(server.dump(args.superpwd, args.database, backup_format=args.type).decode('base64'))
         f.write(server.dump(args.superpwd, args.database).decode('base64'))
         if f:
             print 'Database Backup File Name: %s' % f.name
@@ -80,7 +81,7 @@ parser_dupdb.set_defaults(func=dupdb)
 parser_backup = subparsers.add_parser('backup', help='Backup database with data-dir as zip file.')
 parser_backup.add_argument('-d', '--database', required='True', help='Database to backup')
 parser_backup.add_argument('-f', '--filedump', required='False', help='Backupfile')
-parser_backup.add_argument('-t', '--type', required='False', help='Backupformat: can be zip or dump', choices=['zip', 'dump'])
+#parser_backup.add_argument('-t', '--type', required='False', help='Backupformat: can be zip or dump', choices=['zip', 'dump'])
 parser_backup.set_defaults(func=backup)
 
 # SubParser for restore

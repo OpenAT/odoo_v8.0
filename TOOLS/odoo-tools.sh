@@ -1273,7 +1273,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
             echo "backup all Databases, while now backing up ${DBNAME} ...."
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME} -t ${TYPE})
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) # -t ${TYPE})
         done
     else
             DATABASE_RUNNING=${DBNAME}
@@ -1281,7 +1281,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/IS-BACKUP--${DATABASE_RUNNING}--`date +%Y-%m-%d__%H-%M`.zip
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING} -f ${BACKUPFILENAME} -t ${TYPE})
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING} -f ${BACKUPFILENAME}) # -t ${TYPE})
     fi
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP DONE"
