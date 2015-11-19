@@ -1242,9 +1242,20 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     DBNAME=$3
     TARGET_BRANCH=$2
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
-    #if [ "x${TYPE}" == "x" ]; then
-    #    TYPE="zip"
-    #fi
+    if [ "x${TYPE}" == "x" ]; then
+        TYPE="odoozip"
+    fi
+    if [ ${TYPE} = "odoosql" ]; then
+        echo "Sorry this option is actual not available"
+        exit 2
+    elif [ ${TYPE} = "odoozip" ]; then
+        GREPPATTERN="-v -e _cloud -e _pad"
+    elif [ ${TYPE} = "etherpad" ]; then
+        GREPPATTERN="_pad"
+    elif [ ${TYPE} = "owncloud" ]; then
+        GREPPATTERN="_cloud"
+    fi
+
     echo "INSTANCE_PATH --> ${INSTANCE_PATH}"
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
@@ -1277,7 +1288,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             fi
         done
     elif [ ${DBNAME} = "all" ]; then
-        DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep -v -e _cloud -e _pad")) #TODO: check aber auch ALLE Prostgres Prozesse
+        DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${GREPPATTERN}")) #TODO: check aber auch ALLE Prostgres Prozesse
         for i in "${DATABASES[@]}"; do
             #store running databases and log do
             #getting config of database
