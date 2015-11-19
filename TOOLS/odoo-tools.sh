@@ -1207,7 +1207,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     service ${DBNAME} start
     wget -q --retry-connrefused -t 10 http://127.0.0.1:${BASEPORT69}/web/login
     if ! [ $? = 0 ]; then
-        echo "WARNING CHECK DATABASE, NOT AVAILABLE"
+        echo "ERROR: ${DBNAME} not available"
         exit 2
     fi
     echo "Temporary backup of Database ${DBNAME} after udpate..."
