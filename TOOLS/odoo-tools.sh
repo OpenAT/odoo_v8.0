@@ -1205,7 +1205,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     # ----- Adminstrative post preparations
     echo "Starting up Database ...."
     service ${DBNAME} start
-    wget -q --retry-connrefused -t 5 http://127.0.0.1:${BASEPORT69}/web/login
+    wget -q --retry-connrefused -t 10 http://127.0.0.1:${BASEPORT69}/web/login
     if ! [ $? = 0 ]; then
         echo "WARNING CHECK DATABASE, NOT AVAILABLE"
         exit 2
