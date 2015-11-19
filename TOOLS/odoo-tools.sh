@@ -500,13 +500,13 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         echo -e "Database BACKUP Directory ${DBBACKUPPATH} created."
         read -p "Do you you want to create a remote BACKUP location at external Storage ${QNAPBACKUPSERVER} ? otherwise local dir is used. To continue: <y/N>" prompt
         if [[ ${prompt} =~ [yY](es)* ]]; then
-            echo "creating remote BACKUP location and mount into ${DBBACKUPPATH}"
+            echo "Creating remote BACKUP location and mount into ${DBBACKUPPATH}"
             ssh ${QNAPUSERNAME}@${QNAPBACKUPSERVER} "mkdir -p /share/BACKUP-FCOM/${DBNAME}"
             chown -Rf ${DBNAME}: ${DBBACKUPPATH}
             mount -t nfs ${QNAPBACKUPSERVER}:/BACKUP-FCOM/${DBNAME} ${DBBACKUPPATH}
             echo -e "${QNAPBACKUPSERVER}:/BACKUP-FCOM/${DBNAME}\t${DBBACKUPPATH}\tnfs\tdefaults,noatime 0 0" >> /etc/fstab
         else
-            echo "remote directory creation ignored"
+            echo "Remote directory creation ignored"
         fi
     else
         echo -e "ERROR: Could not create directory ${DBBACKUPPATH}!"; exit 2
