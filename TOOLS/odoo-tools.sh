@@ -1095,7 +1095,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     # modules are not considered cause status is "uninstalled"
     # if there is time write this function in better code, i changed the behavior more times so its bad written code
 
-    # -------- BASIC Definitions BEGIN ---------
+    # ----- Basic definitions
 
     TARGET_BRANCH=$2
     DBNAME=$3
@@ -1107,9 +1107,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     TMPFILENAME=${INSTANCE_PATH}/${DBNAME}/BACKUP1/templang_${DBNAME}
-    # ------------------------------------------ BASIC Definitions END ------------------------------------------------
 
-    # ------------------------------------------ PREPARATIONS 4 - 5 BEGIN ---------------------------------------------
+    # ----- Preparations
     echo "Start Preparations of Language and Module Lists...."
 
     # get the list of addonpaths
@@ -1181,9 +1180,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "ERROR: Module does not exist"
         exit 2
     fi
-    # ------------------------------------------ PREPARATIONS 4 - 5 - 6 END -------------------------------------------
     echo "Starting update..."
-    # ------------------------------------------ ADMIN PREPREPARATIONS 1 - 2 - 3 BEGIN --------------------------------
+    # ----- Administrative preparations
     # Switches 1 2 3 to this place because the exit states would leave the System shut off, so no need to shut the
     # System off while preparation nothing is happening to the system while preparations
     echo "Enabling maintenance mode of ${DBNAME} instance...."
@@ -1193,9 +1191,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
     echo "Stopping odoo of instance ${DBNAME} ..."
     service ${DBNAME} stop
-    # ------------------------------------------ ADMIN PREPARATIONS 1 - 2 - 3 END -------------------------------------
 
-    # ------------------------------------------ UPDATE 7 BEGIN -------------------------------------------------------
+    # ----- Update
     for addon in ${ADDONS}; do
         for code in ${!LANGUAGES[@]}; do
             if [ -f ${addon}/i18n/${LANGUAGES[${code}]}.po ]; then
@@ -1205,11 +1202,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             fi
         done
     done
-
-    # ------------------------------------------ UPDATE 7 BEGIN ---------------------------------------------------------
-
-    # ------------------------------------------ ADMIN POST PREPARATION 8 - 9 - 10 BEGIN -----------------------------------------
-
+    # ----- Adminstrative post preparations
     echo "Starting up Database ...."
     service ${DBNAME} start
     sleep 10
@@ -1223,8 +1216,6 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     echo -e "\n \t\t temporary backup files has been created IS-BACKUP--${DBNAME}--date.zip"
     echo -e "\t\t DELETE OR USE IT FOR RESTORE"
 
-    # ------------------------------------------- ADMIN POST PREPARATION END ------------------------------------------
-
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e "$UPDATETRANSLATION DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
@@ -1234,7 +1225,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} #  [TYPE]
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME}" #  [TYPE]"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all_running|all}" #  [TYPE]"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
@@ -1251,21 +1242,36 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     #    TYPE="zip"
     #fi
     echo "INSTANCE_PATH --> ${INSTANCE_PATH}"
-    # Todo: check vmware Snapshot how to remote execute the vmware-cmd command if with ssh connection to esx erver directly check if the VM is running on this machine
-    # Todo: or find a way of acting from Virtual center server this has access to the whole cluster
+    # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
+    # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
     # Check if a database with this name exists
     if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
         echo -e "Database ${DBNAME} exists, starting to backup this datase ... "
     elif [ ${DBNAME} = "all" ]; then
         echo -e "All databases going to be backed up...."
+    elif [ ${DBNAME} = "all_running" ]; then
+        echo -e "All RUNNING databases going to be backed up...."
     else
         echo -e "check your Databasename, you gave ${DBNAME}, but this seems not to exist, stopping script......"
         exit 2
     fi
-    if [ ${DBNAME} = "all" ]; then
+    if [ ${DBNAME} = "all_running" ]; then
         DATABASE_RUNNING=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
-        for i in "${DATABASE_RUNNING[@]}"
-         do #store running databases and log do
+        for i in "${DATABASE_RUNNING[@]}"; do
+            #store running databases and log do
+            #getting config of database
+            DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
+            echo "configflepath --> ${DATABASECONFIGFILE}"
+            BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
+            echo "backup all Databases, while now backing up ${DBNAME} ...."
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) # -t ${TYPE})
+        done
+    elif [ ${DBNAME} = "all" ]; then
+        DATABASE_RUNNING=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE NOT datistemplate AND datname <> 'postgres'\"|grep -v -e _cloud -e _pad")) #TODO: check aber auch ALLE Prostgres Prozesse
+        for i in "${DATABASE_RUNNING[@]}"; do
+            #store running databases and log do
             #getting config of database
             DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
             echo "configflepath --> ${DATABASECONFIGFILE}"
