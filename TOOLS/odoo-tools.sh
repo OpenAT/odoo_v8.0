@@ -1265,7 +1265,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
-            echo "backup all Databases, while now backing up ${DBNAME} ...."
+            echo "backup all Databases, while now backing up ${i} ...."
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) # -t ${TYPE})
         done
     elif [ ${DBNAME} = "all" ]; then
@@ -1278,11 +1278,11 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
-            echo "backup all Databases, while now backing up ${DBNAME} ...."
-            if [ $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) ]; then # -t ${TYPE})
+            echo "backup all Databases, while now backing up ${i} ...."
+            if [[ $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) ]]; then # -t ${TYPE})
                 echo "Database ${i} backed up successfully"
             else
-                echo "WARNING please check Database ${i}"
+                echo "WARNING please check Database ${i}, not running or connection error"
             fi
         done
     else
