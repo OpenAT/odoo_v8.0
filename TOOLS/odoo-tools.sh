@@ -1229,7 +1229,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} #  [TYPE]
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all_running|all}" #  [TYPE]"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all_running|all} [odoozip|odoosql|etherpad|owncloud|full]"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
@@ -1260,8 +1260,8 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         exit 2
     fi
     if [ ${DBNAME} = "all_running" ]; then
-        DATABASES=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
-        for i in "${DATABASES[@]}"; do
+        RUNNING_ODOOSERVICES=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
+        for i in "${RUNNING_ODOOSERVICES[@]}"; do
             #store running databases and log do
             #getting config of database
             DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
@@ -1271,9 +1271,13 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
             echo "backup all Databases, while now backing up ${i} ...."
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) #-t ${TYPE})
+            if [ -s ${BACKUPFILENAME} ]; then
+                echo "Backup file was not written or is empty, aborting backup..."
+                exit 2
+            fi
         done
     elif [ ${DBNAME} = "all" ]; then
-        DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE NOT datistemplate AND datname <> 'postgres'\"|grep -v -e _cloud -e _pad")) #TODO: check aber auch ALLE Prostgres Prozesse
+        DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep -v -e _cloud -e _pad")) #TODO: check aber auch ALLE Prostgres Prozesse
         for i in "${DATABASES[@]}"; do
             #store running databases and log do
             #getting config of database
@@ -1284,6 +1288,10 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
             echo "backup all Databases, while now backing up ${i} ...."
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) #-t ${TYPE}
+            if [ -s ${BACKUPFILENAME} ]; then
+                echo "Backup file was not written or is empty, aborting backup..."
+                exit 2
+            fi
         done
     else
             DATABASE=${DBNAME}
@@ -1292,6 +1300,10 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE}/BACKUP/IS-BACKUP--${DATABASE}--`date +%Y-%m-%d__%H-%M`.zip
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE} -f ${BACKUPFILENAME}) #-t ${TYPE})
+            if [ -s ${BACKUPFILENAME} ]; then
+                echo "Backup file was not written or is empty, aborting backup..."
+                exit 2
+            fi
     fi
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP DONE"
