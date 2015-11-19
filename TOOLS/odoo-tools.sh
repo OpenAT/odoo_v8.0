@@ -1205,7 +1205,11 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     # ----- Adminstrative post preparations
     echo "Starting up Database ...."
     service ${DBNAME} start
-    sleep 10
+    wget -q --retry-connrefused -t 5 http://127.0.0.1:${BASEPORT69}/web/login
+    if ! [ $? = 0 ]; then
+        echo "WARNING CHECK DATABASE, NOT AVAILABLE"
+        exit 2
+    fi
     echo "Temporary backup of Database ${DBNAME} after udpate..."
     sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
     #remove temp INSTALLED ADDON LIST NOT NEEDED and is overriten everytime
