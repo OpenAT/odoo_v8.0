@@ -127,7 +127,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install Basic Packages
     echo -e "\n----- Install Basic Packages"
     apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev libxslt1-dev \
-        build-essential gcc mc bzr lptools make pkg-config nodejs gdebi -y >> ${SETUP_LOG}
+        build-essential gcc mc bzr lptools make pkg-config nodejs gdebi nfs-common -y >> ${SETUP_LOG}
     echo -e "----- Install Basic Packages Done"
 
     # ----- Less compiler needed by Odoo 8 Website -
@@ -454,6 +454,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DBBACKUPPATH="${DBPATH}/BACKUP"
     DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
+    QNAPUSERNAME="admin"
+    QNAPBACKUPSERVER="192.168.37.100"
 
     # ----- Basic Checks
 
@@ -493,9 +495,19 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         echo -e "ERROR: ${DBPATH} could not be created!"; exit 2
     fi
 
-    # ----- Create BACKUP directory
+    # ----- Create BACKUP directory and mount remote Backup location and Write fstab
     if  mkdir ${DBBACKUPPATH} 2>&1>/dev/null; then
         echo -e "Database BACKUP Directory ${DBBACKUPPATH} created."
+        read -p "Do you you want to create a remote BACKUP location at external Storage ${QNAPBACKUPSERVER} ? otherwise local dir is used. To continue: <y/N>" prompt
+        if [[ ${prompt} =~ [yY](es)* ]]; then
+            echo "Creating remote BACKUP location and mount into ${DBBACKUPPATH}"
+            ssh ${QNAPUSERNAME}@${QNAPBACKUPSERVER} "mkdir -p /share/BACKUP-FCOM/${DBNAME}"
+            chown -Rf ${DBNAME}: ${DBBACKUPPATH}
+            mount -t nfs ${QNAPBACKUPSERVER}:/BACKUP-FCOM/${DBNAME} ${DBBACKUPPATH}
+            echo -e "${QNAPBACKUPSERVER}:/BACKUP-FCOM/${DBNAME}\t${DBBACKUPPATH}\tnfs\tdefaults,noatime 0 0" >> /etc/fstab
+        else
+            echo "Remote directory creation ignored"
+        fi
     else
         echo -e "ERROR: Could not create directory ${DBBACKUPPATH}!"; exit 2
     fi
@@ -1083,7 +1095,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     # modules are not considered cause status is "uninstalled"
     # if there is time write this function in better code, i changed the behavior more times so its bad written code
 
-    # -------- BASIC Definitions BEGIN ---------
+    # ----- Basic definitions
 
     TARGET_BRANCH=$2
     DBNAME=$3
@@ -1095,9 +1107,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     TMPFILENAME=${INSTANCE_PATH}/${DBNAME}/BACKUP1/templang_${DBNAME}
-    # ------------------------------------------ BASIC Definitions END ------------------------------------------------
 
-    # ------------------------------------------ PREPARATIONS 4 - 5 BEGIN ---------------------------------------------
+    # ----- Preparations
     echo "Start Preparations of Language and Module Lists...."
 
     # get the list of addonpaths
@@ -1169,23 +1180,19 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "ERROR: Module does not exist"
         exit 2
     fi
-    # ------------------------------------------ PREPARATIONS 4 - 5 - 6 END -------------------------------------------
     echo "Starting update..."
-    # ------------------------------------------ ADMIN PREPREPARATIONS 1 - 2 - 3 BEGIN --------------------------------
+    # ----- Administrative preparations
     # Switches 1 2 3 to this place because the exit states would leave the System shut off, so no need to shut the
     # System off while preparation nothing is happening to the system while preparations
     echo "Enabling maintenance mode of ${DBNAME} instance...."
     # Calling this script recursive with another option for maintenance mode
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     echo "Create, temp database backup ${DBNAME} before update..."
-    ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_before.zip
-    # TODO: change this recursive call odoo_tools.sh later or use only pgdump for this temp backup
-    #sudo - postgres ${DBNAME} > ${TMPFILENAME}_before.sql
+    sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
     echo "Stopping odoo of instance ${DBNAME} ..."
     service ${DBNAME} stop
-    # ------------------------------------------ ADMIN PREPARATIONS 1 - 2 - 3 END -------------------------------------
 
-    # ------------------------------------------ UPDATE 7 BEGIN -------------------------------------------------------
+    # ----- Update
     for addon in ${ADDONS}; do
         for code in ${!LANGUAGES[@]}; do
             if [ -f ${addon}/i18n/${LANGUAGES[${code}]}.po ]; then
@@ -1195,27 +1202,23 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             fi
         done
     done
-
-    # ------------------------------------------ UPDATE 7 BEGIN ---------------------------------------------------------
-
-    # ------------------------------------------ ADMIN POST PREPARATION 8 - 9 - 10 BEGIN -----------------------------------------
-
-    echo "Temporary backup of Database ${DBNAME} after udpate..."
-    ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_after.zip
-    # TODO: change this recursive call odoo_tools.sh later or use only pgdump for this temp backup
-    #sudo - postgres ${DBNAME} > ${TMPFILENAME}_before.sql
+    # ----- Adminstrative post preparations
     echo "Starting up Database ...."
     service ${DBNAME} start
+    wget -q --retry-connrefused -t 10 http://127.0.0.1:${BASEPORT69}/web/login
+    if ! [ $? = 0 ]; then
+        echo "ERROR: ${DBNAME} not available"
+        exit 2
+    fi
+    echo "Temporary backup of Database ${DBNAME} after udpate..."
+    sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
     #remove temp INSTALLED ADDON LIST NOT NEEDED and is overriten everytime
     rm ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES
     echo "Disable maintenance mode of customer Instance ..."
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable" #recursice call this script with special parameter
     echo -e "\t\t!!!!! ATTENTION !!!!!"
-    echo -e "\n \t\t PLEASE DELETE ${TMPFILENAME}_after.zip"
-    echo -e "and ${TMPFILENAME}_before.zip if everything went well"
-    echo -e "\t\t OR USE IT FOR RESTORE"
-
-    # ------------------------------------------- ADMIN POST PREPARATION END ------------------------------------------
+    echo -e "\n \t\t temporary backup files has been created IS-BACKUP--${DBNAME}--date.zip"
+    echo -e "\t\t DELETE OR USE IT FOR RESTORE"
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e "$UPDATETRANSLATION DONE"
@@ -1224,23 +1227,103 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
 fi
 
 # ---------------------------------------------------------------------------------------
-# $ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}
+# $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} #  [TYPE]
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all_running|all} [odoozip|odoosql|etherpad|owncloud|full]"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ne 2 ]; then
-        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly four arguments!"
+    if ! [ $# -ge 3 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly three arguments!"
         exit 2
     fi
-
-    # TODO: check or create INSTANCE/DATABASE/BACKUP folder
-    # Todo: CD to BACKUP folder
-    # Todo: create backup with dbname--DATE.zip with DATE in Format 2014-12-30--24-59
-
-
+    TYPE=$4
+    DBNAME=$3
+    TARGET_BRANCH=$2
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    if [ "x${TYPE}" == "x" ]; then
+        TYPE="odoozip"
+    fi
+    if [ ${TYPE} = "odoosql" ]; then
+        echo "Sorry this option is actual not available"
+        exit 2
+    elif [ ${TYPE} = "odoozip" ]; then
+        GREPPATTERN="-v -e _cloud -e _pad"
+    elif [ ${TYPE} = "etherpad" ]; then
+        echo "Sorry this option is actual not available"
+        exit 2
+        GREPPATTERN="_pad"
+    elif [ ${TYPE} = "owncloud" ]; then
+        echo "Sorry this option is actual not available"
+        exit 2
+        GREPPATTERN="_cloud"
+    elif [ ${TYPE} = "full" ]; then
+        echo "Sorry this option is actual not available"
+        exit 2
+        GREPPATTERN="${DBNAME}"
+    fi
+    #TODO: implement ehterpad backup and owncloud backup extra or just start backup.sh ....?????
+    echo "INSTANCE_PATH --> ${INSTANCE_PATH}"
+    # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
+    # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
+    # Check if a database with this name exists
+    if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
+        echo -e "Database ${DBNAME} exists, starting to backup this datase ... "
+    elif [ ${DBNAME} = "all" ]; then
+        echo -e "All databases going to be backed up...."
+    elif [ ${DBNAME} = "all_running" ]; then
+        echo -e "All RUNNING databases going to be backed up...."
+    else
+        echo -e "check your Databasename, you gave ${DBNAME}, but this seems not to exist, stopping script......"
+        exit 2
+    fi
+    if [ ${DBNAME} = "all_running" ]; then
+        RUNNING_ODOOSERVICES=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
+        for i in "${RUNNING_ODOOSERVICES[@]}"; do
+            #store running databases and log do
+            #getting config of database
+            DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
+            echo "Database Config File --> ${DATABASECONFIGFILE}"
+            BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
+            echo "backup all Databases, while now backing up ${i} ...."
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) #-t ${TYPE})
+            if ! [ -s ${BACKUPFILENAME} ]; then
+                echo "Backup file was not written or is empty, aborting backup..."
+                exit 2
+            fi
+        done
+    elif [ ${DBNAME} = "all" ]; then
+        DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${GREPPATTERN}")) #TODO: check aber auch ALLE Prostgres Prozesse
+        for i in "${DATABASES[@]}"; do
+            #store running databases and log do
+            #getting config of database
+            DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
+            echo "Database Config File --> ${DATABASECONFIGFILE}"
+            BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
+            echo "backup all Databases, while now backing up ${i} ...."
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) #-t ${TYPE}
+            if ! [ -s ${BACKUPFILENAME} ]; then
+                echo "Backup file was not written or is empty, aborting backup..."
+                exit 2
+            fi
+        done
+    else
+            DATABASE=${DBNAME}
+            DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE}/${DATABASE}.conf
+            BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+            BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE}/BACKUP/IS-BACKUP--${DATABASE}--`date +%Y-%m-%d__%H-%M`.zip
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE} -f ${BACKUPFILENAME}) #-t ${TYPE})
+            if ! [ -s ${BACKUPFILENAME} ]; then
+                echo "Backup file was not written or is empty, aborting backup..."
+                exit 2
+            fi
+    fi
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
@@ -1283,10 +1366,10 @@ echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
 echo -e "$ $MAINTENANCEMODE"
 echo -e "$ $UPDATETRANSLATION"
+echo -e "$ $MODEBACKUP"
 echo -e "----------------- TODOs ----------------"
 echo -e "TODO: odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEDUPDB"
 echo -e "TODO: $MODEUPDATEINST"
-echo -e "TODO: $MODEBACKUP"
 echo -e "TODO: $MODERESTORE"
 echo -e "------------------------\n"
