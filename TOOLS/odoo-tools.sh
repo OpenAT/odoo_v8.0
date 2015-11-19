@@ -1260,12 +1260,12 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         exit 2
     fi
     if [ ${DBNAME} = "all_running" ]; then
-        DATABASE_RUNNING=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
-        for i in "${DATABASE_RUNNING[@]}"; do
+        DATABASES=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
+        for i in "${DATABASES[@]}"; do
             #store running databases and log do
             #getting config of database
             DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
-            echo "configflepath --> ${DATABASECONFIGFILE}"
+            echo "Database Config File --> ${DATABASECONFIGFILE}"
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
@@ -1273,12 +1273,12 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) #-t ${TYPE})
         done
     elif [ ${DBNAME} = "all" ]; then
-        DATABASE_RUNNING=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE NOT datistemplate AND datname <> 'postgres'\"|grep -v -e _cloud -e _pad")) #TODO: check aber auch ALLE Prostgres Prozesse
-        for i in "${DATABASE_RUNNING[@]}"; do
+        DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE NOT datistemplate AND datname <> 'postgres'\"|grep -v -e _cloud -e _pad")) #TODO: check aber auch ALLE Prostgres Prozesse
+        for i in "${DATABASES[@]}"; do
             #store running databases and log do
             #getting config of database
             DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
-            echo "configflepath --> ${DATABASECONFIGFILE}"
+            echo "Database Config File --> ${DATABASECONFIGFILE}"
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
@@ -1286,12 +1286,12 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) #-t ${TYPE}
         done
     else
-            DATABASE_RUNNING=${DBNAME}
-            DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE_RUNNING}/${DATABASE_RUNNING}.conf
+            DATABASE=${DBNAME}
+            DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE}/${DATABASE}.conf
             BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
             SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-            BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/IS-BACKUP--${DATABASE_RUNNING}--`date +%Y-%m-%d__%H-%M`.zip
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE_RUNNING} -f ${BACKUPFILENAME}) #-t ${TYPE})
+            BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE}/BACKUP/IS-BACKUP--${DATABASE}--`date +%Y-%m-%d__%H-%M`.zip
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE} -f ${BACKUPFILENAME}) #-t ${TYPE})
     fi
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP DONE"
