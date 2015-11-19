@@ -1251,11 +1251,19 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     elif [ ${TYPE} = "odoozip" ]; then
         GREPPATTERN="-v -e _cloud -e _pad"
     elif [ ${TYPE} = "etherpad" ]; then
+        echo "Sorry this option is actual not available"
+        exit 2
         GREPPATTERN="_pad"
     elif [ ${TYPE} = "owncloud" ]; then
+        echo "Sorry this option is actual not available"
+        exit 2
         GREPPATTERN="_cloud"
+    elif [ ${TYPE} = "full" ]; then
+        echo "Sorry this option is actual not available"
+        exit 2
+        GREPPATTERN="${DBNAME}"
     fi
-
+    #TODO: implement ehterpad backup and owncloud backup extra or just start backup.sh ....?????
     echo "INSTANCE_PATH --> ${INSTANCE_PATH}"
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
