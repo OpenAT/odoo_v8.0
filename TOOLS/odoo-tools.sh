@@ -1262,7 +1262,8 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     fi
     # ----- Prepare Search Operation
     PATTERN=${SEARCHARRAY[${TYPE}]}
-
+    echo "pattern: ${PATTERN}"
+    exit 2
     # ----- Get Databases
     ODOODATABASES+=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
 
