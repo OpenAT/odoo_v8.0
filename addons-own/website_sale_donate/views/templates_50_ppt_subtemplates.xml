@@ -3,7 +3,7 @@
     <data>
 
         <!-- ========================================= -->
-        <!-- SUB TEMPLATES FOR PRODUCT PAGE TEMPLATES: -->
+        <!-- SUBTEMPLATES FOR PRODUCT PAGE TEMPLATES: -->
         <!-- ========================================= -->
 
         <!-- SUBTEMPLATE: categories_search_publish bar -->
@@ -144,8 +144,13 @@
 
                             <!-- Add to Cart Button -->
                             <a id="add_to_cart" class="btn btn-primary btn-xl mt16 js_check_product a-submit" href="#">
-                                <t t-if="product.simple_checkout">Donate Now!</t>
-                                <t t-if="not product.simple_checkout">Add to Cart</t>
+                                <t t-if="product.button_addtocart_text">
+                                    <span t-field="product.button_addtocart_text"/>
+                                </t>
+                                <t t-if="not product.button_addtocart_text">
+                                    <t t-if="product.simple_checkout">Donate Now!</t>
+                                    <t t-if="not product.simple_checkout">Add to Cart</t>
+                                </t>
                             </a>
 
                             <!-- payment interval radio boxes -->
@@ -164,24 +169,22 @@
                                 </h4>
                             </t>
 
+                            <!-- Shopping Cart (small cart) -->
+                            <t t-if="show_small_cart_in_checkoutbox">
+                                <t t-call="website_sale_donate.checkoutbox_small_cart"/>
+                            </t>
+
                         </div>
                     </form>
                 </div>
 
                 <!-- Panel Footer -->
-                <div class="panel-footer" t-if="not product.hide_panelfooter">
-                    <p class="text-muted">
-                        30-day money-back guarantee
-                        <br/>
-                        Free Shipping in U.S.
-                        <br/>
-                        Buy now, get in 2 days
-                    </p>
+                <div class="panel-footer" t-if="not hide_panelfooter">
+                    <div t-field="website.checkoutbox_footer"/>
                 </div>
 
             </div>
         </template>
-
 
         <!-- SUBTEMPLATE: checkoutbox_small_cart -->
         <template id="checkoutbox_small_cart" name="Small Cart for Checkoutbox">
@@ -286,6 +289,7 @@
                 </div>
             </section>
         </template>
+
 
     </data>
 </openerp>

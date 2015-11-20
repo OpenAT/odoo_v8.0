@@ -6,7 +6,7 @@
         <template id="ppt_donate" name="Product Page Donate Layout">
             <t t-call="website.layout">
                 <t t-set="additional_title" t-value="product.name"/>
-                <div itemscope="itemscope" itemtype="http://schema.org/Product" id="wrap" class="js_sale">
+                <div itemscope="itemscope" itemtype="http://schema.org/Product" id="wrap" class="js_sale ppt_donate">
 
                     <!-- Main Section with optional parallax bg-image -->
                     <section id="website_sale_donate"
@@ -48,6 +48,8 @@
                                                 <t t-set="hide_salesdesc" t-value="product.hide_salesdesc"/>
                                                 <t t-set="hide_fundingtextincp" t-value="product.hide_fundingtextincp"/>
                                                 <t t-set="hide_fundingbarincp" t-value="product.hide_fundingbarincp"/>
+                                                <t t-set="hide_panelfooter" t-value="product.hide_panelfooter"/>
+                                                <t t-set="show_small_cart_in_checkoutbox" t-value="False"/>
                                             </t>
                                         </div>
                                     </div>
@@ -82,10 +84,26 @@
         <!-- PRODUCT PAGE TEMPLATE OPTIONS: ppt_donate -->
         <!-- ========================================= -->
 
-        <!-- INHERIT PRODUCT PAGE TEMPLATE (PPT) ppt_donate: show shopping cart -->
-        <template id="ppt_donate_checkoutbox_small_cart" inherit_id="website_sale_donate.ppt_donate" name="Show Cart" customize_show="True" active="False">
-            <xpath expr="//t[@t-if='product.payment_interval_ids']" position="after">
+        <!-- INHERIT PRODUCT PAGE TEMPLATE (PPT) ppt_donate: show shopping cart in checkoutbox -->
+        <template id="ppt_donate_checkoutbox_small_cart" inherit_id="website_sale_donate.ppt_donate" name="Show Cart in Checkoutbox" customize_show="True" active="False">
+            <xpath expr="//t[@t-set='show_small_cart_in_checkoutbox']" position="attributes">
+                <attribute name="t-value">True</attribute>
+            </xpath>
+        </template>
+
+        <!-- INHERIT PRODUCT PAGE TEMPLATE (PPT) ppt_donate: show shopping cart in right column below checkoutbox -->
+        <template id="ppt_donate_small_cart_right" inherit_id="website_sale_donate.ppt_donate" name="Show Cart in Right-Column" customize_show="True" active="False">
+            <xpath expr="//t[@t-call='website_sale_donate.checkoutbox']" position="after">
                 <t t-call="website_sale_donate.checkoutbox_small_cart"/>
+            </xpath>
+        </template>
+
+        <!-- INHERIT PRODUCT PAGE TEMPLATE (PPT) ppt_donate: show shopping cart below checkoutbox full width -->
+        <template id="ppt_donate_small_cart_full" inherit_id="website_sale_donate.ppt_donate" name="Show Cart" customize_show="True" active="False">
+            <xpath expr="//div[@id='wsd-checkout-box']" position="after">
+                <div class="col-sm-16">
+                    <t t-call="website_sale_donate.checkoutbox_small_cart"/>
+                </div>
             </xpath>
         </template>
 

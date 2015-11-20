@@ -8,74 +8,117 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
-                <field name="description_sale" position="after">
-                    <group name="donate"  colspan="2">
-                        <h3 colspan="2" style="padding-top: 2.5em; padding-bottom: 1em; margin-bottom: 1em; border-bottom: 1px solid rgb(227, 227, 227); color:grey;">
-                            DONATION SETTINGS
-                        </h3>
-                        <group string="Donate Options" colspan="2">
-                            <field name="product_page_template"/>
-                            <field name="simple_checkout"/>
-                            <p colspan="2" style="margin-top: 6px; margin-right: 25%; margin-bottom: 18px; font-size: 12px; color: grey;">
-                                If "Simple Checkout" is Enabled the "Donate" button(s) will directly jump to
-                                the User-Information-Form instead of the Donation-Cart-Overview-Page.
-                                (Adds "simplecheckout" to the URL of the Button: http://shop/simplecheckout/... )
+                <xpath expr="//page[@string='Information']" position="before">
+                    <page string="Donate">
+
+                        <group name="quicksetting"  colspan="2">
+                            <h3 colspan="2" style="padding-top: 2.5em; padding-bottom: 1em; margin-bottom: 1em; border-bottom: 1px solid rgb(227, 227, 227); color:grey;">
+                                BASIC PRODUCT SETTINGS
+                            </h3>
+                            <p colspan="2" style="font-size: 12px; color: grey;">
+                            Please do not forget to set/check this product settings:<br/>
+                                Information -> Product Type<br/>
+                                Information -> Unit of Measure<br/>
+                                Information -> <strong>Sales Price</strong><br/>
+                                <br/>
+                                Sales -> <strong>Description for Quotations</strong> (= Webpage Description in Checkoutbox)<br/>
+                                Sales -> <strong>Public Category</strong> (= Webpage Categories)<br/>
+                                Sales -> Alternative Products<br/>
+                                Sales -> Accessory Products<br/>
+                                <br/>
+                                Accounting -> Customer Taxes<br/>
+                                Accounting -> Supplier Taxes<br/>
+                                <br/>
                             </p>
-                            <field name="variants_as_list"/>
-                            <field name="hide_price"/>
-                            <field name="price_donate"/>
-                            <field name="price_donate_min"/>
-                            <field name="payment_interval_ids" widget="many2many_tags" placeholder="Payment Intervals..."/>
                         </group>
-                        <separator colspan="2"/>
-                        <group string="Donation Page">
-                            <field name="hide_payment"/>
-                            <field name="hide_categories"/>
-                            <field name="hide_search"/>
-                            <field name="show_desctop"/>
-                            <field name="show_descbottom"/>
+
+                        <group name="donate"  colspan="2">
+                            <h3 colspan="2" style="padding-top: 2.5em; padding-bottom: 1em; margin-bottom: 1em; border-bottom: 1px solid rgb(227, 227, 227); color:grey;">
+                                DONATION SETTINGS
+                            </h3>
+
+                            <group string="Webshop: Behaviour" colspan="2">
+                                <p colspan="2" style="font-size: 12px; color: grey;">
+                                    Normally the buyer will be redirected to the shopping-cart-page if he adds a
+                                    product. With "Simple Checkout" enabled this step is skipped and he will be directly
+                                    redirected to the page where he can enter his user data.<br/>
+                                    ATTENTION: Be aware that the global setting "Stay at page after adding a product
+                                    to the cart" will be ignored for products with "Simple Checkout" set!
+                                </p>
+                                <field name="simple_checkout"/>
+                            </group>
+
+                            <group string="Webshop: Product Listings" colspan="2">
+                                <field name="hide_price"/>
+                            </group>
+
+                            <group string="Webshop: Product Page" colspan="2">
+                                <field name="product_page_template"/>
+                                <img colspan="2"
+                                     src="/website_sale_donate/static/src/img/ppt_donate.png"
+                                     style="margin-top:5px; margin-bottom:10px; max-width:98%;"/>
+
+                                <field name="parallax_image_medium" widget="image" class="oe_avatar oe_left"/>
+                                <field name="parallax_speed" />
+                                <field name="hide_categories"/>
+                                <field name="hide_search"/>
+                                <field name="show_desctop"/>
+                                <field name="show_descbottom"/>
+                                <h3 colspan="2" style="padding-top: 1em; margin-bottom: 0.5em; color:grey;">
+                                    Checkoutbox Settings:
+                                </h3>
+                                <field name="hide_payment"/>
+                                <field name="image_square" widget="image" class="oe_avatar oe_left" readonly="True"/>
+                                <field name="hide_image"/>
+                                <field name="hide_salesdesc"/>
+                                <field name="variants_as_list"/>
+                                <field name="hide_quantity"/>
+                                <field name="price_donate"/>
+                                <field name="price_donate_min" attrs="{'invisible': [('price_donate','=', False)]}"/>
+                                <field name="payment_interval_ids" widget="many2many_tags" placeholder="Payment Intervals..."/>
+                                <field name="button_addtocart_text"/>
+                                <field name="hide_panelfooter"/>
+                            </group>
+
                         </group>
-                        <group string="Donation Checkout Panel">
-                            <field name="hide_image"/>
-                            <field name="hide_salesdesc"/>
-                            <field name="hide_quantity"/>
-                            <field name="hide_panelfooter"/>
+
+                        <group name="funding" colspan="2">
+                            <h3 colspan="2" style="padding-top: 2.5em; padding-bottom: 1em; margin-bottom: 1em; border-bottom: 1px solid rgb(227, 227, 227); color:grey;">
+                                CROWDFUNDING SETTINGS
+                            </h3>
+
+                            <group string="Global Crowdfunding Options">
+                                <field name="funding_goal"/>
+                                <p colspan="2" style="margin-top: 6px; margin-right: 25%; margin-bottom: 18px; font-size: 12px; color: grey;">
+                                    ATTENTION: Crowd Funding Bar and Text will only be shown if the funding goal higher than 0!
+                                </p>
+                                <field name="funding_reached" readonly="1"/>
+                                <p colspan="2" style="margin-top: 6px; margin-right: 25%; margin-bottom: 18px; font-size: 12px; color: grey;">
+                                    This is a calculated field and therefore read-only. (Sums up all Sales-Order-Lines not in State Done or Cancelled)
+                                </p>
+                                <field name="funding_user"/>
+                            </group>
+
+                            <group string="Webshop: Product Listings" colspan="2">
+                                <field name="hide_fundingtextinlist"/>
+                                <field name="hide_fundingbarinlist"/>
+                            </group>
+
+                            <group string="Webshop: Product Page">
+                                <field name="hide_fundingtext"/>
+                                <field name="hide_fundingbar"/>
+                                <field name="hide_fundingdesc"/>
+                                <h3 colspan="2" style="padding-top: 1em; margin-bottom: 0.5em; color:grey;">
+                                    Checkoutbox Settings:
+                                </h3>
+                                <field name="hide_fundingtextincp"/>
+                                <field name="hide_fundingbarincp"/>
+                            </group>
+
                         </group>
-                        <separator string="Donation Images" colspan="2"/>
-                        <group>
-                            <field name="parallax_image_medium" widget="image" class="oe_avatar oe_left"/>
-                            <field name="parallax_speed" attrs="{'invisible': [('parallax_image_medium','=', False)]}"/>
-                        </group>
-                        <group>
-                            <field name="image_square" widget="image" class="oe_avatar oe_left"/>
-                        </group>
-                    </group>
-                    <group name="funding" colspan="2">
-                        <h3 colspan="2" style="padding-top: 2.5em; padding-bottom: 1em; margin-bottom: 1em; border-bottom: 1px solid rgb(227, 227, 227); color:grey;">
-                            CROWDFUNDING SETTINGS
-                        </h3>
-                        <group string="Crowdfunding Options">
-                            <field name="funding_goal"/>
-                            <p colspan="2" style="margin-top: 6px; margin-right: 25%; margin-bottom: 18px; font-size: 12px; color: grey;">
-                                ATTENTION: Crowd Funding Bar and Text will only be shown if the funding goal higher than 0!
-                            </p>
-                            <field name="funding_reached" readonly="1"/>
-                            <p colspan="2" style="margin-top: 6px; margin-right: 25%; margin-bottom: 18px; font-size: 12px; color: grey;">
-                                This is a calculated field and therefore read-only. (Sums up all Sales-Order-Lines not in State Done or Cancelled)
-                            </p>
-                            <field name="funding_user"/>
-                        </group>
-                        <group string="Funding Page and Panel">
-                            <field name="hide_fundingtextinlist"/>
-                            <field name="hide_fundingbarinlist"/>
-                            <field name="hide_fundingtextincp"/>
-                            <field name="hide_fundingbarincp"/>
-                            <field name="hide_fundingtext"/>
-                            <field name="hide_fundingbar"/>
-                            <field name="hide_fundingdesc"/>
-                        </group>
-                    </group>
-                </field>
+
+                    </page>
+                </xpath>
             </field>
         </record>
 
