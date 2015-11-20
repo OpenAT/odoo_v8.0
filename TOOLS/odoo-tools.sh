@@ -1253,8 +1253,8 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     i=0
     for item in ${BACKUPOPTIONS[@]}; do
         SEARCHARRAY[${item}]=${GREPPATTERN[$i]}
-        (( i++ ))
         echo "counter: $i : item: $item : gp: ${GREPPATTERN[$i]}"
+        (( i++ ))
      done
 
     if [ ${TYPE} == "odoosql" ]; then
