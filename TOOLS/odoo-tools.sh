@@ -1285,26 +1285,26 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`
-        echo "backup all Databases, while now backing up ${i} ...."
+        echo "backup Databases, while now backing up ${i} ...."
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}.zip) #-t ${TYPE}
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILENAME}.zip") #-t ${TYPE}
             if ! [ -s ${BACKUPFILENAME}.zip ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
         fi
         if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i} > ${BACKUPFILENAME}.sql
+            sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}.sql"
             if ! [ -s ${BACKUPFILENAME}.zip ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
         fi
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i} > ${BACKUPFILENAME}.sql
-            rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ ${BACKUPFILENAME}-data
-            tar -czvf ${BACKUPFILENAME}-config.tgz ${INSTANCE_PATH}/${i}/owncloud/config/config.php
-            if ! [ -s ${BACKUPFILENAME}.zip ]; then
+            sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}.sql"
+            rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILENAME}-data"
+            tar -czvf "${BACKUPFILENAME}-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
+            if ! [ -s "${BACKUPFILENAME}.zip" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
