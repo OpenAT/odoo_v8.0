@@ -1253,7 +1253,6 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     i=0
     for item in ${BACKUPOPTIONS[@]}; do
         SEARCHARRAY[${item}]=${GREPPATTERN[$i]}
-        echo "counter: $i : item: $item : gp: ${GREPPATTERN[$i]}"
         (( i++ ))
      done
 
@@ -1264,10 +1263,9 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # ----- Prepare Search Operation
     PATTERN=${SEARCHARRAY[${TYPE}]}
     echo "pattern: ${PATTERN}"
-    exit 2
     # ----- Get Databases
     ODOODATABASES+=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
-
+    echo ${ODOODATABASES}
     # ----- check database exists
     if [ -z ${#ODOODATABASES[@]} ]; then
         echo "ERROR: Given Database does not exist"
