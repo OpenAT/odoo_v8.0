@@ -1229,7 +1229,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} #  [TYPE]
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all_running|all} [odoozip|odoosql|etherpad|owncloud|full]"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all} [odoozip|odoosql|etherpad|owncloud|full]"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
@@ -1242,88 +1242,74 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     DBNAME=$3
     TARGET_BRANCH=$2
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    declare -a BACKUPOPTIONS=("odoozip" "odoosql" "etherpad" "owncloud" "full")
+    declare -a GREPPATTERN=("-v -e _cloud -e _pad" "notavailable" "_pad" "_cloud" "o8_")
+    declare -A SEARCHARRAY=()
+    # ----- Define default
     if [ "x${TYPE}" == "x" ]; then
         TYPE="odoozip"
     fi
-    if [ ${TYPE} = "odoosql" ]; then
-        echo "Sorry this option is actual not available"
+    # ----- Create Backup Options auto expandable on changing BACKUPOPTIONS and GREPPATTERN
+    i=0
+    for item in ${!BACKUPOPTIONS[@]}; do
+        SEARCHARRAY[${item}]=${GREPPATTERN[$i]}
+        i++
+     done
+
+    if [ ${TYPE} == "odoosql" ]; then
+        echo "ERROR: This option is not supported right now "
         exit 2
-    elif [ ${TYPE} = "odoozip" ]; then
-        GREPPATTERN="-v -e _cloud -e _pad"
-    elif [ ${TYPE} = "etherpad" ]; then
-        echo "Sorry this option is actual not available"
-        exit 2
-        GREPPATTERN="_pad"
-    elif [ ${TYPE} = "owncloud" ]; then
-        echo "Sorry this option is actual not available"
-        exit 2
-        GREPPATTERN="_cloud"
-    elif [ ${TYPE} = "full" ]; then
-        echo "Sorry this option is actual not available"
-        exit 2
-        GREPPATTERN="${DBNAME}"
     fi
-    #TODO: implement ehterpad backup and owncloud backup extra or just start backup.sh ....?????
+    # ----- Prepare Search Operation
+    PATTERN=${SEARCHARRAY[${TYPE}]}
+
+    # ----- Get Databases
+    ODOODATABASES+=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
+
+    # ----- check database exists
+    if [ -z ${#ODOODATABASES[@]} ]; then
+        echo "ERROR: Given Database does not exist"
+        exit 2
+    fi
+
     echo "INSTANCE_PATH --> ${INSTANCE_PATH}"
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
-    # Check if a database with this name exists
-    if [ `su - postgres -c "psql -l | grep ${DBNAME} | wc -l"` -gt 0 ]; then
-        echo -e "Database ${DBNAME} exists, starting to backup this datase ... "
-    elif [ ${DBNAME} = "all" ]; then
-        echo -e "All databases going to be backed up...."
-    elif [ ${DBNAME} = "all_running" ]; then
-        echo -e "All RUNNING databases going to be backed up...."
-    else
-        echo -e "check your Databasename, you gave ${DBNAME}, but this seems not to exist, stopping script......"
-        exit 2
-    fi
-    if [ ${DBNAME} = "all_running" ]; then
-        RUNNING_ODOOSERVICES=($(ps -ef|grep "openerp-server*" |awk '{printf $13;printf "\n"; }')) #TODO: check aber auch ALLE Prostgres Prozesse
-        for i in "${RUNNING_ODOOSERVICES[@]}"; do
-            #store running databases and log do
-            #getting config of database
-            DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
-            echo "Database Config File --> ${DATABASECONFIGFILE}"
-            BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-            SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-            BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
-            echo "backup all Databases, while now backing up ${i} ...."
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) #-t ${TYPE})
-            if ! [ -s ${BACKUPFILENAME} ]; then
-                echo "Backup file was not written or is empty, aborting backup..."
+
+        #DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${GREPPATTERN}")) #TODO: check aber auch ALLE Prostgres Prozesse
+    for i in "${ODOODATABASES[@]}"; do
+        #store running databases and log do
+        #getting config of database
+        DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
+        echo "Database Config File --> ${DATABASECONFIGFILE}"
+        BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+        SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+        BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`
+        echo "backup all Databases, while now backing up ${i} ...."
+        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}.zip) #-t ${TYPE}
+            if ! [ -s ${BACKUPFILENAME}.zip ]; then
+                echo "ERROR: backup was not successfull"
                 exit 2
             fi
-        done
-    elif [ ${DBNAME} = "all" ]; then
-        DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${GREPPATTERN}")) #TODO: check aber auch ALLE Prostgres Prozesse
-        for i in "${DATABASES[@]}"; do
-            #store running databases and log do
-            #getting config of database
-            DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
-            echo "Database Config File --> ${DATABASECONFIGFILE}"
-            BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-            SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-            BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.zip
-            echo "backup all Databases, while now backing up ${i} ...."
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f ${BACKUPFILENAME}) #-t ${TYPE}
-            if ! [ -s ${BACKUPFILENAME} ]; then
-                echo "Backup file was not written or is empty, aborting backup..."
+        fi
+        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
+            sudo -Hu postgres pg_dump ${i} > ${BACKUPFILENAME}.sql
+            if ! [ -s ${BACKUPFILENAME}.zip ]; then
+                echo "ERROR: backup was not successfull"
                 exit 2
             fi
-        done
-    else
-            DATABASE=${DBNAME}
-            DATABASECONFIGFILE=${INSTANCE_PATH}/${DATABASE}/${DATABASE}.conf
-            BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-            SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-            BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE}/BACKUP/IS-BACKUP--${DATABASE}--`date +%Y-%m-%d__%H-%M`.zip
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${DATABASE} -f ${BACKUPFILENAME}) #-t ${TYPE})
-            if ! [ -s ${BACKUPFILENAME} ]; then
-                echo "Backup file was not written or is empty, aborting backup..."
+        fi
+        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
+            sudo -Hu postgres pg_dump ${i} > ${BACKUPFILENAME}.sql
+            rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ ${BACKUPFILENAME}-data
+            tar -czvf ${BACKUPFILENAME}-config.tgz ${INSTANCE_PATH}/${i}/owncloud/config/config.php
+            if ! [ -s ${BACKUPFILENAME}.zip ]; then
+                echo "ERROR: backup was not successfull"
                 exit 2
             fi
-    fi
+        fi
+    done
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
