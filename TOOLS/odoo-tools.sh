@@ -1268,13 +1268,17 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     while read database; do
         if [[ "${database}" =~ "_pad" ]]; then
             DATABASES[${database}]="etherpad"
-            INSTANCEDBNAME="${database%_pad}"
+            # Store previouse value and add comma with another value
+            DATABASES[${database}]="${DATABASES[${database}]DATABASES[${database}]:+},${database%_pad}"
+            #INSTANCEDBNAME="${database%_pad}"
         elif [[ "${database}" =~ "_cloud" ]]; then
             DATABASES[${database}]="owncloud"
-            INSTANCEDBNAME="${database%_cloud}"
+            #INSTANCEDBNAME="${database%_cloud}"
+            DATABASES[${database}]="${DATABASES[${database}]DATABASES[${database}]:+},${database%_cloud}"
         else
             DATABASES[${database}]="odoo"
-            INSTANCEDBNAME="${database}"
+            #INSTANCEDBNAME="${database}"
+            DATABASES[${database}]="${DATABASES[${database}]DATABASES[${database}]:+},${database}"
         fi
         #($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
     done < <(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}")
@@ -1284,9 +1288,9 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         exit 2
     fi
 
-    # ----- FLAG DATABASES ARRAY with TYPE
+    # ----- testing array
     for i in "${!DATABASES[@]}"; do
-        echo "ARRAY #: ${i} VALUE: ${DATABASES[${i}]} isntancedbname: ${INSTANCEDBNAME}"
+        echo "ARRAY #: ${i} VALUE: ${DATABASES[${i}]} isntancedbname: ${DATABASES[${i}]:1}"
     done
     exit 2
     # ----- GET INSTANCEDBNAME for all TYPES
