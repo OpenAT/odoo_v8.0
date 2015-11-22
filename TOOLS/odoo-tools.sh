@@ -1282,7 +1282,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             INSTANCEDBNAME="${i%_cloud}"
         else
             ${DATABASES[${i}]}="odoo"
-            INSTANCEDBNAME=${i}
+            INSTANCEDBNAME="${i}"
         fi
         echo "ARRAY #: ${i} VALUE: ${DATABASES[${i}]}"
     done
@@ -1307,14 +1307,13 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     for i in "${!DATABASES[@]}"; do
         #store running databases and log do
         #getting config of database
-        if
         DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
         echo "Database Config File --> ${DATABASECONFIGFILE}"
         BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`
         echo "backup Databases, while now backing up ${i} ...."
-        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && [ $]; then
+        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILENAME}_odoo.zip") #-t ${TYPE}
             if ! [ -s "${BACKUPFILENAME}_odoo.zip" ]; then
                 echo "ERROR: backup was not successfull"
