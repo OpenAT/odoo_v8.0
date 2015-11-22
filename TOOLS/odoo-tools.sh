@@ -1245,6 +1245,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     declare -a BACKUPOPTIONS=("odoozip" "odoosql" "etherpad" "owncloud" "full")
     declare -a GREPPATTERN=("-v -e _cloud -e _pad" "notavailable" "_pad" "_cloud" "o8_")
     declare -A SEARCHARRAY=()
+    declare -A DATABASES=()
     # ----- Define default
     if [ "x${TYPE}" == "x" ]; then
         TYPE="odoozip"
@@ -1271,7 +1272,23 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         echo "ERROR: Given Database does not exist"
         exit 2
     fi
-    # ----- GET INSTANCEDBNAME
+    # ----- FLAG DATABASES ARRAY with TYPE
+    for i in "${DATABASES[@]}"; do
+        if [[ "${i}" =~ "_pad" ]]; then
+            ${DATABASES[${i}]}="etherpad"
+            INSTANCEDBNAME="${i%_pad}"
+        elif [[ "${i}" =~ "_cloud" ]]; then
+            ${DATABASES[${i}]}="ownlcoud"
+            INSTANCEDBNAME="${i%_cloud}"
+        else
+            ${DATABASES[${i}]}="odoo"
+            INSTANCEDBNAME=${i}
+        fi
+        echo "ARRAY #: ${i} VALUE: ${DATABASES[${i}]}"
+    done
+    exit 2
+    # ----- GET INSTANCEDBNAME for all TYPES
+
     if [[ "${DATABASES[0]}" =~ "_pad" ]]; then
         INSTANCEDBNAME=${DATABASES%_pad}
     elif [[ "${DATABASES[0]}" =~ "_cloud" ]]; then
@@ -1287,16 +1304,17 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
         #DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${GREPPATTERN}")) #TODO: check aber auch ALLE Prostgres Prozesse
     # ----- BACKUP DATA
-    for i in "${DATABASES[@]}"; do
+    for i in "${!DATABASES[@]}"; do
         #store running databases and log do
         #getting config of database
+        if
         DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
         echo "Database Config File --> ${DATABASECONFIGFILE}"
         BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`
         echo "backup Databases, while now backing up ${i} ...."
-        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then
+        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && [ $]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILENAME}_odoo.zip") #-t ${TYPE}
             if ! [ -s "${BACKUPFILENAME}_odoo.zip" ]; then
                 echo "ERROR: backup was not successfull"
