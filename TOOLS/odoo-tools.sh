@@ -1288,24 +1288,24 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`
         echo "backup Databases, while now backing up ${i} ...."
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "odoo_${BACKUPFILENAME}.zip") #-t ${TYPE}
-            if ! [ -s "odoo_${BACKUPFILENAME}.zip" ]; then
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILENAME}_odoo.zip") #-t ${TYPE}
+            if ! [ -s "${BACKUPFILENAME}_odoo.zip" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
         fi
         if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i} > "etherpad_${BACKUPFILENAME}.sql"
-            if ! [ -s "etherpad_${BACKUPFILENAME}.sql" ]; then
+            sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}_etherpad.sql"
+            if ! [ -s "${BACKUPFILENAME}_etherpad.sql" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
         fi
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i} > "owncloud_${BACKUPFILENAME}.sql"
-            rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "owncloud_${BACKUPFILENAME}-data"
-            tar -czvf "owncloud_${BACKUPFILENAME}-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
-            if ! [ -s "owncloud_${BACKUPFILENAME}.sql" ] && ! [ -s "owncloud_${BACKUPFILENAME}-data" ] && ! [ -s "owncloud_${BACKUPFILENAME}-config.tgz" ]; then
+            sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}_owncloud.sql"
+            rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILENAME}_owncloud-data"
+            tar -czvf "${BACKUPFILENAME}_owncloud-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
+            if ! [ -s "${BACKUPFILENAME}_owncloud.sql" ] && ! [ -s "${BACKUPFILENAME}_owncloud-data" ] && ! [ -s "${BACKUPFILENAME}_owncloud-config.tgz" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
