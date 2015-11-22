@@ -1266,7 +1266,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # ----- Get Databases
     ODOODATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
     # ----- check database exists
-    echo "${ODOODATABASES}"
+    echo "${ODOODATABASES[@]}"
     if [ -z ${#ODOODATABASES[@]} ]; then
         echo "ERROR: Given Database does not exist"
         exit 2
