@@ -1264,20 +1264,20 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     PATTERN=${SEARCHARRAY[${TYPE}]}
     echo "pattern: ${PATTERN}"
     # ----- Get Databases
-    ODOODATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
+    DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
     # ----- check database exists
-    echo "${ODOODATABASES[@]}"
-    if [ -z ${#ODOODATABASES[@]} ]; then
+    echo "${DATABASES[@]}"
+    if [ -z ${#DATABASES[@]} ]; then
         echo "ERROR: Given Database does not exist"
         exit 2
     fi
     # ----- GET INSTANCEDBNAME
-    if [[ "${ODOODATABASES[0]}" =~ "_pad" ]]; then
-        INSTANCEDBNAME=${ODOODATABASES%_pad}
-    elif [[ "${ODOODATABASES[0]}" =~ "_cloud" ]]; then
-        INSTANCEDBNAME=${INSTANCEDBNAME%_cloud}
+    if [[ "${DATABASES[0]}" =~ "_pad" ]]; then
+        INSTANCEDBNAME=${DATABASES%_pad}
+    elif [[ "${DATABASES[0]}" =~ "_cloud" ]]; then
+        INSTANCEDBNAME=${DATABASES%_cloud}
     else
-        INSTANCEDBNAME=${ODOODATABASES[0]}
+        INSTANCEDBNAME=${DATABASES[0]}
     fi
     echo "INSTANCEDBNAME: $INSTANCEDBNAME"
      exit 2
@@ -1287,7 +1287,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
         #DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${GREPPATTERN}")) #TODO: check aber auch ALLE Prostgres Prozesse
     # ----- BACKUP DATA
-    for i in "${ODOODATABASES[@]}"; do
+    for i in "${DATABASES[@]}"; do
         #store running databases and log do
         #getting config of database
         DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
