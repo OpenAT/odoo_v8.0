@@ -1264,7 +1264,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # ----- Prepare Search Operation
     PATTERN=${SEARCHARRAY[${TYPE}]}
     echo "pattern: ${PATTERN}"
-    # ----- Get Databases and FLAG the TYPE of it
+    # ----- Get Databases build array and FLAG the TYPE of database
     while read database; do
         if [[ "${database}" =~ "_pad" ]]; then
             DATABASES[${database}]="etherpad"
@@ -1289,21 +1289,12 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     fi
 
     # ----- testing array
-    for i in "${!DATABASES[@]}"; do
-        echo "ARRAY #: ${i} TYPEFLAG: ${DATABASES[${i}]%%,*} isntancedbname: ${DATABASES[${i}]#*,}"
-    done
-    exit 2
+    #for i in "${!DATABASES[@]}"; do
+    #    echo "ARRAY #: ${i} TYPEFLAG: ${DATABASES[${i}]%%,*} isntancedbname: ${DATABASES[${i}]#*,}"
+    #done
+    #exit 2
     # ----- GET INSTANCEDBNAME for all TYPES
 
-    if [[ "${DATABASES[0]}" =~ "_pad" ]]; then
-        INSTANCEDBNAME=${DATABASES%_pad}
-    elif [[ "${DATABASES[0]}" =~ "_cloud" ]]; then
-        INSTANCEDBNAME=${DATABASES%_cloud}
-    else
-        INSTANCEDBNAME=${DATABASES[0]}
-    fi
-    echo "INSTANCEDBNAME: $INSTANCEDBNAME"
-     exit 2
     echo "INSTANCE_PATH --> ${INSTANCE_PATH}"
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
@@ -1313,30 +1304,33 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     for i in "${!DATABASES[@]}"; do
         #store running databases and log do
         #getting config of database
-        DATABASECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
+        DATABASEFLAG="${DATABASES[${i}]%%,*}"
+        INSTANCEDBNAME="${DATABASES[${i}]#*,}"
+        echo "FLAG: ${DATABASEFLAG} INSTANCEDBNAME: ${INSTANCEDBNAME}"
+        DATABASECONFIGFILE=${INSTANCE_PATH}/${INSTANCEDBNAME}/${INSTANCEDBNAME}.conf
         echo "Database Config File --> ${DATABASECONFIGFILE}"
         BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-        BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`
+        BACKUPFILENAME=${INSTANCE_PATH}/${INSTANCEDBNAME}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`
         echo "backup Databases, while now backing up ${i} ...."
-        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
+        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && [ "${DATABASEFLAG}" = "odoo" ]; then # && [ $]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILENAME}_odoo.zip") #-t ${TYPE}
             if ! [ -s "${BACKUPFILENAME}_odoo.zip" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
         fi
-        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
+        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]  && [ "${DATABASEFLAG}" = "etherpad" ]; then
             sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}_etherpad.sql"
             if ! [ -s "${BACKUPFILENAME}_etherpad.sql" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
         fi
-        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
+        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]  && [ "${DATABASEFLAG}" = "owncloud" ]; then
             sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}_owncloud.sql"
-            rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILENAME}_owncloud-data"
-            tar -czvf "${BACKUPFILENAME}_owncloud-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
+            rsync -avz ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/data/ "${BACKUPFILENAME}_owncloud-data"
+            tar -czvf "${BACKUPFILENAME}_owncloud-config.tgz" ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/config/config.php
             if ! [ -s "${BACKUPFILENAME}_owncloud.sql" ] && ! [ -s "${BACKUPFILENAME}_owncloud-data" ] && ! [ -s "${BACKUPFILENAME}_owncloud-config.tgz" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
