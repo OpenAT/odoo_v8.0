@@ -1271,7 +1271,16 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         echo "ERROR: Given Database does not exist"
         exit 2
     fi
-
+    # ----- GET INSTANCEDBNAME
+    if [[ "${ODOODATABASES[0]}" =~ "_pad" ]]; then
+        INSTANCEDBNAME=${ODOODATABASES%_pad}
+    elif [[ "${ODOODATABASES[0]}" =~ "_cloud" ]]; then
+        INSTANCEDBNAME=${INSTANCEDBNAME%_cloud}
+    else
+        INSTANCEDBNAME=${ODOODATABASES[0]}
+    fi
+    echo "INSTANCEDBNAME: $INSTANCEDBNAME"
+     exit 2
     echo "INSTANCE_PATH --> ${INSTANCE_PATH}"
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
