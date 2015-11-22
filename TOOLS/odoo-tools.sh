@@ -1264,14 +1264,17 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # ----- Prepare Search Operation
     PATTERN=${SEARCHARRAY[${TYPE}]}
     echo "pattern: ${PATTERN}"
-    # ----- Get Databases
+    # ----- Get Databases and FLAG the TYPE of it
     while read database; do
         if [[ "${database}" =~ "_pad" ]]; then
             DATABASES[${database}]="etherpad"
+            INSTANCEDBNAME="${database%_pad}"
         elif [[ "${database}" =~ "_cloud" ]]; then
-            DATABASES[${database}]="etherpad"
+            DATABASES[${database}]="owncloud"
+            INSTANCEDBNAME="${database%_cloud}"
         else
             DATABASES[${database}]="odoo"
+            INSTANCEDBNAME="${database}"
         fi
         #($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
     done < <(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}")
@@ -1280,9 +1283,10 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         echo "ERROR: Given Database does not exist"
         exit 2
     fi
+
     # ----- FLAG DATABASES ARRAY with TYPE
     for i in "${!DATABASES[@]}"; do
-        echo "ARRAY #: ${i} VALUE: ${DATABASES[${i}]}"
+        echo "ARRAY #: ${i} VALUE: ${DATABASES[${i}]} isntancedbname: ${INSTANCEDBNAME}"
     done
     exit 2
     # ----- GET INSTANCEDBNAME for all TYPES
