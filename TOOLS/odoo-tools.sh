@@ -1275,7 +1275,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         exit 2
     fi
     # ----- FLAG DATABASES ARRAY with TYPE
-    for i in "${DATABASES[@]}"; do
+    for i in "${!DATABASES[@]}"; do
         if [[ "${i}" =~ "_pad" ]]; then
             ${DATABASES[${i}]}="etherpad"
             INSTANCEDBNAME="${i%_pad}"
