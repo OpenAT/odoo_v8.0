@@ -1266,13 +1266,10 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     echo "pattern: ${PATTERN}"
     # ----- Get Databases
     while read database; do
-        DATABASES[${database}]="STRING"
-        echo "${database}"
+        DATABASES[${database}]="db"
         #($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
     done < <(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}")
     # ----- check database exists
-    echo "${DATABASES[@]}"
-    exit 2
     if [ -z ${#DATABASES[@]} ]; then
         echo "ERROR: Given Database does not exist"
         exit 2
