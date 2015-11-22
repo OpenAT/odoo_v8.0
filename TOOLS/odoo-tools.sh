@@ -1265,7 +1265,6 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     echo "pattern: ${PATTERN}"
     # ----- Get Databases
     ODOODATABASES+=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
-    echo ${ODOODATABASES}
     # ----- check database exists
     if [ -z ${#ODOODATABASES[@]} ]; then
         echo "ERROR: Given Database does not exist"
@@ -1277,6 +1276,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
 
         #DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${GREPPATTERN}")) #TODO: check aber auch ALLE Prostgres Prozesse
+    # ----- BACKUP DATA
     for i in "${ODOODATABASES[@]}"; do
         #store running databases and log do
         #getting config of database
@@ -1287,24 +1287,24 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         BACKUPFILENAME=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`
         echo "backup Databases, while now backing up ${i} ...."
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILENAME}.zip") #-t ${TYPE}
-            if ! [ -s ${BACKUPFILENAME}.zip ]; then
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "odoo_${BACKUPFILENAME}.zip") #-t ${TYPE}
+            if ! [ -s "odoo_${BACKUPFILENAME}.zip" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
         fi
         if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}.sql"
-            if ! [ -s ${BACKUPFILENAME}.zip ]; then
+            sudo -Hu postgres pg_dump ${i} > "etherpad_${BACKUPFILENAME}.sql"
+            if ! [ -s "etherpad_${BACKUPFILENAME}.sql" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
         fi
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}.sql"
-            rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILENAME}-data"
-            tar -czvf "${BACKUPFILENAME}-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
-            if ! [ -s "${BACKUPFILENAME}.zip" ]; then
+            sudo -Hu postgres pg_dump ${i} > "owncloud_${BACKUPFILENAME}.sql"
+            rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "owncloud_${BACKUPFILENAME}-data"
+            tar -czvf "owncloud_${BACKUPFILENAME}-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
+            if ! [ -s "owncloud_${BACKUPFILENAME}.sql" ] && ! [ -s "owncloud_${BACKUPFILENAME}-data" ] && ! [ -s "owncloud_${BACKUPFILENAME}-config.tgz" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
