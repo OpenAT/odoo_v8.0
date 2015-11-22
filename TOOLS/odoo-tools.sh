@@ -1290,7 +1290,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
     # ----- testing array
     for i in "${!DATABASES[@]}"; do
-        echo "ARRAY #: ${i} VALUE: ${DATABASES[${i}]##*,} isntancedbname: ${DATABASES[${i}]%%*,}"
+        echo "ARRAY #: ${i} VALUE: ${DATABASES[${i}]##,} isntancedbname: ${DATABASES[${i}]%%,}"
     done
     exit 2
     # ----- GET INSTANCEDBNAME for all TYPES
