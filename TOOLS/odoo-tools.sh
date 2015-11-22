@@ -1266,7 +1266,12 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     echo "pattern: ${PATTERN}"
     # ----- Get Databases
     while read database; do
-        DATABASES[${database}]="db"
+        if [[ "${database}" =~ "_pad" ]]; then
+            DATABASES[${database}]="etherpad"
+        elif [[ "${database}" =~ "_cloud" ]]; then
+            DATABASES[${database}]="etherpad"
+        else
+            DATABASES[${database}]="odoo"
         #($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
     done < <(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}")
     # ----- check database exists
@@ -1276,16 +1281,6 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     fi
     # ----- FLAG DATABASES ARRAY with TYPE
     for i in "${!DATABASES[@]}"; do
-        if [[ "${i}" =~ "_pad" ]]; then
-            ${DATABASES[${i}]}="etherpad"
-            INSTANCEDBNAME="${i%_pad}"
-        elif [[ "${i}" =~ "_cloud" ]]; then
-            ${DATABASES[${i}]}="ownlcoud"
-            INSTANCEDBNAME="${i%_cloud}"
-        else
-            ${DATABASES[${i}]}="odoo"
-            INSTANCEDBNAME="${i}"
-        fi
         echo "ARRAY #: ${i} VALUE: ${DATABASES[${i}]}"
     done
     exit 2
