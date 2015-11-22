@@ -1265,9 +1265,14 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     PATTERN=${SEARCHARRAY[${TYPE}]}
     echo "pattern: ${PATTERN}"
     # ----- Get Databases
-    DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
+    while read database; do
+        DATABASES[${database}]="STRING"
+        echo "${database}"
+        #($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
+    done < <(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}")
     # ----- check database exists
     echo "${DATABASES[@]}"
+    exit 2
     if [ -z ${#DATABASES[@]} ]; then
         echo "ERROR: Given Database does not exist"
         exit 2
