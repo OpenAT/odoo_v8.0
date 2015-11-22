@@ -1272,6 +1272,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             DATABASES[${database}]="etherpad"
         else
             DATABASES[${database}]="odoo"
+        fi
         #($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
     done < <(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}")
     # ----- check database exists
