@@ -1269,16 +1269,16 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         if [[ "${database}" =~ "_pad" ]]; then
             DATABASES[${database}]="etherpad"
             # Store previouse value and add comma with another value
-            DATABASES[${database}]="${DATABASES[${database}]DATABASES[${database}]:+},${database%_pad}"
+            DATABASES[${database}]="${DATABASES[${database}]}${DATABASES[${database}]:+},${database%_pad}"
             #INSTANCEDBNAME="${database%_pad}"
         elif [[ "${database}" =~ "_cloud" ]]; then
             DATABASES[${database}]="owncloud"
             #INSTANCEDBNAME="${database%_cloud}"
-            DATABASES[${database}]="${DATABASES[${database}]DATABASES[${database}]:+},${database%_cloud}"
+            DATABASES[${database}]="${DATABASES[${database}]}${DATABASES[${database}]:+},${database%_cloud}"
         else
             DATABASES[${database}]="odoo"
             #INSTANCEDBNAME="${database}"
-            DATABASES[${database}]="${DATABASES[${database}]DATABASES[${database}]:+},${database}"
+            DATABASES[${database}]="${DATABASES[${database}]}${DATABASES[${database}]:+},${database}"
         fi
         #($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}"))
     done < <(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}")
