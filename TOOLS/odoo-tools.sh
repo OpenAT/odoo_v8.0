@@ -1300,13 +1300,14 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # ----- Getting config of database an Parameters
         DATABASEFLAG="${DATABASES[${i}]%%,*}"
         INSTANCEDBNAME="${DATABASES[${i}]#*,}"
-        echo "FLAG: ${DATABASEFLAG} INSTANCEDBNAME: ${INSTANCEDBNAME}"
+        BACKUPLOGFILE="${REPOPATH}/${TARGET_BRANCH}/${INSTANCEDBNAME}/LOG/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.log"
+        echo "FLAG: ${DATABASEFLAG} INSTANCEDBNAME: ${INSTANCEDBNAME}" | tee -a ${BACKUPLOGFILE}
         DATABASECONFIGFILE=${INSTANCE_PATH}/${INSTANCEDBNAME}/${INSTANCEDBNAME}.conf
-        echo "Database Config File --> ${DATABASECONFIGFILE}"
+        echo "Database Config File --> ${DATABASECONFIGFILE}" | tee -a ${BACKUPLOGFILE}
         BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         BACKUPFILENAME=${INSTANCE_PATH}/${INSTANCEDBNAME}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`
-        echo "Backup, while now backing up ${i} ...."
+        echo "Backup, while now backing up ${i} ...." | tee -a ${BACKUPLOGFILE}
 
         # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
         # ----- Backup Style, only for Odoo Databases
@@ -1315,7 +1316,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILENAME}_odoo.zip" ]; then
-                echo "ERROR: backup was not successfull"
+                echo "ERROR: backup was not successfull" | tee -a ${BACKUPLOGFILE}
                 exit 2
             fi
         fi
@@ -1326,7 +1327,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILENAME}_etherpad.sql" ]; then
-                echo "ERROR: backup was not successfull"
+                echo "ERROR: backup of Etherpad Database was not successfull" | tee -a ${BACKUPLOGFILE}
                 exit 2
             fi
         fi
@@ -1337,17 +1338,17 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             if [ "$(ls -A  ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/data)" ]; then
                 rsync -avz ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/data/ "${BACKUPFILENAME}_owncloud-data"
             else
-                echo "No Data in owncloud directory to be backed up"
+                echo "No Data in owncloud directory to be backed up" | tee -a ${BACKUPLOGFILE}
             fi
             if [ -f ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/config/config.php ]; then
                 tar -czvf "${BACKUPFILENAME}_owncloud-config.tgz" ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/config/config.php
             else
-                echo "No Config file found skipping config Backup of owncloud..."
+                echo "No Config file found skipping config Backup of owncloud..." | tee -a ${BACKUPLOGFILE}
             fi
 
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILENAME}_owncloud.sql" ] || ! [ -s "${BACKUPFILENAME}_owncloud-data" ] || ! [ -s "${BACKUPFILENAME}_owncloud-config.tgz" ]; then
-                echo "ERROR: backup was not successfull"
+                echo "ERROR: owncloud backup was not successfull" | tee -a ${BACKUPLOGFILE}
                 exit 2
             fi
         fi
