@@ -1334,11 +1334,19 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # ----- Backup Style, only for Owncloud Databases
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]  && [ "${DATABASEFLAG}" = "owncloud" ]; then
             sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}_owncloud.sql"
-            rsync -avz ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/data/ "${BACKUPFILENAME}_owncloud-data"
-            tar -czvf "${BACKUPFILENAME}_owncloud-config.tgz" ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/config/config.php
+            if [ "$(ls -A  ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/data)" ]; then
+                rsync -avz ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/data/ "${BACKUPFILENAME}_owncloud-data"
+            else
+                echo "No Data in owncloud directory to be backed up"
+            fi
+            if [ -f ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/config/config.php ]; then
+                tar -czvf "${BACKUPFILENAME}_owncloud-config.tgz" ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/config/config.php
+            else
+                echo "No Config file found skipping config Backup of owncloud..."
+            fi
 
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILENAME}_owncloud.sql" ] && ! [ -s "${BACKUPFILENAME}_owncloud-data" ] && ! [ -s "${BACKUPFILENAME}_owncloud-config.tgz" ]; then
+            if ! [ -s "${BACKUPFILENAME}_owncloud.sql" ] || ! [ -s "${BACKUPFILENAME}_owncloud-data" ] && ! [ -s "${BACKUPFILENAME}_owncloud-config.tgz" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
