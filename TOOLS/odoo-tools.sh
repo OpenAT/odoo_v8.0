@@ -1358,6 +1358,114 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "--------------------------------------------------------------------------------------------------------"
 fi
 
+
+
+
+
+
+
+
+# BY MIKE:
+# Todo: Wir sollten kurz nochmal wegen der Sicherheit sprechen - immer SU oder sonst als Instance Linux User?
+#       Vorteile / Nachtiele
+
+
+# ---------------------------------------------------------------------------------------
+# $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} #  [TYPE]
+# ---------------------------------------------------------------------------------------
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all} [odoozip|etherpad|owncloud|full]"
+if [ "$SCRIPT_MODE" = "backup" ]; then
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MODEBACKUP"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+    if [ $# -lt 3 ] || [ $# -gt 4 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes a minimum of three and a maximum of four arguments!"
+        exit 2
+    fi
+
+    # ----- Variables
+    TARGET_BRANCH=$2
+    DBNAME=$3
+    if $4; then
+        if [ $4 == "odoozip" -o $4 == "etherpad" -o $4 == "owncloud" -o $4 == "full" ]; then
+            TYPE=$4
+        else
+            echo "ERROR: ${4} must be empty or in [odoozip|etherpad|owncloud|full] !"; exit 2
+        fi
+    else
+        TYPE="odoozip"
+    fi
+    # Global Variables
+    DATETIME=`date +%Y-%m-%d__%H-%M`
+    BRANCH_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    BRANCHLOGFILE= #Todo
+
+    # ----- Find Odoo-Instance(s) to Backup
+    if DBNAME == "all"; then
+        GREPREGEX = "'\bo8_[0-9a-zA-Z]*_[0-9a-zA-Z]*'"
+    else
+        GREPREGEX = "'\b${DBNAME}'"
+    fi
+    # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
+    declare -a INSTANCES=$(su - postgres -c "psql -l" | grep -o ${GREPREGEX})
+    if [ "x${INSTANCES}" == "x" ]; then
+        echo "ERROR: No Database found!"
+    fi
+
+    # ----- Backup
+    for INSTANCE in $INSTANCES; do
+        INSTANCECONFIGFILE="${BRANCH_PATH}/${INSTANCE}/${INSTANCE}.conf"
+        BASEPORT69=($(grep "xmlrpc_port" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+        SUPER_PASSWORD=($(grep "admin_passwd" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+        INSTANCELOGFILE="${REPOPATH}/${TARGET_BRANCH}/${INSTANCE}/LOG/${INSTANCE}_BACKUP.log"
+        BACKUPFILE="${INSTANCE_PATH}/${INSTANCEDBNAME}/BACKUP/BACKUP_${INSTANCE}_${DATETIME}" # Todo: Check the current File name of backups / Backup Filename Convention?
+
+        echo -e "${DATETIME}: Start ${Type} backup for instance ${INSTANCE}."
+
+        # full Backup
+        if [ ${TYPE} == "full" ]; then
+            # Todo: Backup all relevant config files from /etc and from the instance for a full backup!
+        fi
+        # odoozip Backup
+        if [ ${TYPE} == "odoozip" ] || [ ${TYPE} == "full" ]; then
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip")
+            if ! [ -s "${BACKUPFILE}_odoo.zip" ]; then
+                echo "${DATETIME}: ERROR: Odoo backup of ${INSTANCE} was not successful" | tee -a ${BACKUPLOGFILE}
+                exit 2
+            fi
+        fi
+        # etherpad Backup
+        if [ ${TYPE} == "etherpad" ] || [ ${TYPE} == "full" ]; then
+            # Todo: if we do the Backup of odoo with the correct DB-User we should do the backup of etherpad also with this DB user
+            sudo -Hu postgres pg_dump ${INSTANCE}_pad > "${BACKUPFILENAME}_etherpad.sql"
+            if ! [ -s "${BACKUPFILENAME}_etherpad.sql" ]; then
+                echo "${DATETIME}: ERROR: Etherpad backup of ${INSTANCE} was not successful" | tee -a ${BACKUPLOGFILE}
+                exit 2
+            fi
+        fi
+        # owncloud Backup
+        if [ ${TYPE} == "owncloud" ] || [ ${TYPE} == "full" ]; then
+            # Todo: if we do the Backup of odoo with the correct DB-User we should do the backup of etherpad also with this DB user
+            # Todo: use the correct Linux User
+        fi
+    done
+
+
+
+    echo -e "\n--------------------------------------------------------------------------------------------------------"
+    echo -e " $MODEBACKUP DONE"
+    echo -e "--------------------------------------------------------------------------------------------------------"
+fi
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}
 # ---------------------------------------------------------------------------------------
