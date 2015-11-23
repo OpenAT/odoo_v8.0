@@ -1333,6 +1333,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
         # ----- Backup Style, only for Owncloud Databases
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]  && [ "${DATABASEFLAG}" = "owncloud" ]; then
+            echo "database: ${i}"
             sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}_owncloud.sql"
             if [ "$(ls -A  ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/data)" ]; then
                 rsync -avz ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/data/ "${BACKUPFILENAME}_owncloud-data"
