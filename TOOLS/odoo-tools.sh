@@ -1346,7 +1346,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             fi
 
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILENAME}_owncloud.sql" ] || ! [ -s "${BACKUPFILENAME}_owncloud-data" ] && ! [ -s "${BACKUPFILENAME}_owncloud-config.tgz" ]; then
+            if ! [ -s "${BACKUPFILENAME}_owncloud.sql" ] || ! [ -s "${BACKUPFILENAME}_owncloud-data" ] || ! [ -s "${BACKUPFILENAME}_owncloud-config.tgz" ]; then
                 echo "ERROR: backup was not successfull"
                 exit 2
             fi
