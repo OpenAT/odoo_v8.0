@@ -1282,6 +1282,9 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     for i in "${DATABASES[@]}"; do
         # Check if we are at PAD CLOUD OR ODOO DB
         SINGLEINSTANCE=`echo "${i}" | grep -o ${GREPREGEX}`
+        if ! [[ "${i}" =~ "_pad" ]] || ! [[ "${i}" =~ "_cloud" ]]; then
+            DBFLAG="odoo"
+        fi
 
         echo "db: ${i}, dbflag: ${DBFLAG}, single_instance: ${SINGLEINSTANCE}"
 
@@ -1302,7 +1305,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             echo "nix"
         fi
         # ----- Backup Style, only for Odoozip Databases
-        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && ! [[ "${i}" =~ "_pad" ]] || ! [[ "${i}" =~ "_cloud" ]]; then # && [ $]; then
+        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && [[ "${DBFLAG}" =~ "odoo" ]]; then # && [ $]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip") #-t ${TYPE}
 
             # ----- Check if Backup was at least written to file and File is not zero
