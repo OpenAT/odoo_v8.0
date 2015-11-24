@@ -1265,7 +1265,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     fi
 
     # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
-    declare -a INSTANCES=$(su - postgres -c "psql -l" | grep -o ${GREPREGEX})
+    declare -a INSTANCES=$(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep ${GREPREGEX})
     if [ "x${INSTANCES}" = "x" ]; then
         echo "ERROR: No Database found!"
     fi
@@ -1281,7 +1281,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
 
     # ----- Backup Data for each Instance
-    for i in "${!INSTANCES[@]}"; do
+    for i in "${INSTANCES[@]}"; do
 
         # ----- Getting config of database an Parameters
         INSTANCELOGFILE="${REPOPATH}/${TARGET_BRANCH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
