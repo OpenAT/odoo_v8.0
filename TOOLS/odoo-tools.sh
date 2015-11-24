@@ -1259,9 +1259,9 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
     # ----- Find Odoo-Instance(s) to Backup
     if [ ${DBNAME} = "all" ]; then
-        GREPREGEX = "'\bo8_[0-9a-zA-Z]*_[0-9a-zA-Z]*'"
+        GREPREGEX="'\bo8_[0-9a-zA-Z]*_[0-9a-zA-Z]*'"
     else
-        GREPREGEX = "'\b${DBNAME}'"
+        GREPREGEX="'\b${DBNAME}'"
     fi
 
     # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
