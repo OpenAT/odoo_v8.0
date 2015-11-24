@@ -1282,7 +1282,6 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     for i in "${INSTANCES[@]}"; do
         # Check if we are at PAD CLOUD OR ODOO DB
         SINGLEINSTANCE=${i##[o8_[0-9a-zA-Z]*_[0-9a-zA-Z]*]}
-        if [[ "${database}" =~ "_pad" ]]; then
         echo "db: ${i}, dbflag: ${DBFLAG}, single_instance: ${SINGLEINSTANCE}"
 #
 #        # ----- Getting config of database an Parameters
