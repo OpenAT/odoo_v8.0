@@ -1257,7 +1257,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     BRANCH_PATH="${REPOPATH}/${TARGET_BRANCH}"
     BRANCHLOGFILE= #Todo
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
-    #declare -a INSTANCES()
+    #declare -a INSTANCES=()
     # ----- Find Odoo-Instance(s) to Backup
     if [ ${DBNAME} = "all" ]; then
         GREPREGEX="\bo8_[0-9a-zA-Z]*_[0-9a-zA-Z]*"
@@ -1271,7 +1271,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     #    INSTANCES[${i}]=${database}
     #(( i++ ))
     #done < <(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep -o ${GREPREGEX})
-    declare -a INSTANCES=$(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep -o ${GREPREGEX})
+    declare -a INSTANCES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep -o ${GREPREGEX}))
     if [ "x${INSTANCES}" = "x" ]; then
         echo "ERROR: No Database found!"
     fi
