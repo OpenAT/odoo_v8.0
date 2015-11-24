@@ -1255,7 +1255,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # ----- Global Variables
     DATETIME=`date +%Y-%m-%d__%H-%M`
     BRANCH_PATH="${REPOPATH}/${TARGET_BRANCH}"
-    BRANCHLOGFILE= #Todo
+    BRANCHLOGFILE="${REPOPATH}/SETUP/IS-BACKUP--${DATETIME}.log"
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
 
     # ----- Find Odoo-Instance(s) to Backup
@@ -1282,18 +1282,16 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     counter=3
     for i in "${DATABASES[@]}"; do
         # Check if we are at PAD CLOUD OR ODOO DB
-        echo "db: ${i}, dbflag: ${DBFLAG}, single_instance: ${i}"
-
 
         # ----- Getting config of database an Parameters
         INSTANCELOGFILE="${INSTANCE_PATH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
         echo "instancelogfile: ${INSTANCELOGFILE}"
         INSTANCECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
-        echo "Database Config File --> ${INSTANCECONFIGFILE}" | tee -a ${INSTANCELOGFILE}
+        echo "Database Config File --> ${INSTANCECONFIGFILE}" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
         BASEPORT69=($(grep "xmlrpc_port" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         SUPER_PASSWORD=($(grep "admin_passwd" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         BACKUPFILE=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--${DATETIME}
-        echo -e "${DATETIME}: Start ${TYPE} backup for instance ${i}." | tee -a ${INSTANCELOGFILE}
+        echo -e "${DATETIME}: Start ${TYPE} backup for instance ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
 
         # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
         # ----- Backup Style, only for Odoo Databases
@@ -1307,7 +1305,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILE}_odoo.zip" ]; then
-                echo "ERROR: backup was not successfull" | tee -a ${INSTANCELOGFILE}
+                echo "ERROR: backup was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
         fi
@@ -1317,7 +1315,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}_etherpad.sql"
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILE}_etherpad.sql" ]; then
-                echo "ERROR: backup of Etherpad Database was not successfull" | tee -a ${INSTANCELOGFILE}
+                echo "ERROR: backup of Etherpad Database was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
         fi
@@ -1328,17 +1326,17 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
                 rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
             else
-                echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE}
+                echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
             if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
                 tar -czvf "${BACKUPFILE}_owncloud-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
             else
-                echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE}
+                echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
 
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILE}_owncloud.sql" ] || ! [ -s "${BACKUPFILE}_owncloud-data" ] || ! [ -s "${BACKUPFILE}_owncloud-config.tgz" ]; then
-                echo "ERROR: owncloud backup was not successfull" | tee -a ${INSTANCELOGFILE}
+                echo "ERROR: owncloud backup was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
         fi
