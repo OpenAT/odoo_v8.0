@@ -1256,7 +1256,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     DATETIME=`date +%Y-%m-%d__%H-%M`
     BRANCH_PATH="${REPOPATH}/${TARGET_BRANCH}"
     BRANCHLOGFILE= #Todo
-
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
     # ----- Find Odoo-Instance(s) to Backup
     if [ ${DBNAME} = "all" ]; then
         GREPREGEX="\bo8_[0-9a-zA-Z]*_[0-9a-zA-Z]*"
