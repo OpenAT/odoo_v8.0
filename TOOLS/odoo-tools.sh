@@ -1257,6 +1257,9 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     BRANCH_PATH="${REPOPATH}/${TARGET_BRANCH}"
     BRANCHLOGFILE= #Todo
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    ZIPFINISHED=0
+    PADFINISHED=0
+    CLOUDFINISHED=0
 
     # ----- Find Odoo-Instance(s) to Backup
     if [ ${DBNAME} = "all" ]; then
@@ -1297,7 +1300,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             echo "nix"
         fi
         # ----- Backup Style, only for Odoozip Databases
-        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
+        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && [ ${ZIPFINISHED} ]; then # && [ $]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip") #-t ${TYPE}
 
             # ----- Check if Backup was at least written to file and File is not zero
@@ -1305,10 +1308,11 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
                 echo "ERROR: backup was not successfull" | tee -a ${INSTANCELOGFILE}
                 exit 2
             fi
+            ZIPFINISHED=1
         fi
 
         # ----- Backup Style, only for Etherpad Databases
-        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
+        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ] || [ ${PADFINISHED} ]; then
             sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}_etherpad.sql"
 
             # ----- Check if Backup was at least written to file and File is not zero
@@ -1316,10 +1320,11 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
                 echo "ERROR: backup of Etherpad Database was not successfull" | tee -a ${INSTANCELOGFILE}
                 exit 2
             fi
+            PADFINISHED=1
         fi
 
         # ----- Backup Style, only for Owncloud Databases
-        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
+        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ] || [ ${CLOUDFINISHED} ]; then
             sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}_owncloud.sql"
             if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
                 rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
@@ -1337,6 +1342,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
                 echo "ERROR: owncloud backup was not successfull" | tee -a ${INSTANCELOGFILE}
                 exit 2
             fi
+            CLOUDFINISHD=1
         fi
     done
     echo -e "\n--------------------------------------------------------------------------------------------------------"
