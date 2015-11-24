@@ -1234,121 +1234,109 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if ! [ $# -ge 3 ]; then
-        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly three arguments!"
+    if ! [ $# -ge 3 ] || [ $# -gt 4 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes a minimum of three and a maximum of four arguments!"
         exit 2
     fi
 
     # ----- Initialize Variables
-    TYPE=$4
     DBNAME=$3
     TARGET_BRANCH=$2
-    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
-    declare -a BACKUPOPTIONS=("odoozip" "odoosql" "etherpad" "owncloud" "full")
-    declare -a GREPPATTERN=("-v -e _cloud -e _pad" "notavailable" "_pad" "_cloud" "o8_")
-    declare -A SEARCHARRAY=()
-    declare -A DATABASES=()
-
-    # ----- Define default
-    if [ "x${TYPE}" == "x" ]; then
+    if $4; then
+        if [ $4 == "odoozip" -o $4 == "etherpad" -o $4 == "owncloud" -o $4 == "full" ]; then
+            TYPE=$4
+        else
+            echo "ERROR: ${4} must be empty or in [odoozip|etherpad|owncloud|full] !"; exit 2
+        fi
+    else
         TYPE="odoozip"
     fi
 
-    # ----- Create Backup Options auto expandable on changing BACKUPOPTIONS and GREPPATTERN
-    i=0
-    for item in ${BACKUPOPTIONS[@]}; do
-        SEARCHARRAY[${item}]=${GREPPATTERN[$i]}
-        (( i++ ))
-     done
+    # ----- Global Variables
+    DATETIME=`date +%Y-%m-%d__%H-%M`
+    BRANCH_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    BRANCHLOGFILE= #Todo
+
+    # ----- Find Odoo-Instance(s) to Backup
+    if [ ${DBNAME} = "all" ]; then
+        GREPREGEX = "'\bo8_[0-9a-zA-Z]*_[0-9a-zA-Z]*'"
+    else
+        GREPREGEX = "'\b${DBNAME}'"
+    fi
+
+    # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
+    declare -a INSTANCES=$(su - postgres -c "psql -l" | grep -o ${GREPREGEX})
+    if [ "x${INSTANCES}" = "x" ]; then
+        echo "ERROR: No Database found!"
+    fi
 
     # ----- HINT: Spezial case STOP Script till odoo Supports this option, service/db.py needs to be extended
-    if [ ${TYPE} == "odoosql" ]; then
+    if [ ${TYPE} = "odoosql" ]; then
         echo "ERROR: This option is not supported right now "
         exit 2
     fi
 
-    # ----- Prepare Search Operation
-    PATTERN=${SEARCHARRAY[${TYPE}]}
-
-    # ----- Get Databases build array and Flag the Type of database for special Backups for different Types of Backup
-    while read database; do
-        if [[ "${database}" =~ "_pad" ]]; then
-            DATABASES[${database}]="etherpad"
-            # HINT: Store previouse value and add comma with another value this is the way to do it
-            DATABASES[${database}]="${DATABASES[${database}]}${DATABASES[${database}]:+},${database%_pad}"
-        elif [[ "${database}" =~ "_cloud" ]]; then
-            DATABASES[${database}]="owncloud"
-            DATABASES[${database}]="${DATABASES[${database}]}${DATABASES[${database}]:+},${database%_cloud}"
-        else
-            DATABASES[${database}]="odoo"
-            DATABASES[${database}]="${DATABASES[${database}]}${DATABASES[${database}]:+},${database}"
-        fi
-    done < <(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\"|grep ${PATTERN}")
-
-    # ----- check database exists
-    if [ -z ${#DATABASES[@]} ]; then
-        echo "ERROR: No Database found"
-        exit 2
-    fi
 
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
 
-    # ----- Backup Data
-    for i in "${!DATABASES[@]}"; do
+    # ----- Backup Data for each Instance
+    for i in "${!INSTANCES[@]}"; do
 
         # ----- Getting config of database an Parameters
-        DATABASEFLAG="${DATABASES[${i}]%%,*}"
-        INSTANCEDBNAME="${DATABASES[${i}]#*,}"
-        BACKUPLOGFILE="${REPOPATH}/${TARGET_BRANCH}/${INSTANCEDBNAME}/LOG/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`.log"
-        echo "FLAG: ${DATABASEFLAG} INSTANCEDBNAME: ${INSTANCEDBNAME}" | tee -a ${BACKUPLOGFILE}
-        DATABASECONFIGFILE=${INSTANCE_PATH}/${INSTANCEDBNAME}/${INSTANCEDBNAME}.conf
-        echo "Database Config File --> ${DATABASECONFIGFILE}" | tee -a ${BACKUPLOGFILE}
-        BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-        SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-        BACKUPFILENAME=${INSTANCE_PATH}/${INSTANCEDBNAME}/BACKUP/IS-BACKUP--${i}--`date +%Y-%m-%d__%H-%M`
-        echo "Backup, while now backing up ${i} ...." | tee -a ${BACKUPLOGFILE}
+        INSTANCELOGFILE="${REPOPATH}/${TARGET_BRANCH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
+        INSTANCECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
+        echo "Database Config File --> ${INSTANCECONFIGFILE}" | tee -a ${INSTANCELOGFILE}
+        BASEPORT69=($(grep "xmlrpc_port" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+        SUPER_PASSWORD=($(grep "admin_passwd" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+        BACKUPFILE=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--${DATETIME}
+        echo -e "${DATETIME}: Start ${TYPE} backup for instance ${i}." | tee -a ${INSTANCELOGFILE}
 
         # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
         # ----- Backup Style, only for Odoo Databases
-        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && [ "${DATABASEFLAG}" = "odoo" ]; then # && [ $]; then
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILENAME}_odoo.zip") #-t ${TYPE}
+        if [ ${TYPE} = "full" ]; then
+            # Todo: BACKUP all configs relevant from /etc and instance
+            echo "nix"
+        fi
+        # ----- Backup Style, only for Odoozip Databases
+        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip") #-t ${TYPE}
 
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILENAME}_odoo.zip" ]; then
-                echo "ERROR: backup was not successfull" | tee -a ${BACKUPLOGFILE}
+            if ! [ -s "${BACKUPFILE}_odoo.zip" ]; then
+                echo "ERROR: backup was not successfull" | tee -a ${INSTANCELOGFILE}
                 exit 2
             fi
         fi
 
         # ----- Backup Style, only for Etherpad Databases
-        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]  && [ "${DATABASEFLAG}" = "etherpad" ]; then
-            sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}_etherpad.sql"
+        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
+            sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}_etherpad.sql"
 
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILENAME}_etherpad.sql" ]; then
-                echo "ERROR: backup of Etherpad Database was not successfull" | tee -a ${BACKUPLOGFILE}
+            if ! [ -s "${BACKUPFILE}_etherpad.sql" ]; then
+                echo "ERROR: backup of Etherpad Database was not successfull" | tee -a ${INSTANCELOGFILE}
                 exit 2
             fi
         fi
 
         # ----- Backup Style, only for Owncloud Databases
-        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]  && [ "${DATABASEFLAG}" = "owncloud" ]; then
-            sudo -Hu postgres pg_dump ${i} > "${BACKUPFILENAME}_owncloud.sql"
-            if [ "$(ls -A  ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/data)" ]; then
-                rsync -avz ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/data/ "${BACKUPFILENAME}_owncloud-data"
+        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
+            sudo -Hu postgres pg_dump ${i}_owncloud > "${BACKUPFILE}_owncloud.sql"
+            if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
+                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
             else
-                echo "No Data in owncloud directory to be backed up" | tee -a ${BACKUPLOGFILE}
+                echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE}
             fi
-            if [ -f ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/config/config.php ]; then
-                tar -czvf "${BACKUPFILENAME}_owncloud-config.tgz" ${INSTANCE_PATH}/${INSTANCEDBNAME}/owncloud/config/config.php
+            if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
+                tar -czvf "${BACKUPFILE}_owncloud-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
             else
-                echo "No Config file found skipping config Backup of owncloud..." | tee -a ${BACKUPLOGFILE}
+                echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE}
             fi
 
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILENAME}_owncloud.sql" ] || ! [ -s "${BACKUPFILENAME}_owncloud-data" ] || ! [ -s "${BACKUPFILENAME}_owncloud-config.tgz" ]; then
-                echo "ERROR: owncloud backup was not successfull" | tee -a ${BACKUPLOGFILE}
+            if ! [ -s "${BACKUPFILE}_owncloud.sql" ] || ! [ -s "${BACKUPFILE}_owncloud-data" ] || ! [ -s "${BACKUPFILE}_owncloud-config.tgz" ]; then
+                echo "ERROR: owncloud backup was not successfull" | tee -a ${INSTANCELOGFILE}
                 exit 2
             fi
         fi
