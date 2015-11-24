@@ -1281,7 +1281,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # ----- Backup Data for each Instance
     for i in "${INSTANCES[@]}"; do
         # Check if we are at PAD CLOUD OR ODOO DB
-        SINGLEINSTANCE=`echo "${i}" | grep -o GREPREGEX`
+        SINGLEINSTANCE=`echo "${i}" | grep -o ${GREPREGEX}`
         echo "db: ${i}, dbflag: ${DBFLAG}, single_instance: ${SINGLEINSTANCE}"
 
 #        # ----- Getting config of database an Parameters
