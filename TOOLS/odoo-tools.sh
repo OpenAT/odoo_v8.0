@@ -1257,9 +1257,6 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     BRANCH_PATH="${REPOPATH}/${TARGET_BRANCH}"
     BRANCHLOGFILE= #Todo
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
-    ZIPFINISHED=0
-    PADFINISHED=0
-    CLOUDFINISHED=0
 
     # ----- Find Odoo-Instance(s) to Backup
     if [ ${DBNAME} = "all" ]; then
@@ -1283,67 +1280,68 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
     # ----- Backup Data for each Instance
     for i in "${INSTANCES[@]}"; do
-        # ----- Getting config of database an Parameters
-        INSTANCELOGFILE="${INSTANCE_PATH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
-        echo "instancelogfile: ${INSTANCELOGFILE}"
-        INSTANCECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
-        echo "Database Config File --> ${INSTANCECONFIGFILE}" | tee -a ${INSTANCELOGFILE}
-        BASEPORT69=($(grep "xmlrpc_port" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-        SUPER_PASSWORD=($(grep "admin_passwd" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-        BACKUPFILE=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--${DATETIME}
-        echo -e "${DATETIME}: Start ${TYPE} backup for instance ${i}." | tee -a ${INSTANCELOGFILE}
-
-        # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
-        # ----- Backup Style, only for Odoo Databases
-        if [ ${TYPE} = "full" ]; then
-            # Todo: BACKUP all configs relevant from /etc and instance
-            echo "nix"
-        fi
-        # ----- Backup Style, only for Odoozip Databases
-        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && [ ${ZIPFINISHED} -eq 0 ]; then # && [ $]; then
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip") #-t ${TYPE}
-
-            # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}_odoo.zip" ]; then
-                echo "ERROR: backup was not successfull" | tee -a ${INSTANCELOGFILE}
-                exit 2
-            fi
-            ZIPFINISHED=1
-        fi
-
-        # ----- Backup Style, only for Etherpad Databases
-        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ] && [ ${PADFINISHED} -eq 0 ]; then
-            sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}_etherpad.sql"
-
-            # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}_etherpad.sql" ]; then
-                echo "ERROR: backup of Etherpad Database was not successfull" | tee -a ${INSTANCELOGFILE}
-                exit 2
-            fi
-            PADFINISHED=1
-        fi
-
-        # ----- Backup Style, only for Owncloud Databases
-        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ] && [ ${CLOUDFINISHED} -eq 0 ]; then
-            sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}_owncloud.sql"
-            if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
-                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
-            else
-                echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE}
-            fi
-            if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
-                tar -czvf "${BACKUPFILE}_owncloud-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
-            else
-                echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE}
-            fi
-
-            # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}_owncloud.sql" ] || ! [ -s "${BACKUPFILE}_owncloud-data" ] || ! [ -s "${BACKUPFILE}_owncloud-config.tgz" ]; then
-                echo "ERROR: owncloud backup was not successfull" | tee -a ${INSTANCELOGFILE}
-                exit 2
-            fi
-            CLOUDFINISHD=1
-        fi
+        # Check if we are at PAD CLOUD OR ODOO DB
+        DBFLAG=${i#*_}
+        echo "db: ${i}, dbflag: ${DBFLAG}"
+#
+#        # ----- Getting config of database an Parameters
+#        INSTANCELOGFILE="${INSTANCE_PATH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
+#        echo "instancelogfile: ${INSTANCELOGFILE}"
+#        INSTANCECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
+#        echo "Database Config File --> ${INSTANCECONFIGFILE}" | tee -a ${INSTANCELOGFILE}
+#        BASEPORT69=($(grep "xmlrpc_port" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+#        SUPER_PASSWORD=($(grep "admin_passwd" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+#        BACKUPFILE=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--${DATETIME}
+#        echo -e "${DATETIME}: Start ${TYPE} backup for instance ${i}." | tee -a ${INSTANCELOGFILE}
+#
+#        # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
+#        # ----- Backup Style, only for Odoo Databases
+#        if [ ${TYPE} = "full" ]; then
+#            # Todo: BACKUP all configs relevant from /etc and instance
+#            echo "nix"
+#        fi
+#        # ----- Backup Style, only for Odoozip Databases
+#        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
+#            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip") #-t ${TYPE}
+#
+#            # ----- Check if Backup was at least written to file and File is not zero
+#            if ! [ -s "${BACKUPFILE}_odoo.zip" ]; then
+#                echo "ERROR: backup was not successfull" | tee -a ${INSTANCELOGFILE}
+#                exit 2
+#            fi
+#        fi
+#
+#        # ----- Backup Style, only for Etherpad Databases
+#        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
+#            sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}_etherpad.sql"
+#
+#            # ----- Check if Backup was at least written to file and File is not zero
+#            if ! [ -s "${BACKUPFILE}_etherpad.sql" ]; then
+#                echo "ERROR: backup of Etherpad Database was not successfull" | tee -a ${INSTANCELOGFILE}
+#                exit 2
+#            fi
+#        fi
+#
+#        # ----- Backup Style, only for Owncloud Databases
+#        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
+#            sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}_owncloud.sql"
+#            if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
+#                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
+#            else
+#                echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE}
+#            fi
+#            if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
+#                tar -czvf "${BACKUPFILE}_owncloud-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
+#            else
+#                echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE}
+#            fi
+#
+#            # ----- Check if Backup was at least written to file and File is not zero
+#            if ! [ -s "${BACKUPFILE}_owncloud.sql" ] || ! [ -s "${BACKUPFILE}_owncloud-data" ] || ! [ -s "${BACKUPFILE}_owncloud-config.tgz" ]; then
+#                echo "ERROR: owncloud backup was not successfull" | tee -a ${INSTANCELOGFILE}
+#                exit 2
+#            fi
+#        fi
     done
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP DONE"
