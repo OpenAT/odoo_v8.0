@@ -1302,7 +1302,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # ----- Backup Style, only for Odoozip Databases
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip") #-t ${TYPE}
-
+        echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILE}_odoo.zip" ]; then
                 echo "ERROR: backup was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
@@ -1313,6 +1313,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # ----- Backup Style, only for Etherpad Databases
         if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
             sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}_etherpad.sql"
+            echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_pad." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILE}_etherpad.sql" ]; then
                 echo "ERROR: backup of Etherpad Database was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
@@ -1323,13 +1324,16 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # ----- Backup Style, only for Owncloud Databases
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
             sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}_owncloud.sql"
+            echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
-                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
+            echo -e "${DATETIME}: Start ${TYPE} backup for owncloud DATA for ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             else
                 echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
             if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
-                tar -czvf "${BACKUPFILE}_owncloud-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
+                tar -czvf "${BACKUPFILE}_owncloud-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                echo -e "${DATETIME}: Start ${TYPE} backup for owncloud config ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             else
                 echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
