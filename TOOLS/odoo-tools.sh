@@ -1281,7 +1281,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # ----- Backup Data for each Instance
     for i in "${INSTANCES[@]}"; do
         # Check if we are at PAD CLOUD OR ODOO DB
-        DBFLAG=${i#*_}
+        DBFLAG=${i%*_}
         echo "db: ${i}, dbflag: ${DBFLAG}"
 #
 #        # ----- Getting config of database an Parameters
