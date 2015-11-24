@@ -1261,7 +1261,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     if [ ${DBNAME} = "all" ]; then
         GREPREGEX="\bo8_[0-9a-zA-Z]*_[0-9a-zA-Z]*"
     else
-        GREPREGEX="\b${DBNAME}"
+        GREPREGEX="'\b${DBNAME}'"
     fi
     echo "DEBUG: regex: ${GREPREGEX}, dbname: ${DBNAME}"
     # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
@@ -1282,6 +1282,8 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
     # ----- Backup Data for each Instance
     for i in "${INSTANCES[@]}"; do
+        # clean variable
+        i=$(echo ${i}|tr -d '\n')
         # ----- Getting config of database an Parameters
         INSTANCELOGFILE="${INSTANCE_PATH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
         echo "instancelogfile: ${INSTANCELOGFILE}"
