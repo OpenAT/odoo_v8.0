@@ -1300,7 +1300,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             echo "nix"
         fi
         # ----- Backup Style, only for Odoozip Databases
-        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && [ ${ZIPFINISHED} ]; then # && [ $]; then
+        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && ! [ ${ZIPFINISHED} ]; then # && [ $]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip") #-t ${TYPE}
 
             # ----- Check if Backup was at least written to file and File is not zero
@@ -1312,7 +1312,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         fi
 
         # ----- Backup Style, only for Etherpad Databases
-        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ] || [ ${PADFINISHED} ]; then
+        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ] && ! [ ${PADFINISHED} ]; then
             sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}_etherpad.sql"
 
             # ----- Check if Backup was at least written to file and File is not zero
@@ -1324,7 +1324,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         fi
 
         # ----- Backup Style, only for Owncloud Databases
-        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ] || [ ${CLOUDFINISHED} ]; then
+        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ] && ! [ ${CLOUDFINISHED} ]; then
             sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}_owncloud.sql"
             if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
                 rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
