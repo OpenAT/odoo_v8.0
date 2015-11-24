@@ -1282,14 +1282,13 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     for i in "${DATABASES[@]}"; do
         # Check if we are at PAD CLOUD OR ODOO DB
         SINGLEINSTANCE=`echo "${i}" | grep -o ${GREPREGEX}`
-        if ! [[ "${i}" =~ "_pad" ]]; then
+        if [[ "${i}" =~ "_pad" ]]; then
             DBFLAG="etherpad"
-        fi
-        if [[ "${i}" =~ "_cloud" ]]; then
+        elif [[ "${i}" =~ "_cloud" ]]; then
             DBFLAG="owncloud"
+        else
+            DBFLAG="odoo"
         fi
-        DBFLAG="odoo"
-
         echo "db: ${i}, dbflag: ${DBFLAG}, single_instance: ${SINGLEINSTANCE}"
 
         # ----- Getting config of database an Parameters
