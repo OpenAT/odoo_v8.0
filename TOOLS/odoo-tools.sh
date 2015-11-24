@@ -1289,7 +1289,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # ----- Backup Data for each Instance
     for i in "${INSTANCES[@]}"; do
         # clean variable
-        i=$(echo ${i}|tr -d '\r')
+        #i=$(echo ${i}|tr -d '\r')
         # ----- Getting config of database an Parameters
         INSTANCELOGFILE="${INSTANCE_PATH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
         echo "instancelogfile: ${INSTANCELOGFILE}"
@@ -1330,7 +1330,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
         # ----- Backup Style, only for Owncloud Databases
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i}_owncloud > "${BACKUPFILE}_owncloud.sql"
+            sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}_owncloud.sql"
             if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
                 rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
             else
