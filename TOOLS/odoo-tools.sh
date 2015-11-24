@@ -1266,7 +1266,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     fi
     echo "DEBUG: regex: ${GREPREGEX}, dbname: ${DBNAME}"
     # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
-    declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep ${GREPREGEX}))
+    declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep -o ${GREPREGEX}))
     if [ "x${DATABASES}" = "x" ]; then
         echo "ERROR: No Database found!"
     fi
@@ -1281,24 +1281,24 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     # ----- Backup Data for each Instance
     for i in "${DATABASES[@]}"; do
         # Check if we are at PAD CLOUD OR ODOO DB
-        SINGLEINSTANCE=`echo "${i}" | grep -o ${GREPREGEX}`
-        if [[ "${i}" =~ "_pad" ]]; then
-            DBFLAG="etherpad"
-        elif [[ "${i}" =~ "_cloud" ]]; then
-            DBFLAG="owncloud"
-        else
-            DBFLAG="odoo"
-        fi
-        echo "db: ${i}, dbflag: ${DBFLAG}, single_instance: ${SINGLEINSTANCE}"
+#        SINGLEINSTANCE=`echo "${i}" | grep -o ${GREPREGEX}`
+#        if [[ "${i}" =~ "_pad" ]]; then
+#            DBFLAG="etherpad"
+#        elif [[ "${i}" =~ "_cloud" ]]; then
+#            DBFLAG="owncloud"
+#        else
+#            DBFLAG="odoo"
+#        fi
+#        echo "db: ${i}, dbflag: ${DBFLAG}, single_instance: ${SINGLEINSTANCE}"
 
         # ----- Getting config of database an Parameters
-        INSTANCELOGFILE="${INSTANCE_PATH}/${SINGLEINSTANCE}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
+        INSTANCELOGFILE="${INSTANCE_PATH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
         echo "instancelogfile: ${INSTANCELOGFILE}"
-        INSTANCECONFIGFILE=${INSTANCE_PATH}/${SINGLEINSTANCE}/${SINGLEINSTANCE}.conf
+        INSTANCECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
         echo "Database Config File --> ${INSTANCECONFIGFILE}" | tee -a ${INSTANCELOGFILE}
         BASEPORT69=($(grep "xmlrpc_port" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         SUPER_PASSWORD=($(grep "admin_passwd" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-        BACKUPFILE=${INSTANCE_PATH}/${SINGLEINSTANCE}/BACKUP/IS-BACKUP--${i}--${DATETIME}
+        BACKUPFILE=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--${DATETIME}
         echo -e "${DATETIME}: Start ${TYPE} backup for instance ${i}." | tee -a ${INSTANCELOGFILE}
 
         # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
@@ -1308,7 +1308,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             echo "nix"
         fi
         # ----- Backup Style, only for Odoozip Databases
-        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && [[ "${DBFLAG}" =~ "odoo" ]]; then # && [ $]; then
+        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ] && [[ "${DBFLAG}" = "odoo" ]]; then # && [ $]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip") #-t ${TYPE}
 
             # ----- Check if Backup was at least written to file and File is not zero
@@ -1319,7 +1319,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         fi
 
         # ----- Backup Style, only for Etherpad Databases
-        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ] && [[ "${i}" =~ "_pad" ]]; then
+        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ] && [[ "${DBFLAG}" = "etherpad" ]]; then
             sudo -Hu postgres pg_dump ${i} > "${BACKUPFILE}_etherpad.sql"
 
             # ----- Check if Backup was at least written to file and File is not zero
@@ -1330,15 +1330,15 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         fi
 
         # ----- Backup Style, only for Owncloud Databases
-        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ] && [[ "${i}" =~ "_cloud" ]]; then
+        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ] && [[ "${DBFLAG}" = "owncloud" ]]; then
             sudo -Hu postgres pg_dump ${i} > "${BACKUPFILE}_owncloud.sql"
-            if [ "$(ls -A  ${INSTANCE_PATH}/${SINGLEINSTANCE}/owncloud/data)" ]; then
-                rsync -avz ${INSTANCE_PATH}/${SINGLEINSTANCE}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
+            if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
+                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
             else
                 echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE}
             fi
-            if [ -f ${INSTANCE_PATH}/${SINGLEINSTANCE}/owncloud/config/config.php ]; then
-                tar -czvf "${BACKUPFILE}_owncloud-config.tgz" ${INSTANCE_PATH}/${SINGLEINSTANCE}/owncloud/config/config.php
+            if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
+                tar -czvf "${BACKUPFILE}_owncloud-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
             else
                 echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE}
             fi
