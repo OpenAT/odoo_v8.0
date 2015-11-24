@@ -1283,6 +1283,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # Check if we are at PAD CLOUD OR ODOO DB
         echo "db: ${i}, dbflag: ${DBFLAG}, single_instance: ${i}"
 
+
         # ----- Getting config of database an Parameters
         INSTANCELOGFILE="${INSTANCE_PATH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
         echo "instancelogfile: ${INSTANCELOGFILE}"
@@ -1312,7 +1313,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
         # ----- Backup Style, only for Etherpad Databases
         if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i} > "${BACKUPFILE}_etherpad.sql"
+            sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}_etherpad.sql"
 
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILE}_etherpad.sql" ]; then
@@ -1323,7 +1324,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
         # ----- Backup Style, only for Owncloud Databases
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i} > "${BACKUPFILE}_owncloud.sql"
+            sudo -Hu postgres pg_dump ${i}_owncloud > "${BACKUPFILE}_owncloud.sql"
             if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
                 rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data"
             else
