@@ -1266,7 +1266,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     fi
     echo "DEBUG: regex: ${GREPREGEX}, dbname: ${DBNAME}"
     # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
-    declare -a INSTANCES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep -o ${GREPREGEX}))
+    declare -a INSTANCES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep ${GREPREGEX}))
     if [ "x${INSTANCES}" = "x" ]; then
         echo "ERROR: No Database found!"
     fi
