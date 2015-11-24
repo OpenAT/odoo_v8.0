@@ -1257,7 +1257,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     BRANCH_PATH="${REPOPATH}/${TARGET_BRANCH}"
     BRANCHLOGFILE= #Todo
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
-    #declare -a INSTANCES=()
+
     # ----- Find Odoo-Instance(s) to Backup
     if [ ${DBNAME} = "all" ]; then
         GREPREGEX="\bo8_[0-9a-zA-Z]*_[0-9a-zA-Z]*"
@@ -1266,11 +1266,6 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     fi
     echo "DEBUG: regex: ${GREPREGEX}, dbname: ${DBNAME}"
     # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
-    #i=0
-    #while read database; do
-    #    INSTANCES[${i}]=${database}
-    #(( i++ ))
-    #done < <(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep -o ${GREPREGEX})
     declare -a INSTANCES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep -o ${GREPREGEX}))
     if [ "x${INSTANCES}" = "x" ]; then
         echo "ERROR: No Database found!"
@@ -1281,15 +1276,10 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         echo "ERROR: This option is not supported right now "
         exit 2
     fi
-
-
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
-
     # ----- Backup Data for each Instance
     for i in "${INSTANCES[@]}"; do
-        # clean variable
-        #i=$(echo ${i}|tr -d '\r')
         # ----- Getting config of database an Parameters
         INSTANCELOGFILE="${INSTANCE_PATH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
         echo "instancelogfile: ${INSTANCELOGFILE}"
