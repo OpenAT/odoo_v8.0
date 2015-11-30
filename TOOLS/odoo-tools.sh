@@ -1302,7 +1302,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # ----- Backup Style, only for Odoozip Databases
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip") #-t ${TYPE}
-        echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILE}_odoo.zip" ]; then
                 echo "ERROR: backup was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
