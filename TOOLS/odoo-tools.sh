@@ -1295,7 +1295,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             #BACKUP all Config file or only specific
             tar -cvzf "${BACKUPFILE}-instanceconfigfiles_odoo-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}-odoo.-${DATETIME}zip" ]; then
+            if ! [ -s "${BACKUPFILE}-odoo-${DATETIME}.zip" ]; then
                 echo "ERROR: backup of ${i} was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
