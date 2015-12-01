@@ -433,7 +433,7 @@ class product_template(osv.Model):
     _columns = {
         'sold_total': fields.function(_sold_total, string='# Sold Total', type='float'),
         'funding_goal': fields.float(string='Funding Goal'),
-        'funding_desc': fields.html(string='Funding Description (HTML Field below Bar)'),
+        'funding_desc': fields.html(string='Funding Description', translate=True),
         'funding_reached': fields.function(_funding_reached, string='Funding reached in %', type='integer'),
         'funding_user': fields.many2one('res.partner', string='Funding-Campaign User'),
         'funding_user_name': fields.function(_get_name, string="Funding-Campaign User Name", type='char'),

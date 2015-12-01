@@ -3,7 +3,7 @@
     <data>
 
         <!-- SUB-TEMPLATE: CROWDFUNDING text block -->
-        <template id="funding_text" name="Funding Text">
+        <template id="funding_text" name="CrowdFunding Text">
             <span>Help</span>
             <!--<t t-if="product.funding_user"> <t t-esc="product.funding_user.name"/></t>-->
             <t t-if="product.funding_user"> <span t-esc="product.funding_user_name"/> </t>
@@ -18,12 +18,29 @@
         </template>
 
         <!-- SUB-TEMPLATE: CROWDFUNDING info bar -->
-        <template id="funding_bar" name="Funding Bar">
+        <template id="funding_bar" name="CrowdFunding Bar">
             <div class="progress funding_progress_bar">
                 <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" t-att-aria-valuenow="product.funding_reached" aria-valuemin="0" aria-valuemax="100" t-att-style="'width: ' + str(product.funding_reached) + '%;'">
                     <t t-esc="product.funding_reached"/>%
                 </div>
             </div>
+        </template>
+
+        <!-- SUB-TEMPLATE: CROWDFUNDING page_text -->
+        <template id="funding_page_text" name="CrowdFunding In-Page-Text">
+            <t t-if="not product.hide_fundingtext">
+                <div class="crowdfunding">
+                    <p class="text-muted">We have reached</p>
+                    <h1 class="text-primary"><t t-esc="product.funding_reached"/>%</h1>
+                    <p class="text-muted">
+                        <t t-call="website_sale_donate.funding_text"/>
+                    </p>
+                </div>
+            </t>
+            <t t-if="not product.hide_fundingbar"><t t-call="website_sale_donate.funding_bar"/></t>
+            <t t-if="not product.hide_fundingdesc">
+                <div t-field="product.funding_desc" class="oe_structure mt16" id="product_funding_description"/>
+            </t>
         </template>
 
     </data>

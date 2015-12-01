@@ -97,6 +97,7 @@
                                     This is a calculated field and therefore read-only. (Sums up all Sales-Order-Lines not in State Done or Cancelled)
                                 </p>
                                 <field name="funding_user"/>
+                                <field name="funding_desc"/>
                             </group>
 
                             <group string="Webshop: Product Listings" colspan="2">

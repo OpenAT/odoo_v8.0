@@ -76,21 +76,9 @@
         <template id="wsd_product_funding" inherit_id="website_sale.product" name="Product-Page Funding">
             <xpath expr="//div[@t-field='product.website_description']" position="after">
                 <t t-if="product.funding_goal">
-                    <section class="container mt8" id="oe_website_sale_donate_funding">
+                    <section class="container mt8">
                         <div class="row">
-                            <t t-if="not product.hide_fundingtext">
-                                <div class="crowdfunding">
-                                    <p class="text-muted">We have reached</p>
-                                    <h1 class="text-primary"><t t-esc="product.funding_reached"/>%</h1>
-                                    <p class="text-muted">
-                                        <t t-call="website_sale_donate.funding_text"/>
-                                    </p>
-                                </div>
-                            </t>
-                            <t t-if="not product.hide_fundingbar"><t t-call="website_sale_donate.funding_bar"/></t>
-                            <t t-if="not product.hide_fundingdesc">
-                                <div t-field="product.funding_desc" class="oe_structure mt16" id="product_funding_description"/>
-                            </t>
+                            <t t-call="website_sale_donate.funding_page_text"/>
                         </div>
                     </section>
                 </t>

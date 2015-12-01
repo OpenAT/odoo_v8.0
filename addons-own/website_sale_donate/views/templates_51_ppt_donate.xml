@@ -54,6 +54,15 @@
                                         </div>
                                     </div>
 
+                                    <!-- Crowdfunding Info -->
+                                    <t t-if="product.funding_goal">
+                                        <div class="row">
+                                            <div class="col-sm-16">
+                                                <t t-call="website_sale_donate.funding_page_text"/>
+                                            </div>
+                                        </div>
+                                    </t>
+
                                     <!-- Bottom HTML Description Field -->
                                     <t t-if="product.show_descbottom">
                                         <div class="row">
@@ -62,6 +71,9 @@
                                             </div>
                                         </div>
                                     </t>
+
+
+
                                 </section>
                             </div>
                         </div>
