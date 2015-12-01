@@ -1306,7 +1306,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}-pad-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_pad." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config file or only specific
-            tar -cvzf "${BACKUPFILE}-instanceconfigfiles_pad-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
+            tar -cvf "${BACKUPFILE}-instanceconfigfiles_pad-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
             # ----- Check if Backup was at least written to file and File is not zero
             if ! [ -s "${BACKUPFILE}-pad-${DATETIME}.sql" ]; then
                 echo "ERROR: backup of Etherpad Database ${i}_pad was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
@@ -1319,7 +1319,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}-cloud-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config file or only specific
-            tar -cvzf "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
+            tar -cvf "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
             if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
             echo -e "${DATETIME}: Start ${TYPE} backup for owncloud DATA for ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}-cloud_data-${DATETIME}" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
@@ -1327,14 +1327,15 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
                 echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
             if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
-                tar -uvf "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -uvf "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                gzip "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tar"
                 echo -e "${DATETIME}: Start ${TYPE} backup for owncloud config ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             else
                 echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
 
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}-cloud-${DATETIME}.sql" ] || ! [ -s "${BACKUPFILE}-cloud_data-${DATETIME}" ] || ! [ -s "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tgz" ]; then
+            if ! [ -s "${BACKUPFILE}-cloud-${DATETIME}.sql" ] || ! [ -s "${BACKUPFILE}-cloud_data-${DATETIME}" ] || ! [ -s "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tar.gz" ]; then
                 echo "ERROR: owncloud backup of ${i}_cloud was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
@@ -1342,8 +1343,9 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # ----- Backup Style, only for Odoo Databases
         if [ ${TYPE} = "full" ]; then
             echo "creating full config backup file of config files for instance ${i}"
-            tar -cvzf "${BACKUPFILE}-full-configfiles-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
-            tar -uvf "${BACKUPFILE}-full-configfiles-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
+            tar -cvf "${BACKUPFILE}-full-configfiles-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
+            tar -uvf "${BACKUPFILE}-full-configfiles-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
+            gzip "${BACKUPFILE}-full-configfiles-${DATETIME}.tar"
         fi
     done
     echo -e "\n--------------------------------------------------------------------------------------------------------"
