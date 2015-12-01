@@ -1258,7 +1258,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
 
     # ----- Find Odoo-Instance(s) to Backup
-    if ! [ ${DBNAME} = "all" ]; then
+    if [ ${DBNAME} = "all" ]; then
         GREPREGEX=""
     else
         GREPREGEX="\b${DBNAME}"
