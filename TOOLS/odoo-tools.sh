@@ -1290,7 +1290,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
         # ----- Backup Style, only for Odoozip Databases
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}-odoo-${DATETIME}.zsql") #-t ${TYPE}
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}-odoo-${DATETIME}.zip") #-t ${TYPE}
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config file or only specific
             tar -cvzf "${BACKUPFILE}-instanceconfigfiles_odoo-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
