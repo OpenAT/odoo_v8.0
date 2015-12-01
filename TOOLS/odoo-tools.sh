@@ -1229,7 +1229,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} #  [TYPE]
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all} [odoozip|odoosql|etherpad|owncloud|full]"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all} [odoozip|etherpad|owncloud|full]"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
@@ -1249,33 +1249,27 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             echo "ERROR: ${4} must be empty or in [odoozip|etherpad|owncloud|full] !"; exit 2
         fi
     else
-        TYPE="odoozip"
+        TYPE="full"
     fi
 
     # ----- Global Variables
-    DATETIME=`date +%Y-%m-%d__%H-%M`
-    BRANCH_PATH="${REPOPATH}/${TARGET_BRANCH}"
+    DATETIME=`date +%Y_%m_%d_%H%M`
     BRANCHLOGFILE="${REPOPATH}/SETUP/IS-BACKUP--${DATETIME}.log"
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
 
     # ----- Find Odoo-Instance(s) to Backup
-    if [ ${DBNAME} = "all" ]; then
-        GREPREGEX="\bo8_[0-9a-zA-Z]*_[0-9a-zA-Z]*"
+    if ! [ ${DBNAME} = "all" ]; then
+        GREPREGEX=""
     else
         GREPREGEX="\b${DBNAME}"
     fi
     echo "DEBUG: regex: ${GREPREGEX}, dbname: ${DBNAME}"
     # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
-    declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%'\""|grep -o ${GREPREGEX}|sort -u))
+    declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%' and datname not like '%_pad' and datname not like '%_cloud'\""|grep -o ${GREPREGEX}))
     if [ "x${DATABASES}" = "x" ]; then
         echo "ERROR: No Database found!"
     fi
 
-    # ----- HINT: Spezial case STOP Script till odoo Supports this option, service/db.py needs to be extended
-    if [ ${TYPE} = "odoosql" ]; then
-        echo "ERROR: This option is not supported right now "
-        exit 2
-    fi
     # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
     # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
     # ----- Backup Data for each Instance
@@ -1290,59 +1284,65 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         echo "Database Config File --> ${INSTANCECONFIGFILE}" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
         BASEPORT69=($(grep "xmlrpc_port" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
         SUPER_PASSWORD=($(grep "admin_passwd" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
-        BACKUPFILE=${INSTANCE_PATH}/${i}/BACKUP/IS-BACKUP--${i}--${DATETIME}
+        BACKUPFILE=${INSTANCE_PATH}/${i}/BACKUP/${i}
         echo -e "${DATETIME}: Start ${TYPE} backup for instance ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
 
         # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
-        # ----- Backup Style, only for Odoo Databases
-        if [ ${TYPE} = "full" ]; then
-            # Todo: BACKUP all configs relevant from /etc and instance
-            echo "nix"
-        fi
         # ----- Backup Style, only for Odoozip Databases
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}_odoo.zip") #-t ${TYPE}
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}-odoo-${DATETIME}.zip") #-t ${TYPE}
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            #BACKUP all Config file or only specific
+            tar -cvzf "${BACKUPFILE}-instanceconfigfiles_odoo-${DATETIME}.tgz" *.{init,yml,conf,php,sh} -C ${INSTANCE_PATH}/${i}
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}_odoo.zip" ]; then
-                echo "ERROR: backup was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            if ! [ -s "${BACKUPFILE}-odoo.-${DATETIME}zip" ]; then
+                echo "ERROR: backup of ${i} was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
         fi
 
         # ----- Backup Style, only for Etherpad Databases
         if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}_etherpad.sql"
+            sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}-pad-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_pad." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            #BACKUP all Config file or only specific
+            tar -cvzf "${BACKUPFILE}-instanceconfigfiles_pad-${DATETIME}.tgz" *.{init,yml,conf,php,sh} -C ${INSTANCE_PATH}/${i}
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}_etherpad.sql" ]; then
-                echo "ERROR: backup of Etherpad Database was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            if ! [ -s "${BACKUPFILE}-pad-${DATETIME}.sql" ]; then
+                echo "ERROR: backup of Etherpad Database ${i}_pad was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
         fi
 
         # ----- Backup Style, only for Owncloud Databases
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}_owncloud.sql"
+            sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}-cloud-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            #BACKUP all Config file or only specific
+            tar -cvzf "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tgz" *.{init,yml,conf,php,sh} -C ${INSTANCE_PATH}/${i}
             if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
             echo -e "${DATETIME}: Start ${TYPE} backup for owncloud DATA for ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}_owncloud-data" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}-cloud_data-${DATETIME}" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             else
                 echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
             if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
-                tar -czvf "${BACKUPFILE}_owncloud-config.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -czvf "${BACKUPFILE}-cloud_config-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 echo -e "${DATETIME}: Start ${TYPE} backup for owncloud config ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             else
                 echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
 
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}_owncloud.sql" ] || ! [ -s "${BACKUPFILE}_owncloud-data" ] || ! [ -s "${BACKUPFILE}_owncloud-config.tgz" ]; then
-                echo "ERROR: owncloud backup was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            if ! [ -s "${BACKUPFILE}-cloud-${DATETIME}.sql" ] || ! [ -s "${BACKUPFILE}-cloud_data-${DATETIME}" ] || ! [ -s "${BACKUPFILE}-cloud_config-${DATETIME}.tgz" ]; then
+                echo "ERROR: owncloud backup of ${i}_cloud was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
+        fi
+        # ----- Backup Style, only for Odoo Databases
+        if [ ${TYPE} = "full" ]; then
+            tar -cvzf "${BACKUPFILE}-full-configfiles-${DATETIME}.tgz" *.{init,yml,conf,php,sh} -C ${INSTANCE_PATH}/${i}
+            tar -rczvf "${BACKUPFILE}-full-configfiles-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
         fi
     done
     echo -e "\n--------------------------------------------------------------------------------------------------------"
