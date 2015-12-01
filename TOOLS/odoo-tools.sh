@@ -1259,13 +1259,13 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
     # ----- Find Odoo-Instance(s) to Backup
     if [ ${DBNAME} = "all" ]; then
-        GREPREGEX=""
+        declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%' and datname not like '%_pad' and datname not like '%_cloud'\""))
     else
         GREPREGEX="\b${DBNAME}"
+        declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%' and datname not like '%_pad' and datname not like '%_cloud'\""|grep -o ${GREPREGEX}))
     fi
     echo "DEBUG: regex: ${GREPREGEX}, dbname: ${DBNAME}"
     # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
-    declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%' and datname not like '%_pad' and datname not like '%_cloud'\""|grep -o ${GREPREGEX}))
     if [ "x${DATABASES}" = "x" ]; then
         echo "ERROR: No Database found!"
     fi
