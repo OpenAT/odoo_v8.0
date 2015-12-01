@@ -1327,7 +1327,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
                 echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
             if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
-                tar -rvf "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -uvf "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 echo -e "${DATETIME}: Start ${TYPE} backup for owncloud config ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             else
                 echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
@@ -1343,7 +1343,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         if [ ${TYPE} = "full" ]; then
             echo "creating full config backup file of config files for instance ${i}"
             tar -cvzf "${BACKUPFILE}-full-configfiles-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
-            tar -rvf "${BACKUPFILE}-full-configfiles-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
+            tar -uvf "${BACKUPFILE}-full-configfiles-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
         fi
     done
     echo -e "\n--------------------------------------------------------------------------------------------------------"
