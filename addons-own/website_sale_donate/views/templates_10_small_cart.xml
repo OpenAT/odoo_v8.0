@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- SUB-TEMPLATE: wsd_custom_total -->
+        <template id="wsd_custom_total" name="Website Sale Donate Custom Total Carts">
+            <table class='pull-right wsd_custom_total' id="cart_total" t-if="website_sale_order and website_sale_order.website_order_line">
+                <!-- TAX -->
+                <tr id="order_total_taxes" t-att-class="'text-muted' if website_sale_order.amount_tax else 'hidden'">
+                    <td class="text-right"><abbr title="Taxes may be updated after providing shipping address">Taxes:</abbr></td>
+                    <td class="text-right">
+                        <span t-field="website_sale_order.amount_tax" style="white-space: nowrap;" t-field-options='{
+                            "widget": "monetary",
+                            "from_currency": "website_sale_order.pricelist_id.currency_id",
+                            "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+                        }'/>
+                    </td>
+                </tr>
+                <!-- DELIVERY -->
+                <tr id="order_delivery" t-att-class="'text-muted' if website_sale_order.amount_delivery else 'hidden'">
+                    <td class="text-right"><abbr title="Delivery will be updated after choosing a new delivery method">Delivery:</abbr></td>
+                    <td class="text-right">
+                        <span t-field="website_sale_order.amount_delivery" t-field-options='{
+                            "widget": "monetary",
+                            "display_currency": "website.pricelist_id.currency_id"
+                        }'/>
+                    </td>
+                </tr>
+                <!-- TOTAL -->
+                <tr id="order_total">
+                    <td class="text-right"><h3>Total:</h3></td>
+                    <td class="text-right">
+                      <h3><span t-field="website_sale_order.amount_total" style="white-space: nowrap;" t-field-options='{
+                          "widget": "monetary",
+                          "from_currency": "website_sale_order.pricelist_id.currency_id",
+                          "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+                        }'/></h3>
+                    </td>
+                </tr>
+            </table>
+        </template>
+
+        <!-- SUB-TEMPLATE: Small Cart Header -->
+        <template id="small_cart_header" name="Small Cart Header">
+          <h3 class="small_cart_header" t-if="website_sale_order and website_sale_order.website_order_line">
+              <a href="/shop/cart">
+                  <i class="fa fa-shopping-cart"></i>My Items <small class="text-danger">(change)</small>
+
+              </a>
+          </h3>
+        </template>
+
+        <!-- SUB-TEMPLATE: Small Cart -->
+        <template id="small_cart" name="Shopping Cart Small">
+
+            <div class="small_cart">
+              <table class='table table-striped table-condensed' id="cart_products" t-if="website_sale_order and website_sale_order.website_order_line">
+                  <thead>
+                      <tr>
+                          <th colspan="2">Item</th>
+                          <th class="text-right">Price</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    <t t-foreach="website_sale_order.website_order_line" t-as="line">
+                      <tr>
+                          <td colspan="2" t-if="not line.product_id.product_tmpl_id"></td>
+                          <td align="center" t-if="line.product_id.product_tmpl_id">
+                              <span t-field="line.product_id.image_square"
+                                    t-field-options='{"widget": "image", "class": "img-rounded"}'/>
+                          </td>
+                          <td class="text-left" t-if="line.product_id.product_tmpl_id">
+                              <div>
+                                  <small class="text-muted" t-raw="'{0:,.0f}'.format(int(line.product_uos_qty))"/>
+                                  <small class="text-muted"> x </small>
+                                  <t t-if="line.payment_interval_id"><small class="text-muted">(<t t-esc="line.payment_interval_id.name"/>)</small></t>
+                                  <!--<span t-raw="formatLang(line.product_uos_qty, digit=0)"/> x-->
+                                  <a t-attf-href="/shop/product/#{ slug(line.product_id.product_tmpl_id) }">
+                                      <strong t-esc="line.product_id.with_context(display_default_code=False).display_name"/>
+                                  </a>
+                              </div>
+                          </td>
+                          <td class="text-right" name="price">
+                            <span t-field="line.price_unit" style="white-space: nowrap;" t-field-options='{
+                                 "widget": "monetary",
+                                 "from_currency": "website_sale_order.pricelist_id.currency_id",
+                                 "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+                             }'/>
+                          </td>
+                      </tr>
+                    </t>
+                  </tbody>
+              </table>
+              <t t-call="website_sale_donate.wsd_custom_total"/>
+              <div class="clearfix"/>
+            </div>
+        </template>
+
+    </data>
+</openerp>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- ============================================================ -->
+        <!-- DEFAULT PRODUCT PAGE AND RELATED SUBTEMPLATES MODIFICATIONS: -->
+        <!-- ============================================================ -->
+
+        <!-- INHERIT SUBTEMPLATE product_price: -->
+        <template id="wsd_product_price" inherit_id="website_sale.product_price" name="Product-Page Submit-Price-Form Extensions">
+            <!-- Hide list price if an arbitrary price can be set -->
+            <xpath expr="//span[@t-field='product.lst_price']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'text-danger oe_default_price hidden' if product.price_donate else 'text-danger oe_default_price'</attribute>
+            </xpath>
+            <!-- Hide price if an arbitrary price can be set -->
+            <xpath expr="//b[@t-field='product.price']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'oe_price text-primary hidden' if product.price_donate else 'oe_price text-primary'</attribute>
+            </xpath>
+            <xpath expr="//span[@itemprop='price']" position="before">
+                <!-- Arbitrary price Input Field -->
+                <t t-if="product.price_donate">
+                    <div class="form-group price_donate">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon" t-esc="user_id.partner_id.property_product_pricelist.currency_id.symbol"/>
+                            <label for="price_donate" class="sr-only">Arbitrary Donation</label>
+                            <input type="number" class="form-control" name="price_donate" id="price_donate" t-att-min="product.price_donate_min or '1'" t-att-value="price_donate or product.price"/>
+                            <span class="input-group-addon" t-esc="user_id.partner_id.property_product_pricelist.currency_id.name"/>
+                        </div>
+                        <label id="price_donate-error" class="error" for="price_donate" style="font-size: 12px; display: none;"/>
+                    </div>
+                </t>
+                <!-- Simplecheckout: redirect directly to checkout instead of cart if simple_checkout is set -->
+                <t t-if="product.payment_interval_ids">
+                    <input type="text" name="simple_checkout" t-att-value="product.simple_checkout" style="display: none;"/>
+                </t>
+            </xpath>
+        </template>
+
+        <!-- SUBTEMPLATE: product_quantity -->
+        <template id="product_quantity_selector" name="Product Quantity Selector">
+            <t t-if="not product.hide_quantity">
+                <div class="css_quantity input-group input-group-lg oe_website_spinner">
+                    <span class="input-group-addon">
+                        <a t-attf-href="#" class="mb8 js_add_cart_json">
+                            <i class="fa fa-minus"></i>
+                        </a>
+                    </span>
+                    <input type="text" class="js_quantity form-control" data-min="1" name="add_qty" value="1"/>
+                    <span class="input-group-addon">
+                        <a t-attf-href="#" class="mb8 float_left js_add_cart_json">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </span>
+                </div>
+            </t>
+        </template>
+
+        <!-- INHERIT SUBTEMPLATE product_quantity: replace quantity selector -->
+        <template id="wsd_product_quantity" inherit_id="website_sale.product_quantity" name="Product-Page Quantity Extensions">
+            <xpath expr="//div[@class='css_quantity input-group oe_website_spinner']" position="replace">
+                <t t-call="website_sale_donate.product_quantity_selector"/>
+            </xpath>
+        </template>
+
+        <!-- INHERIT PRODUCT PAGE product: hide full add-to-cart form if hide_payment is set -->
+        <template id="wsd_product" inherit_id="website_sale.product" name="Product-Page Hide Payment Box">
+            <xpath expr="//form[@class='js_add_cart_variants']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'js_add_cart_variants hidden' if product.hide_payment else 'js_add_cart_variants'</attribute>
+            </xpath>
+        </template>
+
+        <!-- INHERIT PRODUCT PAGE product: add CROWDFUNDING block -->
+        <template id="wsd_product_funding" inherit_id="website_sale.product" name="Product-Page Funding">
+            <xpath expr="//div[@t-field='product.website_description']" position="after">
+                <t t-if="product.funding_goal">
+                    <section class="container mt8">
+                        <div class="row">
+                            <t t-call="website_sale_donate.funding_page_text"/>
+                        </div>
+                    </section>
+                </t>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

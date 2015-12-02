@@ -43,6 +43,11 @@ class website_sale_donate(website_sale):
         # this will basically pre-render the product page and store it in productpage
         productpage = super(website_sale_donate, self).product(product, category, search, **kwargs)
 
+        # Product Qweb Template based on the product_page_template field
+        # HINT: qcontext hold the initial values the qweb template was called with
+        if product.product_page_template:
+            productpage = request.website.render(product.product_page_template, productpage.qcontext)
+
         # Add Warnings (e.g. by cart_update)
         productpage.qcontext['warnings'] = kwargs.get('warnings')
         kwargs['warnings'] = None
@@ -54,9 +59,9 @@ class website_sale_donate(website_sale):
         # Get values from sales order line
         sale_order_id = request.session.sale_order_id
         if sale_order_id:
-            # search for a sales order line for the current product in the sales order of the current session
+            # Search for a sales order line for the current product in the sales order of the current session
             sol_obj = request.registry['sale.order.line']
-            # get sale order line id if product or variant of product is in active sale order
+            # Get sale order line id if product or variant of product is in active sale order
             sol = sol_obj.search(cr, SUPERUSER_ID,
                                  [['order_id', '=', sale_order_id],
                                   ['product_id', 'in', product.ids + product.product_variant_ids.ids]],
@@ -104,7 +109,7 @@ class website_sale_donate(website_sale):
 
         product = request.registry['product.product'].browse(cr, SUPERUSER_ID, int(product_id), context=context)
 
-        # Validate (donation) Price
+        # Validate (donation) Arbitrary Price
         warnings = None
         price = kw.get('price_donate') or product.list_price or product.price
         # HINT: If price_donate is not a valid number it will be empty and so the product.list_price is used!

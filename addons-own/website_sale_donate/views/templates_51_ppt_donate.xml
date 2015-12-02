@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- PRODUCT PAGE TEMPLATE: ppt_donate -->
+        <template id="ppt_donate" name="Product Page Donate Layout">
+            <t t-call="website.layout">
+                <t t-set="additional_title" t-value="product.name"/>
+                <div itemscope="itemscope" itemtype="http://schema.org/Product" id="wrap" class="js_sale ppt_donate">
+
+                    <!-- Main Section with optional parallax bg-image -->
+                    <section id="website_sale_donate"
+                             t-att-class="'parallax oe_img_bg' if product.parallax_image else ''"
+                             t-att-style="'background-image: url(' + website.image_url(product, 'parallax_image') + ');' if product.parallax_image else 'None'"
+                             t-att-data-scroll-background-offset="'0.6' if product.parallax_speed == 'slow' else 0"
+                             data-scroll-background-ratio="0">
+                        <div class="row">
+                            <div class="col-sm-16">
+                                <section t-attf-class="container mt8 oe_website_sale #{(compute_currency(product.lst_price) - product.price) &gt; 0.1 and 'discount'}" id="product_detail">
+
+                                    <!-- Categories, Search and Publish-Button Bar -->
+                                    <t t-call="website_sale_donate.categories_search_publish"/>
+
+                                   <!-- Warnings Box -->
+                                    <t t-call="website_sale_donate.warningsbox"/>
+
+                                    <!-- Top HTML Description Field -->
+                                    <t t-if="product.show_desctop">
+                                        <div class="row">
+                                            <div class="col-sm-16">
+                                                <div t-field="product.desc_short_top" class="oe_structure" id="product_desc_short_top"/>
+                                            </div>
+                                        </div>
+                                    </t>
+
+                                    <!-- Main Product Page Content (Description Field and Checkoutbox) -->
+                                    <div class="row">
+                                        <!-- (Left) Left HTML Description Field -->
+                                        <div class="col-sm-7 col-md-7 col-lg-6">
+                                            <div t-field="product.desc_short" class="oe_structure" id="product_desc_short"/>
+                                        </div>
+                                        <!-- (Right) CHECKOUTBOX (Add to Cart Box) -->
+                                        <div class="col-sm-5 col-md-5 col-lg-5 col-lg-offset-1" id="wsd-checkout-box">
+                                            <t t-call="website_sale_donate.checkoutbox">
+                                                <!-- Configure the Checkoutbox Subtemplate -->
+                                                <t t-set="hide_name" t-value="False"/>
+                                                <t t-set="hide_image" t-value="product.hide_image"/>
+                                                <t t-set="hide_salesdesc" t-value="product.hide_salesdesc"/>
+                                                <t t-set="hide_fundingtextincp" t-value="product.hide_fundingtextincp"/>
+                                                <t t-set="hide_fundingbarincp" t-value="product.hide_fundingbarincp"/>
+                                                <t t-set="hide_panelfooter" t-value="product.hide_panelfooter"/>
+                                                <t t-set="show_small_cart_in_checkoutbox" t-value="False"/>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- Crowdfunding Info -->
+                                    <t t-if="product.funding_goal">
+                                        <div class="row">
+                                            <div class="col-sm-16">
+                                                <t t-call="website_sale_donate.funding_page_text"/>
+                                            </div>
+                                        </div>
+                                    </t>
+
+                                    <!-- Bottom HTML Description Field -->
+                                    <t t-if="product.show_descbottom">
+                                        <div class="row">
+                                            <div class="col-sm-16">
+                                                <div t-field="product.desc_short_bottom" class="oe_structure" id="product_desc_short_bottom"/>
+                                            </div>
+                                        </div>
+                                    </t>
+
+
+
+                                </section>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Footer Section (without parallax image) -->
+                    <section>
+                        <div class="row">
+                            <!-- Footer HTML Description Field -->
+                            <div itemprop="description" t-field="product.website_description" class="oe_structure" id="product_full_description"/>
+                        </div>
+                    </section>
+
+                </div>
+            </t>
+        </template>
+
+
+        <!-- ========================================= -->
+        <!-- PRODUCT PAGE TEMPLATE OPTIONS: ppt_donate -->
+        <!-- ========================================= -->
+
+        <!-- INHERIT PRODUCT PAGE TEMPLATE (PPT) ppt_donate: show shopping cart in checkoutbox -->
+        <template id="ppt_donate_checkoutbox_small_cart" inherit_id="website_sale_donate.ppt_donate" name="Show Cart in Checkoutbox" customize_show="True" active="False">
+            <xpath expr="//t[@t-set='show_small_cart_in_checkoutbox']" position="attributes">
+                <attribute name="t-value">True</attribute>
+            </xpath>
+        </template>
+
+        <!-- INHERIT PRODUCT PAGE TEMPLATE (PPT) ppt_donate: show shopping cart in right column below checkoutbox -->
+        <template id="ppt_donate_small_cart_right" inherit_id="website_sale_donate.ppt_donate" name="Show Cart in Right-Column" customize_show="True" active="False">
+            <xpath expr="//t[@t-call='website_sale_donate.checkoutbox']" position="after">
+                <t t-call="website_sale_donate.checkoutbox_small_cart"/>
+            </xpath>
+        </template>
+
+        <!-- INHERIT PRODUCT PAGE TEMPLATE (PPT) ppt_donate: show shopping cart below checkoutbox full width -->
+        <template id="ppt_donate_small_cart_full" inherit_id="website_sale_donate.ppt_donate" name="Show Cart" customize_show="True" active="False">
+            <xpath expr="//div[@id='wsd-checkout-box']" position="after">
+                <div class="col-sm-16">
+                    <t t-call="website_sale_donate.checkoutbox_small_cart"/>
+                </div>
+            </xpath>
+        </template>
+
+        <!-- INHERIT PRODUCT PAGE TEMPLATE (PPT) ppt_donate: show recommended_products -->
+        <template id="ppt_donate_recommended_products" inherit_id="website_sale_donate.ppt_donate" name="Recommended Products" customize_show="True" active="False">
+            <xpath expr="//div[@t-field='product.website_description']" position="after">
+                <t t-call="website_sale_donate.recommended_products"/>
+            </xpath>
+        </template>
+
+        <!-- INHERIT PRODUCT PAGE TEMPLATE (PPT) ppt_donate: show product_comment -->
+        <template id="ppt_donate_product_comment" inherit_id="website_sale_donate.ppt_donate" name="Discussion" customize_show="True" active="False">
+            <xpath expr="//div[@t-field='product.website_description']" position="after">
+                <t t-call="website_sale_donate.product_comment"/>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- INHERIT SUB-TEMPLATE products_item: Hide Product Price for Grid and List View if field hide_price set -->
+        <template id="wsd_products_item" inherit_id="website_sale.products_item" name="Product Item Extensions">
+            <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' product_price ')]" position="attributes">
+                <attribute name="class">product_price text-primary</attribute>
+            </xpath>
+            <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' product_price ')]/b" position="attributes">
+                <!--<attribute name="class"></attribute>-->
+                <attribute name="t-att-class">'hidden' if product.hide_price else ''</attribute>
+            </xpath>
+            <xpath expr="//section" position="attributes">
+                <attribute name="t-att-style">'padding: 0 10px 0 10px' if product.hide_price else ''</attribute>
+            </xpath>
+        </template>
+
+        <!-- INHERIT SUB-TEMPLATE products_item: Use Square Images -->
+        <template id="wsd_products_item_image" inherit_id="website_sale.products_item" name="Square Images" customize_show="True" active="False">
+            <xpath expr="//div[@class='oe_product_image']/a/img[@itemprop='image']" position="replace">
+                <img itemprop="image" class="img img-responsive" t-att-src="website.image_url(product, 'image_square')" t-att-alt="product.name"/>
+            </xpath>
+        </template>
+
+        <!-- INHERIT PRODUCT LISTING products: small cart on left side -->
+        <template id="products_cart" inherit_id="website_sale.products" active="False" customize_show="True" name="Product Cart">
+            <!-- ToDo: Add a Warenkorb Button to the top of the product grid only visible for in extra small mode
+                       This is needed because the left column may disappear in extra small -->
+
+            <!-- Add a small shopping cart to the left column -->
+            <xpath expr="//div[@id='products_grid_before']" position="inside">
+                <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+                <!-- Small Cart Header -->
+                <t t-call="website_sale_donate.small_cart_header"/>
+                <!-- Small Cart -->
+                <t t-call="website_sale_donate.small_cart"/>
+                <!-- Checkout Button -->
+                <div class="text-left small_cart_buttons">
+                    <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line" class="btn btn-primary pull-right" href="/shop/checkout">Checkout</a>
+                </div>
+                <div class="clearfix"/>
+            </xpath>
+
+            <!-- Make products_grid_before a left column just like the categories will do it -->
+            <!-- ATTENTION: this will also be done by the product categories: Test what happens if we use both -->
+            <xpath expr="//div[@id='products_grid_before']" position="attributes">
+                <attribute name="class">col-md-3</attribute>
+            </xpath>
+            <xpath expr="//div[@id='products_grid']" position="attributes">
+                <attribute name="class">col-md-9</attribute>
+            </xpath>
+        </template>
+
+        <!-- SHOP PRODUCT LISTING: Crowd Funding Bar -->
+        <template id="wsd_products_item_funding" inherit_id="website_sale.products_item" name="Funding Bar">
+            <xpath expr="//div[@class='product_price']" position="after">
+                <t t-if="product.funding_goal">
+                    <div class="crowdfunding_list_views">
+                        <t t-if="not product.hide_fundingtextinlist">
+                            <div class="text-info oe_subdescription">
+                                <t t-call="website_sale_donate.funding_text"/>
+                            </div>
+                        </t>
+                        <t t-if="not product.hide_fundingbarinlist"><t t-call="website_sale_donate.funding_bar"/></t>
+                    </div>
+                </t>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

@@ -2,7 +2,7 @@
 __author__ = 'mkarrer'
 
 from openerp import SUPERUSER_ID
-from openerp import tools
+from openerp import tools, api
 from openerp.osv import osv, orm, fields
 from openerp.tools.translate import _
 import openerp.addons.decimal_precision as dp
@@ -39,6 +39,8 @@ class website_sale_donate_settings(osv.Model):
         'country_default_value': fields.many2one('res.country', string='Default country for checkout page'),
         # Behaviour
         'add_to_cart_stay_on_page': fields.boolean(string='Add to Cart and stay on Page'),
+        # Global Fields for Snippets
+        'checkoutbox_footer': fields.html(string='Global Footer for the Checkoutbox'),
     }
     _defaults = {
         # Mandatory for billing
@@ -105,30 +107,42 @@ class product_template(osv.Model):
         return result
 
     _columns = {
-        'hide_payment': fields.boolean('Hide complete Checkout Panel'),
-        'hide_price': fields.boolean('Hide Price in Shop overview Pages'),
-        'hide_quantity': fields.boolean('Hide Product-Quantity-Selector in CP'),
+        # BEHAVIOUR
         'simple_checkout': fields.boolean('Simple Checkout'),
+
+        # PRODUCT LISTINGS
+        'hide_price': fields.boolean('Hide Price in Shop overview Pages'),
+
+        # PRODUCT PAGE
+        'product_page_template': fields.selection([('website_sale.product', 'Default Layout'),
+                                                   ('website_sale_donate.ppt_donate', 'Donation Layout'),
+                                                   ('website_sale_donate.ppt_ahch', 'AHCH Layout')],
+                                                  string="Product Page Template"),
+        'parallax_image': fields.binary(string='Background Parallax Image'),
+        'parallax_speed': fields.selection([('static', 'Static'), ('slow', 'Slow')], string='Parallax Speed'),
+        'hide_categories': fields.boolean('Hide Categories Navigation'),
+        'hide_search': fields.boolean('Hide Search Field'),
+        'desc_short_top': fields.html(string='Banner Product Description - Top'),
+        'show_desctop': fields.boolean('Show additional Description above Checkout Panel'),
+        'desc_short': fields.html(string='Banner Product Description - Center'),
+        'desc_short_bottom': fields.html(string='Banner Product Description - Bottom'),
+        'show_descbottom': fields.boolean('Show additional Description below Checkout Panel'),
+        # Checkoutbox in Product Page
+        'hide_payment': fields.boolean('Hide complete Checkout Panel'),
+        'hide_image': fields.boolean('Hide Image in Checkout Panel'),
+        'hide_salesdesc': fields.boolean('Hide Text in Checkout Panel'),
+        'variants_as_list': fields.boolean('Show Variants as a List of Products'),
+        'hide_quantity': fields.boolean('Hide Product-Quantity-Selector in CP'),
         'price_donate': fields.boolean('Arbitrary Price'),
         'price_donate_min': fields.integer(string='Minimum Arbitrary Price'),
         'payment_interval_ids': fields.many2many('product.payment_interval', string='Payment Intervals'),
-
-        'hide_search': fields.boolean('Hide Search Field'),
-        'hide_categories': fields.boolean('Hide Categories Navigation'),
-        'hide_image': fields.boolean('Hide Image in Checkout Panel'),
-        'hide_salesdesc': fields.boolean('Hide Text in Checkout Panel'),
+        'button_addtocart_text': fields.char('Add-To-Cart Button Text', size=30, translate=True),
         'hide_panelfooter': fields.boolean('Hide Checkout Panel Footer'),
 
-        'show_desctop': fields.boolean('Show additional Description above Checkout Panel'),
-        'show_descbottom': fields.boolean('Show additional Description below Checkout Panel'),
-
-        'desc_short_top': fields.html(string='Banner Product Description - Top'),
-        'desc_short': fields.html(string='Banner Product Description - Center'),
-        'desc_short_bottom': fields.html(string='Banner Product Description - Bottom'),
+        # IMAGE HELPER
         'image_square': fields.function(_get_square_image, fnct_inv=_set_square_image,
             string="Square Image (Auto crop and zoom)", type="binary", multi="_get_square_image",
             store={'product.template': (lambda self, cr, uid, ids, c={}: ids, ['image'], 10)}),
-        'parallax_image': fields.binary(string='Background Parallax Image'),
         'parallax_image_medium': fields.function(_get_parallax_image, fnct_inv=_set_parallax_image,
             string="Background Parallax Image", type="binary", multi="_get_parallax_image",
             store={
@@ -137,8 +151,7 @@ class product_template(osv.Model):
             help="Medium-sized image of the background. It is automatically "\
                  "resized as a 128x128px image, with aspect ratio preserved, "\
                  "only when the image exceeds one of those sizes. Use this field in form views or some kanban views."),
-        'parallax_speed': fields.selection([('static', 'Static'), ('slow', 'Slow')], string='Parallax Speed'),
-        # OVERRIDE orignal image functional fields to store full size images
+        # Override of the orignal image functional fields to store full size images!
         'image_medium': fields.function(_get_image, fnct_inv=_set_image,
             string="Medium-sized image", type="binary", multi="_get_image",
             store={
@@ -155,12 +168,31 @@ class product_template(osv.Model):
             help="Small-sized image of the product. It is automatically "\
                  "resized as a 64x64px image, with aspect ratio preserved. "\
                  "Use this field anywhere a small image is required."),
+
     }
     _defaults = {
-        'price_donate_min': 0,
         'parallax_speed': 'slow',
+        'price_donate': True,
+        'price_donate_min': 0,
         'hide_quantity': True,
+        'product_page_template': 'website_sale_donate.ppt_donate',
     }
+
+    def init(self, cr, context=None):
+        # HINT: Since we use the old API search does not return a recordset therefore we need browse too
+        products = self.browse(cr, SUPERUSER_ID, self.search(cr, SUPERUSER_ID, []))
+        for product in products:
+            if not product.product_page_template:
+                product.write({"product_page_template": 'website_sale_donate.ppt_donate'})
+
+
+    class product_template_onchange(osv.osv):
+        _inherit = 'product.template'
+
+        @api.onchange('price_donate')
+        def _set_hide_quantity(self):
+            if self.price_donate:
+                self.hide_quantity = True
 
 
 # Extend sale.order.line to be able to store price_donate and payment interval information
@@ -401,7 +433,7 @@ class product_template(osv.Model):
     _columns = {
         'sold_total': fields.function(_sold_total, string='# Sold Total', type='float'),
         'funding_goal': fields.float(string='Funding Goal'),
-        'funding_desc': fields.html(string='Funding Description (HTML Field below Bar)'),
+        'funding_desc': fields.html(string='Funding Description', translate=True),
         'funding_reached': fields.function(_funding_reached, string='Funding reached in %', type='integer'),
         'funding_user': fields.many2one('res.partner', string='Funding-Campaign User'),
         'funding_user_name': fields.function(_get_name, string="Funding-Campaign User Name", type='char'),
