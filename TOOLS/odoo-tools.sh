@@ -1324,12 +1324,12 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             gzip "${BACKUPFILE}-odoo-${DATETIME}.tar"
             mv "${BACKUPFILE}-odoo-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo-${DATETIME}.zip"
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}-odoo_db-${DATETIME}.zip" ] && ! [ "${BACKUPFILE}-odoo_config-${DATETIME}.tgz" ] && ! [ "${BACKUPFILE}-odoo_file-${DATETIME}.tgz" ]; then
+            if ! [ -s "${BACKUPFILE}-odoo_db-${DATETIME}.zip" ] && ! [ "${BACKUPFILE}-odoo_config-${DATETIME}.tgz" ]; then
                 echo "ERROR: backup of ${i} or config files backup was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
             # ----- if both files has been written config and DB delete
-            rm "${BACKUPFILE}-odoo_config-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo_db-${DATETIME}.zip" "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
+            rm -f "${BACKUPFILE}-odoo_config-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo_db-${DATETIME}.zip" "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
         fi
 
         # ----- Backup Style, only for Etherpad Databases
@@ -1347,7 +1347,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
                 echo "ERROR: backup of Etherpad ${i}_pad or config was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
-            rm "${BACKUPFILE}-pad_config-${DATETIME}.tgz" "${BACKUPFILE}-pad_db-${DATETIME}.sql"
+            rm -f "${BACKUPFILE}-pad_config-${DATETIME}.tgz" "${BACKUPFILE}-pad_db-${DATETIME}.sql"
         fi
 
         # ----- Backup Style, only for Owncloud Databases
@@ -1383,7 +1383,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
                 echo "ERROR: owncloud backup of ${i}_cloud was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
-            rm "${BACKUPFILE}-cloud_db-${DATETIME}.sql" "${BACKUPFILE}-cloud_config-${DATETIME}.tgz" "${BACKUPFILE}-cloud_file-${DATETIME}.tgz"
+            rm -f "${BACKUPFILE}-cloud_db-${DATETIME}.sql" "${BACKUPFILE}-cloud_config-${DATETIME}.tgz" "${BACKUPFILE}-cloud_file-${DATETIME}.tgz"
         fi
         # ----- Backup Style, only for Odoo Databases
         if [ ${TYPE} = "full" ]; then
