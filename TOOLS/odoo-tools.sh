@@ -1304,24 +1304,24 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}-odoo_db-${DATETIME}.zip") #-t ${TYPE}
-            if [ -d "${INSTANCE_PATH}/${i}/data_dir/filestore" ]; then
+            if [ -d ${INSTANCE_PATH}/${i}/data_dir/filestore ]; then
                 echo -e "${DATETIME}: Start ${TYPE} backup for filestore of ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                tar -cvzf "${BACKUPFILE}-odoo_file-${DATETIME}.tgz" -C / "${INSTANCE_PATH}/${i}/data_dir/filestore/"
+                tar -cvzf "${BACKUPFILE}-odoo_file-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/data_dir/filestore/
             fi
             #BACKUP all Config files separately, this needs to be extended when new config files are used
-            tar -cvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C / ${INSTANCE_PATH}/${i}/${i}-backup.sh
-            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C / ${INSTANCE_PATH}/${i}/${i}.conf
-            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C / ${INSTANCE_PATH}/${i}/${i}.init
-            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C / ${INSTANCE_PATH}/${i}/${i}-logrotate.conf
-            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C / ${INSTANCE_PATH}/${i}/${i}-nginx.conf
-            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C / ${INSTANCE_PATH}/${i}/${i}-pushtodeploy.*
+            tar -cvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-backup.sh
+            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}.conf
+            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}.init
+            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-logrotate.conf
+            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-nginx.conf
+            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-pushtodeploy.*
             gzip "${BACKUPFILE}-odoo_config-${DATETIME}.tar"
             mv "${BACKUPFILE}-odoo_config-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo_config-${DATETIME}.tgz"
             # ----- Create Package of db and config files
-            tar -cvf "${BACKUPFILE}-odoo-${DATETIME}.tar" -C / "${BACKUPFILE}-odoo_config-${DATETIME}.tgz"
-            tar -rvf "${BACKUPFILE}-odoo-${DATETIME}.tar" -C / "${BACKUPFILE}-odoo_db-${DATETIME}.zip"
-            if [ "${BACKUPFILE}-odoo_file-${DATETIME}.tgz" ]; then
-                tar -rvf "${BACKUPFILE}-odoo-${DATETIME}.tar" -C / "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
+            tar -cvf "${BACKUPFILE}-odoo-${DATETIME}.tar" "${BACKUPFILE}-odoo_config-${DATETIME}.tgz"
+            tar -rvf "${BACKUPFILE}-odoo-${DATETIME}.tar" "${BACKUPFILE}-odoo_db-${DATETIME}.zip"
+            if [ -f ${BACKUPFILE}-odoo_file-${DATETIME}.tgz ]; then
+                tar -rvf "${BACKUPFILE}-odoo-${DATETIME}.tar" "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
             fi
             gzip "${BACKUPFILE}-odoo-${DATETIME}.tar"
             mv "${BACKUPFILE}-odoo-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo-${DATETIME}.zip"
@@ -1354,7 +1354,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
         # ----- Backup Style, only for Owncloud Databases
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}-cloud-${DATETIME}.sql"
+            sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}-cloud_db-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config files separately, this needs to be extended when new config files are used
             tar -cvf "${BACKUPFILE}-cloud_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}_cloud*
