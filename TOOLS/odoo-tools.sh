@@ -1258,12 +1258,13 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     else
         INTERVAL="ondemand"
     fi
-
+    echo "interval: ${INTERVAL}"
     if [ ${INTERVAL} = "ondemand" ]; then
         DATETIME=`date +%Y_%m_%d_%H%M`
     else
         DATETIME=`date +%Y_`${INTERVAL}
     fi
+    echo "datetime: ${DATETIME}"
 
     BRANCHLOGFILE="${REPOPATH}/SETUP/IS-BACKUP--${DATETIME}.log"
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
