@@ -1259,7 +1259,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         INTERVAL="ondemand"
     fi
 
-    if [ INTERVAL = "ondemand" ]; then
+    if [ "${INTERVAL}" = "ondemand" ]; then
         DATETIME=`date +%Y_%m_%d_%H%M`
     else
         DATETIME=`date +%Y_`${INTERVAL}
