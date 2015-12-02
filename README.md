@@ -33,28 +33,33 @@ Where int marks a server we pay (our own server) for and ext marks a server the 
 
 ### Backup Filename Convention
 ```odoo-tools.sh backup``` can create backups of odoo, etherpad and owncloud. If you are creating backups always include
-the configuration files of the programm finally move all partial backups in a single zip or tgz archive. 
+the configuration files of the programm as a partial backup also and finally move all partial backups in a single zip or tgz archive. 
+
 Odoo backup example:
-Step 1: Odoo Database Backup **o8_intdadi_dadi-odoo_db-2015_01_23_0154.zip**
-Step 2: Odoo Config File Backup **o8_intdadi_dadi-odoo_conf-2015_01_0156.tgz**
-Step 3: **Move** both archives into the final backup archive **o8_intdadi_dadi-odoo-2015_01_23_0156.zip**
+- Step 1: Odoo Database Backup **o8_intdadi_dadi-odoo_db-2015_01_23_0154.zip**
+- Step 2: Odoo Config File Backup **o8_intdadi_dadi-odoo_conf-2015_01_0156.tgz**
+- Step 3: **Move** both archives into the final backup archive **o8_intdadi_dadi-odoo-2015_01_23_0156.zip**
 
 #### Convention for backup parts file names:
 ```[instancename]-[progname]_[backuptype]-[YYYY]_[MM]_[DD]_[HHmm].[fileending]``` e.g.: o8_intdadi_dadi-odoo_db-2015_01_23_0154.zip
-*progname* should be in [odoo|pad|cloud]
-*backuptype* must be in [db|conf|file]
-**db** = backup of a database (sql dump)
-**conf** = config files
-**file** = the rest ;) - file based backups
+
+- **progname** should be in [odoo|pad|cloud]
+- **backuptype** must be in [db|conf|file]
+  - **db** = backup of a database (sql dump)
+  - **conf** = config files
+  - **file** = the rest ;) - file based backups
 
 
 #### Convention for the final backup file name:
-All backup parts will then be moved into a final backup archive:
-```[instancename]-[progname]-[YYYY]_[MM]_[DD]_[HHmm].[fileending]``` e.g.: o8_intdadi_dadi-odoo-2015_01_23_0154.tgz
+All backup parts must be moved into a final backup archive of the format:
+- ```[instancename]-[progname]-[YYYY]_[MM]_[DD]_[HHmm].[fileending]``` 
+    - e.g.: o8_intdadi_dadi-odoo-2015_01_23_0154.tgz
 
 If it is a cyclical backup e.g. weekly or daily the Date Part can be replaced like this:
-```[instancename]-[progname]-[YYYY]_week_[weeknumber].[fileending]``` e.g.: o8_intdadi_dadi-odoo-week_32.tgz
-```[instancename]-[progname]-[YYYY]_day_[monday].[fileending]``` e.g.: o8_intdadi_dadi-odoo-day_monday.tgz
+- ```[instancename]-[progname]-[YYYY]_week_[weeknumber].[fileending]``` 
+  - e.g.: o8_intdadi_dadi-odoo-week_32.tgz
+- ```[instancename]-[progname]-[YYYY]_day_[monday].[fileending]``` 
+  - e.g.: o8_intdadi_dadi-odoo-day_monday.tgz
 
 
 ## GOALS
