@@ -1304,8 +1304,8 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}-odoo_db-${DATETIME}.zip") #-t ${TYPE}
-            if [ -d ${INSTANCE_PATH}/${i}/data_dir/filestore ]; then
-            echo -e "${DATETIME}: Start ${TYPE} backup for filestore of ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            if [ -d "${INSTANCE_PATH}/${i}/data_dir/filestore" ]; then
+                echo -e "${DATETIME}: Start ${TYPE} backup for filestore of ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 tar -cvzf "${BACKUPFILE}-odoo_file-${DATETIME}.tgz" "${INSTANCE_PATH}/${i}/data_dir/filestore/"
             fi
             #BACKUP all Config files separately, this needs to be extended when new config files are used
