@@ -1229,13 +1229,13 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} #  [TYPE]
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all} [odoozip|etherpad|owncloud|full]"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all} [odoozip|etherpad|owncloud|full] {INTERVAL}"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if ! [ $# -ge 3 ] || [ $# -gt 4 ]; then
-        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes a minimum of three and a maximum of four arguments!"
+    if ! [ $# -ge 3 ] || [ $# -gt 5 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes a minimum of three and a maximum of five arguments!"
         exit 2
     fi
 
@@ -1253,7 +1253,18 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     fi
 
     # ----- Global Variables
-    DATETIME=`date +%Y_%m_%d_%H%M`
+    if ! [ "x$5" = "x" ]; then
+        INTERVAL=$5
+    else
+        INTERVAL="ondemand"
+    fi
+
+    if [ INTERVAL = "ondemand" ]; then
+        DATETIME=`date +%Y_%m_%d_%H%M`
+    else
+        DATETIME=`date +%Y_`${INTERVAL}
+    fi
+
     BRANCHLOGFILE="${REPOPATH}/SETUP/IS-BACKUP--${DATETIME}.log"
     INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
 
@@ -1290,62 +1301,99 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
         # ----- Backup Style, only for Odoozip Databases
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
-            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}-odoo-${DATETIME}.zip") #-t ${TYPE}
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-            #BACKUP all Config file or only specific
-            tar -cvzf "${BACKUPFILE}-instanceconfigfiles_odoo-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}-odoo_db-${DATETIME}.zip") #-t ${TYPE}
+            if [ -d ${INSTANCE_PATH}/${i}/data_dir/filestore ]; then
+            echo -e "${DATETIME}: Start ${TYPE} backup for filestore of ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -cvzf "${BACKUPFILE}-odoo_file-${DATETIME}.tgz" "${INSTANCE_PATH}/${i}/data_dir/filestore/"
+            fi
+            #BACKUP all Config files separately, this needs to be extended when new config files are used
+            tar -cvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-backup.sh
+            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}.conf
+            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}.init
+            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-logrotate.conf
+            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-nginx.conf
+            tar -rvf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-pushtodeploy.*
+            gzip "${BACKUPFILE}-odoo_config-${DATETIME}.tar"
+            mv "${BACKUPFILE}-odoo_config-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo_config-${DATETIME}.tgz"
+            # ----- Create Package of db and config files
+            tar -cvf "${BACKUPFILE}-odoo-${DATETIME}.tar" "${BACKUPFILE}-odoo_config-${DATETIME}.tgz"
+            tar -rvf "${BACKUPFILE}-odoo-${DATETIME}.tar" "${BACKUPFILE}-odoo_db-${DATETIME}.zip"
+            tar -rvf "${BACKUPFILE}-odoo-${DATETIME}.tar" "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
+            gzip "${BACKUPFILE}-odoo-${DATETIME}.tar"
+            mv "${BACKUPFILE}-odoo-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo-${DATETIME}.zip"
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}-odoo-${DATETIME}.zip" ]; then
-                echo "ERROR: backup of ${i} was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            if ! [ -s "${BACKUPFILE}-odoo_db-${DATETIME}.zip" ] && ! [ "${BACKUPFILE}-odoo_config-${DATETIME}.tgz" ] && ! [ "${BACKUPFILE}-odoo_file-${DATETIME}.tgz" ]; then
+                echo "ERROR: backup of ${i} or config files backup was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
+            # ----- if both files has been written config and DB delete
+            rm "${BACKUPFILE}-odoo_config-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo_db-${DATETIME}.zip" "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
         fi
 
         # ----- Backup Style, only for Etherpad Databases
         if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}-pad-${DATETIME}.sql"
+            sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}-pad_db-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_pad." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-            #BACKUP all Config file or only specific
-            tar -cvf "${BACKUPFILE}-instanceconfigfiles_pad-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
+            #BACKUP all Config files separately, this needs to be extended when new config files are used
+            tar -cvzf "${BACKUPFILE}-pad_config-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/${i}-pad*
+            tar -cvf "${BACKUPFILE}-pad-${DATETIME}.tar" "${BACKUPFILE}-pad_config-${DATETIME}.tgz"
+            tar -rvf "${BACKUPFILE}-pad-${DATETIME}.tar" "${BACKUPFILE}-pad_db-${DATETIME}.sql"
+            gzip "${BACKUPFILE}-pad-${DATETIME}.tar"
+            mv "${BACKUPFILE}-pad-${DATETIME}.tar.gz" "${BACKUPFILE}-pad-${DATETIME}.zip"
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}-pad-${DATETIME}.sql" ]; then
-                echo "ERROR: backup of Etherpad Database ${i}_pad was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            if ! [ -s "${BACKUPFILE}-pad_db-${DATETIME}.sql" ] && ! [ "${BACKUPFILE}-pad_config-${DATETIME}.tgz" ]; then
+                echo "ERROR: backup of Etherpad ${i}_pad or config was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
+            rm "${BACKUPFILE}-pad_config-${DATETIME}.tgz" "${BACKUPFILE}-pad_db-${DATETIME}.sql"
         fi
 
         # ----- Backup Style, only for Owncloud Databases
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
             sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}-cloud-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-            #BACKUP all Config file or only specific
-            tar -cvf "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
-            if [ "$(ls -A  ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
-            echo -e "${DATETIME}: Start ${TYPE} backup for owncloud DATA for ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPFILE}-cloud_data-${DATETIME}" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            #BACKUP all Config files separately, this needs to be extended when new config files are used
+            tar -cvf "${BACKUPFILE}-cloud_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}_cloud*
+            if [ "$(ls -A ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
+                echo -e "${DATETIME}: Start ${TYPE} backup for owncloud DATA for ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -cvzf "${BACKUPFILE}-cloud_file-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/owncloud/data/ | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             else
                 echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
             if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
-                tar -uvf "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                gzip "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tar"
                 echo -e "${DATETIME}: Start ${TYPE} backup for owncloud config ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -rvf "${BACKUPFILE}-cloud_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                gzip "${BACKUPFILE}-cloud_config-${DATETIME}.tar"
+                mv "${BACKUPFILE}-cloud_config-${DATETIME}.tar.gz" "${BACKUPFILE}-cloud_config-${DATETIME}.tgz"
             else
-                echo "No Config file found skipping config Backup of owncloud..." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                echo "ERROR: No Config file found skipping config Backup of owncloud... please check the owncloud config seems not to be finished" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                exit 2
             fi
+            # ----- create package of db and config files and datadir
+            tar -cvf "${BACKUPFILE}-cloud-${DATETIME}.tar" "${BACKUPFILE}-cloud_db-${DATETIME}.sql"
+            tar -rvf "${BACKUPFILE}-cloud-${DATETIME}.tar" "${BACKUPFILE}-cloud_config-${DATETIME}.tgz"
+            tar -rvf "${BACKUPFILE}-cloud-${DATETIME}.tar" "${BACKUPFILE}-cloud_file-${DATETIME}.tgz"
+            gzip "${BACKUPFILE}-cloud-${DATETIME}.tar"
+            mv "${BACKUPFILE}-cloud-${DATETIME}.tar.gz" "${BACKUPFILE}-cloud-${DATETIME}.zip"
 
             # ----- Check if Backup was at least written to file and File is not zero
-            if ! [ -s "${BACKUPFILE}-cloud-${DATETIME}.sql" ] || ! [ -s "${BACKUPFILE}-cloud_data-${DATETIME}" ] || ! [ -s "${BACKUPFILE}-instanceconfigfiles_cloud-${DATETIME}.tar.gz" ]; then
+            if ! [ -s "${BACKUPFILE}-cloud_db-${DATETIME}.sql" ] || ! [ -s "${BACKUPFILE}-cloud_file-${DATETIME}.tgz" ] || ! [ -s "${BACKUPFILE}-cloud_config-${DATETIME}.tgz" ]; then
                 echo "ERROR: owncloud backup of ${i}_cloud was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 exit 2
             fi
+            rm "${BACKUPFILE}-cloud_db-${DATETIME}.sql" "${BACKUPFILE}-cloud_config-${DATETIME}.tgz" "${BACKUPFILE}-cloud_file-${DATETIME}.tgz"
         fi
         # ----- Backup Style, only for Odoo Databases
         if [ ${TYPE} = "full" ]; then
             echo "creating full config backup file of config files for instance ${i}"
-            tar -cvf "${BACKUPFILE}-full-configfiles-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/*.{init,yml,conf,php,sh}
-            tar -uvf "${BACKUPFILE}-full-configfiles-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/owncloud/config/config.php
-            gzip "${BACKUPFILE}-full-configfiles-${DATETIME}.tar"
+            # ----- Take care on extracting always use -h HINT: tar -xhzvf test.tgz restores all symbolic links as they was on backup time
+            tar -cvf "${BACKUPFILE}-system-${DATETIME}.tar" /etc/nginx/
+            tar -rvf "${BACKUPFILE}-system-${DATETIME}.tar" /etc/init.d/
+            tar -rvf "${BACKUPFILE}-system-${DATETIME}.tar" /usr/share/nginx/html/
+            gzip "${BACKUPFILE}-system-${DATETIME}.tar"
+            # ----- keep this file outside of the packages cause it is normaly not needed
+            mv "${BACKUPFILE}-system-${DATETIME}.tar.gz" "${BACKUPFILE}-system-${DATETIME}.zip"
         fi
     done
     echo -e "\n--------------------------------------------------------------------------------------------------------"
