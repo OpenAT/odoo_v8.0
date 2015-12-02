@@ -1253,7 +1253,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     fi
 
     # ----- Global Variables
-    if ! [ "x$5" = "x" ]; then
+    if [[ ${5+x} ]]; then
         INTERVAL=$5
     else
         INTERVAL="ondemand"
