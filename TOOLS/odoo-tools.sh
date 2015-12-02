@@ -1331,7 +1331,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
                 exit 2
             fi
             # ----- if both files has been written config and DB delete
-            rm -f "${BACKUPFILE}-odoo_config-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo_db-${DATETIME}.zip" "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
+            rm -f "${BACKUPFILE}-odoo_config-${DATETIME}.tgz" "${BACKUPFILE}-odoo_db-${DATETIME}.zip" "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
         fi
 
         # ----- Backup Style, only for Etherpad Databases
