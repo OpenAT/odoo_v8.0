@@ -1,19 +1,19 @@
 # odoo_v8.0 Code Base
-This repository is used as a codebase for odoo v8.0 and the related setup tools (odoo-tools.sh). 
+This repository is used as a codebase for odoo v8.0 instances and the related setup tools (odoo-tools.sh). 
 The *master* branch of this repo is always a deploy-able production ready branch. 
 
 ## CONVENTIONS
 
 ### Branches:
-The default latest stable branch is called master.
-The other branches in the github repository are either production branches starting with "int" or "ext" (intdadi,
-intdadirle, exthof) or development branches (setuptools, fix1234) that will be merged back into the master branch.
+**The default latest stable branch is called master.**
+The other branches in the github repository are either **production branches starting with "int" or "ext"** (intdadi,
+intdadirle, exthof) or development and bugfix branches (setuptools, fix1234, dev_wsd_templates) that will be merged back into the master branch.
 
 ### Branch Names
-- **freename** e.g.: *setuptools*  = Local Development branches that will be merged into master (deleted after merge)
-- **fix[ISSUE Number]** e.g.: *fix1234*  = Developments related to Github Issues (deleted after merge)
-- **int[customer id]** e.g.: *intdemo* = Production Instances hosted on our servers (our servers - also our hosted ones e.g.: at abaton)
-- **ext[customer id]** e.g.: *exthof* = Production Instances hosted on customer servers (no control/payment for this servers from our side)
+- **dev[description]** or **freename** e.g.: *devsetuptools*  = Development branches that will be merged into master (deleted after merge)
+- **fix[Issue Number]** e.g.: *fix1234*  = Bug Fixes related to Github Issues (deleted after merge)
+- **int[rolloutlevel]** e.g.: *intdemo* = Production Branches hosted on our servers (our servers - also our hosted ones e.g.: at abaton)
+- **ext[customer id]** e.g.: *exthofe* = Production Branches hosted on customer servers (no control/payment for this servers from our side)
 
 #### Examples of Branch Names on github:
 - master (default stable branch)
@@ -23,12 +23,38 @@ intdadirle, exthof) or development branches (setuptools, fix1234) that will be m
 - exthofe
 - fix1234 (deleted after merge)
 - setuptools (deleted after merge)
+- dev_website_sale_donate_newtemplating (deleted after merge)
 
 ### Branch Updates (Deployment) for the odoo codebase:
 The flow of fast-forward-branch-updates is always: master -> intdadi -> intdadirl1 - intdadirl2
 Ext branches are normally not included in the update cycle.
 Therefore and to make FF possible **merges or commits are never done directly in any "int" or "ext" branches**
 Where int marks a server we pay (our own server) for and ext marks a server the custommer pays for (custommer server).
+
+### Backup Filename Convention
+```odoo-tools.sh backup``` can create backups of odoo, etherpad and owncloud. If you are creating backups always include
+the configuration files of the programm finally move all partial backups in a single zip or tgz archive. 
+Odoo backup example:
+Step 1: Odoo Database Backup **o8_intdadi_dadi-odoo_db-2015_01_23_0154.zip**
+Step 2: Odoo Config File Backup **o8_intdadi_dadi-odoo_conf-2015_01_0156.tgz**
+Step 3: **Move** both archives into the final backup archive **o8_intdadi_dadi-odoo-2015_01_23_0156.zip**
+
+#### Convention for backup parts file names:
+```[instancename]-[progname]_[backuptype]-[YYYY]_[MM]_[DD]_[HHmm].[fileending]``` e.g.: o8_intdadi_dadi-odoo_db-2015_01_23_0154.zip
+*progname* should be in [odoo|pad|cloud]
+*backuptype* must be in [db|conf|file]
+**db** = backup of a database (sql dump)
+**conf** = config files
+**file** = the rest ;) - file based backups
+
+
+#### Convention for the final backup file name:
+All backup parts will then be moved into a final backup archive:
+```[instancename]-[progname]-[YYYY]_[MM]_[DD]_[HHmm].[fileending]``` e.g.: o8_intdadi_dadi-odoo-2015_01_23_0154.tgz
+
+If it is a cyclical backup e.g. weekly or daily the Date Part can be replaced like this:
+```[instancename]-[progname]-[YYYY]_week_[weeknumber].[fileending]``` e.g.: o8_intdadi_dadi-odoo-week_32.tgz
+```[instancename]-[progname]-[YYYY]_day_[monday].[fileending]``` e.g.: o8_intdadi_dadi-odoo-day_monday.tgz
 
 
 ## GOALS
