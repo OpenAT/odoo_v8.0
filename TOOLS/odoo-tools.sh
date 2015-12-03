@@ -1391,9 +1391,8 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         if [ ${TYPE} = "full" ]; then
             echo "creating full config backup file of config files for instance ${i}"
             # ----- Take care on extracting always use -h HINT: tar -xhzvf test.tgz restores all symbolic links as they was on backup time
-            tar -cf "${BACKUPFILE}-system-${DATETIME}.tar" /etc/nginx/
-            tar -rf "${BACKUPFILE}-system-${DATETIME}.tar" /etc/init.d/
-            tar -rf "${BACKUPFILE}-system-${DATETIME}.tar" /usr/share/nginx/html/
+            # change to only link files to backup not everything
+            find /etc/init.d -name "*${i}*" -print0|tar -cvf "${BACKUPFILE}-system-${DATETIME}.tar" --null -T -
             gzip "${BACKUPFILE}-system-${DATETIME}.tar"
             # ----- keep this file outside of the packages cause it is normaly not needed
             mv "${BACKUPFILE}-system-${DATETIME}.tar.gz" "${BACKUPFILE}-system-${DATETIME}.zip"
