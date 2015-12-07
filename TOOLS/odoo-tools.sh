@@ -1249,15 +1249,161 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh restore     {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}
 # ---------------------------------------------------------------------------------------
-MODERESTORE="odoo-tools.sh restore {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME} {BACKUPFILE_NAME}"
+MODERESTORE="$ odoo-tools.sh restore {TARGET_BRANCH} {BACKUPFILE_NAME}"
 if [ "$SCRIPT_MODE" = "restore" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODERESTORE"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ne 2 ]; then
-        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly five arguments!"
+    if [ $# -ne 3 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly three arguments!"
         exit 2
     fi
+    TARGET_BRANCH=$2
+    BACKUPFILENAME=$3
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+
+    # ----- Checks
+    # ----- Check parameters
+    if ! [ "x${BACKUPFILENAME}" = "x" ]; then
+        echo "no BACKUP File given please check your parameters"
+        exit 2
+    fi
+
+    # ----- Check if Target Branch exists
+    if [ ! -d ${INSTANCE_PATH} ];then
+        echo "ERROR: given ${TARGET_BRANCH} does not exist, please check your options in ${REPOPATH} diretory"
+        exit 2
+    fi
+    # ----- Extract Database name of given Backup File
+    DBNAME=${BACKUPFILENAME%%-*}
+    echo "DEBUG: dbname from backfilename: ${DBNAME}"
+
+    # ----- Get the list of Databases in this Server
+    declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%' and datname not like '%_pad' and datname not like '%_cloud'\""))
+    echo "DEBUG: DAtabases: ${DATABASES[@]}"
+
+    # ----- check if Database exists for the given Database Backupfile to restore
+    if ! [[ "${DATABASES[@]}" =~ "${DBNAME}" ]]; then
+        echo "ERROR: database ${DBNAME} from the given ${BACKUPFILENAME} does not exist, please check your parameter and "
+        exit 2
+    fi
+
+    # ----- prepare further variables
+    TEMPWORKINGDIR="${INSTANCE_PATH}/${DBNAME}/BACKUP/TEMPRESTORE_deleteme"
+    BACKUPDIR="${INSTANCE_PATH}/${DBNAME}/BACKUP"
+
+    # ----- Find the given Backup File in Backupdirectory
+    if [ ! -f "${BACKUPDIR}/${BACKUPFILENAME}" ]; then
+        echo "ERROR: given Filename ${BACKUPFILENAME} does not exist, please check your parameter and the available Backup Files in ${BACKUPDIR}"
+        exit 2
+    fi
+
+    # ----- Prepare Restore Parameters for Instance and Data from Backup
+    DATABASECONFIGFILE=${INSTANCE_PATH}/${DBNAME}/${DBNAME}.conf
+    BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+    SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+    DB_PASSWD=($(grep "db_password" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+    DB_USER=($(grep "db_user" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+    TEMPWORKINGDIR=${BACKUPDIR}/TEMPRESTORE_deleteme
+    mkdir ${TEMPWORKINGDIR}
+
+    cp "${BACKUPDIR}/${BACKUPFILENAME}" "${TEMPWORKINGDIR}/"
+    tar -xzf ${TEMPWORKINGDIR}/${BACKUPFILENAME} --transform='s/.*\///'
+
+    # ----- restore
+    # 1. single restore
+    # 1.1 odoo
+    # 1.2 cloud
+    # 1.3 pad
+    # 2. full restore
+    # 2.1 extract fullbackup file which could hold all three backup types optional right now only single restore
+    # 3. all databases additional parameter
+
+
+    if [ -f ${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${BACKUPFILENAME} ]; then
+        BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip
+        echo "working on ${BACKUPFILENAME}"
+    elif [ ${BACKUPFILENAME} = "latest" ]; then
+        echo "todo find latest backup file"# this is in case of single database manual restore ... in upgradeinst mode this option is different
+        #BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip find latest file
+    else
+        echo "no backup file found or wrong backupfilename stopping ...."
+        exit 2
+    fi
+    if [ "$DB_NAME" != "" ]; then
+        echo "Unzip $BACKUPFILENAME"
+        echo "prepare and creating temp restore directory"
+        mkdir $BACKUPPATH/temprestore
+        if [ $(unzip $BACKUPFILENAME $BACKUPPATH/temprestore) ]; then
+            echo "unzipping successfully..."
+            ACTRESTOREDBDUMPNAME=$BACKUPATH/temprestore/dump.sql
+            ACTRESTOREFILESTOREPATH=$BACKUPATH/temprestore/filestore
+            ACTDATADIRPATH=$INSTANCE_PATH/$DATABASE_RUNNING/data_dir
+        else
+            echo "some error occured ...."
+            exit 2
+        fi
+    else
+        echo "Database Empty"
+        exit 2
+    fi
+    echo "check if open connections are available to databae ${DBAME} ...."
+    su postgres  -l -c "psql  -c 'select pg_terminate_backend(pid) \
+                      from pg_stat_activity \
+                      where datname = '\"'${DBNAME}'\"''"
+    #test su - postgres -c "psql select pg_terminate_backend(procpid) from pg_stat_activity where datname = '${DBNAME}"
+    echo "deleting Database before restore ...."
+    su - postgres -c "dropdb ${DBNAME}"
+    echo "DATABASE DELETED......"
+    # ----- Create a new Database
+    echo -e "\n----- Create empty Database ${DBNAME}"
+    if [ $(su - postgres -l -c "createdb -U $DB_USER -T template0 $DB_NAME") ] ; then
+        echo -e "Database created!" #| tee -a $DB_SETUPLOG
+        echo -e "going to restore Database $DB_NAME..."
+        if [ $(su - postgres -l -c "psql -U $DB_USER -p ${BASEPORT69} -d ${DBNAME} -h localhost -f ${BACKUPFILENAME}") ] ; then
+            echo -e "Database restore successfully finished .... doing some testt ..... "
+            echo -e "deleting sessions..."
+            rm -rf $ACTDATADIRPATH/sessions
+            echo -e "going to restere filestore"
+            if [ -d $ACTDATADIRPATH/filestore ]; then
+                echo "removing existing filestore..."
+                rm -rf $ACTDATADIRPATH/filestore
+            else
+                mkdir -p $ACTDATADIRPATH/filestore
+            fi
+            cp -r $ACTRESTOREFILESTOREPATH $ACTDATADIRPATH/filestore
+            echo "removing temprestore path..."
+            rm -r $BACKUPPATH/temprestore
+        else
+            echo -e "Database restore error stopping restore"
+            exit 2 # ??? TODO
+        fi
+    else
+        echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" #| tee -a $DB_SETUPLOG
+        echo -e "stopping restore process..."
+        exit 2
+    fi
+    #if [ $(su - postgres -l -c "psql -b ${BASEPORT69} -s ${SUPER_PASSWORD} newdb -d ${DBNAME} -p 'adminpw'") ] ; then
+
+    # test : access denied --> maybe open connection  ??? echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${DB_PASSWD} "drop" -d ${DBNAME})
+
+    #if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME}; then
+    #if ${INSTANCE_PATH}/TOOLS/psql -U DB_USER -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME}; then
+
+    #mit db-tools geht nicht, try manuell alles
+    #echo "Unzip ${BACKUPFILENAME}...."
+    #unzip ${BACKUPFILENAME}
+    #DUMPFILE=`echo ${BACKUPFILENAME} | cut -d"." -f1,2`
+    #echo "DUMPFILE ..... ${DUMPFILE}"
+    #echo "Create DB ${DBNAME} with ${BACKUPFILENAME} file.."
+    #su - postgres -c "createdb -U ${DB_USER} -T template1 ${DBNAME}"
+    #echo "starting restore ....."
+    #if $(su - postgres -c "psql -f ${BACKUPFILENAME} -d ${DBNAME}"); then
+    #    echo -e "Datbase restored successfully ..... "
+    #else
+    #    echo -e "Error on restoring database ....."
+    #fi
+
 
     # Todo: Check if BACKUPFILE_NAME exists and is readable
     # Todo: Try to restore BACKUPFILE_NAME to DBNAME_restoretest
