@@ -1328,10 +1328,13 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         done
     elif [ ${BACKUPTYPE} = "odoo" ]; then
         # todo: only do odoo specifix extracts if needed
+        echo "odoo"
     elif [ ${BACKUPTYPE} = "cloud" ]; then
        # todo: only do cloud specifix extracts if needed
+       echo "cloud"
     elif [ ${BACKUPTYPE} = "pad" ]; then
         # todo: only do pad specifix extracts if needed
+        echo "pad"
     fi
 
     # ----- restore
