@@ -1346,100 +1346,28 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     # 2.1 extract fullbackup file which could hold all three backup types optional right now only single restore
     # 3. all databases additional parameter
 
-
-    if [ -f ${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${BACKUPFILENAME} ]; then
-        BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip
-        echo "working on ${BACKUPFILENAME}"
-    elif [ ${BACKUPFILENAME} = "latest" ]; then
-        echo "todo find latest backup file"# this is in case of single database manual restore ... in upgradeinst mode this option is different
-        #BACKUPFILENAME=${INSTANCE_PATH}/${DATABASE_RUNNING}/BACKUP/${DATABASE_RUNNING}.zip find latest file
-    else
-        echo "no backup file found or wrong backupfilename stopping ...."
-        exit 2
-    fi
-    if [ "$DB_NAME" != "" ]; then
-        echo "Unzip $BACKUPFILENAME"
-        echo "prepare and creating temp restore directory"
-        mkdir $BACKUPPATH/temprestore
-        if [ $(unzip $BACKUPFILENAME $BACKUPPATH/temprestore) ]; then
-            echo "unzipping successfully..."
-            ACTRESTOREDBDUMPNAME=$BACKUPATH/temprestore/dump.sql
-            ACTRESTOREFILESTOREPATH=$BACKUPATH/temprestore/filestore
-            ACTDATADIRPATH=$INSTANCE_PATH/$DATABASE_RUNNING/data_dir
-        else
-            echo "some error occured ...."
-            exit 2
-        fi
-    else
-        echo "Database Empty"
-        exit 2
-    fi
-    echo "check if open connections are available to databae ${DBAME} ...."
+    # ----- Global preparations before restore
+    echo "Put instance ${DBNAME} into Maintenance mode"
+    sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
+    echo "Check if open connections are available to database ${DBNAME} ...."
     su postgres  -l -c "psql  -c 'select pg_terminate_backend(pid) \
                       from pg_stat_activity \
                       where datname = '\"'${DBNAME}'\"''"
-    #test su - postgres -c "psql select pg_terminate_backend(procpid) from pg_stat_activity where datname = '${DBNAME}"
-    echo "deleting Database before restore ...."
-    su - postgres -c "dropdb ${DBNAME}"
-    echo "DATABASE DELETED......"
-    # ----- Create a new Database
-    echo -e "\n----- Create empty Database ${DBNAME}"
-    if [ $(su - postgres -l -c "createdb -U $DB_USER -T template0 $DB_NAME") ] ; then
-        echo -e "Database created!" #| tee -a $DB_SETUPLOG
-        echo -e "going to restore Database $DB_NAME..."
-        if [ $(su - postgres -l -c "psql -U $DB_USER -p ${BASEPORT69} -d ${DBNAME} -h localhost -f ${BACKUPFILENAME}") ] ; then
-            echo -e "Database restore successfully finished .... doing some testt ..... "
-            echo -e "deleting sessions..."
-            rm -rf $ACTDATADIRPATH/sessions
-            echo -e "going to restere filestore"
-            if [ -d $ACTDATADIRPATH/filestore ]; then
-                echo "removing existing filestore..."
-                rm -rf $ACTDATADIRPATH/filestore
-            else
-                mkdir -p $ACTDATADIRPATH/filestore
-            fi
-            cp -r $ACTRESTOREFILESTOREPATH $ACTDATADIRPATH/filestore
-            echo "removing temprestore path..."
-            rm -r $BACKUPPATH/temprestore
-        else
-            echo -e "Database restore error stopping restore"
-            exit 2 # ??? TODO
-        fi
-    else
-        echo -e "WARNING: Could not create Database ${DBNAME} !\nPlease create it manually!" #| tee -a $DB_SETUPLOG
-        echo -e "stopping restore process..."
-        exit 2
+    rm -rf ${INSTANCE_PATH}/${DBNAME}/data_dir/sessions/*
+    if [ ${BACKUPTYPE} = "odoo" ] || [ ${BACKUPTYPE} = "full" ]; then
+        # todo: need drop database before or does retore mode of db-tools.py do this already ?
+        FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *odoo_db*)
+        ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILERESTORE}
+        echo "odoo"
+    elif [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
+       echo "cloud"
+    elif [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "full" ]; then
+        echo "pad"
+    elif [ ${BACKUPTYPE} = "system" ]; then
+        echo "system secific restore"
     fi
-    #if [ $(su - postgres -l -c "psql -b ${BASEPORT69} -s ${SUPER_PASSWORD} newdb -d ${DBNAME} -p 'adminpw'") ] ; then
 
-    # test : access denied --> maybe open connection  ??? echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${DB_PASSWD} "drop" -d ${DBNAME})
-
-    #if ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME}; then
-    #if ${INSTANCE_PATH}/TOOLS/psql -U DB_USER -b ${BASEPORT69} -s ${SUPER_PASSWORD} "restore" -d ${DBNAME} -f ${BACKUPFILENAME}; then
-
-    #mit db-tools geht nicht, try manuell alles
-    #echo "Unzip ${BACKUPFILENAME}...."
-    #unzip ${BACKUPFILENAME}
-    #DUMPFILE=`echo ${BACKUPFILENAME} | cut -d"." -f1,2`
-    #echo "DUMPFILE ..... ${DUMPFILE}"
-    #echo "Create DB ${DBNAME} with ${BACKUPFILENAME} file.."
-    #su - postgres -c "createdb -U ${DB_USER} -T template1 ${DBNAME}"
-    #echo "starting restore ....."
-    #if $(su - postgres -c "psql -f ${BACKUPFILENAME} -d ${DBNAME}"); then
-    #    echo -e "Datbase restored successfully ..... "
-    #else
-    #    echo -e "Error on restoring database ....."
-    #fi
-
-
-    # Todo: Check if BACKUPFILE_NAME exists and is readable
-    # Todo: Try to restore BACKUPFILE_NAME to DBNAME_restoretest
-        # If success Todo: Remove DB DBNAME_restoretest
-    # Todo: Backup DBNAME
-        # check size, and if restoreabel - so restore and if success remove db again :)
-        # If success Todo: Remove DBNAME
-        # Todo: Restore BACKUPFILE_NAME to DBNAME
-            # If success restart DBNAME service
+    sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable"
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODERESTORE DONE"
