@@ -1306,9 +1306,26 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     DB_USER=($(grep "db_user" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     TEMPWORKINGDIR=${BACKUPDIR}/TEMPRESTORE_deleteme
     mkdir ${TEMPWORKINGDIR}
+    tar -xzf ${TEMPWORKINGDIR}/${BACKUPFILENAME} --transform='s/.*\///' "${TEMPWORKINGDIR}"
 
-    cp "${BACKUPDIR}/${BACKUPFILENAME}" "${TEMPWORKINGDIR}/"
-    tar -xzf ${TEMPWORKINGDIR}/${BACKUPFILENAME} --transform='s/.*\///'
+    # ----- Check Backup Type
+    if [[ "${BACKUPFILENAME}" =~ "odoo" ]]; then
+        BACKUPTYPE="odoo"
+    elif [[ "${BACKUPFILENAME}" =~ "pad" ]]; then
+        BACKUPTYPE="pad"
+    elif [[ "${BACKUPFILENAME}" =~ "cloud" ]]; then
+        BACKUPTYPE="cloud"
+    elif [[ "${BACKUPFILENAME}" =~ "full" ]]; then
+        BACKUPTYPE="full"
+    else
+        BACKUPTYPE="system"
+    fi
+
+    # ----- Prepare DATA for restore
+    if [ ${BACKUPTYPE} = "full" ]; then
+        # todo: extract package and prepare
+        echo "test"
+    fi
 
     # ----- restore
     # 1. single restore
