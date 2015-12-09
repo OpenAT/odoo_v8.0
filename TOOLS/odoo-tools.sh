@@ -1323,8 +1323,15 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
 
     # ----- Prepare DATA for restore
     if [ ${BACKUPTYPE} = "full" ]; then
-        # todo: extract package and prepare
-        echo "test"
+        for FILE in `ls ${TEMPWORKINGDIR}/*`; do
+            tar -xzf ${TEMPWORKINGDIR}/${FILE} --transform='s/.*\///' "${TEMPWORKINGDIR}"
+        done
+    elif [ ${BACKUPTYPE} = "odoo" ]; then
+        # todo: only do odoo specifix extracts if needed
+    elif [ ${BACKUPTYPE} = "cloud" ]; then
+       # todo: only do cloud specifix extracts if needed
+    elif [ ${BACKUPTYPE} = "pad" ]; then
+        # todo: only do pad specifix extracts if needed
     fi
 
     # ----- restore
