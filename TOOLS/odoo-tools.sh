@@ -1397,8 +1397,15 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             # ----- keep this file outside of the packages cause it is normaly not needed
             mv "${BACKUPFILE}-system-${DATETIME}.tar.gz" "${BACKUPFILE}-system-${DATETIME}.zip"
             tar -cf "${BACKUPFILE}-full-${DATETIME}.tar" "${BACKUPFILE}-odoo-${DATETIME}.zip"
+            rm "${BACKUPFILE}-odoo-${DATETIME}.zip"
             tar -rf "${BACKUPFILE}-full-${DATETIME}.tar" "${BACKUPFILE}-cloud-${DATETIME}.zip"
+            rm "${BACKUPFILE}-pad-${DATETIME}.zip"
             tar -rf "${BACKUPFILE}-full-${DATETIME}.tar" "${BACKUPFILE}-pad-${DATETIME}.zip"
+            rm "${BACKUPFILE}-pad-${DATETIME}.zip"
+            tar -rf "${BACKUPFILE}-full-${DATETIME}.tar" "${BACKUPFILE}-system-${DATETIME}.zip"
+            rm "${BACKUPFILE}-system-${DATETIME}.zip"
+            gzip "${BACKUPFILE}-full-${DATETIME}.tar"
+            mv "${BACKUPFILE}-full-${DATETIME}.tar.gz" "${BACKUPFILE}-full-${DATETIME}.zip"
         fi
     done
     echo -e "\n--------------------------------------------------------------------------------------------------------"
