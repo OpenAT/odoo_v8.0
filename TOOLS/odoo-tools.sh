@@ -1327,12 +1327,15 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     # ----- Prepare DATA for restore extract aso
     # ----- If a full package was given all the singles packages needs to be extracted
     if [ ${BACKUPTYPE} = "full" ]; then
+        FILES=$(ls -l ${TEMPWORKINGDIR})
+        echo "files ${FILES}"
         for FILE in `ls ${TEMPWORKINGDIR}/*`; do
+            echo "filename: ${FILE}"
             tar -xzf ${FILE} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
             rm ${FILE}
         done
     fi
-
+exit 2
     # ----- Special case cloud data extraction
     if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILE=$(find ${TEMPWORKINGDIR} -name *cloud*)
@@ -1379,11 +1382,11 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *cloud_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_cloud Database"
-        if [ su - postgres -c "pg_restore -d ${DBNAME}_cloud ${FILETORESTORE}" ]; then
+        su - postgres -c "pg_restore -d ${DBNAME}_cloud ${FILETORESTORE}"
             echo "${BACKUPTYPE} restore cloud"
-        else
-            echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
-            exit 2
+        # todo: else error
+        #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
+        #    exit 2
         fi
         # todo: testing owncloud do login and download a testfile or anything better else error
         rsync -Aax ${TEMPWORKINGDIR}/data/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
@@ -1393,12 +1396,11 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *pad_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_pad Database"
         PADUSERNAME=${DBNAME}_pad
-        if [ su - postgres -c "pg_restore -d ${DBNAME}_pad ${FILETORESTORE}" ]; then
-            echo "${BACKUPTYPE} restore pad"
-        else
-            echo "ERRRO: ${BACKUPTYPE} restore for pad was not successfully"
-            exit 2
-        fi
+        su - postgres -c "pg_restore -d ${DBNAME}_pad ${FILETORESTORE}"
+        echo "${BACKUPTYPE} restore pad"
+        # todo: else error
+        #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
+        #    exit 2
     fi
     if [ ${BACKUPTYPE} = "system" ]; then
         # todo: system restore if needed
