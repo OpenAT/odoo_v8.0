@@ -127,7 +127,7 @@ if [ "$SCRIPT_MODE" = "prepare" ]; then
     # ----- Install Basic Packages
     echo -e "\n----- Install Basic Packages"
     apt-get install ssh wget sed git git-core gzip curl python libssl-dev libxml2-dev libxslt-dev libxslt1-dev \
-        build-essential gcc mc bzr lptools make pkg-config nodejs gdebi -y >> ${SETUP_LOG}
+        build-essential gcc mc bzr lptools make pkg-config nodejs gdebi nfs-common -y >> ${SETUP_LOG}
     echo -e "----- Install Basic Packages Done"
 
     # ----- Less compiler needed by Odoo 8 Website -
@@ -454,6 +454,8 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
     DBBACKUPPATH="${DBPATH}/BACKUP"
     DB_SETUPLOG="${DBPATH}/${SCRIPT_MODE}--${DBNAME}--`date +%Y-%m-%d__%H-%M`.log"
     ETHERPADKEY=`tr -cd \#_[:alnum:] < /dev/urandom |  fold -w 16 | head -1`
+    QNAPUSERNAME="admin"
+    QNAPBACKUPSERVER="192.168.37.100"
 
     # ----- Basic Checks
 
@@ -493,9 +495,19 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         echo -e "ERROR: ${DBPATH} could not be created!"; exit 2
     fi
 
-    # ----- Create BACKUP directory
+    # ----- Create BACKUP directory and mount remote Backup location and Write fstab
     if  mkdir ${DBBACKUPPATH} 2>&1>/dev/null; then
         echo -e "Database BACKUP Directory ${DBBACKUPPATH} created."
+        read -p "Do you you want to create a remote BACKUP location at external Storage ${QNAPBACKUPSERVER} ? otherwise local dir is used. To continue: <y/N>" prompt
+        if [[ ${prompt} =~ [yY](es)* ]]; then
+            echo "Creating remote BACKUP location and mount into ${DBBACKUPPATH}"
+            ssh ${QNAPUSERNAME}@${QNAPBACKUPSERVER} "mkdir -p /share/BACKUP-FCOM/${DBNAME}"
+            chown -Rf ${DBNAME}: ${DBBACKUPPATH}
+            mount -t nfs ${QNAPBACKUPSERVER}:/BACKUP-FCOM/${DBNAME} ${DBBACKUPPATH}
+            echo -e "${QNAPBACKUPSERVER}:/BACKUP-FCOM/${DBNAME}\t${DBBACKUPPATH}\tnfs\tdefaults,noatime 0 0" >> /etc/fstab
+        else
+            echo "Remote directory creation ignored"
+        fi
     else
         echo -e "ERROR: Could not create directory ${DBBACKUPPATH}!"; exit 2
     fi
@@ -1083,7 +1095,7 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     # modules are not considered cause status is "uninstalled"
     # if there is time write this function in better code, i changed the behavior more times so its bad written code
 
-    # -------- BASIC Definitions BEGIN ---------
+    # ----- Basic definitions
 
     TARGET_BRANCH=$2
     DBNAME=$3
@@ -1095,9 +1107,8 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
     SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     BASEPORT69=($(grep "xmlrpc_port" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     TMPFILENAME=${INSTANCE_PATH}/${DBNAME}/BACKUP1/templang_${DBNAME}
-    # ------------------------------------------ BASIC Definitions END ------------------------------------------------
 
-    # ------------------------------------------ PREPARATIONS 4 - 5 BEGIN ---------------------------------------------
+    # ----- Preparations
     echo "Start Preparations of Language and Module Lists...."
 
     # get the list of addonpaths
@@ -1169,23 +1180,19 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
         echo "ERROR: Module does not exist"
         exit 2
     fi
-    # ------------------------------------------ PREPARATIONS 4 - 5 - 6 END -------------------------------------------
     echo "Starting update..."
-    # ------------------------------------------ ADMIN PREPREPARATIONS 1 - 2 - 3 BEGIN --------------------------------
+    # ----- Administrative preparations
     # Switches 1 2 3 to this place because the exit states would leave the System shut off, so no need to shut the
     # System off while preparation nothing is happening to the system while preparations
     echo "Enabling maintenance mode of ${DBNAME} instance...."
     # Calling this script recursive with another option for maintenance mode
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     echo "Create, temp database backup ${DBNAME} before update..."
-    ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_before.zip
-    # TODO: change this recursive call odoo_tools.sh later or use only pgdump for this temp backup
-    #sudo - postgres ${DBNAME} > ${TMPFILENAME}_before.sql
+    sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
     echo "Stopping odoo of instance ${DBNAME} ..."
     service ${DBNAME} stop
-    # ------------------------------------------ ADMIN PREPARATIONS 1 - 2 - 3 END -------------------------------------
 
-    # ------------------------------------------ UPDATE 7 BEGIN -------------------------------------------------------
+    # ----- Update
     for addon in ${ADDONS}; do
         for code in ${!LANGUAGES[@]}; do
             if [ -f ${addon}/i18n/${LANGUAGES[${code}]}.po ]; then
@@ -1195,27 +1202,23 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
             fi
         done
     done
-
-    # ------------------------------------------ UPDATE 7 BEGIN ---------------------------------------------------------
-
-    # ------------------------------------------ ADMIN POST PREPARATION 8 - 9 - 10 BEGIN -----------------------------------------
-
-    echo "Temporary backup of Database ${DBNAME} after udpate..."
-    ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s "${SUPER_PASSWORD}" backup -d ${DBNAME} -f ${TMPFILENAME}_after.zip
-    # TODO: change this recursive call odoo_tools.sh later or use only pgdump for this temp backup
-    #sudo - postgres ${DBNAME} > ${TMPFILENAME}_before.sql
+    # ----- Adminstrative post preparations
     echo "Starting up Database ...."
     service ${DBNAME} start
+    wget -q --retry-connrefused -t 10 http://127.0.0.1:${BASEPORT69}/web/login
+    if ! [ $? = 0 ]; then
+        echo "ERROR: ${DBNAME} not available"
+        exit 2
+    fi
+    echo "Temporary backup of Database ${DBNAME} after udpate..."
+    sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME}"
     #remove temp INSTALLED ADDON LIST NOT NEEDED and is overriten everytime
     rm ${INSTANCE_PATH}/${DBNAME}/INSTALLEDMODULES
     echo "Disable maintenance mode of customer Instance ..."
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable" #recursice call this script with special parameter
     echo -e "\t\t!!!!! ATTENTION !!!!!"
-    echo -e "\n \t\t PLEASE DELETE ${TMPFILENAME}_after.zip"
-    echo -e "and ${TMPFILENAME}_before.zip if everything went well"
-    echo -e "\t\t OR USE IT FOR RESTORE"
-
-    # ------------------------------------------- ADMIN POST PREPARATION END ------------------------------------------
+    echo -e "\n \t\t temporary backup files has been created IS-BACKUP--${DBNAME}--date.zip"
+    echo -e "\t\t DELETE OR USE IT FOR RESTORE"
 
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e "$UPDATETRANSLATION DONE"
@@ -1224,23 +1227,187 @@ if [ "$SCRIPT_MODE" = "updatetranslation" ]; then
 fi
 
 # ---------------------------------------------------------------------------------------
-# $ odoo-tools.sh backup      {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}
+# $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} #  [TYPE]
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME}"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all} [odoozip|etherpad|owncloud|full] {INTERVAL}"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
     echo -e "--------------------------------------------------------------------------------------------------------"
-    if [ $# -ne 2 ]; then
-        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes exactly four arguments!"
+    if ! [ $# -ge 3 ] || [ $# -gt 5 ]; then
+        echo -e "ERROR: \"setup-toosl.sh $SCRIPT_MODE\" takes a minimum of three and a maximum of five arguments!"
         exit 2
     fi
 
-    # TODO: check or create INSTANCE/DATABASE/BACKUP folder
-    # Todo: CD to BACKUP folder
-    # Todo: create backup with dbname--DATE.zip with DATE in Format 2014-12-30--24-59
+    # ----- Initialize Variables
+    DBNAME=$3
+    TARGET_BRANCH=$2
+    if ! [ "x$4" = "x" ]; then
+        if [ $4 == "odoozip" ] || [ $4 == "etherpad" ] || [ $4 == "owncloud" ] || [ $4 == "full" ]; then
+            TYPE=$4
+        else
+            echo "ERROR: ${4} must be empty or in [odoozip|etherpad|owncloud|full] !"; exit 2
+        fi
+    else
+        TYPE="full"
+    fi
 
+    # ----- Global Variables
+    if [[ ${5+x} ]]; then
+        INTERVAL=$5
+    else
+        INTERVAL="ondemand"
+    fi
+    echo "interval: ${INTERVAL}"
+    if [ ${INTERVAL} = "ondemand" ]; then
+        DATETIME=`date +%Y_%m_%d_%H%M`
+    else
+        DATETIME=`date +%Y_`${INTERVAL}
+    fi
+    echo "datetime: ${DATETIME}"
 
+    BRANCHLOGFILE="${REPOPATH}/SETUP/IS-BACKUP--${DATETIME}.log"
+    INSTANCE_PATH="${REPOPATH}/${TARGET_BRANCH}"
+
+    # ----- Find Odoo-Instance(s) to Backup
+    if [ ${DBNAME} = "all" ]; then
+        declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%' and datname not like '%_pad' and datname not like '%_cloud'\""))
+    else
+        GREPREGEX="\b${DBNAME}"
+        declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%' and datname not like '%_pad' and datname not like '%_cloud'\""|grep -o ${GREPREGEX}))
+    fi
+    echo "DEBUG: regex: ${GREPREGEX}, dbname: ${DBNAME}"
+    # Todo: Use the correct linux user instead of SU except for full backup. Check rights of psql
+    if [ "x${DATABASES}" = "x" ]; then
+        echo "ERROR: No Database found!"
+    fi
+
+    # Todo: check vmware Snapshot how to remote execute the vmware-cmd command with ssh connection to esx server directly, check if the VM is running on this machine
+    # Todo: or find a way of acting through Virtual center server this server has access to the whole cluster and no check on which host a machine is running would be needed
+    # ----- Backup Data for each Instance
+    counter=3
+    for i in "${DATABASES[@]}"; do
+        # Check if we are at PAD CLOUD OR ODOO DB
+
+        # ----- Getting config of database an Parameters
+        INSTANCELOGFILE="${INSTANCE_PATH}/${i}/LOG/IS-BACKUP--${i}--${DATETIME}.log"
+        echo "instancelogfile: ${INSTANCELOGFILE}"
+        INSTANCECONFIGFILE=${INSTANCE_PATH}/${i}/${i}.conf
+        echo "Database Config File --> ${INSTANCECONFIGFILE}" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+        BASEPORT69=($(grep "xmlrpc_port" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+        SUPER_PASSWORD=($(grep "admin_passwd" ${INSTANCECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+        BACKUPFILE=${INSTANCE_PATH}/${i}/BACKUP/${i}
+        echo -e "${DATETIME}: Start ${TYPE} backup for instance ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+
+        # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
+        # ----- Backup Style, only for Odoozip Databases
+        if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
+            echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPFILE}-odoo_db-${DATETIME}.zip") #-t ${TYPE}
+            if [ -d ${INSTANCE_PATH}/${i}/data_dir/filestore ]; then
+                echo -e "${DATETIME}: Start ${TYPE} backup for filestore of ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -czf "${BACKUPFILE}-odoo_file-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/data_dir/filestore/
+            fi
+            #BACKUP all Config files separately, this needs to be extended when new config files are used
+            tar -cf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-backup.sh
+            tar -rf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}.conf
+            tar -rf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}.init
+            tar -rf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-logrotate.conf
+            tar -rf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-nginx.conf
+            tar -rf "${BACKUPFILE}-odoo_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}-pushtodeploy.*
+            gzip "${BACKUPFILE}-odoo_config-${DATETIME}.tar"
+            mv "${BACKUPFILE}-odoo_config-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo_config-${DATETIME}.tgz"
+            # ----- Create Package of db and config files
+            tar -cf "${BACKUPFILE}-odoo-${DATETIME}.tar" "${BACKUPFILE}-odoo_config-${DATETIME}.tgz"
+            tar -rf "${BACKUPFILE}-odoo-${DATETIME}.tar" "${BACKUPFILE}-odoo_db-${DATETIME}.zip"
+            if [ -f ${BACKUPFILE}-odoo_file-${DATETIME}.tgz ]; then
+                tar -rf "${BACKUPFILE}-odoo-${DATETIME}.tar" "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
+            fi
+            gzip "${BACKUPFILE}-odoo-${DATETIME}.tar"
+            mv "${BACKUPFILE}-odoo-${DATETIME}.tar.gz" "${BACKUPFILE}-odoo-${DATETIME}.zip"
+            # ----- Check if Backup was at least written to file and File is not zero
+            if ! [ -s "${BACKUPFILE}-odoo_db-${DATETIME}.zip" ] && ! [ "${BACKUPFILE}-odoo_config-${DATETIME}.tgz" ]; then
+                echo "ERROR: backup of ${i} or config files backup was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                exit 2
+            fi
+            # ----- if both files has been written config and DB delete
+            rm -f "${BACKUPFILE}-odoo_config-${DATETIME}.tgz" "${BACKUPFILE}-odoo_db-${DATETIME}.zip" "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
+        fi
+
+        # ----- Backup Style, only for Etherpad Databases
+        if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
+            sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPFILE}-pad_db-${DATETIME}.sql"
+            echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_pad." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            #BACKUP all Config files separately, this needs to be extended when new config files are used
+            tar -czf "${BACKUPFILE}-pad_config-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/${i}-pad*
+            tar -cf "${BACKUPFILE}-pad-${DATETIME}.tar" "${BACKUPFILE}-pad_config-${DATETIME}.tgz"
+            tar -rf "${BACKUPFILE}-pad-${DATETIME}.tar" "${BACKUPFILE}-pad_db-${DATETIME}.sql"
+            gzip "${BACKUPFILE}-pad-${DATETIME}.tar"
+            mv "${BACKUPFILE}-pad-${DATETIME}.tar.gz" "${BACKUPFILE}-pad-${DATETIME}.zip"
+            # ----- Check if Backup was at least written to file and File is not zero
+            if ! [ -s "${BACKUPFILE}-pad_db-${DATETIME}.sql" ] && ! [ "${BACKUPFILE}-pad_config-${DATETIME}.tgz" ]; then
+                echo "ERROR: backup of Etherpad ${i}_pad or config was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                exit 2
+            fi
+            rm -f "${BACKUPFILE}-pad_config-${DATETIME}.tgz" "${BACKUPFILE}-pad_db-${DATETIME}.sql"
+        fi
+
+        # ----- Backup Style, only for Owncloud Databases
+        if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
+            sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPFILE}-cloud_db-${DATETIME}.sql"
+            echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            #BACKUP all Config files separately, this needs to be extended when new config files are used
+            tar -cf "${BACKUPFILE}-cloud_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/${i}_cloud*
+            if [ "$(ls -A ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
+                echo -e "${DATETIME}: Start ${TYPE} backup for owncloud DATA for ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -czf "${BACKUPFILE}-cloud_file-${DATETIME}.tgz" ${INSTANCE_PATH}/${i}/owncloud/data/ | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            else
+                echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            fi
+            if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
+                echo -e "${DATETIME}: Start ${TYPE} backup for owncloud config ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -rf "${BACKUPFILE}-cloud_config-${DATETIME}.tar" ${INSTANCE_PATH}/${i}/owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                gzip "${BACKUPFILE}-cloud_config-${DATETIME}.tar"
+                mv "${BACKUPFILE}-cloud_config-${DATETIME}.tar.gz" "${BACKUPFILE}-cloud_config-${DATETIME}.tgz"
+            else
+                echo "ERROR: No Config file found skipping config Backup of owncloud... please check the owncloud config seems not to be finished" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                exit 2
+            fi
+            # ----- create package of db and config files and datadir
+            tar -cf "${BACKUPFILE}-cloud-${DATETIME}.tar" "${BACKUPFILE}-cloud_db-${DATETIME}.sql"
+            tar -rf "${BACKUPFILE}-cloud-${DATETIME}.tar" "${BACKUPFILE}-cloud_config-${DATETIME}.tgz"
+            tar -rf "${BACKUPFILE}-cloud-${DATETIME}.tar" "${BACKUPFILE}-cloud_file-${DATETIME}.tgz"
+            gzip "${BACKUPFILE}-cloud-${DATETIME}.tar"
+            mv "${BACKUPFILE}-cloud-${DATETIME}.tar.gz" "${BACKUPFILE}-cloud-${DATETIME}.zip"
+
+            # ----- Check if Backup was at least written to file and File is not zero
+            if ! [ -s "${BACKUPFILE}-cloud_db-${DATETIME}.sql" ] || ! [ -s "${BACKUPFILE}-cloud_file-${DATETIME}.tgz" ] || ! [ -s "${BACKUPFILE}-cloud_config-${DATETIME}.tgz" ]; then
+                echo "ERROR: owncloud backup of ${i}_cloud was not successfull" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                exit 2
+            fi
+            rm -f "${BACKUPFILE}-cloud_db-${DATETIME}.sql" "${BACKUPFILE}-cloud_config-${DATETIME}.tgz" "${BACKUPFILE}-cloud_file-${DATETIME}.tgz"
+        fi
+        # ----- Backup Style, only for Odoo Databases
+        if [ ${TYPE} = "full" ]; then
+            echo "creating full config backup file of config files for instance ${i}"
+            # ----- Take care on extracting always use -h HINT: tar -xhzvf test.tgz restores all symbolic links as they was on backup time
+            # change to only link files to backup not everything
+            find /etc/init.d -name "*${i}*" -print0|tar -cvf "${BACKUPFILE}-system-${DATETIME}.tar" --null -T -
+            gzip "${BACKUPFILE}-system-${DATETIME}.tar"
+            # ----- keep this file outside of the packages cause it is normaly not needed
+            mv "${BACKUPFILE}-system-${DATETIME}.tar.gz" "${BACKUPFILE}-system-${DATETIME}.zip"
+            tar -cf "${BACKUPFILE}-full-${DATETIME}.tar" "${BACKUPFILE}-odoo-${DATETIME}.zip"
+            rm "${BACKUPFILE}-odoo-${DATETIME}.zip"
+            tar -rf "${BACKUPFILE}-full-${DATETIME}.tar" "${BACKUPFILE}-cloud-${DATETIME}.zip"
+            rm "${BACKUPFILE}-cloud-${DATETIME}.zip"
+            tar -rf "${BACKUPFILE}-full-${DATETIME}.tar" "${BACKUPFILE}-pad-${DATETIME}.zip"
+            rm "${BACKUPFILE}-pad-${DATETIME}.zip"
+            tar -rf "${BACKUPFILE}-full-${DATETIME}.tar" "${BACKUPFILE}-system-${DATETIME}.zip"
+            rm "${BACKUPFILE}-system-${DATETIME}.zip"
+            gzip "${BACKUPFILE}-full-${DATETIME}.tar"
+            mv "${BACKUPFILE}-full-${DATETIME}.tar.gz" "${BACKUPFILE}-full-${DATETIME}.zip"
+        fi
+    done
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP DONE"
     echo -e "--------------------------------------------------------------------------------------------------------"
@@ -1283,10 +1450,10 @@ echo -e "$ $MODESETUP"
 echo -e "$ $MODENEWDB"
 echo -e "$ $MAINTENANCEMODE"
 echo -e "$ $UPDATETRANSLATION"
+echo -e "$ $MODEBACKUP"
 echo -e "----------------- TODOs ----------------"
 echo -e "TODO: odoo-tools.sh deployaddon {TARGET_BRANCH} {SUPER_PASSWORD} {DBNAME,DBNAME|all} {ADDON,ADDON}"
 echo -e "TODO: $MODEDUPDB"
 echo -e "TODO: $MODEUPDATEINST"
-echo -e "TODO: $MODEBACKUP"
 echo -e "TODO: $MODERESTORE"
 echo -e "------------------------\n"
