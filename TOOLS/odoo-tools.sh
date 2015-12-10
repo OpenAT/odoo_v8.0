@@ -1306,6 +1306,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     DB_USER=($(grep "db_user" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     TEMPWORKINGDIR=${BACKUPDIR}/TEMPRESTORE_deleteme
     mkdir ${TEMPWORKINGDIR}
+    # ----- In all cases extract the given filename into TEMPWORKINGDIR and then start checking, with this the full option is already handled too
     tar -xzf ${TEMPWORKINGDIR}/${BACKUPFILENAME} --transform='s/.*\///' "${TEMPWORKINGDIR}"
 
     # ----- Check Backup Type
@@ -1315,27 +1316,40 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         BACKUPTYPE="pad"
     elif [[ "${BACKUPFILENAME}" =~ "cloud" ]]; then
         BACKUPTYPE="cloud"
+    elif [[ "${BACKUPFILENAME}" =~ "system" ]]; then
+        BACKUPTYPE="system"
     elif [[ "${BACKUPFILENAME}" =~ "full" ]]; then
         BACKUPTYPE="full"
     else
-        BACKUPTYPE="system"
+        echo "ERROR: no option found for this type of file, please check your backupfile ${BACKUPFILENAME}"
     fi
 
-    # ----- Prepare DATA for restore
+    # ----- Prepare DATA for restore extract aso
+    # ----- If a full package was given all the singles packages needs to be extracted
     if [ ${BACKUPTYPE} = "full" ]; then
         for FILE in `ls ${TEMPWORKINGDIR}/*`; do
-            tar -xzf ${TEMPWORKINGDIR}/${FILE} --transform='s/.*\///' "${TEMPWORKINGDIR}"
+            tar -xzf ${FILE} --transform='s/.*\///' "${TEMPWORKINGDIR}"
+            rm ${FILE}
         done
-    elif [ ${BACKUPTYPE} = "odoo" ]; then
-        # todo: only do odoo specifix extracts if needed
-        echo "odoo"
-    elif [ ${BACKUPTYPE} = "cloud" ]; then
-       # todo: only do cloud specifix extracts if needed
-       echo "cloud"
-    elif [ ${BACKUPTYPE} = "pad" ]; then
-        # todo: only do pad specifix extracts if needed
-        echo "pad"
     fi
+
+    # ----- Special case cloud data extraction
+    if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
+        FILE=$(find ${TEMPWORKINGDIR} -name *cloud*)
+        tar -xzf ${FILE} --transform='s/.*\///' "${TEMPWORKINGDIR}"
+        rm ${FILE}
+        FILE=$(find ${TEMPWORKINGDIR} -name *cloud_file*)
+        tar -xzf ${FILE} --transform='s/.*\///' "${TEMPWORKINGDIR}"
+        rm ${FILE}
+    fi
+
+    # ----- If a single package was given it is already extracted above so nothing to do anymore
+    #if [ ${BACKUPTYPE} = "odoo" ] || [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "system" ]; then
+    #    echo "Extracting ${BACKUPTYPE} Package ${BACKUPFILENAME}"
+    #    tar -xzf ${TEMPWORKINGDIR}/${BACKUPFILENAME} --transform='s/.*\///' "${TEMPWORKINGDIR}"
+    #else
+    #    echo "ERROR: no backup option found for this filetype please check your filename ${BACKUPFILENAME}"
+    #fi
 
     # ----- restore
     # 1. single restore
@@ -1354,16 +1368,40 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
                       from pg_stat_activity \
                       where datname = '\"'${DBNAME}'\"''"
     rm -rf ${INSTANCE_PATH}/${DBNAME}/data_dir/sessions/*
+    # todo: temp backup before restore ??? discussion
     if [ ${BACKUPTYPE} = "odoo" ] || [ ${BACKUPTYPE} = "full" ]; then
         # todo: need drop database before or does retore mode of db-tools.py do this already ?
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *odoo_db*)
-        ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILERESTORE}
-        echo "odoo"
-    elif [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
-       echo "cloud"
-    elif [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "full" ]; then
-        echo "pad"
-    elif [ ${BACKUPTYPE} = "system" ]; then
+        ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILETORESTORE}
+        # todo: check url and parse home html for testing or anything better
+        echo "${BACKUPTYPE} restore odoo"
+    fi
+    if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
+        FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *cloud_db*.sql)
+        echo "${FILETORESTORE} will be restored into existing ${DBNAME}_cloud Database"
+        if [ su - postgres -c "pg_restore -d ${DBNAME}_cloud ${FILETORESTORE}" ]; then
+            echo "${BACKUPTYPE} restore cloud"
+        else
+            echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
+            exit 2
+        fi
+        # todo: testing owncloud do login and download a testfile or anything better else error
+        rsync -Aax ${TEMPWORKINGDIR}/data/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
+        #rsync -Aax ${TEMPWORKINGDIR}/apps/ ${INSTANCE_PATH}/${DBNAME}/owncloud/apps/
+    fi
+    if [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "full" ]; then
+        FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *pad_db*.sql)
+        echo "${FILETORESTORE} will be restored into existing ${DBNAME}_pad Database"
+        PADUSERNAME=${DBNAME}_pad
+        if [ su - postgres -c "pg_restore -d ${DBNAME}_pad ${FILETORESTORE}" ]; then
+            echo "${BACKUPTYPE} restore pad"
+        else
+            echo "ERRRO: ${BACKUPTYPE} restore for pad was not successfully"
+            exit 2
+        fi
+    fi
+    if [ ${BACKUPTYPE} = "system" ]; then
+        # todo: system restore if needed
         echo "system secific restore"
     fi
 
