@@ -1264,7 +1264,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
 
     # ----- Checks
     # ----- Check parameters
-    if ! [ "x${BACKUPFILENAME}" = "x" ]; then
+    if [ "x${BACKUPFILENAME}" = "x" ]; then
         echo "no BACKUP File given please check your parameters"
         exit 2
     fi
