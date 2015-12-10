@@ -1307,7 +1307,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     TEMPWORKINGDIR=${BACKUPDIR}/TEMPRESTORE_deleteme
     mkdir ${TEMPWORKINGDIR}
     # ----- In all cases extract the given filename into TEMPWORKINGDIR and then start checking, with this the full option is already handled too
-    tar -xzf ${TEMPWORKINGDIR}/${BACKUPFILENAME} --transform='s/.*\///' "${TEMPWORKINGDIR}"
+    tar -xzf ${TEMPWORKINGDIR}/${BACKUPFILENAME} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
 
     # ----- Check Backup Type
     if [[ "${BACKUPFILENAME}" =~ "odoo" ]]; then
@@ -1328,7 +1328,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     # ----- If a full package was given all the singles packages needs to be extracted
     if [ ${BACKUPTYPE} = "full" ]; then
         for FILE in `ls ${TEMPWORKINGDIR}/*`; do
-            tar -xzf ${FILE} --transform='s/.*\///' "${TEMPWORKINGDIR}"
+            tar -xzf ${FILE} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
             rm ${FILE}
         done
     fi
@@ -1336,10 +1336,10 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     # ----- Special case cloud data extraction
     if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILE=$(find ${TEMPWORKINGDIR} -name *cloud*)
-        tar -xzf ${FILE} --transform='s/.*\///' "${TEMPWORKINGDIR}"
+        tar -xzf ${FILE} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
         rm ${FILE}
         FILE=$(find ${TEMPWORKINGDIR} -name *cloud_file*)
-        tar -xzf ${FILE} --transform='s/.*\///' "${TEMPWORKINGDIR}"
+        tar -xzf ${FILE} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
         rm ${FILE}
     fi
 
