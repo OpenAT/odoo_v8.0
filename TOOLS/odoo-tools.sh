@@ -1307,7 +1307,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     TEMPWORKINGDIR=${BACKUPDIR}/TEMPRESTORE_deleteme
     mkdir ${TEMPWORKINGDIR}
     # ----- In all cases extract the given filename into TEMPWORKINGDIR and then start checking, with this the full option is already handled too
-    tar -xzf ${TEMPWORKINGDIR}/${BACKUPFILENAME} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
+    tar -xzf ${BACKUPFILENAME} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
 
     # ----- Check Backup Type
     if [[ "${BACKUPFILENAME}" =~ "odoo" ]]; then
