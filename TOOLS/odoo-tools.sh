@@ -1243,7 +1243,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     DBNAME=$3
     TARGET_BRANCH=$2
     if ! [ "x$4" = "x" ]; then
-        if [ $4 == "odoozip" ] || [ $4 == "odoosql" ] [ $4 == "etherpad" ] || [ $4 == "owncloud" ] || [ $4 == "full" ]; then
+        if [ $4 == "odoozip" ] || [ $4 == "odoosql" ] || [ $4 == "etherpad" ] || [ $4 == "owncloud" ] || [ $4 == "full" ]; then
             TYPE=$4
         else
             echo "ERROR: ${4} must be empty or in [odoozip|odoosql|etherpad|owncloud|full] !"; exit 2
