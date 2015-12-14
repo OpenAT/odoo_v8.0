@@ -1315,7 +1315,8 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             tar -rf "${BACKUPPATH}/${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${BACKUPFILE}.init
             tar -rf "${BACKUPPATH}/${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${BACKUPFILE}-logrotate.conf
             tar -rf "${BACKUPPATH}/${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${BACKUPFILE}-nginx.conf
-            tar -rf "${BACKUPPATH}/${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${BACKUPFILE}-pushtodeploy.*
+            tar -rf "${BACKUPPATH}/${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${BACKUPFILE}-pushtodeploy.yml
+            tar -rf "${BACKUPPATH}/${BACKUPFILE}-odoo_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${BACKUPFILE}-pushtodeploy.init
             gzip "${BACKUPPATH}/${BACKUPFILE}-odoo_config-${DATETIME}.tar"
             mv "${BACKUPPATH}/${BACKUPFILE}-odoo_config-${DATETIME}.tar.gz" "${BACKUPPATH}/${BACKUPFILE}-odoo_config-${DATETIME}.tgz"
             # ----- Create Package of db and config files
@@ -1340,7 +1341,9 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPPATH}/${BACKUPFILE}-pad_db-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_pad." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config files separately, this needs to be extended when new config files are used
-            tar -czf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tgz" -C ${INSTANCE_PATH}/${i}/ ${i}-pad*
+            tar -czf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tgz" -C ${INSTANCE_PATH}/${i}/ ${i}-pad-backup-pad.sh
+            tar -czf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tgz" -C ${INSTANCE_PATH}/${i}/ ${i}-pad.conf
+            tar -czf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tgz" -C ${INSTANCE_PATH}/${i}/ ${i}-pad.init
             tar -cf "${BACKUPPATH}${BACKUPFILE}-pad-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-pad_config-${DATETIME}.tgz"
             tar -rf "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar" -C ${BACKUPPATH}/ "/${BACKUPFILE}-pad_db-${DATETIME}.sql"
             gzip "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar"
@@ -1358,11 +1361,13 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPPATH}/${BACKUPFILE}-cloud_db-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config files separately, this needs to be extended when new config files are used
-            tar -cf "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}_cloud*
+            tar -cf "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}_cloud-autoconfig.php
+            tar -cf "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}_cloud-backup-owncloud.sh
             if [ "$(ls -A ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
                 echo -e "${DATETIME}: Start ${TYPE} backup for owncloud DATA for ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}/data" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                tar -pzvf "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}.tgz" -C ${BACKUPPATH}/ "${BACKUPFILE}-cloud_file-${DATETIME}"
+                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -czvf "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}.tgz" -C ${BACKUPPATH}/ "${BACKUPFILE}-cloud_file-${DATETIME}"
+                rm -rf "${BACKUPFILE}-cloud_file-${DATETIME}"
             else
                 echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
