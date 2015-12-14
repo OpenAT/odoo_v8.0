@@ -1327,20 +1327,15 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     # ----- Prepare DATA for restore extract aso
     # ----- If a full package was given all the singles packages needs to be extracted
     if [ ${BACKUPTYPE} = "full" ]; then
-        FILES=$(ls -l ${TEMPWORKINGDIR})
         echo "files ${FILES}"
-        for FILE in `ls ${TEMPWORKINGDIR}/*`; do
+        for FILE in `ls ${TEMPWORKINGDIR}`; do
             echo "filename: ${FILE}"
             tar -xzf ${FILE} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
             rm ${FILE}
         done
     fi
-exit 2
     # ----- Special case cloud data extraction
     if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
-        FILE=$(find ${TEMPWORKINGDIR} -name *cloud*)
-        tar -xzf ${FILE} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
-        rm ${FILE}
         FILE=$(find ${TEMPWORKINGDIR} -name *cloud_file*)
         tar -xzf ${FILE} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
         rm ${FILE}
