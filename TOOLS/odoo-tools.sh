@@ -1372,7 +1372,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
                 echo -e "${DATETIME}: Start ${TYPE} backup for owncloud DATA for ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 tar -czvf "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}.tgz" -C ${BACKUPPATH}/ "${BACKUPFILE}-cloud_file-${DATETIME}"
-                rm -rf "${BACKUPFILE}-cloud_file-${DATETIME}"
+                rm -rf "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}"
             else
                 echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
