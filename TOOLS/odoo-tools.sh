@@ -1361,8 +1361,8 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             tar -cf "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}_cloud*
             if [ "$(ls -A ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
                 echo -e "${DATETIME}: Start ${TYPE} backup for owncloud DATA for ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                tar - pzvf "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}.tgz" -C ${BACKUPPATH}/ "${BACKUPFILE}-cloud_file-${DATETIME}"
+                rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}/data" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+                tar -pzvf "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}.tgz" -C ${BACKUPPATH}/ "${BACKUPFILE}-cloud_file-${DATETIME}"
             else
                 echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             fi
