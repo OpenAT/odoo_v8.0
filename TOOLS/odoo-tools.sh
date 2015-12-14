@@ -1341,13 +1341,13 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPPATH}/${BACKUPFILE}-pad_db-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_pad." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config files separately, this needs to be extended when new config files are used
-            tar -cf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}-pad-backup-pad.sh
+            tar -cf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}_pad-backup-pad.sh
             tar -rf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}-pad.conf
             tar -rf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}-pad.init
             gzip "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar"
             mv "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar.gz" "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tgz"
             tar -cf "${BACKUPPATH}${BACKUPFILE}-pad-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-pad_config-${DATETIME}.tgz"
-            tar -rf "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar" -C ${BACKUPPATH}/ "/${BACKUPFILE}-pad_db-${DATETIME}.sql"
+            tar -rf "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-pad_db-${DATETIME}.sql"
             gzip "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar"
             mv "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar.gz" "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.zip"
             # ----- Check if Backup was at least written to file and File is not zero
@@ -1395,7 +1395,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             echo "creating full config backup file of config files for instance ${i}"
             # ----- Take care on extracting always use -h HINT: tar -xhzvf test.tgz restores all symbolic links as they was on backup time
             # change to only link files to backup not everything
-            find /etc/init.d -name "*${i}*" -exec tar -czvf "${BACKUPPATH}/${BACKUPFILE}-system-${DATETIME}.tgz" '{}' "\+"
+            find /etc/init.d -name "*${i}*" -exec tar -czvf "${BACKUPPATH}/${BACKUPFILE}-system-${DATETIME}.tgz" '{}' \+
             # ----- keep this file outside of the packages cause it is normaly not needed
             mv "${BACKUPPATH}/${BACKUPFILE}-system-${DATETIME}.tgz" "${BACKUPPATH}/${BACKUPFILE}-system-${DATETIME}.zip"
             tar -cf "${BACKUPPATH}/${BACKUPFILE}-full-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-odoo-${DATETIME}.zip"
