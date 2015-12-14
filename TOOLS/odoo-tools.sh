@@ -1229,7 +1229,7 @@ fi
 # ---------------------------------------------------------------------------------------
 # $ odoo-tools.sh backup      {TARGET_BRANCH} {DBNAME} #  [TYPE]
 # ---------------------------------------------------------------------------------------
-MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all} [odoozip|etherpad|owncloud|full] {INTERVAL}"
+MODEBACKUP="odoo-tools.sh backup {TARGET_BRANCH} {DBNAME|all} [odoozip|odoosql|etherpad|owncloud|full] {INTERVAL}"
 if [ "$SCRIPT_MODE" = "backup" ]; then
     echo -e "\n--------------------------------------------------------------------------------------------------------"
     echo -e " $MODEBACKUP"
@@ -1243,10 +1243,10 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
     DBNAME=$3
     TARGET_BRANCH=$2
     if ! [ "x$4" = "x" ]; then
-        if [ $4 == "odoozip" ] || [ $4 == "etherpad" ] || [ $4 == "owncloud" ] || [ $4 == "full" ]; then
+        if [ $4 == "odoozip" ] || [ $4 == "odoosql" ] [ $4 == "etherpad" ] || [ $4 == "owncloud" ] || [ $4 == "full" ]; then
             TYPE=$4
         else
-            echo "ERROR: ${4} must be empty or in [odoozip|etherpad|owncloud|full] !"; exit 2
+            echo "ERROR: ${4} must be empty or in [odoozip|odoosql|etherpad|owncloud|full] !"; exit 2
         fi
     else
         TYPE="full"
@@ -1302,6 +1302,11 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
         # ----- Now Backing up 3 different ways of Backup Style using collected parameters in the Backup Script above
         # ----- Backup Style, only for Odoozip Databases
+        if [ ${TYPE} = "odoosql" ]; then
+            echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            sudo -Hu postgres pg_dump ${i} > "${BACKUPPATH}/${BACKUPFILE}-odoosql_db-${DATETIME}.sql"
+            tar -czf "${BACKUPPATH}/${BACKUPFILE}-odoosql_db-${DATETIME}.tgz" -C ${BACKUPPATH} "${BACKUPFILE}-odoosql_db-${DATETIME}.sql"
+        fi
         if [ ${TYPE} = "odoozip" ] || [ ${TYPE} = "full" ]; then # && [ $]; then
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             echo -e $(${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} "backup" -d ${i} -f "${BACKUPPATH}/${BACKUPFILE}-odoo_db-${DATETIME}.zip") #-t ${TYPE}
