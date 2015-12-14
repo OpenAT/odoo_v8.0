@@ -1,6 +1,9 @@
 # odoo_v8.0 Code Base
 This repository is used as a codebase for odoo v8.0 instances and the related setup tools (odoo-tools.sh). 
-The *master* branch of this repo is always a deploy-able production ready branch. 
+The *master* branch of this repo is always a deploy-able production ready branch.
+
+# WARNING
+This structure is going to change very soon!
 
 ## CONVENTIONS
 
