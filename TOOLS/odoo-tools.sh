@@ -1341,9 +1341,11 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPPATH}/${BACKUPFILE}-pad_db-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_pad." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config files separately, this needs to be extended when new config files are used
-            tar -czf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tgz" -C ${INSTANCE_PATH}/${i}/ ${i}-pad-backup-pad.sh
-            tar -czf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tgz" -C ${INSTANCE_PATH}/${i}/ ${i}-pad.conf
-            tar -czf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tgz" -C ${INSTANCE_PATH}/${i}/ ${i}-pad.init
+            tar -cf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}-pad-backup-pad.sh
+            tar -rf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}-pad.conf
+            tar -rf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}-pad.init
+            gzip "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar"
+            mv "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar.gz" "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tgz"
             tar -cf "${BACKUPPATH}${BACKUPFILE}-pad-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-pad_config-${DATETIME}.tgz"
             tar -rf "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar" -C ${BACKUPPATH}/ "/${BACKUPFILE}-pad_db-${DATETIME}.sql"
             gzip "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar"
@@ -1362,7 +1364,10 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config files separately, this needs to be extended when new config files are used
             tar -cf "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}_cloud-autoconfig.php
-            tar -cf "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}_cloud-backup-owncloud.sh
+            tar -rf "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}_cloud-backup-owncloud.sh
+            tar -rf "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
+            gzip "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar"
+            mv "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar.gz" "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tgz"
             if [ "$(ls -A ${INSTANCE_PATH}/${i}/owncloud/data)" ]; then
                 echo -e "${DATETIME}: Start ${TYPE} backup for owncloud DATA for ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
                 rsync -avz ${INSTANCE_PATH}/${i}/owncloud/data/ "${BACKUPPATH}/${BACKUPFILE}-cloud_file-${DATETIME}" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
@@ -1370,15 +1375,6 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
                 rm -rf "${BACKUPFILE}-cloud_file-${DATETIME}"
             else
                 echo "No Data in owncloud directory to be backed up" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-            fi
-            if [ -f ${INSTANCE_PATH}/${i}/owncloud/config/config.php ]; then
-                echo -e "${DATETIME}: Start ${TYPE} backup for owncloud config ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                tar -rf "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ owncloud/config/config.php | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                gzip "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar"
-                mv "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar.gz" "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tgz"
-            else
-                echo "ERROR: No Config file found skipping config Backup of owncloud... please check the owncloud config seems not to be finished" | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-                exit 2
             fi
             # ----- create package of db and config files and datadir
             tar -cf "${BACKUPPATH}/${BACKUPFILE}-cloud-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-cloud_db-${DATETIME}.sql"
