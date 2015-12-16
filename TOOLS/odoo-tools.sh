@@ -1370,7 +1370,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
         # ----- Backup Style, only for Owncloud Databases
         if [ ${TYPE} = "owncloud" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i}_cloud > "${BACKUPPATH}/${BACKUPFILE}-cloud_db-${DATETIME}.sql"
+            sudo -Hu postgres pg_dump -U ${i}_cloud -Fc ${i}_cloud > "${BACKUPPATH}/${BACKUPFILE}-cloud_db-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_cloud." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config files separately, this needs to be extended when new config files are used
             tar -cf "${BACKUPPATH}/${BACKUPFILE}-cloud_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}_cloud-autoconfig.php
