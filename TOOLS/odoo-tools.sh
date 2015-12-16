@@ -1387,7 +1387,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *cloud_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_cloud Database"
-        su - postgres -c "psql -d ${DBNAME}_cloud < ${FILETORESTORE}"
+        su - postgres -c "pg_restore -U ${DBNAME}_cloud -n public -c -1 -d ${DBNAME}_cloud ${FILETORESTORE}"
             echo "${BACKUPTYPE} restore cloud"
         # todo: else error
         #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
@@ -1396,6 +1396,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         rsync -Aax ${TEMPWORKINGDIR}/${CLOUDDATATORESTORE}/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
         #rsync -Aax ${TEMPWORKINGDIR}/apps/ ${INSTANCE_PATH}/${DBNAME}/owncloud/apps/
     fi
+    exit 2
     if [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *pad_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_pad Database"
