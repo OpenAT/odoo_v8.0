@@ -1384,7 +1384,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *cloud_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_cloud Database"
-        su - postgres -c "pg_restore -d ${DBNAME}_cloud ${FILETORESTORE}"
+        su - postgres -c "psql -d ${DBNAME}_cloud < ${FILETORESTORE}"
             echo "${BACKUPTYPE} restore cloud"
         # todo: else error
         #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
@@ -1397,7 +1397,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *pad_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_pad Database"
         PADUSERNAME=${DBNAME}_pad
-        su - postgres -c "pg_restore -d ${DBNAME}_pad ${FILETORESTORE}"
+        su - postgres -c "psql -d ${DBNAME}_pad < ${FILETORESTORE}"
         echo "${BACKUPTYPE} restore pad"
         # todo: else error
         #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
