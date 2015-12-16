@@ -1280,7 +1280,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
 
     # ----- Get the list of Databases in this Server
     declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%' and datname not like '%_pad' and datname not like '%_cloud'\""))
-    echo "DEBUG: DAtabases: ${DATABASES[@]}"
+    echo "DEBUG: Databases: ${DATABASES[@]}"
 
     # ----- check if Database exists for the given Database Backupfile to restore
     if ! [[ "${DATABASES[@]}" =~ "${DBNAME}" ]]; then
@@ -1289,7 +1289,6 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     fi
 
     # ----- prepare further variables
-    TEMPWORKINGDIR="${INSTANCE_PATH}/${DBNAME}/BACKUP/TEMPRESTORE_deleteme"
     BACKUPDIR="${INSTANCE_PATH}/${DBNAME}/BACKUP"
 
     # ----- Find the given Backup File in Backupdirectory
@@ -1307,11 +1306,14 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     TEMPWORKINGDIR=${BACKUPDIR}/TEMPRESTORE_deleteme
     mkdir ${TEMPWORKINGDIR}
     # ----- In all cases extract the given filename into TEMPWORKINGDIR and then start checking, with this the full option is already handled too
-    tar -xzf ${BACKUPFILENAME} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
+    #tar -xzf "${BACKUPDIR}/${BACKUPFILENAME}" --transform='s/.*\///' -C "${TEMPWORKINGDIR}" # this is an example if you want to remove all paths inside the tar
+    tar -xzf "${BACKUPDIR}/${BACKUPFILENAME}" -C "${TEMPWORKINGDIR}"
 
     # ----- Check Backup Type
-    if [[ "${BACKUPFILENAME}" =~ "odoo" ]]; then
-        BACKUPTYPE="odoo"
+    if [[ "${BACKUPFILENAME}" =~ "odoozip" ]]; then
+        BACKUPTYPE="odoozip"
+    elif [[ "${BACKUPFILENAME}" =~ "odoosql" ]]; then
+        BACKUPTYPE="odoosql"
     elif [[ "${BACKUPFILENAME}" =~ "pad" ]]; then
         BACKUPTYPE="pad"
     elif [[ "${BACKUPFILENAME}" =~ "cloud" ]]; then
@@ -1327,19 +1329,19 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     # ----- Prepare DATA for restore extract aso
     # ----- If a full package was given all the singles packages needs to be extracted
     if [ ${BACKUPTYPE} = "full" ]; then
-        echo "files ${FILES}"
-        for FILE in `ls ${TEMPWORKINGDIR}`; do
+        for FILE in ${TEMPWORKINGDIR}/*; do
             echo "filename: ${FILE}"
-            tar -xzf ${FILE} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
+            tar -xzf ${FILE} -C "${TEMPWORKINGDIR}"
             rm ${FILE}
         done
     fi
     # ----- Special case cloud data extraction
-    if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
+    if [ ${BACKUPTYPE} = "cloud" ]; then
         FILE=$(find ${TEMPWORKINGDIR} -name *cloud_file*)
-        tar -xzf ${FILE} --transform='s/.*\///' -C "${TEMPWORKINGDIR}"
+        tar -xzf ${FILE} -C "${TEMPWORKINGDIR}"
         rm ${FILE}
     fi
+    echo "File Preparations done in ${TEMPWORKINGDIR}."
 
     # ----- If a single package was given it is already extracted above so nothing to do anymore
     #if [ ${BACKUPTYPE} = "odoo" ] || [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "system" ]; then
@@ -1357,17 +1359,19 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     # 2. full restore
     # 2.1 extract fullbackup file which could hold all three backup types optional right now only single restore
     # 3. all databases additional parameter
-
+exit 2
     # ----- Global preparations before restore
+    echo "Starting Restore of Instance ${DBNAME}"
     echo "Put instance ${DBNAME} into Maintenance mode"
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
     echo "Check if open connections are available to database ${DBNAME} ...."
     su postgres  -l -c "psql  -c 'select pg_terminate_backend(pid) \
                       from pg_stat_activity \
                       where datname = '\"'${DBNAME}'\"''"
+    echo "Remove all open websessions from odoo Instance"
     rm -rf ${INSTANCE_PATH}/${DBNAME}/data_dir/sessions/*
     # todo: temp backup before restore ??? discussion
-    if [ ${BACKUPTYPE} = "odoo" ] || [ ${BACKUPTYPE} = "full" ]; then
+    if [ ${BACKUPTYPE} = "odoozip" ] || [ ${BACKUPTYPE} = "full" ]; then
         # todo: need drop database before or does retore mode of db-tools.py do this already ?
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *odoo_db*)
         ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILETORESTORE}
@@ -1382,7 +1386,6 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         # todo: else error
         #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
         #    exit 2
-        fi
         # todo: testing owncloud do login and download a testfile or anything better else error
         rsync -Aax ${TEMPWORKINGDIR}/data/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
         #rsync -Aax ${TEMPWORKINGDIR}/apps/ ${INSTANCE_PATH}/${DBNAME}/owncloud/apps/
@@ -1396,6 +1399,9 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         # todo: else error
         #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
         #    exit 2
+    fi
+    if [ ${BACKUPTYPE} = "odoosql" ]; then
+        echo "do whats needed fpr odoosql"
     fi
     if [ ${BACKUPTYPE} = "system" ]; then
         # todo: system restore if needed
