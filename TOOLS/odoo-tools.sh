@@ -1387,7 +1387,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *cloud_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_cloud Database"
-        su - postgres -c "pg_restore -U ${DBNAME}_cloud -n public -c -1 -d ${DBNAME}_cloud ${FILETORESTORE}"
+        su - postgres -c "pg_restore -n public -c -d ${DBNAME}_cloud ${FILETORESTORE}"
             echo "${BACKUPTYPE} restore cloud"
         # todo: else error
         #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
