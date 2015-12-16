@@ -1334,11 +1334,15 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             tar -xzf ${FILE} -C "${TEMPWORKINGDIR}"
             rm ${FILE}
         done
+        FILE=$(find ${TEMPWORKINGDIR} -name *cloud_file*)
+        tar -xzf ${FILE} -C "${TEMPWORKINGDIR}"
+        rm ${FILE}
     fi
     # ----- Special case cloud data extraction
     if [ ${BACKUPTYPE} = "cloud" ]; then
         FILE=$(find ${TEMPWORKINGDIR} -name *cloud_file*)
         tar -xzf ${FILE} -C "${TEMPWORKINGDIR}"
+        CLOUDDATATORESTORE=${FILE%.tgz}
         rm ${FILE}
     fi
     echo "File Preparations done in ${TEMPWORKINGDIR}."
@@ -1359,7 +1363,6 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     # 2. full restore
     # 2.1 extract fullbackup file which could hold all three backup types optional right now only single restore
     # 3. all databases additional parameter
-exit 2
     # ----- Global preparations before restore
     echo "Starting Restore of Instance ${DBNAME}"
     echo "Put instance ${DBNAME} into Maintenance mode"
@@ -1387,7 +1390,7 @@ exit 2
         #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
         #    exit 2
         # todo: testing owncloud do login and download a testfile or anything better else error
-        rsync -Aax ${TEMPWORKINGDIR}/data/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
+        rsync -Aax ${TEMPWORKINGDIR}/${CLOUDDATATORESTORE}git statu/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
         #rsync -Aax ${TEMPWORKINGDIR}/apps/ ${INSTANCE_PATH}/${DBNAME}/owncloud/apps/
     fi
     if [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "full" ]; then
