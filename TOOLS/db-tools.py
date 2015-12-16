@@ -99,7 +99,7 @@ parser_restore.set_defaults(func=restore)
 # SubParser for restore
 parser_drop = subparsers.add_parser('drop', help='drop database.')
 parser_drop.add_argument('-d', '--database', required='True', help='Name of database')
-parser_drop.set_defaults(func=restore)
+parser_drop.set_defaults(func=drop)
 
 # --------------------
 # START
