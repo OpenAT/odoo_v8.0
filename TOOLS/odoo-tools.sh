@@ -1377,6 +1377,9 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     if [ ${BACKUPTYPE} = "odoozip" ] || [ ${BACKUPTYPE} = "full" ]; then
         # todo: need drop database before or does retore mode of db-tools.py do this already ?
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *odoo_db*)
+        echo "dropping database"
+        ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} drop -d ${DBNAME}
+        echo "restore database"
         ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILETORESTORE}
         # todo: check url and parse home html for testing or anything better
         echo "${BACKUPTYPE} restore odoo"

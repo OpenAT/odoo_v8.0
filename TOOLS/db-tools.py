@@ -53,6 +53,14 @@ def restore(args):
         else:
             sys.exit(2)
 
+# DROP DB
+# service/db.py:   def exp_drop(db_name):
+def drop(args):
+    print 'Drop Database: %s' % args.database
+    if server.drop(args.superpwd, args.database):
+        sys.exit(0)
+    else:
+        sys.exit(2)
 
 # ----------------------------
 # Create the command parser
@@ -87,6 +95,11 @@ parser_restore = subparsers.add_parser('restore', help='restore database with da
 parser_restore.add_argument('-d', '--database', required='True', help='Name of new database')
 parser_restore.add_argument('-f', '--filedump', required='True', help='Backupfile to restore')
 parser_restore.set_defaults(func=restore)
+
+# SubParser for restore
+parser_drop = subparsers.add_parser('drop', help='drop database.')
+parser_drop.add_argument('-d', '--database', required='True', help='Name of database')
+parser_drop.set_defaults(func=restore)
 
 # --------------------
 # START
