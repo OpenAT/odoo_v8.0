@@ -1348,7 +1348,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
 
         # ----- Backup Style, only for Etherpad Databases
         if [ ${TYPE} = "etherpad" ] || [ ${TYPE} = "full" ]; then
-            sudo -Hu postgres pg_dump ${i}_pad > "${BACKUPPATH}/${BACKUPFILE}-pad_db-${DATETIME}.sql"
+            sudo -Hu postgres pg_dump -Fc ${i}_pad > "${BACKUPPATH}/${BACKUPFILE}-pad_db-${DATETIME}.sql"
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}_pad." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
             #BACKUP all Config files separately, this needs to be extended when new config files are used
             tar -cf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}_pad-backup-pad.sh
