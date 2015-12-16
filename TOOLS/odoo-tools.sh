@@ -1401,7 +1401,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *pad_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_pad Database"
         PADUSERNAME=${DBNAME}_pad
-        su - postgres -c "psql -d ${DBNAME}_pad < ${FILETORESTORE}"
+        su - postgres -c "pg_restore -n public -c -d ${DBNAME}_pad ${FILETORESTORE}"
         echo "${BACKUPTYPE} restore pad"
         # todo: else error
         #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
