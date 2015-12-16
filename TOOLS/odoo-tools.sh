@@ -1390,7 +1390,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
         #    exit 2
         # todo: testing owncloud do login and download a testfile or anything better else error
-        rsync -Aax ${TEMPWORKINGDIR}/${CLOUDDATATORESTORE}git statu/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
+        rsync -Aax ${TEMPWORKINGDIR}/${CLOUDDATATORESTORE}/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
         #rsync -Aax ${TEMPWORKINGDIR}/apps/ ${INSTANCE_PATH}/${DBNAME}/owncloud/apps/
     fi
     if [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "full" ]; then
