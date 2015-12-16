@@ -1396,7 +1396,6 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         rsync -Aax ${TEMPWORKINGDIR}/${CLOUDDATATORESTORE}/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
         #rsync -Aax ${TEMPWORKINGDIR}/apps/ ${INSTANCE_PATH}/${DBNAME}/owncloud/apps/
     fi
-    exit 2
     if [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *pad_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_pad Database"
