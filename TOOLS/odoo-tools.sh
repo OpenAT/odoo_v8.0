@@ -1306,6 +1306,8 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     SUPER_PASSWORD=($(grep "admin_passwd" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     DB_PASSWD=($(grep "db_password" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     DB_USER=($(grep "db_user" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
+    NEWDB_LOGFILE=$(find ${INSTANCE_PATH}/${DBNAME} -name newdb--${DBNAME}*.log)
+    DOMAIN_NAME=($(grep "DOMAIN_NAME" ${NEWDB_LOGFILE}|awk '{printf $4;printf "\n";}'))
     TEMPWORKINGDIR=${BACKUPDIR}/TEMPRESTORE_deleteme
     mkdir ${TEMPWORKINGDIR}
 
@@ -1364,7 +1366,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
                       where datname = '\"'${DBNAME}'\"''"
     echo "Remove all saved websessions from odoo Instance ${DBNAME}"
     rm -rf ${INSTANCE_PATH}/${DBNAME}/data_dir/sessions/*
-    # todo: temp backup before restore ??? discussion
+    # todo: temp backup before restore ??? discussion -- activate of this line when backupscript merge is completed
     #sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME} full tmpbr"
 
     # ----- Restore Data
@@ -1374,9 +1376,13 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} drop -d ${DBNAME}
         echo "restore database ${DBNAME}"
         ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILETORESTORE}
-        # todo: check url and parse home html for testing or anything better
-        #if [ curl -l http://ptd5.dadidev.datadialog.net/page/homepage | grep "Homepage" ]; then
-        echo "${BACKUPTYPE} restore odoo ${DBNAME} done."
+        if [ $(curl -l "http://${DOMAIN_NAME}/page/homepage" | grep "Homepage") ]; then
+            echo "${BACKUPTYPE} restore odoo ${DBNAME} done."
+        else
+            echo "ERROR: System seems not running properly after restore please check website http://${DOMAIN_NAME}/page/homepage \
+                  or check your DNS Settings"
+            exit 2
+        fi
     fi
     if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *cloud_db*.sql)
@@ -1392,11 +1398,16 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             echo "ERROR: ${BACKUPTYPE} restore for cloud db was not successfully"
             exit 2
         fi
-        # todo: testing owncloud do login and download a testfile or anything better else error
-        #if [ curl -l http://cloud.ptd5.dadidev.datadialog.net | grep "ownCloud" ]; then
-        rsync -Aax ${TEMPWORKINGDIR}/${CLOUDDATATORESTORE}/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
-        #rsync -Aax ${TEMPWORKINGDIR}/apps/ ${INSTANCE_PATH}/${DBNAME}/owncloud/apps/
-        echo "${BACKUPTYPE} restore cloud for instance ${DBNAME} done."
+        rsync -Aax ${TEMPWORKINGDIR}/${CLOUDDATATORESTORE}/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data
+        # If we gonna use apps in future implement this line and add also in BACKUPSCRIPT
+        #rsync -Aax ${TEMPWORKINGDIR}/apps/ ${INSTANCE_PATH}/${DBNAME}/owncloud/apps
+        if [ $(curl -l "http://cloud.${DOMAIN_NAME}" | grep "ownCloud") ]; then
+            echo "${BACKUPTYPE} restore owncloud ${DBNAME}_cloud and datadir done."
+        else
+            echo "ERROR: System seems not running properly after restore please check website http://cloud.${DOMAIN_NAME} \
+                  or check your DNS Settings"
+            exit 2
+        fi
     fi
     if [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *pad_db*.sql)
@@ -1406,9 +1417,13 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
             echo "ERROR: ${BACKUPTYPE} restore for pad db was not successfully"
             exit 2
         fi
-        # todo: testing if pad is online
-        #if [ curl -l http://pad.ptd5.dadidev.datadialog.net | grep "${DBNAME}_pad" ]; then
-        echo "${BACKUPTYPE} restore pad for instance ${DBNAME} done."
+        if [ $(curl -l "http://pad.${DOMAIN_NAME}" | grep "${DBNAME}-pad") ]; then
+            echo "${BACKUPTYPE} restore etherpad ${DBNAME}_pad done."
+        else
+            echo "ERROR: System seems not running properly after restore please check website http://pad.${DOMAIN_NAME} \
+                  or check your DNS Settings"
+            exit 2
+        fi
     fi
 
     # ----- Restore Odoo Only special case
