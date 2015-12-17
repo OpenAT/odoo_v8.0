@@ -1279,12 +1279,14 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     echo "DEBUG: dbname from backfilename: ${DBNAME}"
 
     # ----- Get the list of Databases in this Server
-    declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM pg_database WHERE datname LIKE 'o8_%' and datname not like '%_pad' and datname not like '%_cloud'\""))
+    declare -a DATABASES=($(su - postgres -c "psql --tuples-only -P format=unaligned -c \"SELECT datname FROM \
+                                              pg_database WHERE datname LIKE 'o8_%' and datname not like '%_pad' \
+                                              and datname not like '%_cloud'\""))
     echo "DEBUG: Databases: ${DATABASES[@]}"
 
     # ----- check if Database exists for the given Database Backupfile to restore
     if ! [[ "${DATABASES[@]}" =~ "${DBNAME}" ]]; then
-        echo "ERROR: database ${DBNAME} from the given ${BACKUPFILENAME} does not exist, please check your parameter and "
+        echo "ERROR: database ${DBNAME} from the given ${BACKUPFILENAME} does not exist, please check your parameter and"
         exit 2
     fi
 
@@ -1293,7 +1295,8 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
 
     # ----- Find the given Backup File in Backupdirectory
     if [ ! -f "${BACKUPDIR}/${BACKUPFILENAME}" ]; then
-        echo "ERROR: given Filename ${BACKUPFILENAME} does not exist, please check your parameter and the available Backup Files in ${BACKUPDIR}"
+        echo "ERROR: given Filename ${BACKUPFILENAME} does not exist, please check your parameter and the available \
+              Backup Files in ${BACKUPDIR}"
         exit 2
     fi
 
@@ -1305,7 +1308,9 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     DB_USER=($(grep "db_user" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     TEMPWORKINGDIR=${BACKUPDIR}/TEMPRESTORE_deleteme
     mkdir ${TEMPWORKINGDIR}
-    # ----- In all cases extract the given filename into TEMPWORKINGDIR and then start checking, with this the full option is already handled too
+
+    # In all cases extract the given filename into TEMPWORKINGDIR and then start checking, with this the full option
+    # is already handled too
     #tar -xzf "${BACKUPDIR}/${BACKUPFILENAME}" --transform='s/.*\///' -C "${TEMPWORKINGDIR}" # this is an example if you want to remove all paths inside the tar
     tar -xzf "${BACKUPDIR}/${BACKUPFILENAME}" -C "${TEMPWORKINGDIR}"
 
@@ -1327,7 +1332,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     fi
 
     # ----- Prepare DATA for restore extract aso
-    # ----- If a full package was given all the singles packages needs to be extracted
+    # If a full package was given all the singles packages needs to be extracted
     if [ ${BACKUPTYPE} = "full" ]; then
         for FILE in ${TEMPWORKINGDIR}/*; do
             echo "filename: ${FILE}"
@@ -1347,71 +1352,87 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     fi
     echo "File Preparations done in ${TEMPWORKINGDIR}."
 
-    # ----- If a single package was given it is already extracted above so nothing to do anymore
-    #if [ ${BACKUPTYPE} = "odoo" ] || [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "system" ]; then
-    #    echo "Extracting ${BACKUPTYPE} Package ${BACKUPFILENAME}"
-    #    tar -xzf ${TEMPWORKINGDIR}/${BACKUPFILENAME} --transform='s/.*\///' "${TEMPWORKINGDIR}"
-    #else
-    #    echo "ERROR: no backup option found for this filetype please check your filename ${BACKUPFILENAME}"
-    #fi
+    # If a single package was given it is already extracted above so nothing to do anymore
 
-    # ----- restore
-    # 1. single restore
-    # 1.1 odoo
-    # 1.2 cloud
-    # 1.3 pad
-    # 2. full restore
-    # 2.1 extract fullbackup file which could hold all three backup types optional right now only single restore
-    # 3. all databases additional parameter
     # ----- Global preparations before restore
     echo "Starting Restore of Instance ${DBNAME}"
     echo "Put instance ${DBNAME} into Maintenance mode"
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} enable"
-    echo "Check if open connections are available to database ${DBNAME} ...."
+    echo "Check if open connections are available to database ${DBNAME} and kill open connections ...."
     su postgres  -l -c "psql  -c 'select pg_terminate_backend(pid) \
                       from pg_stat_activity \
                       where datname = '\"'${DBNAME}'\"''"
-    echo "Remove all open websessions from odoo Instance"
+    echo "Remove all saved websessions from odoo Instance ${DBNAME}"
     rm -rf ${INSTANCE_PATH}/${DBNAME}/data_dir/sessions/*
     # todo: temp backup before restore ??? discussion
+    #sh -c "$0 backup ${TARGET_BRANCH} ${DBNAME} full tmpbr"
+
+    # ----- Restore Data
     if [ ${BACKUPTYPE} = "odoozip" ] || [ ${BACKUPTYPE} = "full" ]; then
-        # todo: need drop database before or does retore mode of db-tools.py do this already ?
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *odoo_db*)
-        echo "dropping database"
+        echo "dropping database ${DBNAME}"
         ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} drop -d ${DBNAME}
-        echo "restore database"
+        echo "restore database ${DBNAME}"
         ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILETORESTORE}
         # todo: check url and parse home html for testing or anything better
-        echo "${BACKUPTYPE} restore odoo"
+        #if [ curl -l http://ptd5.dadidev.datadialog.net/page/homepage | grep "Homepage" ]; then
+        echo "${BACKUPTYPE} restore odoo ${DBNAME} done."
     fi
     if [ ${BACKUPTYPE} = "cloud" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *cloud_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_cloud Database"
-        su - postgres -c "pg_restore -n public -c -d ${DBNAME}_cloud ${FILETORESTORE}"
-            echo "${BACKUPTYPE} restore cloud"
-        # todo: else error
-        #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
-        #    exit 2
+        # HINT: In-place restore - The combination of "-n public" and "-c" clears all existing tables in the public
+        # schema before restoring the tables and data. Without "-n public," pg_restore will attempt to clear the whole
+        # db, including the public namespace which is owned by the superuser, not me. "-1" ensures that the restore
+        # takes place as a single transaction, and any error will cancel the whole operation.
+        # discussion or drop db first see this article
+        # https://community.webfaction.com/questions/5352/comand-line-dump-restore-postgresql-database-in-place
+        su - postgres -c "pg_restore -n public -c -1 -d ${DBNAME}_cloud ${FILETORESTORE}"
+        if ! [ $? -eq 0 ]; then
+            echo "ERROR: ${BACKUPTYPE} restore for cloud db was not successfully"
+            exit 2
+        fi
         # todo: testing owncloud do login and download a testfile or anything better else error
+        #if [ curl -l http://cloud.ptd5.dadidev.datadialog.net | grep "ownCloud" ]; then
         rsync -Aax ${TEMPWORKINGDIR}/${CLOUDDATATORESTORE}/ ${INSTANCE_PATH}/${DBNAME}/owncloud/data/
         #rsync -Aax ${TEMPWORKINGDIR}/apps/ ${INSTANCE_PATH}/${DBNAME}/owncloud/apps/
+        echo "${BACKUPTYPE} restore cloud for instance ${DBNAME} done."
     fi
     if [ ${BACKUPTYPE} = "pad" ] || [ ${BACKUPTYPE} = "full" ]; then
         FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *pad_db*.sql)
         echo "${FILETORESTORE} will be restored into existing ${DBNAME}_pad Database"
-        PADUSERNAME=${DBNAME}_pad
-        su - postgres -c "pg_restore -n public -c -d ${DBNAME}_pad ${FILETORESTORE}"
-        echo "${BACKUPTYPE} restore pad"
-        # todo: else error
-        #    echo "ERROR: ${BACKUPTYPE} restore for cloud was not successfully"
-        #    exit 2
+        su - postgres -c "pg_restore -n public -c -1 -d ${DBNAME}_pad ${FILETORESTORE}"
+        if ! [ $? -eq 0 ]; then
+            echo "ERROR: ${BACKUPTYPE} restore for pad db was not successfully"
+            exit 2
+        fi
+        # todo: testing if pad is online
+        #if [ curl -l http://pad.ptd5.dadidev.datadialog.net | grep "${DBNAME}_pad" ]; then
+        echo "${BACKUPTYPE} restore pad for instance ${DBNAME} done."
     fi
+
+    # ----- Restore Odoo Only special case
     if [ ${BACKUPTYPE} = "odoosql" ]; then
         echo "do whats needed fpr odoosql"
+        # Test ob pgrestore auch mit der odoo db gehen würde mit dem vorabclean ohne die db zu droppen
+        su - postgres -c "pg_restore -n public -c -1 -d ${DBNAME} ${FILETORESTORE}"
+        if ! [ $? -eq 0 ]; then
+            echo "ERROR: ${BACKUPTYPE} restore for odoo was not successfully"
+            exit 2
+        fi
     fi
+
+    # ----- Restore config files only system wide, extend this if needed
     if [ ${BACKUPTYPE} = "system" ]; then
         # todo: system restore if needed
-        echo "system secific restore"
+        echo "system wide config files restore, right now does nothing"
+    fi
+
+    # ----- Restore Service Specific config if needed, extend this
+    if [ ${BACKUPTYPE} = "config" ]; then
+        # todo: config restore only if needed
+        echo "system secific restore, right now does nothing"
+        # extract all config files compare with original if difference --> replace it or just replace it
     fi
 
     sh -c "$0 maintenancemode ${TARGET_BRANCH} ${DBNAME} disable"
