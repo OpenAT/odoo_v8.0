@@ -1269,6 +1269,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         exit 2
     fi
 
+
     # ----- Check if Target Branch exists
     if [ ! -d ${INSTANCE_PATH} ];then
         echo "ERROR: given ${TARGET_BRANCH} does not exist, please check your options in ${REPOPATH} diretory"
@@ -1308,6 +1309,14 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     DB_USER=($(grep "db_user" ${DATABASECONFIGFILE} | awk '{printf $3;printf "\n"; }'))
     NEWDB_LOGFILE=$(find ${INSTANCE_PATH}/${DBNAME} -name newdb--${DBNAME}*.log)
     DOMAIN_NAME=($(grep "DOMAIN_NAME" ${NEWDB_LOGFILE}|awk '{printf $4;printf "\n";}'))
+    # ----- Check Domain before doing anything
+    #if [ $(curl -l "http://${DOMAIN_NAME}" | grep "Welcome to nginx") ]; then
+    #        echo "${BACKUPTYPE} restore odoo ${DBNAME} done."
+    #    else
+    #        echo "ERROR: System seems not running properly after restore please check website http://${DOMAIN_NAME}/page/homepage \
+    #              or check your DNS Settings"
+    #        exit 2
+    #    fi
     TEMPWORKINGDIR=${BACKUPDIR}/TEMPRESTORE_deleteme
     mkdir ${TEMPWORKINGDIR}
 
@@ -1429,8 +1438,18 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
     # ----- Restore Odoo Only special case
     if [ ${BACKUPTYPE} = "odoosql" ]; then
         echo "do whats needed fpr odoosql"
+        echo "Check if open connections are available to database ${DBNAME} and kill open connections ...."
+        su postgres  -l -c "psql  -c 'select pg_terminate_backend(pid) \
+                          from pg_stat_activity \
+                          where datname = '\"'${DBNAME}'\"''"
+        echo "Remove all saved websessions from odoo Instance ${DBNAME}"
+        rm -rf ${INSTANCE_PATH}/${DBNAME}/data_dir/sessions/*
         # Test ob pgrestore auch mit der odoo db gehen würde mit dem vorabclean ohne die db zu droppen
         su - postgres -c "pg_restore -n public -c -1 -d ${DBNAME} ${FILETORESTORE}"
+        echo "dropping database ${DBNAME}"
+        ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} drop -d ${DBNAME}
+        echo "restore database ${DBNAME}"
+        ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILETORESTORE}
         if ! [ $? -eq 0 ]; then
             echo "ERROR: ${BACKUPTYPE} restore for odoo was not successfully"
             exit 2
