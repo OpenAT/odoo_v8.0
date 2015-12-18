@@ -1437,6 +1437,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
 
     # ----- Restore Odoo Only special case
     if [ ${BACKUPTYPE} = "odoosql" ]; then
+        FILETORESTORE=$(find ${TEMPWORKINGDIR} -name *odoosql*)
         echo "do whats needed fpr odoosql"
         echo "Check if open connections are available to database ${DBNAME} and kill open connections ...."
         su postgres  -l -c "psql  -c 'select pg_terminate_backend(pid) \
