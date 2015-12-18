@@ -1333,7 +1333,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             tar -cf "${BACKUPPATH}/${BACKUPFILE}-odoo-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-odoo_config-${DATETIME}.tgz"
             tar -rf "${BACKUPPATH}/${BACKUPFILE}-odoo-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-odoo_db-${DATETIME}.zip"
             if [ -f ${BACKUPPATH}/${BACKUPFILE}-odoo_file-${DATETIME}.tgz ]; then
-                tar -rf "${BACKUPPATH}${BACKUPFILE}-odoo-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
+                tar -rf "${BACKUPPATH}/${BACKUPFILE}-odoo-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-odoo_file-${DATETIME}.tgz"
             fi
             gzip "${BACKUPPATH}/${BACKUPFILE}-odoo-${DATETIME}.tar"
             mv "${BACKUPPATH}/${BACKUPFILE}-odoo-${DATETIME}.tar.gz" "${BACKUPPATH}/${BACKUPFILE}-odoo-${DATETIME}.zip"
@@ -1356,7 +1356,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
             tar -rf "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar" -C ${INSTANCE_PATH}/${i}/ ${i}-pad.init
             gzip "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar"
             mv "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tar.gz" "${BACKUPPATH}/${BACKUPFILE}-pad_config-${DATETIME}.tgz"
-            tar -cf "${BACKUPPATH}${BACKUPFILE}-pad-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-pad_config-${DATETIME}.tgz"
+            tar -cf "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-pad_config-${DATETIME}.tgz"
             tar -rf "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar" -C ${BACKUPPATH}/ "${BACKUPFILE}-pad_db-${DATETIME}.sql"
             gzip "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar"
             mv "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.tar.gz" "${BACKUPPATH}/${BACKUPFILE}-pad-${DATETIME}.zip"
