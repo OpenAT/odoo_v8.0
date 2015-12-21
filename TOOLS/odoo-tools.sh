@@ -660,6 +660,7 @@ if [ "$SCRIPT_MODE" = "newdb" ]; then
         s!DBNAME!'"${DBNAME}"'!g
         s!DOMAIN_NAME!'"${DOMAIN_NAME}"'!g
         s!DBLOGPATH!'"${DBLOGPATH}"'!g
+        s!DBLOGPATH!'"${DBLOGPATH}"'!g
         s!DBPATH!'"${DBPATH}"'!g
         s!MAINTENANCEMODE!'"${NGINXDBMAINTENANCEONLYFILE}_ein"'!g
         s!PUSHTODEPLOYLOCATION!'"${CUADDONSREPONAME}"'!g
@@ -1445,12 +1446,15 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
                           where datname = '\"'${DBNAME}'\"''"
         echo "Remove all saved websessions from odoo Instance ${DBNAME}"
         rm -rf ${INSTANCE_PATH}/${DBNAME}/data_dir/sessions/*
-        # Test ob pgrestore auch mit der odoo db gehen würde mit dem vorabclean ohne die db zu droppen
-        su - postgres -c "pg_restore -n public -c -1 -d ${DBNAME} ${FILETORESTORE}"
         echo "dropping database ${DBNAME}"
         ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} drop -d ${DBNAME}
+        # Test ob pgrestore auch mit der odoo db gehen würde mit dem vorabclean ohne die db zu droppen
+        sudo su - postgres -c 'psql -a -e -c "CREATE DATABASE '${DBNAME}' WITH OWNER '${DBNAME}' ENCODING '\'UTF8\''“ '
+        sudo -Hu postgres psql -U ${DBNAME} -d ${DBNAME} -h 127.0.0.1 -f ${FILETORESTORE}
+        #su - postgres -c "pg_restore -n public -c -1 -d ${DBNAME} ${FILETORESTORE}"
         echo "restore database ${DBNAME}"
-        ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILETORESTORE}
+        #${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILETORESTORE}
+
         if ! [ $? -eq 0 ]; then
             echo "ERROR: ${BACKUPTYPE} restore for odoo was not successfully"
             exit 2
