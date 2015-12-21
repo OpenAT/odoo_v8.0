@@ -1304,7 +1304,7 @@ if [ "$SCRIPT_MODE" = "backup" ]; then
         # ----- Backup Style, only for Odoozip Databases
         if [ ${TYPE} = "odoosql" ]; then
             echo -e "${DATETIME}: Start ${TYPE} backup for database ${i}." | tee -a ${INSTANCELOGFILE} ${BRANCHLOGFILE}
-            sudo -Hu postgres pg_dump -Fc ${i} > "${BACKUPPATH}/${BACKUPFILE}-odoosql_db-${DATETIME}.sql"
+            sudo -Hu postgres pg_dump ${i} > "${BACKUPPATH}/${BACKUPFILE}-odoosql_db-${DATETIME}.sql"
             tar -czf "${BACKUPPATH}/${BACKUPFILE}-odoosql_db-${DATETIME}.tgz" -C ${BACKUPPATH} "${BACKUPFILE}-odoosql_db-${DATETIME}.sql"
             if ! [ -s ${BACKUPPATH}/${BACKUPFILE}-odoosql_db-${DATETIME}.tgz ]; then
                 echo "ERROR: backup of {i} in mode ${TYPE} failed."
