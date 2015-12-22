@@ -1452,7 +1452,7 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         #sudo -Hu postgres psql -a -e -c CREATE DATABASE ${DBNAME} WITH OWNER ${DBNAME} ENCODING 'UTF8'
         #sudo -Hu postgres psql -a -e -c CREATE DATABASE ${DBNAME} WITH OWNER ${DBNAME} ENCODING UTF8
         sudo su postgres -c "psql -a -e -c \"CREATE DATABASE ${DBNAME} WITH OWNER ${DBNAME} ENCODING 'UTF8'\""
-        sudo su postgres -c "psql -U ${DBNAME} -d ${DBNAME} -h 127.0.0.1 -f ${FILETORESTORE}"
+        sudo su postgres -c "psql -d ${DBNAME} -f ${FILETORESTORE}"
         #su - postgres -c "pg_restore -n public -c -1 -d ${DBNAME} ${FILETORESTORE}"
         echo "restore database ${DBNAME} from file ${FILETORESTORE}"
         #${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILETORESTORE}
