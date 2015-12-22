@@ -1449,14 +1449,10 @@ if [ "$SCRIPT_MODE" = "restore" ]; then
         echo "dropping database ${DBNAME}"
         ${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} drop -d ${DBNAME}
         # Test ob pgrestore auch mit der odoo db gehen würde mit dem vorabclean ohne die db zu droppen
-        #sudo -Hu postgres psql -a -e -c CREATE DATABASE ${DBNAME} WITH OWNER ${DBNAME} ENCODING 'UTF8'
-        #sudo -Hu postgres psql -a -e -c CREATE DATABASE ${DBNAME} WITH OWNER ${DBNAME} ENCODING UTF8
         sudo su postgres -c "psql -a -e -c \"CREATE DATABASE ${DBNAME} WITH OWNER ${DBNAME} ENCODING 'UTF8'\""
         sudo su postgres -c "psql -d ${DBNAME} -f ${FILETORESTORE}"
         #su - postgres -c "pg_restore -n public -c -1 -d ${DBNAME} ${FILETORESTORE}"
         echo "restore database ${DBNAME} from file ${FILETORESTORE}"
-        #${INSTANCE_PATH}/TOOLS/db-tools.py -b ${BASEPORT69} -s ${SUPER_PASSWORD} restore -d ${DBNAME} -f ${FILETORESTORE}
-
         if ! [ $? -eq 0 ]; then
             echo "ERROR: ${BACKUPTYPE} restore for odoo was not successfully"
             exit 2
