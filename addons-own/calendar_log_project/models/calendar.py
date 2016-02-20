@@ -27,13 +27,13 @@ class calendar_event(osv.osv):
     task_work_id = Many2one('project.task.work', string='Task Worklog ID')
     analytic_time_id = Many2one('hr.analytic.timesheet', string='HR Analytic Timesheet ID')
 
-    # Update the field event_category_id at installation or update
-    def init(self, cr, context=None):
-        print "INIT OF calendar_log_project"
-        events = self.browse(cr, SUPERUSER_ID, self.search(cr, SUPERUSER_ID, []))
-        for event in events:
-            # We trigger the write method at install or update time for all events to update the event_category_id
-            event.write({"name": event.name or None})
+    # DISABLED FOR NOW Update the field event_category_id at installation or update
+    # def init(self, cr, context=None):
+    #     print "INIT OF calendar_log_project"
+    #     events = self.browse(cr, SUPERUSER_ID, self.search(cr, SUPERUSER_ID, []))
+    #     for event in events:
+    #         # We trigger the write method at install or update time for all events to update the event_category_id
+    #         event.write({"name": event.name or None})
 
     @api.onchange('category_id')
     def _set_worklog(self):
