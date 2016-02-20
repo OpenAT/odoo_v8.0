@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+hr_timesheet_sheet_sheet_day_cat_detail_user,hr_timesheet_sheet.sheet.day_cat_detail.user,calendar_log_project.model_hr_timesheet_sheet_sheet_day_cat_detail,base.group_hr_user,1,0,0,0

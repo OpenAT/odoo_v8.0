@@ -25,5 +25,6 @@ Use the calender as a simple work log.
     'data': [
         'data/data.xml',
         'views/views.xml',
+        'security/ir.model.access.csv',
     ],
 }
