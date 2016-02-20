@@ -108,5 +108,134 @@
             </field>
         </record>
 
+        <!-- TREE: TIMESHEET CAT SUMMARY: -->
+        <record id="calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree" model="ir.ui.view">
+            <field name="name">hr_timesheet_sheet.sheet.day_cat_detail_tree</field>
+            <field name="model">hr_timesheet_sheet.sheet.day_cat_detail</field>
+            <field name="arch" type="xml">
+                <tree string="Expense Summary">
+                    <field name="timesheet_id" invisible="1"/>
+                    <field name="name"/>
+                    <field name="ga" widget="float_time" sum="sga"/>
+                    <field name="ga_e" widget="float_time" sum="sga_e"/>
+                    <field name="ga_a" widget="float_time" sum="sga_a"/>
+                    <field name="ga_ae" widget="float_time" sum="sga_ae"/>
+                    <field name="cm" widget="float_time" sum="scm"/>
+                    <field name="cm_e" widget="float_time" sum="scm_e"/>
+                    <field name="cm_a" widget="float_time" sum="scm_a"/>
+                    <field name="cm_ae" widget="float_time" sum="scm_ae"/>
+                    <field name="t" widget="float_time" sum="st"/>
+                    <field name="t_e" widget="float_time" sum="st_e"/>
+                    <field name="t_a" widget="float_time" sum="st_a"/>
+                    <field name="t_ae" widget="float_time" sum="st_ae"/>
+                    <field name="os" widget="float_time" sum="sos"/>
+                    <field name="os_e" widget="float_time" sum="sos_e"/>
+                    <field name="os_a" widget="float_time" sum="sos_a"/>
+                    <field name="os_ae" widget="float_time" sum="sos_ae"/>
+                    <field name="sum_e" widget="float_time" sum="Expense"/>
+                    <field name="sum_a" widget="float_time" sum="Abroad"/>
+                    <field name="sum_ae" widget="float_time" sum="Abr. Exp."/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ACTION: TIMESHEET CAT SUMMARY: -->
+        <record id="calendar_log_project_hr_timesheet_sheet_day_cat_detail_action" model="ir.actions.act_window">
+            <field name="name">Exp. Sum.</field>
+            <field name="res_model">hr_timesheet_sheet.sheet.day_cat_detail</field>
+            <field name="view_id" ref="calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[('timesheet_id','=',active_id)]</field>
+            <field name="view_mode">tree</field>
+            <field name="view_type">form</field>
+        </record>
+
+        <!-- INHERIT: TIMESHEET FORM VIEW: Add event_category_id -->
+        <record id="calendar_log_project_hr_timesheet_sheet_form" model="ir.ui.view">
+            <field name="name">hr_timesheet_sheet.sheet_overtime</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="inherit_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_form"/>
+            <field name="arch" type="xml">
+                <field name="account_id" position="after">
+                    <field name="event_category_id" readonly="True"/>
+                </field>
+                <div name="buttons" position="inside">
+                    <button type="action"
+                            class="oe_stat_button"
+                            icon="fa-clock-o"
+                            name="%(calendar_log_project_hr_timesheet_sheet_day_cat_detail_action)d"
+                            string="Exp. Sum." />
+                </div>
+                <notebook position="inside">
+                    <page string="Expense Summary">
+                        <field colspan="4" name="day_cat_details" nolabel="1">
+                            <tree string="Expense Summary">
+                                <field name="timesheet_id" invisible="1"/>
+                                <field name="name"/>
+                                <field name="sum_e" widget="float_time" sum="Expense"/>
+                                <field name="sum_a" widget="float_time" sum="Abroad"/>
+                                <field name="sum_ae" widget="float_time" sum="Abr. Exp."/>
+                                <field name="os" widget="float_time" sum="sos"/>
+                                <field name="os_e" widget="float_time" sum="sos_e"/>
+                                <field name="os_a" widget="float_time" sum="sos_a"/>
+                                <field name="os_ae" widget="float_time" sum="sos_ae"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+        <!-- INHERIT: ANALYTIC TIMESHEET TREE VIEW: Add event_category_id -->
+        <record id="calendar_log_project_hr_timesheet_line_tree" model="ir.ui.view">
+            <field name="name">hr.analytic.timesheet.tree</field>
+            <field name="model">hr.analytic.timesheet</field>
+            <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree"/>
+            <field name="arch" type="xml">
+                <field name="account_id" position="after">
+                    <field name="event_category_id" readonly="True"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- INHERIT: ANALYTIC TIMESHEET SEARCH VIEW: Add event_category_id and day -->
+        <record id="calendar_log_project_hr_timesheet_line_search" model="ir.ui.view">
+            <field name="name">hr.analytic.timesheet.search</field>
+            <field name="model">hr.analytic.timesheet</field>
+            <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_search"/>
+            <field name="arch" type="xml">
+                <field name="account_id" position="after">
+                    <field name="event_category_id"/>
+                </field>
+                <group position="inside">
+                    <filter string="Group by Day" icon="terp-go-today" context="{'group_by':'date:day'}"/>
+                    <filter string="Event Category" icon="terp-go-today" context="{'group_by':'event_category_id'}"/>
+                </group>
+            </field>
+        </record>
+
+        <!-- ANALYTIC TIMESHEET GRAPH VIEW: -->
+        <record id="calendar_log_project_hr_timesheet_line_graph" model="ir.ui.view">
+            <field name="name">hr.analytic.timesheet.graph</field>
+            <field name="model">hr.analytic.timesheet</field>
+            <field name="arch" type="xml">
+                <graph string="Timesheet Line" type="bar">
+                    <field name="event_category_id"/>
+                    <field name="unit_amount" operator="+"/>
+                    <field group="True" name="user_id"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- INHERIT: ANALYTIC TIMESHEET ACT WINDOW: Add graph view -->
+        <!--<record id="calendar_log_project_act_hr_timesheet_line_evry1_all_form" model="ir.actions.act_window">-->
+            <!--<field name="name">Timesheet Activities</field>-->
+            <!--<field name="model">hr.analytic.timesheet</field>-->
+            <!--<field name="inherit_id" ref="hr_timesheet.act_hr_timesheet_line_evry1_all_form"/>-->
+            <!--<field name="view_mode" position="replace">-->
+                <!--<field name="view_mode">tree,form,graph</field>-->
+            <!--</field>-->
+        <!--</record>-->
+
     </data>
 </openerp>
