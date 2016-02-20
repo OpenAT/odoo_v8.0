@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-13 09:30+0000\n"
-"PO-Revision-Date: 2015-11-13 09:30+0000\n"
+"POT-Creation-Date: 2016-02-20 09:43+0000\n"
+"PO-Revision-Date: 2016-02-20 09:43+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,52 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "Abr. Exp."
+msgstr "Ausl. Diät."
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,sum_a:0
+msgid "Abroad"
+msgstr "Ausland"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,sum_ae:0
+msgid "Abroad Expense"
+msgstr "Ausland Diätenberechtigt"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,cm:0
+msgid "CM"
+msgstr "M"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,cm_a:0
+msgid "CM Abroad"
+msgstr "M Ausland"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,cm_ae:0
+msgid "CM Abroad Expense"
+msgstr "M Ausland Diätenberechtigt"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,cm_e:0
+msgid "CM Expense"
+msgstr "M Diätenberechtigt"
+
+#. module: calendar_log_project
 #: model:ir.model,name:calendar_log_project.model_calendar_event
 msgid "Calendar Event"
 msgstr "Kalenderereignis"
+
+#. module: calendar_log_project
+#: model:ir.model,name:calendar_log_project.model_hr_timesheet_sheet_sheet_day_cat_detail
+msgid "Category by Days in Period"
+msgstr "Kategorie nach Tagen pro Periode"
 
 #. module: calendar_log_project
 #: help:calendar.event,is_worklog:0
@@ -26,14 +69,84 @@ msgid "Create a Work-Log Entry"
 msgstr "Arbeitsaufzeichnung erstellen"
 
 #. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,name:0
+msgid "Date"
+msgstr "Datum"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet,day_cat_details:0
+msgid "Day Cat Details"
+msgstr "Kat./Tag Details"
+
+#. module: calendar_log_project
 #: help:calendar.event.category,is_worklog:0
 msgid "Default Is Worklog setting for meetings with this category"
 msgstr "Standard \"Ist Arbeitsaufzeichung\" Einstellung für diese Kategorie"
 
 #. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,employee_id:0
+msgid "Employee"
+msgstr "Mitarbeiter"
+
+#. module: calendar_log_project
+#: view:hr.analytic.timesheet:calendar_log_project.calendar_log_project_hr_timesheet_line_search
+#: field:hr.analytic.timesheet,event_category_id:0
+msgid "Event Category"
+msgstr "Event Kategorie"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+#: model:ir.actions.act_window,name:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_action
+msgid "Exp. Sum."
+msgstr "Diät. Sum."
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,sum_e:0
+msgid "Expense"
+msgstr "Diäten"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "Expense Summary"
+msgstr "Diäten Zusammenfassung"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,ga:0
+msgid "GA"
+msgstr "AA"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,ga_a:0
+msgid "GA Abroad"
+msgstr "AA Ausland"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,ga_ae:0
+msgid "GA Abroad Expense"
+msgstr "AA Ausland Diätenberechtig"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,ga_e:0
+msgid "GA Expense"
+msgstr "AA Diätenberechtig"
+
+#. module: calendar_log_project
+#: view:hr.analytic.timesheet:calendar_log_project.calendar_log_project_hr_timesheet_line_search
+msgid "Group by Day"
+msgstr "Gruppierung nach Tag"
+
+#. module: calendar_log_project
 #: field:calendar.event,analytic_time_id:0
 msgid "HR Analytic Timesheet ID"
-msgstr ""
+msgstr "HR Analytic Timesheet ID"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,id:0
+msgid "ID"
+msgstr "ID"
 
 #. module: calendar_log_project
 #: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
@@ -67,10 +180,45 @@ msgid "Meeting Category"
 msgstr "Meeting Kategorie"
 
 #. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,os:0
+msgid "OS"
+msgstr "ÜN"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,os_a:0
+msgid "OS Abroad"
+msgstr "ÜN Ausland"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,os_ae:0
+msgid "OS Abroad Expense"
+msgstr "ÜN Ausland Diätenberechtigt"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,os_e:0
+msgid "OS Expense"
+msgstr "ÜN Diätenberechtigt"
+
+#. module: calendar_log_project
 #: view:calendar.event:calendar_log_project.view_calendar_log_project_search
 #: field:calendar.event,project_id:0
 msgid "Project"
 msgstr "Projekt"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,t_a:0
+msgid "T Abroad"
+msgstr "R Ausland"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,t_ae:0
+msgid "T Abroad Expense"
+msgstr "R Ausland Diätenberechtigt"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,t_e:0
+msgid "T Expense"
+msgstr "R Diätenberechtigt"
 
 #. module: calendar_log_project
 #: view:calendar.event:calendar_log_project.view_calendar_log_project_search
@@ -81,7 +229,7 @@ msgstr "Aufgabe"
 #. module: calendar_log_project
 #: field:calendar.event,task_work_id:0
 msgid "Task Worklog ID"
-msgstr ""
+msgstr "Task Worklog ID"
 
 #. module: calendar_log_project
 #: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
@@ -93,10 +241,101 @@ msgstr "Die verfügbaren Aufgaben hängen vom Projekt ab!\n"
 #. module: calendar_log_project
 #: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
 msgid "This text will be used for invitation emails and therefore may be visible to customers!"
-msgstr "Dieser Text wird für eventuelle Einladungs E-Mails verwendet und könnte daher für den Kudnen sichtbar sein!"
+msgstr "Dieser Text wird für eventuelle Einladungs E-Mails verwendet und könnte daher für den Kunden sichtbar sein!"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,timesheet_id:0
+#: model:ir.model,name:calendar_log_project.model_hr_timesheet_sheet_sheet
+msgid "Timesheet"
+msgstr "Zeiterfassung"
+
+#. module: calendar_log_project
+#: view:hr.analytic.timesheet:calendar_log_project.calendar_log_project_hr_timesheet_line_graph
+#: model:ir.model,name:calendar_log_project.model_hr_analytic_timesheet
+msgid "Timesheet Line"
+msgstr "Zeiterfassungsposition"
 
 #. module: calendar_log_project
 #: field:calendar.event,worklog_text:0
 msgid "Work-Log"
 msgstr "Arbeitsaufzeichnung"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "scm"
+msgstr "scm"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "scm_a"
+msgstr "scm_a"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "scm_ae"
+msgstr "scm_ae"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "scm_e"
+msgstr "scm_e"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "sga"
+msgstr "sga"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "sga_a"
+msgstr "sga_a"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "sga_ae"
+msgstr "sga_ae"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "sga_e"
+msgstr "sga_e"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "sos"
+msgstr "sos"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "sos_a"
+msgstr "sos_a"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "sos_ae"
+msgstr "sos_ae"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "sos_e"
+msgstr "sos_e"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "st_a"
+msgstr "st_a"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "st_ae"
+msgstr "st_ae"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
+msgid "st_e"
+msgstr "st_e"
 
