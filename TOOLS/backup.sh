@@ -17,14 +17,14 @@ if [ "${TYPE}" == "odoo-backup-zip" ] ; then
     if [ "${WEEKDAY}" == "7" ] ; then
         FILENAME=BACKUPFILE--week${WEEKNUMBER}.zip #="DBBACKUPPATH/DBNAME--week${WEEKNUMBER}.zip"
     else
-        FILENAME=BACKUPFILE--week${WEEKDAY}.zip #="DBBACKUPPATH/DBNAME--day${WEEKDAY}.zip"
+        FILENAME=BACKUPFILE--day${WEEKDAY}.zip #="DBBACKUPPATH/DBNAME--day${WEEKDAY}.zip"
     fi
     INSTANCE_PATH/TOOLS/db-tools.py -b BASEPORT69 -s 'SUPER_PASSWORD' backup -d DBNAME -f ${FILENAME}
 elif [ "${TYPE}" == "pad-backup-sql" ] ; then
     if [ "${WEEKDAY}" == "7" ] ; then
         FILENAME=BACKUPFILE--week${WEEKNUMBER}.sql #="DBBACKUPPATH/DBNAME--week${WEEKNUMBER}.zip"
     else
-        FILENAME=BACKUPFILE--week${WEEKDAY}.sql #="DBBACKUPPATH/DBNAME--day${WEEKDAY}.zip"
+        FILENAME=BACKUPFILE--day${WEEKDAY}.sql #="DBBACKUPPATH/DBNAME--day${WEEKDAY}.zip"
     fi
     sudo -Hu postgres pg_dump DBNAME > ${FILENAME}
 elif [ "${TYPE}" == "owncloud-backup-sql" ] ; then
@@ -33,9 +33,9 @@ elif [ "${TYPE}" == "owncloud-backup-sql" ] ; then
         DATAFILENAME=BACKUPFILE--week${WEEKNUMBER}-data
         CONFIGDATAFILENAME=BACKUPFILE--week${WEEKNUMBER}-config.tgz
     else
-        FILENAME=BACKUPFILE--week${WEEKDAY}.sql #="/opt/odoo_v8.0/testodoo/o8_testodoo_backuptest11/BACKUP/o8_testodoo_backuptest11_cloud--day${WEEKDAY}.zip"
-        DATAFILENAME=BACKUPFILE--week${WEEKDAY}-data
-        CONFIGDATAFILENAME=BACKUPFILE--week${WEEKDAY}-config.tgz
+        FILENAME=BACKUPFILE--day${WEEKDAY}.sql #="/opt/odoo_v8.0/testodoo/o8_testodoo_backuptest11/BACKUP/o8_testodoo_backuptest11_cloud--day${WEEKDAY}.zip"
+        DATAFILENAME=BACKUPFILE--day${WEEKDAY}-data
+        CONFIGDATAFILENAME=BACKUPFILE--day${WEEKDAY}-config.tgz
     fi
     sudo -Hu postgres pg_dump DBNAME > ${FILENAME}
     rsync -avz DBPATH/owncloud/data/ ${DATAFILENAME}
@@ -45,5 +45,3 @@ fi
 
 #INSTANCE_PATH/TOOLS/db-tools.py -b BASEPORT69 -s 'SUPER_PASSWORD' backup -d DBNAME -f ${FILENAME}
 # Todo: Create Backup directory
-# Todo: Backup etherpad-lite database (pgdump)
-# Todo: Backup owncloud database and data,config,apps directories (rsync, pgdump)
